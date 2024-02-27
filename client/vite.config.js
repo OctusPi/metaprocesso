@@ -10,7 +10,9 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      'b%': fileURLToPath(new URL('node_modules/bootstrap/dist/css', import.meta.url)),
+      'bi%': fileURLToPath(new URL('node_modules/bootstrap-icons/font', import.meta.url))
     }
   }
 })
