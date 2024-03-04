@@ -13,7 +13,7 @@ const menu = [
 </script>
 
 <template>
-  <div class="container-fluid container-primary p-4 bg-warning">
+  <div class="container-fluid container-primary p-4">
       <MainNav v-bind="{active:true, menu:menu}" />
     <main>
       <RouterView />

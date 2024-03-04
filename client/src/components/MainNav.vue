@@ -9,7 +9,7 @@
 </script>
 
 <template>
-    <nav v-show="active" class="navbar navbar-expand-lg bg-body-tertiary rounded-4 ">
+    <nav v-show="active" class="navbar navbar-expand-lg rounded-4 ">
        
         <div class="navbar-container p-4">
             <div class="nav-header">
@@ -41,6 +41,7 @@
 
 <style>
     .navbar{
+        z-index: 1000;
         height: calc(100% - 48px);
         width: 120px;
         overflow: auto;
@@ -48,6 +49,7 @@
         position: fixed;
         align-items: start;
         justify-content: center;
+        background-color: var(--color-background-mute);
         --bs-navbar-toggler-border-color:none;
         --bs-navbar-toggler-focus-width:none;
     }
@@ -79,6 +81,10 @@
 
     .nav-link-icon{
         font-size: 1.8rem;
+    }
+
+    .nav-link-item:hover{
+        color: var(--color-base);
     }
 
     @media (max-width: 991px) {

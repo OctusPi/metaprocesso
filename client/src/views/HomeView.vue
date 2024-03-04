@@ -1,84 +1,9 @@
 <script setup>
-
+import MainHeader from '@/components/MainHeader.vue';
 </script>
 
 <template>
     <section class="container-main text-dark">
-        <h1>Home</h1>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
-        <p>teste</p>
+        <MainHeader />
     </section>
 </template>
