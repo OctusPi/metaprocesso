@@ -13,7 +13,7 @@
        
         <div class="navbar-container p-4">
             <div class="nav-header">
-                <a class="brand" href="#">
+                <a class="brand" href="/">
                     <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Bootstrap" height="34">
                 </a>
 

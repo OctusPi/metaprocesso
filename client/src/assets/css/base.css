@@ -41,7 +41,7 @@
   --section-gap: 160px;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --color-background: var(--vt-c-black);
     --color-background-soft: var(--vt-c-black-soft);
@@ -55,7 +55,7 @@
 
     --color-base: var(--vt-color-base-dark);
   }
-}
+} */
 
 *,
 *::before,
@@ -65,12 +65,15 @@
   font-weight: normal;
 }
 
+*, h1, h2, h3, h4, h5{
+  font-size: 1rem;
+}
+
 body {
   min-height: 100vh;
   color: var(--color-text);
   background: var(--color-background);
   transition:color 0.5s, background-color 0.5s;
-  line-height: 1.6;
   font-family:
     Inter,
     -apple-system,
@@ -84,7 +87,6 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

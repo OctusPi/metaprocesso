@@ -8,13 +8,38 @@
 
 .container-main{
   width: 100%;
-  padding: 0 0 15px 160px;
-  position: relative;
+  padding: 100px 0 15px 160px;
+}
+
+.header-main{
+  width: calc(100% - 145px);
+  background-color: var(--color-background);
+  top: 0;
+  left: 145px;
+  padding: 20px;
+  position: fixed;
+}
+
+.header-main-title{
+  flex-grow: 2;
+}
+
+.header-main-title h1{
+  margin: 0;
+  padding: 0;
 }
 
 @media (max-width: 991px) {
   .container-main{
     width: 100%;
-    padding: 100px 30px 30px 30px;
+    padding: 200px 30px 30px 30px;
+  }
+
+  .header-main{
+    width: 100%;
+    /* background-color: var(----color-background); */
+    padding: 0 20px;
+    top: 130px;
+    left: 0;
   }
 }
