@@ -2,13 +2,25 @@
 @import 'bi%/bootstrap-icons.css';
 @import './base.css';
 
+.txt-color{
+  color: var(--color-text);
+}
+
+.txt-color-sec{
+  color: var(--color-text-secondary);
+}
+
+.txt-color-base{
+  color: var(--color-base);
+}
+
 .container-primary{
   min-height: 100vh;
 }
 
 .container-main{
   width: 100%;
-  padding: 100px 0 15px 160px;
+  padding: 100px 0 15px 150px;
 }
 
 .header-main{
@@ -24,9 +36,14 @@
   flex-grow: 2;
 }
 
-.header-main-title h1{
-  margin: 0;
-  padding: 0;
+.header-main-btn-searchbar{
+  height: 60px;
+  text-align: left;
+  width: 100%;
+  padding: 10px;
+  outline:none;
+  background-color: var(--color-background);
+  border: 2px solid var(--color-border);
 }
 
 @media (max-width: 991px) {
