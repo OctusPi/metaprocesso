@@ -1,15 +1,16 @@
 <script setup>
     import { ref } from 'vue';
-    const props = defineProps({
-        active:Boolean,
-        menu:Array
-    })
-    const active = ref(props.active) ?? true
-    const menu = ref(props.menu) ?? []
+
+    const menu = ref([
+    {href: '/', icon:'bi-cake2-fill', title:'Bolo de Niver', description:'Vamos Comemorar Again'},
+    {href: '/about', icon:'bi-backpack3-fill', title:'Lets Travel', description:'O Mundo é minha morada'},
+    {href: '/cart', icon:'bi-box-seam-fill', title:'Controle de Estoque', description:'Entrada e Saída de Mercadorias'},
+    {href: '/login', icon:'bi-browser-firefox', title:'Navigation', description:'World Wide Web is Coming'},
+    {href: '/logout', icon:'bi-chat-square-heart-fill', title:'Notifications', description:'Visualize suas mensagens'},])
 </script>
 
 <template>
-    <nav v-show="active" class="navbar navbar-expand-lg rounded-4">
+    <nav class="navbar navbar-expand-lg rounded-4">
        
         <div class="navbar-container p-4">
             <div class="nav-header">
@@ -43,6 +44,7 @@
     .navbar{
         z-index: 1000;
         height: calc(100% - 48px);
+        top:24px;
         width: 120px;
         overflow: auto;
         padding: 0;
