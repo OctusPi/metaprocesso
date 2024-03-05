@@ -1,6 +1,7 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import MainNav from '@/components/MainNav.vue'
+import { onMounted } from 'vue';
 
 const menu = [
   {href: '/', icon:'bi-cake2-fill', title:'Bolo de Niver', description:'Vamos Comemorar Again'},
