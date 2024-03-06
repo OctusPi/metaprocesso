@@ -1,24 +1,25 @@
 <script setup>
     import { ref } from 'vue';
-    const props = defineProps({
-        active:Boolean,
-        menu:Array
-    })
-    const active = ref(props.active) ?? true
-    const menu = ref(props.menu) ?? []
+
+    const menu = ref([
+    {href: '/', icon:'bi-cake2-fill', title:'Bolo de Niver', description:'Vamos Comemorar Again'},
+    {href: '/about', icon:'bi-backpack3-fill', title:'Lets Travel', description:'O Mundo é minha morada'},
+    {href: '/cart', icon:'bi-box-seam-fill', title:'Controle de Estoque', description:'Entrada e Saída de Mercadorias'},
+    {href: '/login', icon:'bi-browser-firefox', title:'Navigation', description:'World Wide Web is Coming'},
+    {href: '/logout', icon:'bi-chat-square-heart-fill', title:'Notifications', description:'Visualize suas mensagens'},])
 </script>
 
 <template>
-    <nav v-show="active" class="navbar navbar-expand-lg rounded-4 ">
+    <nav class="navbar navbar-expand-lg rounded-4">
        
         <div class="navbar-container p-4">
             <div class="nav-header">
-                <a class="brand" href="#">
-                    <img src="https://getbootstrap.com/docs/5.3/assets/brand/bootstrap-logo.svg" alt="Bootstrap" height="34">
+                <a class="brand" href="/">
+                    <img src="../assets/imgs/logo.svg" alt="Bootstrap" height="38">
                 </a>
 
                 <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                    <i class="bi bi-grid nav-toggle-icon"></i>
                 </button>
             </div>
 
@@ -43,16 +44,23 @@
     .navbar{
         z-index: 1000;
         height: calc(100% - 48px);
+        top:24px;
         width: 120px;
         overflow: auto;
         padding: 0;
         position: fixed;
         align-items: start;
         justify-content: center;
-        background-color: var(--color-background-mute);
+        background-color: var(--color-nav);
         --bs-navbar-toggler-border-color:none;
         --bs-navbar-toggler-focus-width:none;
     }
+
+    .nav-toggle-icon{
+        color: var(--color-nav-itens) !important;
+        font-size: 1.2rem;
+    }
+
     .navbar-nav{
         width: 100%;
         display: block;
@@ -77,6 +85,7 @@
     .nav-link-item{
         text-align: center;
         margin: 10px;
+        color: var(--color-nav-itens);
     }
 
     .nav-link-icon{

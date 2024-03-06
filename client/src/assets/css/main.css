@@ -2,19 +2,90 @@
 @import 'bi%/bootstrap-icons.css';
 @import './base.css';
 
+.txt-color{
+  color: var(--color-text);
+}
+
+.txt-color-sec{
+  color: var(--color-text-secondary);
+}
+
+.txt-color-base{
+  color: var(--color-base);
+}
+
 .container-primary{
   min-height: 100vh;
 }
 
 .container-main{
   width: 100%;
-  padding: 0 0 15px 160px;
-  position: relative;
+  padding: 90px 0 15px 142px;
+}
+
+.header-main{
+  width: calc(100% - 168px);
+  background-color: var(--color-fundo);
+  top: 0;
+  left: 168px;
+  padding: 24px 24px 10px 0;
+  position: fixed;
+}
+
+.header-main-title{
+  flex-grow: 2;
+}
+
+.header-main-btn-icon{
+  padding: 0 !important;
+  margin-left: 16px;
+  margin-right: 3px;
+  border: none;
+}
+
+.header-main-btn-icon:focus{
+  border: none;
+}
+
+.header-main-btn-icon:hover i{
+  color: var(--color-base);
+}
+
+.header-main-btn-icon i{
+  font-size: 1.2rem;
+  color: var(--color-text);
+}
+
+.dropdown-menu {
+  padding: 20px;
+  border-radius: 20px;
+  border: var(--border-box);
+  background-color: var(--color-box);
+  box-shadow: -3px 6px 23px -1px var(--shadow--color-shadow);
+  -webkit-box-shadow: -3px 6px 23px -1px var(--shadow--color-shadow);
+  -moz-box-shadow: -3px 6px 23px -1px var(--shadow--color-shadow);
+}
+
+.dropdown-item{
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.box{
+  background-color: var(--color-box);
+  border: var(--border-box);
 }
 
 @media (max-width: 991px) {
   .container-main{
     width: 100%;
-    padding: 100px 30px 30px 30px;
+    padding: 230px 0 20px 0;
+  }
+
+  .header-main{
+    width: 100%;
+    padding: 130px 22px 0 22px;
+    top: 0;
+    left: 0;
   }
 }

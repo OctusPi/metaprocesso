@@ -1,9 +1,17 @@
 <script setup>
+import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 </script>
 
 <template>
-    <section class="container-main text-dark">
-        <MainHeader />
-    </section>
+    <main class="container-primary">
+        <MainNav />
+        <section class="container-main">
+            <MainHeader />
+
+            <div class="box p-4 mb-4 rounded-4">
+                dasdas
+            </div>
+        </section>
+    </main>
 </template>

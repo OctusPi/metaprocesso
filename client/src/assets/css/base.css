@@ -1,60 +1,71 @@
-/* color palette from <https://github.com/vuejs/theme> */
-:root {
-  --vt-c-white: #ffffff;
-  --vt-c-white-soft: #f5f9fc;
-  --vt-c-white-mute: #ededed;
+:root{
+  --color-fundo: #F5F9FC;
+  --color-box: #ffffff;
 
-  --vt-c-black: #181818;
-  --vt-c-black-soft: #222222;
-  --vt-c-black-mute: #343434;
+  --color-base : #19a6ec;
+  --color-base-translucid: #19a6ec25;
+  --color-hover : #058ed3;
+  --color-contrast : #14345c;
+  --color-contrast-hover : #F5F9FC;
+  
+  --color-text: #2e2e2e;
+  --color-text-secondary: #7c7a7a;
 
-  --vt-c-indigo: #2c3e50;
+  --color-code : rgb(223, 238, 255);
+  --color-imput: #ffffff;
+  --color-input-label: #19c5ec;
+  --color-input-focus: #EBEDF3;
+  --color-input-border:#e2e2e3;
+  --color-input-placeholder:#c0c0c0;
 
-  --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
-  --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
+  --color-nav:rgba(0, 0, 0, 0.984);
+  --color-nav-itens:rgba(224, 224, 224, 0.984);
+  --color-wall-load:rgba(255, 255, 255, 0.661);
 
-  --vt-c-text-light-1: var(--vt-c-indigo);
-  --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1: var(--vt-c-white);
-  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  --color-shadow: #cac9c9;
+  --color-shadow-2: #f1f1f1;
+  --color-gray: #939191;
+  --color-ligthgray: #E7EAF0;
+  --color-darkgray: #5d5d5d;
+  --color-success: #86ebba;
+  --color-primary: #6fbcf2;
+  --color-warning: #f5c674;
+  --color-danger: #ff586e;
+  --color-success-dark: #1d7254;
+  --color-primary-dark: #1a5f91;
+  --color-warning-dark: #a16704;
+  --color-danger-dark: #7e1c29;
 
-  --vt-color-base-light: #3e7ff8;
-  --vt-color-base-dark: #72aef8;
+  --border-box: 1px solid #E1EDF6;
 }
 
-/* semantic color variables for this project */
-:root {
-  --color-background: var(--vt-c-white);
-  --color-background-soft: var(--vt-c-white-soft);
-  --color-background-mute: var(--vt-c-white-mute);
+.dark:root{
+  --color-fundo: #000000;
+  --color-box: #373737;
 
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
+  --color-base : #0da5f0;
+  --color-hover : #058ed3;
+  --color-contrast : #acd1ff;
+  --color-contrast-hover : #0091ff29;
+  
+  --color-text: #f0f0f0;
+  --color-text-secondary: #cfcfcf;
+  --color-wall-load:rgba(35, 35, 35, 0.458);
+  --color-code : rgba(38, 74, 116, 0.795);
 
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+  --color-shadow: rgba(149, 220, 255, 0.35);
+  --color-shadow-2: rgba(149, 220, 255, 0.15);
+  --color-imput: #000000;
+  --color-input-label: #64d4ec;
+  --color-input-focus: #EBEDF3;
+  --color-input-border:#e2e2e3;
+  --color-input-placeholder:#535353;
+  
+  --color-nav:rgba(53, 53, 53, 0.984);
+  --color-nav-itens:#cfcfcf;
+  --color-wall-load:rgba(39, 39, 39, 0.661);
 
-  --color-base: var(--vt-color-base-light);
-
-  --section-gap: 160px;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
-
-    --color-base: var(--vt-color-base-dark);
-  }
+  --border-box: 1px solid #525252;
 }
 
 *,
@@ -65,12 +76,15 @@
   font-weight: normal;
 }
 
+*, h1, h2, h3, h4, h5{
+  font-size: 1rem;
+}
+
 body {
   min-height: 100vh;
   color: var(--color-text);
-  background: var(--color-background);
+  background: var(--color-fundo);
   transition:color 0.5s, background-color 0.5s;
-  line-height: 1.6;
   font-family:
     Inter,
     -apple-system,
@@ -84,7 +98,6 @@ body {
     'Droid Sans',
     'Helvetica Neue',
     sans-serif;
-  font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
