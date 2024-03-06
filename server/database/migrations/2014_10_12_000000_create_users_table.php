@@ -17,12 +17,12 @@ return new class extends Migration
             $table->string('email', 220);
             $table->string('username');
             $table->string('password');
-            $table->text('token');
-            $table->json('organs');
-            $table->json('units');
+            $table->text('token')->nullable();
+            $table->json('organs')->nullable();
+            $table->json('units')->nullable();
             $table->json('sectors');
             $table->integer('profile');
-            $table->json('modules');
+            $table->json('modules')->nullable();
             $table->boolean('passchange')->default(false);
             $table->integer('status');
         });
