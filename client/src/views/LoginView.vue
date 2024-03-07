@@ -4,7 +4,7 @@
 
 <template>
     <main class="container-back-box d-flex justify-content-center align-items-center">
-        <div class="box p-4 rounded-4 shadow-sm container-box">
+        <div class="box p-5 rounded-4 shadow-sm container-box">
             <header class="d-lg-flex align-items-center text-center text-lg-start mb-4">
                 <img src="../assets/imgs/logo.svg" class="logomarca-box mb-3 mb-lg-0">
                 <div>
@@ -20,11 +20,11 @@
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label d-flex justify-content-between">
-                        <span>Senha</span>
+                        Senha
                         <RouterLink to="/recover" class="box-link">Esqueceu sua senha?</RouterLink>
                     </label>
                     <input type="password" name="password" class="form-control" id="password"
-                        placeholder="nome@example.com">
+                        placeholder="***********">
                 </div>
 
                 <div class="mb-4">
@@ -33,31 +33,11 @@
                 
 
                 <div class="box-copyr">
-                    <p class="text-color-sec small p-0 m-0 text-center">Todos os direitos reservados.</p>
-                    <p class="text-color-sec small p-0 m-0 text-center">Octuspi 2024&copy;</p>
-                    
+                    <p class="txt-color-sec small p-0 m-0 text-center">Todos os direitos reservados.</p>
+                    <p class="txt-color-sec small p-0 m-0 text-center">Octuspi 2024&copy;</p>
                 </div>
                 
             </form>
         </div>
     </main>
 </template>
-
-<style>
-.container-back-box {
-    height: 100vh;
-}
-
-.container-box {
-    width: 360px;
-}
-
-.logomarca-box {
-    width: 55px;
-}
-
-.sistem-title-box {
-    font-weight: 600;
-    font-size: 1.1rem;
-}
-</style>
