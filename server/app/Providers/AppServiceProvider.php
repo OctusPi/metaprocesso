@@ -2,8 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\Organ;
-use App\Models\Unit;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
