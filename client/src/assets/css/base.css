@@ -88,6 +88,10 @@ body {
   min-height: 100vh;
   color: var(--color-text);
   background: var(--color-fundo);
+  background-image: url('../imgs/bg.svg');
+  background-repeat:no-repeat;
+  background-size: cover;
+  background-position: center;
   transition:color 0.5s, background-color 0.5s;
   font-family:
     Inter,
