@@ -43,6 +43,8 @@ class UserModelTest extends TestCase
 
     public function test_user_invalid(): void
     {
+        $this->expectException(QueryException::class);
+
         $user = (new User())->fill([
             'name' => fake()->name(),
             'email' => fake()->email(),
@@ -53,6 +55,6 @@ class UserModelTest extends TestCase
             'status' => 1
         ]);
 
-        $this->assertThrows($user->save(...), QueryException::class);
+        $user->save();
     }
 }
