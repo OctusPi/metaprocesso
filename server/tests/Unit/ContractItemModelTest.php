@@ -31,13 +31,16 @@ class ContractItemModelTest extends TestCase
     public function test_contract_item_fullfilled(): void
     {
         $contractItem = (new ContractItem())->fill([
-            'contract' => $this->contract->id,
-            'item' => $this->item->id,
+            'contract_id' => $this->contract->id,
+            'item_id' => $this->item->id,
             'quantity' => fake()->numberBetween(1, 100),
             'unitary_value' => fake()->randomFloat(2, 1, 100000)
         ]);
 
         $this->assertTrue($contractItem->save());
+
+        $this->assertEquals($contractItem->contract->id, $this->contract->id);
+        $this->assertEquals($contractItem->item->id, $this->item->id);
     }
 
     public function test_contract_item_invalid(): void
@@ -45,8 +48,8 @@ class ContractItemModelTest extends TestCase
         $this->expectException(QueryException::class);
 
         $contractItem = (new ContractItem())->fill([
-            'contract' => $this->contract->id,
-            'item' => 0,
+            'contract_id' => $this->contract->id,
+            'item_id' => 0,
             'quantity' => fake()->numberBetween(1, 100),
             'unitary_value' => fake()->randomFloat(2, 1, 100000)
         ]);

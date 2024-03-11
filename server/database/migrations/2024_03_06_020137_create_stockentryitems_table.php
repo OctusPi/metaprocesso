@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('stockentryitems', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('stockentry')->constrained('stockentries');
-            $table->foreignId('item')->constrained('items');
+            $table->foreignId('stockentry_id')->constrained('stockentries');
+            $table->foreignId('item_id')->constrained('items');
             $table->integer('quantity');
             $table->double('current_value');
         });

@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('contractadditives', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('contract')->constrained('contracts');
+            $table->foreignId('contract_id')->constrained('contracts');
             $table->date('date_ini');
             $table->text('obj');
             $table->text('description')->nullable();

@@ -15,9 +15,9 @@ return new class extends Migration {
             $table->timestamps();
             $table->string('cod', 50);
             $table->date('date_ini');
-            $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('unit')->constrained('units');
-            $table->foreignId('contract')->constrained('contracts');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('unit_id')->constrained('units');
+            $table->foreignId('contract_id')->constrained('contracts');
             $table->integer('status');
         });
     }

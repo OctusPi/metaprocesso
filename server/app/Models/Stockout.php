@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Stockout extends Model
 {
@@ -14,26 +15,26 @@ class Stockout extends Model
     protected $fillable = [
         'date_ini',
         'cod',
-        'organ',
-        'unit',
-        'sector',
+        'organ_id',
+        'unit_id',
+        'sector_id',
         'description',
         'issuer',
         'requester',
     ];
 
-    public function organ()
+    public function organ(): BelongsTo
     {
-        return $this->belongsTo(Organ::class);
+        return $this->belongsTo(Organ::class, 'organ_id');
     }
 
-    public function unit()
+    public function unit(): BelongsTo
     {
-        return $this->belongsTo(Unit::class);
+        return $this->belongsTo(Unit::class, 'unit_id');
     }
 
     public function sector()
     {
-        return $this->belongsTo(Sector::class);
+        return $this->belongsTo(Sector::class, 'sector_id');
     }
 }

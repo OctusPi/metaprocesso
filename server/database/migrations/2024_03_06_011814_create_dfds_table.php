@@ -18,8 +18,8 @@ return new class extends Migration {
             $table->integer('category');
             $table->text('obj');
             $table->text('description')->nullable();
-            $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('unit')->constrained('units');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('unit_id')->constrained('units');
         });
     }
 

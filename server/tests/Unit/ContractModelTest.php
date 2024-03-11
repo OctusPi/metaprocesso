@@ -31,13 +31,13 @@ class ContractModelTest extends TestCase
             'category' => fake()->numberBetween(1, 5),
             'obj' => fake()->text(),
             'description' => fake()->text(),
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
             'date_ini' => fake()->date(),
             'date_fin' => fake()->date(),
             'estimated_value' => fake()->randomFloat(2, 1000, 10000),
             'approved_value' => fake()->randomFloat(2, 1000, 10000),
-            'supplier' => $this->supplier->id,
+            'supplier_id' => $this->supplier->id,
             'additive' => fake()->boolean(),
             'status' => fake()->numberBetween(1, 3)
         ]);
@@ -51,18 +51,22 @@ class ContractModelTest extends TestCase
             'cod' => fake()->text(),
             'category' => fake()->numberBetween(1, 5),
             'obj' => fake()->text(),
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
             'date_ini' => fake()->date(),
             'date_fin' => fake()->date(),
             'estimated_value' => fake()->randomFloat(2, 1000, 10000),
             'approved_value' => fake()->randomFloat(2, 1000, 10000),
-            'supplier' => $this->supplier->id,
+            'supplier_id' => $this->supplier->id,
             'additive' => fake()->boolean(),
             'status' => fake()->numberBetween(1, 3)
         ]);
 
         $this->assertTrue($contract->save());
+
+        $this->assertEquals($contract->organ->id, $this->organ->id);
+        $this->assertEquals($contract->unit->id, $this->unit->id);
+        $this->assertEquals($contract->supplier->id, $this->supplier->id);
     }
 
     public function test_contract_invalid(): void
@@ -74,13 +78,13 @@ class ContractModelTest extends TestCase
             'category' => fake()->numberBetween(1, 5),
             'obj' => fake()->text(),
             'description' => fake()->text(),
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
             'date_ini' => fake()->date(),
             'date_fin' => fake()->date(),
             'estimated_value' => fake()->randomFloat(2, 1000, 10000),
             'approved_value' => fake()->randomFloat(2, 1000, 10000),
-            'supplier' => 0,
+            'supplier_id' => 0,
             'additive' => fake()->boolean(),
             'status' => fake()->numberBetween(1, 3)
         ]);

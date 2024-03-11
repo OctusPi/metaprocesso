@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PurchaseOrder extends Model
 {
@@ -14,24 +15,24 @@ class PurchaseOrder extends Model
     protected $fillable = [
         'cod',
         'date_ini',
-        'organ',
-        'unit',
-        'contract',
+        'organ_id',
+        'unit_id',
+        'contract_id',
         'status',
     ];
 
-    public function organ()
+    public function organ(): BelongsTo
     {
-        return $this->belongsTo(Organ::class);
+        return $this->belongsTo(Organ::class, 'organ_id');
     }
 
-    public function unit()
+    public function unit(): BelongsTo
     {
-        return $this->belongsTo(Unit::class);
+        return $this->belongsTo(Unit::class, 'unit_id');
     }
 
-    public function contract()
+    public function contract(): BelongsTo
     {
-        return $this->belongsTo(Contract::class);
+        return $this->belongsTo(Contract::class, 'contract_id');
     }
 }

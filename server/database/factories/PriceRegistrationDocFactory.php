@@ -19,13 +19,13 @@ class PriceRegistrationDocFactory extends Factory
             'category' => fake()->numberBetween(1, 3),
             'obj' => fake()->text(),
             'description' => fake()->text(),
-            'organ' => fake()->numberBetween(1, Organ::all()->count()),
-            'unit' =>  fake()->numberBetween(1, Unit::all()->count()),
+            'organ_id' => fake()->numberBetween(1, Organ::all()->count()),
+            'unit_id' =>  fake()->numberBetween(1, Unit::all()->count()),
             'date_ini' => fake()->date(),
             'date_fin' => fake()->date(),
             'estimated_value' => fake()->randomFloat(2, 1, 10000),
             'approved_value' => fake()->randomFloat(2, 1, 10000),
-            'supplier' => fake()->numberBetween(1, Supplier::all()->count()),
+            'supplier_id' => fake()->numberBetween(1, Supplier::all()->count()),
             'additive' => fake()->boolean(),
             'status' => fake()->numberBetween(1, 3)
         ];

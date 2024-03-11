@@ -16,8 +16,8 @@ return new class extends Migration {
             $table->date('date_ini');
             $table->string('invoice', 50);
             $table->text('danfe');
-            $table->foreignId('purchaseorder')->constrained('purchaseorders');
-            $table->foreignId('contract')->constrained('contracts');
+            $table->foreignId('purchaseorder_id')->constrained('purchaseorders');
+            $table->foreignId('contract_id')->constrained('contracts');
             $table->integer('quantity');
             $table->double('current_value');
         });

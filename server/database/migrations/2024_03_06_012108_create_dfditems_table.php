@@ -13,11 +13,11 @@ return new class extends Migration {
         Schema::create('dfditems', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('dfd')->constrained('dfds');
-            $table->foreignId('item')->constrained('items');
+            $table->foreignId('dfd_id')->constrained('dfds');
+            $table->foreignId('item_id')->constrained('items');
             $table->integer('quantity');
-            $table->foreignId('program')->constrained('programs');
-            $table->foreignId('dotation')->constrained('dotations');
+            $table->foreignId('program_id')->constrained('programs');
+            $table->foreignId('dotation_id')->constrained('dotations');
         });
     }
 

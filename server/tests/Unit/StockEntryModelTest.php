@@ -34,13 +34,16 @@ class StockEntryModelTest extends TestCase
             'date_ini' => fake()->date(),
             'invoice' => fake()->text(50),
             'danfe' => fake()->text(),
-            'purchaseorder' => $this->purchaseOrder->id,
-            'contract' => $this->contract->id,
+            'purchaseorder_id' => $this->purchaseOrder->id,
+            'contract_id' => $this->contract->id,
             'quantity' => fake()->numberBetween(1, 100),
             'current_value' => fake()->randomFloat(2, 10, 1000)
         ]);
 
         $this->assertTrue($stockEntry->save());
+
+        $this->assertEquals($stockEntry->purchaseOrder->id, $this->purchaseOrder->id);
+        $this->assertEquals($stockEntry->contract->id, $this->contract->id);
     }
 
     public function test_stock_entry_invalid(): void
@@ -51,8 +54,8 @@ class StockEntryModelTest extends TestCase
             'date_ini' => fake()->date(),
             'invoice' => fake()->text(50),
             'danfe' => fake()->text(),
-            'purchaseorder' => $this->purchaseOrder->id,
-            'contract' => 0,
+            'purchaseorder_id' => $this->purchaseOrder->id,
+            'contract_id' => 0,
             'quantity' => fake()->numberBetween(1, 100),
             'current_value' => fake()->randomFloat(2, 10, 1000)
         ]);

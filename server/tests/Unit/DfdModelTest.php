@@ -29,11 +29,14 @@ class DfdModelTest extends TestCase
             'category' => 1,
             'obj' => fake()->text(),
             'description' => fake()->text(),
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id
         ]);
 
         $this->assertTrue($dfd->save());
+
+        $this->assertEquals($dfd->organ->id, $this->organ->id);
+        $this->assertEquals($dfd->unit->id, $this->unit->id);
     }
 
     public function test_dfd_nullables(): void
@@ -43,8 +46,8 @@ class DfdModelTest extends TestCase
             'date_ini' => fake()->date(),
             'category' => 1,
             'obj' => fake()->text(),
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id
         ]);
 
         $this->assertTrue($dfd->save());
@@ -60,8 +63,8 @@ class DfdModelTest extends TestCase
             'category' => 1,
             'obj' => fake()->text(),
             'description' => fake()->text(),
-            'organ' => 0,
-            'unit' => $this->unit->id
+            'organ_id' => 0,
+            'unit_id' => $this->unit->id
         ]);
 
         $dfd->save();

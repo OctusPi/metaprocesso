@@ -28,24 +28,29 @@ class SupplieOccurrencyModelTest extends TestCase
         Unit::factory()->create();
         Sector::factory()->create();
 
+        $this->user = User::factory()->create();
         $this->supplier = Supplier::factory()->create();
         $this->contract = Contract::factory()->create();
         $this->purchaseOrder = PurchaseOrder::factory()->create();
-        $this->user = User::factory()->create();
     }
 
     public function test_stock_out_item_fullfilled(): void
     {
         $stockOut = (new SupplieOcurrency())->fill([
-            'purchaseorder' => $this->purchaseOrder->id,
-            'contract' => $this->contract->id,
-            'supplier' => $this->supplier->id,
+            'purchaseorder_id' => $this->purchaseOrder->id,
+            'contract_id' => $this->contract->id,
+            'supplier_id' => $this->supplier->id,
             'status' => fake()->numberBetween(1, 3),
             'description' => fake()->text(),
-            'user' => $this->user->id,
+            'user_id' => $this->user->id,
         ]);
 
         $this->assertTrue($stockOut->save());
+
+        $this->assertEquals($stockOut->contract->id, $this->contract->id);
+        $this->assertEquals($stockOut->purchaseOrder->id, $this->purchaseOrder->id);
+        $this->assertEquals($stockOut->supplier->id, $this->supplier->id);
+        $this->assertEquals($stockOut->user->id, $this->user->id);
     }
 
     public function test_stock_out_item_invalid(): void
@@ -53,12 +58,12 @@ class SupplieOccurrencyModelTest extends TestCase
         $this->expectException(QueryException::class);
 
         $stockOut = (new SupplieOcurrency())->fill([
-            'purchaseorder' => $this->purchaseOrder->id,
-            'contract' => $this->contract->id,
-            'supplier' => $this->supplier->id,
+            'purchaseorder_id' => $this->purchaseOrder->id,
+            'contract_id' => $this->contract->id,
+            'supplier_id' => $this->supplier->id,
             'status' => fake()->numberBetween(1, 3),
             'description' => fake()->text(),
-            'user' => 0,
+            'user_id' => 0,
         ]);
 
         $stockOut->save();

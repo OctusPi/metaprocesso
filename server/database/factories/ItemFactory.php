@@ -15,7 +15,7 @@ class ItemFactory extends Factory
             'cod' => fake()->text(50),
             'name' => fake()->word(),
             'description' => fake()->paragraph(),
-            'unit' => fake()->word(),
+            'unit_id' => fake()->word(),
             'volume' => fake()->text(50)
         ];
     }

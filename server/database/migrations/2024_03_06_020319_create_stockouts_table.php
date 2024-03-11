@@ -15,9 +15,9 @@ return new class extends Migration {
             $table->timestamps();
             $table->date('date_ini');
             $table->string('cod', 50);
-            $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('unit')->constrained('units');
-            $table->foreignId('sector')->constrained('sectors');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('unit_id')->constrained('units');
+            $table->foreignId('sector_id')->constrained('sectors');
             $table->text('description')->nullable();
             $table->string('issuer')->nullable();
             $table->string('requester')->nullable();

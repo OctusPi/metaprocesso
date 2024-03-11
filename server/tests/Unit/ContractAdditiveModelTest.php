@@ -29,19 +29,21 @@ class ContractAdditiveModelTest extends TestCase
     public function test_contract_additive_fullfilled(): void
     {
         $contractAdditive = (new ContractAdditive())->fill([
-            'contract' => $this->contract->id,
+            'contract_id' => $this->contract->id,
             'date_ini' => fake()->date(),
             'obj' => fake()->text(),
             'description' => fake()->text()
         ]);
 
         $this->assertTrue($contractAdditive->save());
+
+        $this->assertEquals($contractAdditive->contract->id, $this->contract->id);
     }
 
     public function test_contract_additive_nullables(): void
     {
         $contractAdditive = (new ContractAdditive())->fill([
-            'contract' => $this->contract->id,
+            'contract_id' => $this->contract->id,
             'date_ini' => fake()->date(),
             'obj' => fake()->text(),
         ]);
@@ -54,7 +56,7 @@ class ContractAdditiveModelTest extends TestCase
         $this->expectException(QueryException::class);
 
         $contractAdditive = (new ContractAdditive())->fill([
-            'contract' => 0,
+            'contract_id' => 0,
             'date_ini' => fake()->date(),
             'obj' => fake()->text(),
             'description' => fake()->text()

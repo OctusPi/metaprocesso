@@ -32,13 +32,16 @@ class PriceRegistrationDocModelItemTest extends TestCase
     public function test_price_registration_doc_item_fullfilled(): void
     {
         $priceRegistrationDocItem = (new PriceRegistrationDocItem())->fill([
-            'priceregistrationdoc' => $this->priceRegistrationDoc->id,
-            'item' =>  $this->item->id,
+            'priceregistrationdoc_id' => $this->priceRegistrationDoc->id,
+            'item_id' =>  $this->item->id,
             'quantity' => fake()->numberBetween(1, 100),
             'unitary_value' => fake()->randomFloat(2, 1, 100000)
         ]);
 
         $this->assertTrue($priceRegistrationDocItem->save());
+
+        $this->assertEquals($priceRegistrationDocItem->priceRegistrationDoc->id, $this->priceRegistrationDoc->id);
+        $this->assertEquals($priceRegistrationDocItem->item->id, $this->item->id);
     }
 
     public function test_price_registration_doc_item_invalid(): void
@@ -46,8 +49,8 @@ class PriceRegistrationDocModelItemTest extends TestCase
         $this->expectException(QueryException::class);
 
         $priceRegistrationDocItem = (new PriceRegistrationDocItem())->fill([
-            'priceregistrationdoc' => null,
-            'item' => fake()->numberBetween(1, 10),
+            'priceregistrationdoc_id' => null,
+            'item_id' => fake()->numberBetween(1, 10),
             'quantity' => fake()->numberBetween(1, 100),
             'unitary_value' => fake()->randomFloat(2, 10, 1000)
         ]);

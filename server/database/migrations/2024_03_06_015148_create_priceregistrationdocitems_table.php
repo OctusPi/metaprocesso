@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('priceregistrationdocitems', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('priceregistrationdoc')->constrained('priceregistrationdocs');
-            $table->foreignId('item')->constrained('items');
+            $table->foreignId('priceregistrationdoc_id')->constrained('priceregistrationdocs');
+            $table->foreignId('item_id')->constrained('items');
             $table->integer('quantity');
             $table->double('unitary_value');
         });

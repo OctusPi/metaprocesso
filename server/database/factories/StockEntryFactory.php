@@ -17,8 +17,8 @@ class StockEntryFactory extends Factory
             'date_ini' => fake()->date(),
             'invoice' => fake()->text(50),
             'danfe' => fake()->text(),
-            'purchaseorder' => fake()->numberBetween(1, PurchaseOrder::all()->count()),
-            'contract' =>  fake()->numberBetween(1, Contract::all()->count()),
+            'purchaseorder_id' => fake()->numberBetween(1, PurchaseOrder::all()->count()),
+            'contract_id' =>  fake()->numberBetween(1, Contract::all()->count()),
             'quantity' => fake()->numberBetween(1, 100),
             'current_value' => fake()->randomFloat(2, 10, 1000)
         ];

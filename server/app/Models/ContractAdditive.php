@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ContractAdditive extends Model
 {
@@ -12,14 +13,14 @@ class ContractAdditive extends Model
     protected $table = 'contractadditives';
 
     protected $fillable = [
-        'contract',
+        'contract_id',
         'date_ini',
         'obj',
         'description',
     ];
 
-    public function contract()
+    public function contract(): BelongsTo
     {
-        return $this->belongsTo(Contract::class);
+        return $this->belongsTo(Contract::class, 'contract_id');
     }
 }

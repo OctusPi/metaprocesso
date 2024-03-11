@@ -13,9 +13,9 @@ return new class extends Migration {
         Schema::create('contractadditiveitems', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('contract')->constrained('contracts');
-            $table->foreignId('contractadditive')->constrained('contractadditives');
-            $table->foreignId('item')->constrained('items');
+            $table->foreignId('contract_id')->constrained('contracts');
+            $table->foreignId('contractadditive_id')->constrained('contractadditives');
+            $table->foreignId('item_id')->constrained('items');
             $table->integer('quantity');
             $table->double('unitary_value');
         });

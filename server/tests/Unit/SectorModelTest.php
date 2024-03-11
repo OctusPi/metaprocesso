@@ -24,8 +24,8 @@ class SectorModelTest extends TestCase
     public function test_sector_fullfilled(): void
     {
         $sector = (new Sector())->fill([
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
             'name' => fake()->company(),
             'cnpj' => fake()->numerify('##############'),
             'phone' => fake()->numerify('(##) #########'),
@@ -34,13 +34,16 @@ class SectorModelTest extends TestCase
         ]);
 
         $this->assertTrue($sector->save());
+
+        $this->assertEquals($sector->organ->id, $this->organ->id);
+        $this->assertEquals($sector->unit->id, $this->unit->id);
     }
 
     public function test_sector_nullables(): void
     {
         $sector = (new Sector())->fill([
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
             'name' => fake()->company(),
             'cnpj' => fake()->numerify('##############'),
             'phone' => fake()->numerify('(##) #########'),
@@ -56,8 +59,8 @@ class SectorModelTest extends TestCase
         $this->expectException(QueryException::class);
 
         $sector = (new Sector())->fill([
-            'organ' => 0,
-            'unit' => $this->unit->id,
+            'organ_id' => 0,
+            'unit_id' => $this->unit->id,
             'name' => fake()->company(),
             'cnpj' => fake()->numerify('##############'),
             'phone' => fake()->numerify('(##) #########'),

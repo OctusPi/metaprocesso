@@ -17,9 +17,9 @@ class PurchaseOrderFactory extends Factory
         return [
             'cod' => fake()->text(20),
             'date_ini' => fake()->date(),
-            'organ' => fake()->numberBetween(1, Organ::all()->count()),
-            'unit' =>  fake()->numberBetween(1, Unit::all()->count()),
-            'contract' => fake()->numberBetween(1, Contract::all()->count()),
+            'organ_id' => fake()->numberBetween(1, Organ::all()->count()),
+            'unit_id' =>  fake()->numberBetween(1, Unit::all()->count()),
+            'contract_id' => fake()->numberBetween(1, Contract::all()->count()),
             'status' => fake()->numberBetween(1, 3)
         ];
     }

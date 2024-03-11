@@ -35,13 +35,16 @@ class StockEntryItemModelTest extends TestCase
     public function test_stock_entry_item_fullfilled(): void
     {
         $stockEntryItem = (new StockEntryItem())->fill([
-            'stockentry' => $this->stockEntry->id,
-            'item' => $this->item->id,
+            'stockentry_id' => $this->stockEntry->id,
+            'item_id' => $this->item->id,
             'quantity' => fake()->numberBetween(1, 100),
             'current_value' => fake()->randomFloat(2, 10, 1000)
         ]);
 
         $this->assertTrue($stockEntryItem->save());
+
+        $this->assertEquals($stockEntryItem->stockentry->id, $this->stockEntry->id);
+        $this->assertEquals($stockEntryItem->item->id, $this->item->id);
     }
 
     public function test_stock_entry_item_invalid(): void
@@ -49,8 +52,8 @@ class StockEntryItemModelTest extends TestCase
         $this->expectException(QueryException::class);
 
         $stockEntryItem = (new StockEntryItem())->fill([
-            'stockentry' => 0,
-            'item' => fake()->numberBetween(1, 10),
+            'stockentry_id' => 0,
+            'item_id' => fake()->numberBetween(1, 10),
             'quantity' => fake()->numberBetween(1, 100),
             'current_value' => fake()->randomFloat(2, 10, 1000)
         ]);

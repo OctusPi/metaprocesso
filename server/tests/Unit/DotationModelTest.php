@@ -25,22 +25,25 @@ class DotationModelTest extends TestCase
     {
         $dotation = (new Dotation())->fill([
             'name' => fake()->word(),
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
             'law' => fake()->word(),
             'description' => fake()->paragraph(),
             'status' => 1
         ]);
 
         $this->assertTrue($dotation->save());
+
+        $this->assertEquals($dotation->organ->id, $this->organ->id);
+        $this->assertEquals($dotation->unit->id, $this->unit->id);
     }
 
     public function test_dotation_nullables(): void
     {
         $dotation = (new Dotation())->fill([
             'name' => fake()->word(),
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
             'status' => 1
         ]);
 
@@ -53,8 +56,8 @@ class DotationModelTest extends TestCase
 
         $dotation = (new Dotation())->fill([
             'name' => fake()->word(),
-            'organ' => 0,
-            'unit' => $this->unit->id,
+            'organ_id' => 0,
+            'unit_id' => $this->unit->id,
             'law' => fake()->word(),
             'description' => fake()->paragraph(),
             'status' => 1

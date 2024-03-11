@@ -17,13 +17,13 @@ return new class extends Migration {
             $table->integer('category');
             $table->text('obj');
             $table->text('description')->nullable();
-            $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('unit')->constrained('units');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('unit_id')->constrained('units');
             $table->date('date_ini');
             $table->date('date_fin');
             $table->double('estimated_value');
             $table->double('approved_value');
-            $table->foreignId('supplier')->constrained('suppliers');
+            $table->foreignId('supplier_id')->constrained('suppliers');
             $table->boolean('additive');
             $table->integer('status');
         });

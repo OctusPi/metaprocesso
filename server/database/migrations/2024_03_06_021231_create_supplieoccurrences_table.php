@@ -13,12 +13,12 @@ return new class extends Migration {
         Schema::create('supplieoccurrences', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('purchaseorder')->constrained('purchaseorders');
-            $table->foreignId('contract')->constrained('contracts');
-            $table->foreignId('supplier')->constrained('suppliers');
+            $table->foreignId('purchaseorder_id')->constrained('purchaseorders');
+            $table->foreignId('contract_id')->constrained('contracts');
+            $table->foreignId('supplier_id')->constrained('suppliers');
+            $table->foreignId('user_id')->constrained('users');
             $table->integer('status');
             $table->text('description');
-            $table->foreignId('user')->constrained('users');
         });
     }
 

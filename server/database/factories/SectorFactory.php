@@ -14,8 +14,8 @@ class SectorFactory extends Factory
     public function definition(): array
     {
         return [
-            'organ' => fake()->numberBetween(1, Organ::all()->count()),
-            'unit' => fake()->numberBetween(1, Unit::all()->count()),
+            'organ_id' => fake()->numberBetween(1, Organ::all()->count()),
+            'unit_id' => fake()->numberBetween(1, Unit::all()->count()),
             'name' => fake()->company(),
             'cnpj' => fake()->numerify('##############'),
             'phone' => fake()->numerify('(##) #########'),

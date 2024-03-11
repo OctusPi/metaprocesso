@@ -34,14 +34,18 @@ class ContractAdditiveItemModelTest extends TestCase
     public function test_contract_additive_item_fullfilled(): void
     {
         $contractAdditiveItem = (new ContractAdditiveItem())->fill([
-            'contract' => $this->contract->id,
-            'contractadditive' => $this->contractAdditive->id,
-            'item' => $this->item->id,
+            'contract_id' => $this->contract->id,
+            'contractadditive_id' => $this->contractAdditive->id,
+            'item_id' => $this->item->id,
             'quantity' => fake()->numberBetween(1, 100),
             'unitary_value' => fake()->randomFloat(2, 10, 1000)
         ]);
 
         $this->assertTrue($contractAdditiveItem->save());
+
+        $this->assertEquals($contractAdditiveItem->contract->id, $this->contract->id);
+        $this->assertEquals($contractAdditiveItem->contractAdditive->id, $this->contractAdditive->id);
+        $this->assertEquals($contractAdditiveItem->item->id, $this->item->id);
     }
 
     public function test_contract_additive_item_invalid(): void
@@ -49,9 +53,9 @@ class ContractAdditiveItemModelTest extends TestCase
         $this->expectException(QueryException::class);
 
         $contractAdditiveItem = (new ContractAdditiveItem())->fill([
-            'contract' => 0,
+            'contract_id' => 0,
             'contractadditive' => $this->contractAdditive->id,
-            'item' => $this->item->id,
+            'item_id' => $this->item->id,
             'quantity' => fake()->numberBetween(1, 100),
             'unitary_value' => fake()->randomFloat(2, 10, 1000)
         ]);

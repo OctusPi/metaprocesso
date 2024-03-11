@@ -15,9 +15,9 @@ class StockoutFactory extends Factory
     public function definition(): array
     {
         return [
-            'organ' => fake()->numberBetween(1, Organ::all()->count()),
-            'unit' => fake()->numberBetween(1, Unit::all()->count()),
-            'sector' => fake()->numberBetween(1, Sector::all()->count()),
+            'organ_id' => fake()->numberBetween(1, Organ::all()->count()),
+            'unit_id' => fake()->numberBetween(1, Unit::all()->count()),
+            'sector_id' => fake()->numberBetween(1, Sector::all()->count()),
             'cod' => fake()->text(20),
             'date_ini' => fake()->date(),
             'description' => fake()->text(),

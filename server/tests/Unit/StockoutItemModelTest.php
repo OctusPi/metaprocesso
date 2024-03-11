@@ -31,12 +31,15 @@ class StockoutItemModelTest extends TestCase
     public function test_stock_out_item_fullfilled(): void
     {
         $stockOut = (new StockoutItem())->fill([
-            'stockout' => $this->stockout->id,
-            'item' => $this->item->id,
+            'stockout_id' => $this->stockout->id,
+            'item_id' => $this->item->id,
             'quantity' => fake()->numberBetween(1, 100),
         ]);
 
         $this->assertTrue($stockOut->save());
+
+        $this->assertEquals($stockOut->stockout->id, $this->stockout->id);
+        $this->assertEquals($stockOut->item->id, $this->item->id);
     }
 
     public function test_stock_out_item_invalid(): void
@@ -44,8 +47,8 @@ class StockoutItemModelTest extends TestCase
         $this->expectException(QueryException::class);
 
         $stockOut = (new StockoutItem())->fill([
-            'stockout' => 0,
-            'item' => $this->item->id,
+            'stockout_id' => 0,
+            'item_id' => $this->item->id,
             'quantity' => fake()->numberBetween(1, 100),
         ]);
 

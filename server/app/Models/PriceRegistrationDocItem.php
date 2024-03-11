@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PriceRegistrationDocItem extends Model
 {
@@ -12,19 +13,19 @@ class PriceRegistrationDocItem extends Model
     protected $table = 'priceregistrationdocitems';
 
     protected $fillable = [
-        'priceregistrationdoc',
-        'item',
+        'priceregistrationdoc_id',
+        'item_id',
         'quantity',
         'unitary_value',
     ];
 
-    public function priceregistrationdoc()
+    public function priceRegistrationDoc(): BelongsTo
     {
-        return $this->belongsTo(PriceRegistrationDoc::class);
+        return $this->belongsTo(PriceRegistrationDoc::class, 'priceregistrationdoc_id');
     }
 
-    public function item()
+    public function item(): BelongsTo
     {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class, 'item_id');
     }
 }

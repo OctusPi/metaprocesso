@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PriceRegistrationDoc extends Model
 {
@@ -16,29 +17,29 @@ class PriceRegistrationDoc extends Model
         'category',
         'obj',
         'description',
-        'organ',
-        'unit',
+        'organ_id',
+        'unit_id',
         'date_ini',
         'date_fin',
         'estimated_value',
         'approved_value',
-        'supplier',
+        'supplier_id',
         'additive',
         'status',
     ];
 
-    public function organ()
+    public function organ(): BelongsTo
     {
-        return $this->belongsTo(Organ::class);
+        return $this->belongsTo(Organ::class, 'organ_id');
     }
 
-    public function unit()
+    public function unit(): BelongsTo
     {
-        return $this->belongsTo(Unit::class);
+        return $this->belongsTo(Unit::class, 'unit_id');
     }
 
-    public function supplier()
+    public function supplier(): BelongsTo
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 }

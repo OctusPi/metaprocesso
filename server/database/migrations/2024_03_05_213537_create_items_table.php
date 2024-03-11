@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('cod', 50);
             $table->string('name');
             $table->text('description');
-            $table->string('unit', 20);
+            $table->string('unit_id', 20);
             $table->string('volume', 50);
         });
     }

@@ -13,8 +13,8 @@ return new class extends Migration {
         Schema::create('contractitems', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('contract')->constrained('contracts');
-            $table->foreignId('item')->constrained('items');
+            $table->foreignId('contract_id')->constrained('contracts');
+            $table->foreignId('item_id')->constrained('items');
             $table->integer('quantity');
             $table->double('unitary_value');
         });

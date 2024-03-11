@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StockoutItem extends Model
 {
@@ -12,13 +13,18 @@ class StockoutItem extends Model
     protected $table = 'stockoutitems';
 
     protected $fillable = [
-        'stockout',
-        'item',
+        'stockout_id',
+        'item_id',
         'quantity',
     ];
 
-    public function stockOut()
+    public function stockout(): BelongsTo
     {
-        return $this->belongsTo(StockOut::class);
+        return $this->belongsTo(StockOut::class, 'stockout_id');
+    }
+
+    public function item(): BelongsTo
+    {
+        return $this->belongsTo(StockOut::class, 'stockout_id');
     }
 }

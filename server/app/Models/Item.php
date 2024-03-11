@@ -15,7 +15,7 @@ class Item extends Model
         'cod',
         'name',
         'description',
-        'unit',
+        'unit_id',
         'volume',
     ];
 }

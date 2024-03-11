@@ -21,7 +21,7 @@ class UnitModelTest extends TestCase
     public function test_unit_fullfilled(): void
     {
         $unit = (new Unit())->fill([
-            'organ' => $this->organ->id,
+            'organ_id' => $this->organ->id,
             'name' => fake()->company(),
             'cnpj' => fake()->numerify('##############'),
             'phone' => fake()->numerify('(##) #########'),
@@ -30,12 +30,14 @@ class UnitModelTest extends TestCase
         ]);
 
         $this->assertTrue($unit->save());
+
+        $this->assertEquals($unit->organ->toArray(), $this->organ->toArray());
     }
 
     public function test_unit_nullables(): void
     {
         $unit = (new Unit())->fill([
-            'organ' => $this->organ->id,
+            'organ_id' => $this->organ->id,
             'name' => fake()->company(),
             'cnpj' => fake()->numerify('##############'),
             'phone' => fake()->numerify('(##) #########'),
@@ -44,6 +46,8 @@ class UnitModelTest extends TestCase
         ]);
 
         $this->assertTrue($unit->save());
+
+        $this->assertEquals($unit->organ->toArray(), $this->organ->toArray());
     }
 
     public function test_unit_invalid(): void
@@ -51,7 +55,7 @@ class UnitModelTest extends TestCase
         $this->expectException(QueryException::class);
 
         $unit = (new Unit())->fill([
-            'organ' => 0,
+            'organ_id' => 0,
             'name' => fake()->company(),
             'cnpj' => fake()->numerify('##############'),
             'phone' => fake()->numerify('(##) #########'),

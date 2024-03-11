@@ -27,9 +27,9 @@ class StockoutModelTest extends TestCase
     public function test_stock_out_fullfilled(): void
     {
         $stockOut = (new Stockout())->fill([
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
-            'sector' => $this->sector->id,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
+            'sector_id' => $this->sector->id,
             'cod' => fake()->text(20),
             'date_ini' => fake()->date(),
             'description' => fake()->text(),
@@ -38,14 +38,18 @@ class StockoutModelTest extends TestCase
         ]);
 
         $this->assertTrue($stockOut->save());
+
+        $this->assertEquals($stockOut->organ->id, $this->organ->id);
+        $this->assertEquals($stockOut->unit->id, $this->unit->id);
+        $this->assertEquals($stockOut->sector->id, $this->sector->id);
     }
 
     public function test_stock_out_item_nullables(): void
     {
         $stockOut = (new Stockout())->fill([
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
-            'sector' => $this->sector->id,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
+            'sector_id' => $this->sector->id,
             'cod' => fake()->text(20),
             'date_ini' => fake()->date(),
         ]);
@@ -58,9 +62,9 @@ class StockoutModelTest extends TestCase
         $this->expectException(QueryException::class);
 
         $stockOut = (new Stockout())->fill([
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
-            'sector' => 0,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
+            'sector_id' => 0,
             'cod' => fake()->text(20),
             'date_ini' => fake()->date(),
             'description' => fake()->text(),

@@ -15,15 +15,15 @@ class UserModelTest extends TestCase
             'email' => fake()->email(),
             'password' => fake()->password(),
             'username' => fake()->userName(),
-            'sectors' => ['sector'],
-            'organs' => ['organ'],
-            'units' => ['unit'],
+            'sectors' => ['sector_id'],
+            'organs' => ['organ_id'],
+            'units' => ['unit_id'],
             'modules' => ['module'],
             'profile' => 1,
             'status' => 1
         ]);
 
-        $this->assertTrue($user->save());   
+        $this->assertTrue($user->save());
     }
 
     public function test_user_nullables(): void
@@ -33,7 +33,7 @@ class UserModelTest extends TestCase
             'email' => fake()->email(),
             'password' => fake()->password(),
             'username' => fake()->userName(),
-            'sectors' => ['sector'],
+            'sectors' => ['sector_id'],
             'profile' => 1,
             'status' => 1
         ]);

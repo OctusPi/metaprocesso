@@ -25,22 +25,25 @@ class ProgramModelTest extends TestCase
     {
         $program = (new Program())->fill([
             'name' => fake()->company(),
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
             'law' => fake()->text(),
             'description' => fake()->paragraph(),
             'status' => 1
         ]);
 
         $this->assertTrue($program->save());
+
+        $this->assertEquals($program->organ->id, $this->organ->id);
+        $this->assertEquals($program->unit->id, $this->unit->id);
     }
 
     public function test_program_nullables(): void
     {
         $program = (new Program())->fill([
             'name' => fake()->company(),
-            'organ' => $this->organ->id,
-            'unit' => $this->unit->id,
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
             'status' => 1
         ]);
 
@@ -53,8 +56,8 @@ class ProgramModelTest extends TestCase
 
         $program = (new Program())->fill([
             'name' => fake()->company(),
-            'organ' => 0,
-            'unit' => $this->unit->id,
+            'organ_id' => 0,
+            'unit_id' => $this->unit->id,
             'law' => fake()->text(255),
             'description' => fake()->paragraph(),
             'status' => 1

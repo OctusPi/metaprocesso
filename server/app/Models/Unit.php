@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Unit extends Model
 {
@@ -12,7 +13,7 @@ class Unit extends Model
     protected $table = 'units';
 
     protected $fillable = [
-        'organ',
+        'organ_id',
         'name',
         'cnpj',
         'phone',
@@ -20,8 +21,8 @@ class Unit extends Model
         'address',
     ];
 
-    function organ()
+    public function organ(): BelongsTo
     {
-        return $this->belongsTo(Organ::class);
+        return $this->belongsTo(Organ::class, 'organ_id');
     }
 }

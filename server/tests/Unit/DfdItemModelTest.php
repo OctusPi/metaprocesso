@@ -35,14 +35,18 @@ class DfdItemModelTest extends TestCase
     public function test_dfd_item_fullfilled(): void
     {
         $dfdItem = (new DfdItem())->fill([
-            'dfd' => $this->dfd->id, // Assuming dfd, item, program, and dotation IDs exist in the database
-            'item' => $this->item->id,
+            'dfd_id' => $this->dfd->id,
+            'item_id' => $this->item->id,
             'quantity' => fake()->numberBetween(1, 100),
-            'program' => $this->program->id,
-            'dotation' => $this->dotation->id
+            'program_id' => $this->program->id,
+            'dotation_id' => $this->dotation->id
         ]);
 
         $this->assertTrue($dfdItem->save());
+
+        $this->assertEquals($dfdItem->dfd->id, $this->dfd->id);
+        $this->assertEquals($dfdItem->item->id, $this->item->id);
+        $this->assertEquals($dfdItem->program->id, $this->program->id);
     }
 
     public function test_dfd_item_invalid(): void
@@ -50,11 +54,11 @@ class DfdItemModelTest extends TestCase
         $this->expectException(QueryException::class);
 
         $dfdItem = (new DfdItem())->fill([
-            'dfd' => $this->dfd->id,
-            'item' => $this->item->id,
+            'dfd_id' => $this->dfd->id,
+            'item_id' => $this->item->id,
             'quantity' => fake()->numberBetween(1, 100),
-            'program' => $this->program->id,
-            'dotation' => 0
+            'program_id' => $this->program->id,
+            'dotation_id' => 0
         ]);
 
         $dfdItem->save();
