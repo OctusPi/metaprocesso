@@ -9,6 +9,10 @@ const alert = ref({show: false, data:{type:'success', msg: 'Mensagem vinda do ba
 
 <template>
 
+  <div id="load-wall" class="load-wall d-none">
+    <img id="load-img" class="load-img" src="./assets/imgs/load.svg">
+  </div>
+
   <Alert :alert="alert" />
 
   <div class="container-fluid px-4">

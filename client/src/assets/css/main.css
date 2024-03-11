@@ -2,6 +2,32 @@
 @import 'bi%/bootstrap-icons.css';
 @import './base.css';
 
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.load-wall{
+  position: fixed;
+  width: 100%;
+  height: 100vh;
+  background-color: var(--color-wall-load);
+  top: 0;
+  z-index: 3000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.load-img{
+  width: 50px;
+  animation: rotate 3s linear infinite;
+}
+
 .form-label, .form-label a{
   font-size: small;
   font-weight: 700;
