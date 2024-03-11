@@ -46,8 +46,8 @@ class ContractItemModelTest extends TestCase
 
         $contractItem = (new ContractItem())->fill([
             'contract' => $this->contract->id,
-            'item' => $this->item->id,
-            'quantity' => 0,
+            'item' => 0,
+            'quantity' => fake()->numberBetween(1, 100),
             'unitary_value' => fake()->randomFloat(2, 1, 100000)
         ]);
 

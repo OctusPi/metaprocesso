@@ -32,7 +32,7 @@ class PriceRegistrationDocModelItemTest extends TestCase
     public function test_price_registration_doc_item_fullfilled(): void
     {
         $priceRegistrationDocItem = (new PriceRegistrationDocItem())->fill([
-            'priceregistrationdoc' => $this->priceRegistrationDoc->id, // Assuming priceregistrationdoc and item IDs exist in the database
+            'priceregistrationdoc' => $this->priceRegistrationDoc->id,
             'item' =>  $this->item->id,
             'quantity' => fake()->numberBetween(1, 100),
             'unitary_value' => fake()->randomFloat(2, 1, 100000)
@@ -46,7 +46,7 @@ class PriceRegistrationDocModelItemTest extends TestCase
         $this->expectException(QueryException::class);
 
         $priceRegistrationDocItem = (new PriceRegistrationDocItem())->fill([
-            'priceregistrationdoc' => null, // Assuming 'priceregistrationdoc' is required
+            'priceregistrationdoc' => null,
             'item' => fake()->numberBetween(1, 10),
             'quantity' => fake()->numberBetween(1, 100),
             'unitary_value' => fake()->randomFloat(2, 10, 1000)

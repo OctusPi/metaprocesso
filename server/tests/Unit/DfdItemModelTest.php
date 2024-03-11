@@ -52,9 +52,9 @@ class DfdItemModelTest extends TestCase
         $dfdItem = (new DfdItem())->fill([
             'dfd' => $this->dfd->id,
             'item' => $this->item->id,
-            'quantity' => 0,
+            'quantity' => fake()->numberBetween(1, 100),
             'program' => $this->program->id,
-            'dotation' => $this->dotation->id
+            'dotation' => 0
         ]);
 
         $dfdItem->save();

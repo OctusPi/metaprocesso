@@ -52,8 +52,8 @@ class StockEntryModelTest extends TestCase
             'invoice' => fake()->text(50),
             'danfe' => fake()->text(),
             'purchaseorder' => $this->purchaseOrder->id,
-            'contract' => $this->contract->id,
-            'quantity' => 0,
+            'contract' => 0,
+            'quantity' => fake()->numberBetween(1, 100),
             'current_value' => fake()->randomFloat(2, 10, 1000)
         ]);
 

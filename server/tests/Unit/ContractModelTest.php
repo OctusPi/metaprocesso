@@ -78,9 +78,9 @@ class ContractModelTest extends TestCase
             'unit' => $this->unit->id,
             'date_ini' => fake()->date(),
             'date_fin' => fake()->date(),
-            'estimated_value' => 0,
-            'approved_value' => 0,
-            'supplier' => $this->supplier->id,
+            'estimated_value' => fake()->randomFloat(2, 1000, 10000),
+            'approved_value' => fake()->randomFloat(2, 1000, 10000),
+            'supplier' => 0,
             'additive' => fake()->boolean(),
             'status' => fake()->numberBetween(1, 3)
         ]);
