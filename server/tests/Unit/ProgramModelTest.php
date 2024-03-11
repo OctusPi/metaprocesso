@@ -18,9 +18,7 @@ class ProgramModelTest extends TestCase
         parent::setUp();
 
         $this->organ = Organ::factory()->create();
-        $this->unit = Unit::factory()->create([
-            'organ' => $this->organ->id
-        ]);
+        $this->unit = Unit::factory()->create();
     }
 
     public function test_program_fullfilled(): void
@@ -29,7 +27,7 @@ class ProgramModelTest extends TestCase
             'name' => fake()->company(),
             'organ' => $this->organ->id,
             'unit' => $this->unit->id,
-            'law' => fake()->company(),
+            'law' => fake()->text(),
             'description' => fake()->paragraph(),
             'status' => 1
         ]);
@@ -57,7 +55,7 @@ class ProgramModelTest extends TestCase
             'name' => fake()->company(),
             'organ' => 0,
             'unit' => $this->unit->id,
-            'law' => fake()->company(),
+            'law' => fake()->text(255),
             'description' => fake()->paragraph(),
             'status' => 1
         ]);

@@ -18,9 +18,7 @@ class SectorModelTest extends TestCase
         parent::setUp();
 
         $this->organ = Organ::factory()->create();
-        $this->unit = Unit::factory()->create([
-            'organ' => $this->organ->id
-        ]);
+        $this->unit = Unit::factory()->create();
     }
 
     public function test_sector_fullfilled(): void

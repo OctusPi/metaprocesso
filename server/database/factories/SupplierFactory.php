@@ -5,21 +5,20 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Organ>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Supplier>
  */
-class OrganFactory extends Factory
+class SupplierFactory extends Factory
 {
     public function definition(): array
     {
         return [
             'name' => fake()->company(),
             'cnpj' => fake()->numerify('##############'),
+            'agent' => fake()->name(),
+            'cpf' => fake()->numerify('###########'),
             'phone' => fake()->numerify('(##) #########'),
             'email' => fake()->email(),
-            'address' => fake()->address(),
-            'postalcity' => fake()->numberBetween(0, 3),
-            'postalcode' => fake()->postcode(),
-            'status' => fake()->numberBetween(0, 3),
+            'address' => fake()->address()
         ];
     }
 }

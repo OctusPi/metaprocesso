@@ -23,8 +23,8 @@ class UserFactory extends Factory
             'organs' => ['organ'],
             'units' => ['unit'],
             'modules' => ['module'],
-            'profile' => 1,
-            'status' => 1
+            'profile' => fake()->numberBetween(0, 3),
+            'status' => fake()->numberBetween(0, 3),
         ];
     }
 }

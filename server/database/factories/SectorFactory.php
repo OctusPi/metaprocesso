@@ -2,24 +2,25 @@
 
 namespace Database\Factories;
 
+use App\Models\Organ;
+use App\Models\Unit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Organ>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Sector>
  */
-class OrganFactory extends Factory
+class SectorFactory extends Factory
 {
     public function definition(): array
     {
         return [
+            'organ' => fake()->numberBetween(1, Organ::all()->count()),
+            'unit' => fake()->numberBetween(1, Unit::all()->count()),
             'name' => fake()->company(),
             'cnpj' => fake()->numerify('##############'),
             'phone' => fake()->numerify('(##) #########'),
             'email' => fake()->email(),
-            'address' => fake()->address(),
-            'postalcity' => fake()->numberBetween(0, 3),
-            'postalcode' => fake()->postcode(),
-            'status' => fake()->numberBetween(0, 3),
+            'address' => fake()->address()
         ];
     }
 }

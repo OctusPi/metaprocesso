@@ -18,9 +18,7 @@ class DotationModelTest extends TestCase
         parent::setUp();
 
         $this->organ = Organ::factory()->create();
-        $this->unit = Unit::factory()->create([
-            'organ' => $this->organ->id
-        ]);
+        $this->unit = Unit::factory()->create();
     }
 
     public function test_dotation_fullfilled(): void

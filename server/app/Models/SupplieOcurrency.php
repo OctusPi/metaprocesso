@@ -9,7 +9,7 @@ class SupplieOcurrency extends Model
 {
     use HasFactory;
 
-    protected $table = 'supplieocurrencies';
+    protected $table = 'supplieoccurrences';
 
     protected $fillable = [
         'purchaseorder',
