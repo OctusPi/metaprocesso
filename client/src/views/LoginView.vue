@@ -1,7 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-
-import forms from '@/services/forms';
 import http from '@/services/http';
 
 
@@ -14,16 +12,21 @@ const page = ref({
     rules:{
         username:'required|email',
         password:'required'
-    }
+    },
+    valids:{}
 })
 
 
 function login(){
-    function respl(data){
-        console.log(data)
+    function resplogin(data, emit){
+
+
+        
+        http.response(data, emit)
+        
     }
 
-    http.request({data:forms.buildata(page.value.data)}, respl, emit)
+    http.post('/auth', page.value.data, emit, resplogin)
 }
 
 </script>
