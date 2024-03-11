@@ -13,6 +13,9 @@ import http from '@/services/http'
                     <p class="p-0 m-0 text-color-sec small ms-0 ms-lg-2">Gestão e Fiscalização de Contratos</p>
                 </div>
             </header>
+            
+            <h1 class="my-2 text-center txt-color">Alteração de senha obrigatória</h1>
+            
             <form class="row g-3" @submit.prevent="login">
                 <div class="mb-2">
                     <label for="username" class="form-label">Usuário</label>
@@ -22,7 +25,7 @@ import http from '@/services/http'
                 <div class="mb-3">
                     <label for="password" class="form-label d-flex justify-content-between">
                         Senha
-                        <RouterLink to="/recover" class="box-link">Esqueceu sua senha?</RouterLink>
+                        <RouterLink to="/" class="box-link">Esqueceu sua senha?</RouterLink>
                     </label>
                     <input type="password" name="password" class="form-control" id="password"
                         placeholder="***********">

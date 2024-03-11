@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useJwtStore = defineStore('counter', () => {
@@ -11,7 +11,7 @@ export const useJwtStore = defineStore('counter', () => {
   }
 
   function setUser(userValue){
-    localStorage.setItem('user', userValue)
+    localStorage.setItem('user', JSON.stringify(userValue))
     user.value = userValue
   }
 

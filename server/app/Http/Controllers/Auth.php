@@ -10,14 +10,14 @@ class Auth extends Controller
 {
     public function auth(Request $request)
     {
-        $user = User::where("email", $request->email)->first();
+        $user = User::where("username", $request->username)->first();
         
         if (!$user) {
-            response()->json(['alert'=>'warning', 'msg'=>'Usuário não localizado!'], 401);
+            return response()->json(['alert'=>'warning', 'msg'=>'Acesso não autorizado!'], 401);
         }
         
         if(!password_verify($request->password, $user->password)) {
-            response()->json(['alert'=>'warning', 'msg'=>'Usuário não localizado!'], 401);
+            return response()->json(['alert'=>'warning', 'msg'=>'Acesso não autorizado!'], 401);
         }
 
         $token = JWT::create($user);
