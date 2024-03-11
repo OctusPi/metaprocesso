@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-export const useJwtStore = defineStore('counter', () => {
+export const useJwt = defineStore('counter', () => {
   const token = ref(localStorage.getItem('token'))
   const user = ref(JSON.parse(localStorage.getItem('user') ?? ''))
 

@@ -1,5 +1,30 @@
 <script setup>
-import http from '@/services/http'
+import { ref } from 'vue';
+
+import forms from '@/services/forms';
+import http from '@/services/http';
+
+
+const emit = defineEmits(['callAlert'])
+const page = ref({
+    data: {
+        username:'',
+        password:''
+    },
+    rules:{
+        username:'required|email',
+        password:'required'
+    }
+})
+
+
+function login(){
+    function respl(data){
+        console.log(data)
+    }
+
+    http.request({data:forms.buildata(page.value.data)}, respl, emit)
+}
 
 </script>
 
@@ -17,7 +42,7 @@ import http from '@/services/http'
                 <div class="mb-2">
                     <label for="username" class="form-label">Usuário</label>
                     <input type="email" name="username" class="form-control" id="username"
-                        placeholder="nome@example.com">
+                        placeholder="nome@example.com" v-model="page.data.username">
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label d-flex justify-content-between">
@@ -25,11 +50,11 @@ import http from '@/services/http'
                         <RouterLink to="/recover" class="box-link">Esqueceu sua senha?</RouterLink>
                     </label>
                     <input type="password" name="password" class="form-control" id="password"
-                        placeholder="***********">
+                        placeholder="***********" v-model="page.data.password">
                 </div>
 
                 <div class="mb-4">
-                    <button type="button" class="btn btn-outline-primary w-100">Entrar <i class="bi bi-check2-circle"></i></button>
+                    <button type="submit" class="btn btn-outline-primary w-100">Entrar <i class="bi bi-check2-circle"></i></button>
                 </div>
                 
 

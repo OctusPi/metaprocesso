@@ -1,10 +1,38 @@
-import axios from 'axios'
+import axsi from '@/services/axsi'
+import utils from '@/utils/utils'
 
-const axiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_URL_API,
-    headers: {
-        'Content-Type':'multipart/form-data'
+function request(opt, resp, emit){
+    utils.load()
+
+    axsi(opt).then(res => {
+        if(res.data){
+            resp(res.data, emit)
+            return
+        }
+
+        emit('callAlert', {show: true, data:{type:'darger', msg: 'Falha ao receber dados...'}})
+
+    }).catch((error) => {
+        console.log(error.message)
+        emit('callAlert', {show: true, data:{type:'darger', msg: 'Falha ao receber dados, verifique sua conexão...'}})
+    }).finally(() => {
+        utils.load(false)
+    })
+}
+
+function response(data, emit){
+    //call redirect
+    if(data.redirect){
+        window.location = data.redirect
     }
-})
 
-export default axiosInstance
+     //call notifys
+    if(data.notify){
+        emit('callAlert', {show:true, data:data.notify})
+    }
+}
+
+export default {
+    request,
+    response
+}
