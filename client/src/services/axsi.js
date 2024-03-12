@@ -1,7 +1,7 @@
 import axios from 'axios'
-import {useJwt} from '@/stores/jwt'
+import {useJwt} from '@/stores/auth'
 
-const auth = useJwt
+const auth = useJwt()
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_URL_API,

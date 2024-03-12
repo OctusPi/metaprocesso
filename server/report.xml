@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="D:\Developer\Web\gestor-contratos\server\phpunit.xml" tests="57" assertions="100" errors="0" failures="0" skipped="0" time="2.492349">
+    <testsuite name="Unit" tests="56" assertions="99" errors="0" failures="0" skipped="0" time="2.431488">
+      <testsuite name="Tests\Unit\ContractAdditiveItemModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractAdditiveItemModelTest.php" tests="2" assertions="5" errors="0" failures="0" skipped="0" time="0.277380">
+        <testcase name="test_contract_additive_item_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractAdditiveItemModelTest.php" line="34" class="Tests\Unit\ContractAdditiveItemModelTest" classname="Tests.Unit.ContractAdditiveItemModelTest" assertions="4" time="0.236273"/>
+        <testcase name="test_contract_additive_item_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractAdditiveItemModelTest.php" line="51" class="Tests\Unit\ContractAdditiveItemModelTest" classname="Tests.Unit.ContractAdditiveItemModelTest" assertions="1" time="0.041107"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\ContractAdditiveModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractAdditiveModelTest.php" tests="3" assertions="4" errors="0" failures="0" skipped="0" time="0.115506">
+        <testcase name="test_contract_additive_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractAdditiveModelTest.php" line="29" class="Tests\Unit\ContractAdditiveModelTest" classname="Tests.Unit.ContractAdditiveModelTest" assertions="2" time="0.037729"/>
+        <testcase name="test_contract_additive_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractAdditiveModelTest.php" line="43" class="Tests\Unit\ContractAdditiveModelTest" classname="Tests.Unit.ContractAdditiveModelTest" assertions="1" time="0.039279"/>
+        <testcase name="test_contract_additive_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractAdditiveModelTest.php" line="54" class="Tests\Unit\ContractAdditiveModelTest" classname="Tests.Unit.ContractAdditiveModelTest" assertions="1" time="0.038497"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\ContractItemModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractItemModelTest.php" tests="2" assertions="4" errors="0" failures="0" skipped="0" time="0.080541">
+        <testcase name="test_contract_item_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractItemModelTest.php" line="31" class="Tests\Unit\ContractItemModelTest" classname="Tests.Unit.ContractItemModelTest" assertions="3" time="0.039698"/>
+        <testcase name="test_contract_item_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractItemModelTest.php" line="46" class="Tests\Unit\ContractItemModelTest" classname="Tests.Unit.ContractItemModelTest" assertions="1" time="0.040843"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\ContractModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractModelTest.php" tests="3" assertions="6" errors="0" failures="0" skipped="0" time="0.115924">
+        <testcase name="test_contract_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractModelTest.php" line="27" class="Tests\Unit\ContractModelTest" classname="Tests.Unit.ContractModelTest" assertions="1" time="0.037995"/>
+        <testcase name="test_contract_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractModelTest.php" line="48" class="Tests\Unit\ContractModelTest" classname="Tests.Unit.ContractModelTest" assertions="4" time="0.039543"/>
+        <testcase name="test_contract_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ContractModelTest.php" line="72" class="Tests\Unit\ContractModelTest" classname="Tests.Unit.ContractModelTest" assertions="1" time="0.038386"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\DfdItemModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\DfdItemModelTest.php" tests="2" assertions="5" errors="0" failures="0" skipped="0" time="0.082276">
+        <testcase name="test_dfd_item_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\DfdItemModelTest.php" line="35" class="Tests\Unit\DfdItemModelTest" classname="Tests.Unit.DfdItemModelTest" assertions="4" time="0.042449"/>
+        <testcase name="test_dfd_item_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\DfdItemModelTest.php" line="52" class="Tests\Unit\DfdItemModelTest" classname="Tests.Unit.DfdItemModelTest" assertions="1" time="0.039826"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\DfdModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\DfdModelTest.php" tests="3" assertions="5" errors="0" failures="0" skipped="0" time="0.118227">
+        <testcase name="test_dfd_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\DfdModelTest.php" line="24" class="Tests\Unit\DfdModelTest" classname="Tests.Unit.DfdModelTest" assertions="3" time="0.038733"/>
+        <testcase name="test_dfd_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\DfdModelTest.php" line="42" class="Tests\Unit\DfdModelTest" classname="Tests.Unit.DfdModelTest" assertions="1" time="0.038955"/>
+        <testcase name="test_dfd_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\DfdModelTest.php" line="56" class="Tests\Unit\DfdModelTest" classname="Tests.Unit.DfdModelTest" assertions="1" time="0.040539"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\DotationModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\DotationModelTest.php" tests="3" assertions="5" errors="0" failures="0" skipped="0" time="0.114755">
+        <testcase name="test_dotation_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\DotationModelTest.php" line="24" class="Tests\Unit\DotationModelTest" classname="Tests.Unit.DotationModelTest" assertions="3" time="0.038436"/>
+        <testcase name="test_dotation_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\DotationModelTest.php" line="41" class="Tests\Unit\DotationModelTest" classname="Tests.Unit.DotationModelTest" assertions="1" time="0.037851"/>
+        <testcase name="test_dotation_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\DotationModelTest.php" line="53" class="Tests\Unit\DotationModelTest" classname="Tests.Unit.DotationModelTest" assertions="1" time="0.038468"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\ItemModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ItemModelTest.php" tests="2" assertions="2" errors="0" failures="0" skipped="0" time="0.077399">
+        <testcase name="test_item_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ItemModelTest.php" line="11" class="Tests\Unit\ItemModelTest" classname="Tests.Unit.ItemModelTest" assertions="1" time="0.038126"/>
+        <testcase name="test_item_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ItemModelTest.php" line="24" class="Tests\Unit\ItemModelTest" classname="Tests.Unit.ItemModelTest" assertions="1" time="0.039273"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\OrganModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\OrganModelTest.php" tests="3" assertions="3" errors="0" failures="0" skipped="0" time="0.132888">
+        <testcase name="test_organ_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\OrganModelTest.php" line="11" class="Tests\Unit\OrganModelTest" classname="Tests.Unit.OrganModelTest" assertions="1" time="0.048142"/>
+        <testcase name="test_organ_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\OrganModelTest.php" line="27" class="Tests\Unit\OrganModelTest" classname="Tests.Unit.OrganModelTest" assertions="1" time="0.043284"/>
+        <testcase name="test_organ_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\OrganModelTest.php" line="43" class="Tests\Unit\OrganModelTest" classname="Tests.Unit.OrganModelTest" assertions="1" time="0.041462"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\PriceRegistrationDocModelItemTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\PriceRegistrationDocModelItemTest.php" tests="2" assertions="4" errors="0" failures="0" skipped="0" time="0.080359">
+        <testcase name="test_price_registration_doc_item_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\PriceRegistrationDocModelItemTest.php" line="32" class="Tests\Unit\PriceRegistrationDocModelItemTest" classname="Tests.Unit.PriceRegistrationDocModelItemTest" assertions="3" time="0.040899"/>
+        <testcase name="test_price_registration_doc_item_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\PriceRegistrationDocModelItemTest.php" line="47" class="Tests\Unit\PriceRegistrationDocModelItemTest" classname="Tests.Unit.PriceRegistrationDocModelItemTest" assertions="1" time="0.039460"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\PriceRegistrationDocModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\PriceRegistrationDocModelTest.php" tests="3" assertions="6" errors="0" failures="0" skipped="0" time="0.119563">
+        <testcase name="test_price_registration_doc_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\PriceRegistrationDocModelTest.php" line="31" class="Tests\Unit\PriceRegistrationDocModelTest" classname="Tests.Unit.PriceRegistrationDocModelTest" assertions="4" time="0.040316"/>
+        <testcase name="test_price_registration_doc_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\PriceRegistrationDocModelTest.php" line="56" class="Tests\Unit\PriceRegistrationDocModelTest" classname="Tests.Unit.PriceRegistrationDocModelTest" assertions="1" time="0.040073"/>
+        <testcase name="test_price_registration_doc_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\PriceRegistrationDocModelTest.php" line="76" class="Tests\Unit\PriceRegistrationDocModelTest" classname="Tests.Unit.PriceRegistrationDocModelTest" assertions="1" time="0.039173"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\ProgramModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ProgramModelTest.php" tests="3" assertions="5" errors="0" failures="0" skipped="0" time="0.129893">
+        <testcase name="test_program_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ProgramModelTest.php" line="24" class="Tests\Unit\ProgramModelTest" classname="Tests.Unit.ProgramModelTest" assertions="3" time="0.051654"/>
+        <testcase name="test_program_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ProgramModelTest.php" line="41" class="Tests\Unit\ProgramModelTest" classname="Tests.Unit.ProgramModelTest" assertions="1" time="0.038224"/>
+        <testcase name="test_program_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\ProgramModelTest.php" line="53" class="Tests\Unit\ProgramModelTest" classname="Tests.Unit.ProgramModelTest" assertions="1" time="0.040015"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\PurchaseOrderModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\PurchaseOrderModelTest.php" tests="2" assertions="5" errors="0" failures="0" skipped="0" time="0.078607">
+        <testcase name="test_purchase_order_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\PurchaseOrderModelTest.php" line="30" class="Tests\Unit\PurchaseOrderModelTest" classname="Tests.Unit.PurchaseOrderModelTest" assertions="4" time="0.039624"/>
+        <testcase name="test_purchase_order_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\PurchaseOrderModelTest.php" line="48" class="Tests\Unit\PurchaseOrderModelTest" classname="Tests.Unit.PurchaseOrderModelTest" assertions="1" time="0.038983"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\SectorModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\SectorModelTest.php" tests="3" assertions="5" errors="0" failures="0" skipped="0" time="0.116554">
+        <testcase name="test_sector_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\SectorModelTest.php" line="24" class="Tests\Unit\SectorModelTest" classname="Tests.Unit.SectorModelTest" assertions="3" time="0.038836"/>
+        <testcase name="test_sector_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\SectorModelTest.php" line="42" class="Tests\Unit\SectorModelTest" classname="Tests.Unit.SectorModelTest" assertions="1" time="0.038858"/>
+        <testcase name="test_sector_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\SectorModelTest.php" line="57" class="Tests\Unit\SectorModelTest" classname="Tests.Unit.SectorModelTest" assertions="1" time="0.038861"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\StockEntryItemModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockEntryItemModelTest.php" tests="2" assertions="4" errors="0" failures="0" skipped="0" time="0.083724">
+        <testcase name="test_stock_entry_item_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockEntryItemModelTest.php" line="35" class="Tests\Unit\StockEntryItemModelTest" classname="Tests.Unit.StockEntryItemModelTest" assertions="3" time="0.042079"/>
+        <testcase name="test_stock_entry_item_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockEntryItemModelTest.php" line="50" class="Tests\Unit\StockEntryItemModelTest" classname="Tests.Unit.StockEntryItemModelTest" assertions="1" time="0.041644"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\StockEntryModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockEntryModelTest.php" tests="2" assertions="4" errors="0" failures="0" skipped="0" time="0.082629">
+        <testcase name="test_stock_entry_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockEntryModelTest.php" line="31" class="Tests\Unit\StockEntryModelTest" classname="Tests.Unit.StockEntryModelTest" assertions="3" time="0.043169"/>
+        <testcase name="test_stock_entry_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockEntryModelTest.php" line="49" class="Tests\Unit\StockEntryModelTest" classname="Tests.Unit.StockEntryModelTest" assertions="1" time="0.039460"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\StockoutItemModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockoutItemModelTest.php" tests="2" assertions="4" errors="0" failures="0" skipped="0" time="0.080946">
+        <testcase name="test_stock_out_item_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockoutItemModelTest.php" line="31" class="Tests\Unit\StockoutItemModelTest" classname="Tests.Unit.StockoutItemModelTest" assertions="3" time="0.041199"/>
+        <testcase name="test_stock_out_item_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockoutItemModelTest.php" line="45" class="Tests\Unit\StockoutItemModelTest" classname="Tests.Unit.StockoutItemModelTest" assertions="1" time="0.039747"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\StockoutModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockoutModelTest.php" tests="3" assertions="6" errors="0" failures="0" skipped="0" time="0.116928">
+        <testcase name="test_stock_out_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockoutModelTest.php" line="27" class="Tests\Unit\StockoutModelTest" classname="Tests.Unit.StockoutModelTest" assertions="4" time="0.038666"/>
+        <testcase name="test_stock_out_item_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockoutModelTest.php" line="47" class="Tests\Unit\StockoutModelTest" classname="Tests.Unit.StockoutModelTest" assertions="1" time="0.039127"/>
+        <testcase name="test_stock_out_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\StockoutModelTest.php" line="60" class="Tests\Unit\StockoutModelTest" classname="Tests.Unit.StockoutModelTest" assertions="1" time="0.039135"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\SupplieOccurrencyModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\SupplieOccurrencyModelTest.php" tests="2" assertions="6" errors="0" failures="0" skipped="0" time="0.086783">
+        <testcase name="test_stock_out_item_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\SupplieOccurrencyModelTest.php" line="37" class="Tests\Unit\SupplieOccurrencyModelTest" classname="Tests.Unit.SupplieOccurrencyModelTest" assertions="5" time="0.045172"/>
+        <testcase name="test_stock_out_item_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\SupplieOccurrencyModelTest.php" line="56" class="Tests\Unit\SupplieOccurrencyModelTest" classname="Tests.Unit.SupplieOccurrencyModelTest" assertions="1" time="0.041610"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\SupplierModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\SupplierModelTest.php" tests="3" assertions="3" errors="0" failures="0" skipped="0" time="0.111554">
+        <testcase name="test_supplier_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\SupplierModelTest.php" line="11" class="Tests\Unit\SupplierModelTest" classname="Tests.Unit.SupplierModelTest" assertions="1" time="0.037545"/>
+        <testcase name="test_supplier_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\SupplierModelTest.php" line="26" class="Tests\Unit\SupplierModelTest" classname="Tests.Unit.SupplierModelTest" assertions="1" time="0.036770"/>
+        <testcase name="test_supplier_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\SupplierModelTest.php" line="39" class="Tests\Unit\SupplierModelTest" classname="Tests.Unit.SupplierModelTest" assertions="1" time="0.037239"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\UnitModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\UnitModelTest.php" tests="3" assertions="5" errors="0" failures="0" skipped="0" time="0.115487">
+        <testcase name="test_unit_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\UnitModelTest.php" line="21" class="Tests\Unit\UnitModelTest" classname="Tests.Unit.UnitModelTest" assertions="2" time="0.039271"/>
+        <testcase name="test_unit_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\UnitModelTest.php" line="37" class="Tests\Unit\UnitModelTest" classname="Tests.Unit.UnitModelTest" assertions="2" time="0.038992"/>
+        <testcase name="test_unit_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\UnitModelTest.php" line="53" class="Tests\Unit\UnitModelTest" classname="Tests.Unit.UnitModelTest" assertions="1" time="0.037224"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\UserModelTest" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\UserModelTest.php" tests="3" assertions="3" errors="0" failures="0" skipped="0" time="0.113566">
+        <testcase name="test_user_fullfilled" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\UserModelTest.php" line="11" class="Tests\Unit\UserModelTest" classname="Tests.Unit.UserModelTest" assertions="1" time="0.040267"/>
+        <testcase name="test_user_nullables" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\UserModelTest.php" line="29" class="Tests\Unit\UserModelTest" classname="Tests.Unit.UserModelTest" assertions="1" time="0.036290"/>
+        <testcase name="test_user_invalid" file="D:\Developer\Web\gestor-contratos\server\tests\Unit\UserModelTest.php" line="44" class="Tests\Unit\UserModelTest" classname="Tests.Unit.UserModelTest" assertions="1" time="0.037010"/>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Feature" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.060860">
+      <testsuite name="Tests\Feature\ExampleTest" file="D:\Developer\Web\gestor-contratos\server\tests\Feature\ExampleTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.060860">
+        <testcase name="test_the_application_returns_a_successful_response" file="D:\Developer\Web\gestor-contratos\server\tests\Feature\ExampleTest.php" line="13" class="Tests\Feature\ExampleTest" classname="Tests.Feature.ExampleTest" assertions="1" time="0.060860"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

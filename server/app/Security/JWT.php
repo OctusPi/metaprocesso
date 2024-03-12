@@ -4,6 +4,7 @@ namespace App\Security;
 
 use App\Models\User;
 use Firebase\JWT\JWT as FirebaseJWT;
+use Firebase\JWT\Key;
 
 class JWT
 {
@@ -11,12 +12,16 @@ class JWT
     
     public static function create(User $data):string
     {
+        $key = env('APP_KEY', '');
+        $url = env('APP_URL', '');
+        
         $payload = [
+            'iss' => $url,
+            'aud' => $url,
             'exp' => time() + 3600,
             'iat' => time(),
             'data' => $data
         ];
-        $key = $_ENV['APP_KEY'] ?? '';
 
         return FirebaseJWT::encode($payload, $key, self::$algorithm);
     }
@@ -24,8 +29,8 @@ class JWT
     public static function validate(string $token):bool
     {
         try {
-            $key = $_ENV['APP_KEY'] ?? '';
-            FirebaseJWT::decode($token, []);
+            $key = env('APP_KEY', '');
+            FirebaseJWT::decode($token, new Key($key, self::$algorithm));
             return true;
         } catch (\Throwable $th) {
             return false;

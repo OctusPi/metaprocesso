@@ -1,7 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import http from '@/services/http';
+import { useJwt } from '@/stores/auth';
 
+
+const sysapp = inject('sysapp')
 
 const emit = defineEmits(['callAlert'])
 const page = ref({
@@ -18,12 +21,15 @@ const page = ref({
 
 
 function login(){
-    function resplogin(data, emit){
+    function resplogin(response, emit){
 
-
+        if(response.status === 200){
+            const auth = useJwt()
+            auth.setToken(response.data.token)
+            auth.setUser(response.data.user)
+        }
         
-        http.response(data, emit)
-        
+        http.response(response, emit)
     }
 
     http.post('/auth', page.value.data, emit, resplogin)
@@ -37,8 +43,8 @@ function login(){
             <header class="d-lg-flex align-items-center text-center text-lg-start mb-4">
                 <img src="../assets/imgs/logo.svg" class="logomarca-box mb-3 mb-lg-0">
                 <div>
-                    <h1 class="m-0 p-0 ms-0 ms-lg-2 sistem-title-box">Contratos Plus</h1>
-                    <p class="p-0 m-0 text-color-sec small ms-0 ms-lg-2">Gestão e Fiscalização de Contratos</p>
+                    <h1 class="m-0 p-0 ms-0 ms-lg-2 sistem-title-box">{{ sysapp.name }}</h1>
+                    <p class="p-0 m-0 text-color-sec small ms-0 ms-lg-2">{{ sysapp.desc }}</p>
                 </div>
             </header>
             <form class="row g-3" @submit.prevent="login">
@@ -63,7 +69,7 @@ function login(){
 
                 <div class="box-copyr">
                     <p class="txt-color-sec small p-0 m-0 text-center">Todos os direitos reservados.</p>
-                    <p class="txt-color-sec small p-0 m-0 text-center">Octuspi 2024&copy;</p>
+                    <p class="txt-color-sec small p-0 m-0 text-center">{{ sysapp.copy }}&copy;</p>
                 </div>
                 
             </form>

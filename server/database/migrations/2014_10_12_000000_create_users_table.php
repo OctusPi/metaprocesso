@@ -25,6 +25,8 @@ return new class extends Migration {
             $table->json('modules')->nullable();
             $table->boolean('passchange')->default(false);
             $table->integer('status');
+            $table->dateTime('lastlogin')->nullable();
+            $table->dateTime('nowlogin')->nullable();
         });
     }
 
