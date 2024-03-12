@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Utils\Dates;
 use Carbon\Carbon;
 use DateException;
-use DateTime;
 use PHPUnit\Framework\TestCase;
 
 class DatesUtilTest extends TestCase

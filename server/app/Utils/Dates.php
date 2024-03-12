@@ -26,7 +26,7 @@ class Dates
             throw new DateException("The given date does not match the format");
         }
 
-        $this->date = Carbon::createFromFormat($format, $date);
+        $this->date = Carbon::createFromFormat($format, $date, "America/Fortaleza");
     }
 
     /**
