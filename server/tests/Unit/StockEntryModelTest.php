@@ -31,7 +31,7 @@ class StockEntryModelTest extends TestCase
     public function test_stock_entry_fullfilled(): void
     {
         $stockEntry = (new StockEntry())->fill([
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'invoice' => fake()->text(50),
             'danfe' => fake()->text(),
             'purchaseorder_id' => $this->purchaseOrder->id,
@@ -44,6 +44,7 @@ class StockEntryModelTest extends TestCase
 
         $this->assertEquals($stockEntry->purchaseOrder->id, $this->purchaseOrder->id);
         $this->assertEquals($stockEntry->contract->id, $this->contract->id);
+        $this->assertEquals($stockEntry->date_ini, "12/12/2023");
     }
 
     public function test_stock_entry_invalid(): void
@@ -51,7 +52,7 @@ class StockEntryModelTest extends TestCase
         $this->expectException(QueryException::class);
 
         $stockEntry = (new StockEntry())->fill([
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'invoice' => fake()->text(50),
             'danfe' => fake()->text(),
             'purchaseorder_id' => $this->purchaseOrder->id,

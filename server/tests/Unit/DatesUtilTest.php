@@ -18,31 +18,28 @@ class DatesUtilTest extends TestCase
 
     public function test_convert(): void
     {
-        $dateUtc = new Dates(Dates::UTC, "2023-12-12");
-        $dateTimeUtc = new Dates(Dates::UTC_TIME, "2023-12-12 12:12:12");
-        $datePtbr = new Dates(Dates::PTBR, "12/12/2023");
-        $dateTimePtbr = new Dates(Dates::PTBR_TIME, "12/12/2023 12:12:12");
+        $dateUtc = "2023-12-12";
+        $datePtbr = "12/12/2023";
 
-
-        $this->assertEquals($dateUtc->convertTo(Dates::PTBR), "12/12/2023");
-        $this->assertEquals($dateTimeUtc->convertTo(Dates::PTBR_TIME), "12/12/2023 12:12:12");
-        $this->assertEquals($datePtbr->convertTo(Dates::UTC), "2023-12-12");
-        $this->assertEquals($dateTimePtbr->convertTo(Dates::UTC_TIME), "2023-12-12 12:12:12");
+        $this->assertEquals(Dates::utcToPtBr($dateUtc), $datePtbr);
+        $this->assertEquals(Dates::ptbrToUtc($datePtbr), $dateUtc);
     }
 
-    public function test_invalid_convert_utc(): void
+    public function test_utc_invalid(): void
     {
         $this->expectException(DateException::class);
+        
+        $dateUtc = "2023/12/12";
 
-        $invalidDateUtc = new Dates(Dates::UTC, "10/20");
-        $invalidDateUtc->convertTo(Dates::PTBR);
+        Dates::utcToPtBr($dateUtc);
     }
 
-    public function test_invalid_convert_ptbr(): void
+    public function test_ptbr_invalid(): void
     {
         $this->expectException(DateException::class);
+        
+        $datePtbr = "2023/12/12";
 
-        $invalidDatePtbr = new Dates(Dates::PTBR, "12/12");
-        $invalidDatePtbr->convertTo(Dates::UTC);
+        Dates::ptbrToUtc($datePtbr);
     }
 }

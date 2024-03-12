@@ -12,23 +12,6 @@ class Dates
     const PTBR = "d/m/Y";
     const PTBR_TIME = "d/m/Y H:i:s";
 
-    public Carbon $date;
-
-    /**
-     * Creates a Carbon date instance
-     * @param string $format Defines the date format
-     * @param string $date Defines the date string with the given **$format** param
-     */
-
-    public function __construct(string $format, string $date)
-    {
-        if (!Carbon::canBeCreatedFromFormat($date, $format)) {
-            throw new DateException("The given date does not match the format");
-        }
-
-        $this->date = Carbon::createFromFormat($format, $date);
-    }
-
     /**
      * Returns the current UTC datetime value
      * @return string
@@ -39,12 +22,36 @@ class Dates
     }
 
     /**
-     * Converts a Pt-BR date string to UTC format
-     * @param string $to Defines the expected format
+     * Converts a UTC date string to PTBR format
+     * 
+     * @param string $utcDate Defines the date in the UTC format
+     * 
      * @return string
      */
-    public function convertTo(string $to): string
+    public static function utcToPtBr(string $utcDate): string
     {
-        return $this->date->format($to);
+        if (!Carbon::canBeCreatedFromFormat($utcDate, self::UTC)) {
+            throw new DateException("The given date does not match the UTC format");
+        }
+
+        return Carbon::createFromFormat(self::UTC, $utcDate)
+            ->format(self::PTBR);
+    }
+
+    /**
+     * Converts a PTRB date string to UTC format
+     * 
+     * @param string $ptbrDate Defines the date in the PTBR format
+     * 
+     * @return string
+     */
+    public static function ptbrToUtc(string $ptbrDate): string
+    {
+        if (!Carbon::canBeCreatedFromFormat($ptbrDate, self::PTBR)) {
+            throw new DateException("The given date does not match the PTBR format");
+        }
+
+        return Carbon::createFromFormat(self::PTBR, $ptbrDate)
+            ->format(self::UTC);
     }
 }
