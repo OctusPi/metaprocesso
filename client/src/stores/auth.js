@@ -15,10 +15,20 @@ export const useJwt = defineStore('auth', () => {
     user.value = userValue
   }
 
+  function getUser(){
+    try {
+      return JSON.parse(user);
+  } catch (e) {
+      console.log('Fail parse string to JSON')
+      return {}
+  }
+  }
+
   return {
     token,
     user,
     setToken,
-    setUser
+    setUser,
+    getUser
   }
 })
