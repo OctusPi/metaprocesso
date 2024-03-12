@@ -21,7 +21,7 @@ class DatesUtilTest extends TestCase
         $dateUtc = "2023-12-12";
         $datePtbr = "12/12/2023";
 
-        $this->assertEquals(Dates::utcToPtBr($dateUtc), $datePtbr);
+        $this->assertEquals(Dates::utcToPtbr($dateUtc), $datePtbr);
         $this->assertEquals(Dates::ptbrToUtc($datePtbr), $dateUtc);
     }
 
@@ -31,7 +31,7 @@ class DatesUtilTest extends TestCase
         
         $dateUtc = "2023/12/12";
 
-        Dates::utcToPtBr($dateUtc);
+        Dates::utcToPtbr($dateUtc);
     }
 
     public function test_ptbr_invalid(): void

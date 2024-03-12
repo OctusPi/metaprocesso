@@ -28,7 +28,7 @@ class Dates
      * 
      * @return string
      */
-    public static function utcToPtBr(string $utcDate): string
+    public static function utcToPtbr(string $utcDate): string
     {
         if (!Carbon::canBeCreatedFromFormat($utcDate, self::UTC)) {
             throw new DateException("The given date does not match the UTC format");

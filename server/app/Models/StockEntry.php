@@ -37,7 +37,7 @@ class StockEntry extends Model
     public function dateIni(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Dates::utcToPtBr($value),
+            get: fn (string $value) => Dates::utcToPtbr($value),
             set: fn (string $value) => Dates::ptbrToUtc($value)
         );
     }
