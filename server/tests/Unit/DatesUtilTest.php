@@ -25,9 +25,9 @@ class DatesUtilTest extends TestCase
 
 
         $this->assertEquals($dateUtc->convertTo(Dates::PTBR), "12/12/2023");
-        $this->assertEquals($dateTimeUtc->convertTo(Dates::PTBR), "12/12/2023");
+        $this->assertEquals($dateTimeUtc->convertTo(Dates::PTBR_TIME), "12/12/2023 12:12:12");
         $this->assertEquals($datePtbr->convertTo(Dates::UTC), "2023-12-12");
-        $this->assertEquals($dateTimePtbr->convertTo(Dates::UTC), "2023-12-12");
+        $this->assertEquals($dateTimePtbr->convertTo(Dates::UTC_TIME), "2023-12-12 12:12:12");
     }
 
     public function test_invalid_convert_utc(): void

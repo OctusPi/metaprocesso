@@ -26,7 +26,8 @@ class Dates
             throw new DateException("The given date does not match the format");
         }
 
-        $this->date = Carbon::createFromFormat($format, $date, "America/Fortaleza");
+        $this->date = Carbon::createFromFormat($format, $date);
+        echo $this->date . "\n";
     }
 
     /**
@@ -45,6 +46,18 @@ class Dates
      */
     public function convertTo(string $to): string
     {
+        switch ($to) {
+            case self::PTBR || self::PTBR_TIME:
+                $this->date->setTimezone("America/Fortaleza");
+                break;
+            case self::UTC || self::UTC_TIME:
+                $this->date->setTimezone('UTC');
+                break;
+            default:
+                $this->date->setTimezone('UTC');
+                break;
+        }
+
         return $this->date->format($to);
     }
 }
