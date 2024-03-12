@@ -33,28 +33,8 @@ class ContractModelTest extends TestCase
             'description' => fake()->text(),
             'organ_id' => $this->organ->id,
             'unit_id' => $this->unit->id,
-            'date_ini' => fake()->date(),
-            'date_fin' => fake()->date(),
-            'estimated_value' => fake()->randomFloat(2, 1000, 10000),
-            'approved_value' => fake()->randomFloat(2, 1000, 10000),
-            'supplier_id' => $this->supplier->id,
-            'additive' => fake()->boolean(),
-            'status' => fake()->numberBetween(1, 3)
-        ]);
-
-        $this->assertTrue($contract->save());
-    }
-
-    public function test_contract_nullables(): void
-    {
-        $contract = (new Contract())->fill([
-            'cod' => fake()->text(),
-            'category' => fake()->numberBetween(1, 5),
-            'obj' => fake()->text(),
-            'organ_id' => $this->organ->id,
-            'unit_id' => $this->unit->id,
-            'date_ini' => fake()->date(),
-            'date_fin' => fake()->date(),
+            'date_ini' => "12/12/2023",
+            'date_fin' => "12/12/2024",
             'estimated_value' => fake()->randomFloat(2, 1000, 10000),
             'approved_value' => fake()->randomFloat(2, 1000, 10000),
             'supplier_id' => $this->supplier->id,
@@ -67,6 +47,28 @@ class ContractModelTest extends TestCase
         $this->assertEquals($contract->organ->id, $this->organ->id);
         $this->assertEquals($contract->unit->id, $this->unit->id);
         $this->assertEquals($contract->supplier->id, $this->supplier->id);
+        $this->assertEquals($contract->date_ini, "12/12/2023");
+        $this->assertEquals($contract->date_fin, "12/12/2024");
+    }
+
+    public function test_contract_nullables(): void
+    {
+        $contract = (new Contract())->fill([
+            'cod' => fake()->text(),
+            'category' => fake()->numberBetween(1, 5),
+            'obj' => fake()->text(),
+            'organ_id' => $this->organ->id,
+            'unit_id' => $this->unit->id,
+            'date_ini' => "12/12/2023",
+            'date_fin' => "12/12/2024",
+            'estimated_value' => fake()->randomFloat(2, 1000, 10000),
+            'approved_value' => fake()->randomFloat(2, 1000, 10000),
+            'supplier_id' => $this->supplier->id,
+            'additive' => fake()->boolean(),
+            'status' => fake()->numberBetween(1, 3)
+        ]);
+
+        $this->assertTrue($contract->save());
     }
 
     public function test_contract_invalid(): void
@@ -80,8 +82,8 @@ class ContractModelTest extends TestCase
             'description' => fake()->text(),
             'organ_id' => $this->organ->id,
             'unit_id' => $this->unit->id,
-            'date_ini' => fake()->date(),
-            'date_fin' => fake()->date(),
+            'date_ini' => "12/12/2023",
+            'date_fin' => "12/12/2024",
             'estimated_value' => fake()->randomFloat(2, 1000, 10000),
             'approved_value' => fake()->randomFloat(2, 1000, 10000),
             'supplier_id' => 0,

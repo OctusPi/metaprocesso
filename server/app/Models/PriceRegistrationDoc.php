@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Utils\Dates;
 
 class PriceRegistrationDoc extends Model
 {
@@ -41,5 +43,21 @@ class PriceRegistrationDoc extends Model
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class, 'supplier_id');
+    }
+
+    public function dateIni(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => Dates::utcToPtbr($value),
+            set: fn (string $value) => Dates::ptbrToUtc($value)
+        );
+    }
+
+    public function dateFin(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value) => Dates::utcToPtbr($value),
+            set: fn (string $value) => Dates::ptbrToUtc($value)
+        );
     }
 }

@@ -19,7 +19,7 @@ class StockoutFactory extends Factory
             'unit_id' => fake()->numberBetween(1, Unit::all()->count()),
             'sector_id' => fake()->numberBetween(1, Sector::all()->count()),
             'cod' => fake()->text(20),
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'description' => fake()->text(),
             'issuer' => fake()->name(),
             'requester' => fake()->name()

@@ -37,8 +37,8 @@ class PriceRegistrationDocModelTest extends TestCase
             'description' => fake()->text(),
             'organ_id' => $this->organ->id,
             'unit_id' => $this->unit->id,
-            'date_ini' => fake()->date(),
-            'date_fin' => fake()->date(),
+            'date_ini' => "12/12/2023",
+            'date_fin' => "12/12/2024",
             'estimated_value' => fake()->randomFloat(2, 1, 10000),
             'approved_value' => fake()->randomFloat(2, 1, 10000),
             'supplier_id' => $this->supplier->id,
@@ -51,6 +51,8 @@ class PriceRegistrationDocModelTest extends TestCase
         $this->assertEquals($priceRegistrationDoc->organ->id, $this->organ->id);
         $this->assertEquals($priceRegistrationDoc->unit->id, $this->unit->id);
         $this->assertEquals($priceRegistrationDoc->supplier->id, $this->supplier->id);
+        $this->assertEquals($priceRegistrationDoc->date_ini, "12/12/2023");
+        $this->assertEquals($priceRegistrationDoc->date_fin, "12/12/2024");
     }
 
     public function test_price_registration_doc_nullables(): void
@@ -61,8 +63,8 @@ class PriceRegistrationDocModelTest extends TestCase
             'obj' => fake()->text(),
             'organ_id' => $this->organ->id,
             'unit_id' => $this->unit->id,
-            'date_ini' => fake()->date(),
-            'date_fin' => fake()->date(),
+            'date_ini' => "12/12/2023",
+            'date_fin' => "12/12/2024",
             'estimated_value' => fake()->randomFloat(2, 1, 10000),
             'approved_value' => fake()->randomFloat(2, 1, 10000),
             'supplier_id' => $this->supplier->id,
@@ -84,8 +86,8 @@ class PriceRegistrationDocModelTest extends TestCase
             'description' => fake()->text(),
             'organ_id' => $this->organ->id,
             'unit_id' => $this->unit->id,
-            'date_ini' => fake()->date(),
-            'date_fin' => fake()->date(),
+            'date_ini' => "12/12/2023",
+            'date_fin' => "12/12/2024",
             'estimated_value' => fake()->randomFloat(2, 1000, 10000),
             'approved_value' => fake()->randomFloat(2, 1000, 10000),
             'supplier_id' => 0,

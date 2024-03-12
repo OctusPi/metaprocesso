@@ -31,7 +31,7 @@ class StockoutModelTest extends TestCase
             'unit_id' => $this->unit->id,
             'sector_id' => $this->sector->id,
             'cod' => fake()->text(20),
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'description' => fake()->text(),
             'issuer' => fake()->name(),
             'requester' => fake()->name()
@@ -42,6 +42,7 @@ class StockoutModelTest extends TestCase
         $this->assertEquals($stockOut->organ->id, $this->organ->id);
         $this->assertEquals($stockOut->unit->id, $this->unit->id);
         $this->assertEquals($stockOut->sector->id, $this->sector->id);
+        $this->assertEquals($stockOut->date_ini, "12/12/2023");
     }
 
     public function test_stock_out_item_nullables(): void
@@ -51,7 +52,7 @@ class StockoutModelTest extends TestCase
             'unit_id' => $this->unit->id,
             'sector_id' => $this->sector->id,
             'cod' => fake()->text(20),
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
         ]);
 
         $this->assertTrue($stockOut->save());
@@ -66,7 +67,7 @@ class StockoutModelTest extends TestCase
             'unit_id' => $this->unit->id,
             'sector_id' => 0,
             'cod' => fake()->text(20),
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'description' => fake()->text(),
             'issuer' => fake()->name(),
             'requester' => fake()->name()
