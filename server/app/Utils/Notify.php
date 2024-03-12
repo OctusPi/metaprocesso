@@ -8,24 +8,55 @@ class Notify
     const WARNING = 'warning';
     const DANGER = 'danger';
 
-    private static function notify(string $type, ?string $msg = null):array
+    /**
+     * Make a notification object with given type and message
+     * 
+     * @param string $type Defines the notification type
+     * @param ?string $msg Defines the notification message
+     * 
+     * @return array
+     */
+    private static function notify(string $type, ?string $msg = null): array
     {
         $notify = ['type' => $type];
-        if($msg != null){ $notify['msg'] = $msg;}
+        if ($msg != null) {
+            $notify['msg'] = $msg;
+        }
         return $notify;
     }
 
-    public static function success(?string $msg = null):array
+    /**
+     * Make a success notification object with given message
+     * 
+     * @param ?string $msg Defines the notification message
+     * 
+     * @return array
+     */
+    public static function success(?string $msg = null): array
     {
-       return ['notify' => self::notify(self::SUCCESS, $msg)];
+        return ['notify' => self::notify(self::SUCCESS, $msg)];
     }
 
-    public static function warning(?string $msg = null):array
+    /**
+     * Make a success notification object with given message
+     * 
+     * @param ?string $msg Defines the notification message
+     * 
+     * @return array
+     */
+    public static function warning(?string $msg = null): array
     {
         return ['notify' => self::notify(self::WARNING, $msg)];
     }
 
-    public static function error(?string $msg = null):array
+    /**
+     * Make a error notification object with given message
+     * 
+     * @param ?string $msg Defines the notification message
+     * 
+     * @return array
+     */
+    public static function error(?string $msg = null): array
     {
         return ['notify' => self::notify(self::DANGER, $msg)];
     }
