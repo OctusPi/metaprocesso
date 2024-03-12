@@ -4,11 +4,11 @@ import utils from '@/utils/utils'
 
 async function request(opt, emit, resp = null){
     utils.load()
-    const rsp = resp ?? response
+    const callresp = resp ?? response
 
-    await axsi.request(opt).then(res => {
-        if(res.data){
-            rsp(res.data, emit)
+    await axsi.request(opt).then(response => {
+        if(response){
+            callresp(response, emit)
             return
         }
 
@@ -22,7 +22,10 @@ async function request(opt, emit, resp = null){
     })
 }
 
-function response(data, emit){
+function response(resp, emit){
+
+    const data = resp.data
+
     //call redirect
     if(data.redirect){
         window.location = data.redirect

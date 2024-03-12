@@ -1,7 +1,13 @@
 <script setup>
-import { ref } from 'vue'
+import { provide, ref } from 'vue'
 import { RouterView } from 'vue-router'
 import Alert from './components/Alert.vue';
+
+provide('sysapp', {
+  name: import.meta.env.VITE_APP_NAME ?? 'Gestor Contratos',
+  desc: import.meta.env.VITE_APP_DESC ?? 'Gestão e Fiscalização de Contratos',
+  copy: import.meta.env.VITE_APP_COPY ?? 'OctusPi 2024'
+})
 
 const alert = ref({show: false, data:{type:'success', msg: ''}})
 
