@@ -14,7 +14,7 @@ class Auth extends Controller
         $user = User::where("username", $request->username)->first();
         
         if (!$user) {
-            return response()->json(Notify::WARNING('Acesso nãsso autorizado!'), 200);
+            return response()->json(Notify::WARNING('Acesso nãsso autorizado!'), 401);
         }
         
         if(!password_verify($request->password, $user->password)) {
