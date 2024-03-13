@@ -66,12 +66,13 @@ class Dates
      * 
      * @return string
      */
-    public static function convert(string $date, string $from, string $to) {
+    public static function convert(?string $date, string $from, string $to) {
+        
         if (!Carbon::canBeCreatedFromFormat($date, $from)) {
             throw new DateException("The given date does not match the given format");
         }
 
-        return Carbon::createFromFormat($from, $date)
-            ->format($to);
+        return $date != null ? Carbon::createFromFormat($from, $date)->format($to) : null;
+       
     }
 }
