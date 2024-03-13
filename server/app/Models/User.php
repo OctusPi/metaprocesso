@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Casts\Json;
 
 class User extends Model
 {
@@ -27,9 +28,9 @@ class User extends Model
     ];
 
     protected $casts = [
-        'organs' => 'array',
-        'units' => 'array',
-        'sectors' => 'array',
-        'modules' => 'array',
+        'organs' => Json::class,
+        'units' => Json::class,
+        'sectors' => Json::class,
+        'modules' => Json::class,
     ];
 }
