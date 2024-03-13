@@ -2,6 +2,8 @@
 import { inject, ref } from 'vue';
 import http from '@/services/http';
 import { useJwt } from '@/stores/auth';
+import forms from '@/services/forms';
+import notifys from '@/utils/notifys';
 
 
 const sysapp = inject('sysapp')
@@ -13,16 +15,24 @@ const page = ref({
         password:''
     },
     rules:{
-        username:'required|email',
-        password:'required'
-    },
-    valids:{}
+        fields: {
+            username:'required|email',
+            password:'required'
+        },
+        valids:{}
+    }
 })
 
 
 function login(){
-    function resplogin(response, emit){
+    
+    const validation = forms.checkform(page.value.data, page.value.rules);
+    if(!validation.isvalid){
+        emit('callAlert', notifys.warning(validation.message))
+        return
+    }
 
+    function resplogin(response, emit){
         if(response.status === 200){
             const auth = useJwt()
             auth.setToken(response.data.token)
@@ -50,8 +60,8 @@ function login(){
             <form class="row g-3" @submit.prevent="login">
                 <div class="mb-2">
                     <label for="username" class="form-label">Usuário</label>
-                    <input type="email" name="username" class="form-control" id="username"
-                        placeholder="nome@example.com" v-model="page.data.username">
+                    <input type="email" name="username" class="form-control" :class="{'form-control-alert' : page.rules.valids.username}"
+                    id="username" placeholder="nome@example.com" v-model="page.data.username">
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label d-flex justify-content-between">
@@ -59,6 +69,7 @@ function login(){
                         <RouterLink to="/recover" class="box-link">Esqueceu sua senha?</RouterLink>
                     </label>
                     <input type="password" name="password" class="form-control" id="password"
+                    :class="{'form-control-alert' : page.rules.valids.password}"
                         placeholder="***********" v-model="page.data.password">
                 </div>
 
