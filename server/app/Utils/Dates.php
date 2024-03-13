@@ -69,24 +69,24 @@ class Dates
     /**
      * Converts a date string from a given format to other
      * 
-     * @param ?string $date Defines the date string
+     * @param ?string $date Defines the date string, if null, then null will be returned
      * 
      * @param string $from Defines the **$date** current format
      * 
      * @param string $to Defines the expected **$date** format
      * 
-     * @return string
+     * @return ?string
      */
-    public static function convert(?string $date, string $from, string $to) {
-        if(!is_null($date)) {
-        
-            if (!Carbon::canBeCreatedFromFormat($date, $from)) {
-                throw new DateException("The given date does not match the given format");
-            }
-
-            return Carbon::createFromFormat($from, $date)->format($to);
+    public static function convert(?string $date, string $from, string $to): ?string {
+        if ($date == null) {
+            return $date;
         }
 
-        return null;
+        if (!Carbon::canBeCreatedFromFormat($date, $from)) {
+            throw new DateException("The given date does not match the given format");
+        }
+
+        return Carbon::createFromFormat($from, $date)->format($to);
+       
     }
 }

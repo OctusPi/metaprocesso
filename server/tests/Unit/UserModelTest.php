@@ -51,12 +51,13 @@ class UserModelTest extends TestCase
             'units' => ['val' => 'test'],
             'modules' => ['val' => 'test'],
             'profile' => 1,
-            'status' => 1
+            'status' => 1,
+            'nowlogin' => '12/12/2024 12:12:12',
+            'lastlogin' => '12/12/2023 12:12:12'        
         ]);
 
         $this->assertTrue($user1->save());
         $this->assertTrue($user2->save());
-
         
         $this->assertEquals($user1->sectors, $user2->sectors);
         $this->assertEquals($user1->organs, $user2->organs);
@@ -73,7 +74,9 @@ class UserModelTest extends TestCase
             'username' => fake()->userName(),
             'sectors' => ['sector_id'],
             'profile' => 1,
-            'status' => 1
+            'status' => 1,
+            'nowlogin' => null,
+            'lastlogin' => null
         ]);
 
         $this->assertTrue($user->save());  
