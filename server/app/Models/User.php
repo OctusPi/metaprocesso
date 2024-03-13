@@ -41,16 +41,16 @@ class User extends Model
     public function nowlogin(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Dates::utcToPtbr($value),
-            set: fn (string $value) => Dates::ptbrToUtc($value)
+            get: fn (string $value) => Dates::convert($value, Dates::UTC_TIME, Dates::PTBR_TIME),
+            set: fn (string $value) => Dates::convert($value, Dates::PTBR_TIME, Dates::UTC_TIME)
         );
     }
 
     public function lastlogin(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Dates::utcToPtbr($value),
-            set: fn (string $value) => Dates::ptbrToUtc($value)
+            get: fn (string $value) => Dates::convert($value, Dates::UTC_TIME, Dates::PTBR_TIME),
+            set: fn (string $value) => Dates::convert($value, Dates::PTBR_TIME, Dates::UTC_TIME)
         );
     }
 }

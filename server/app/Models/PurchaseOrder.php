@@ -41,8 +41,8 @@ class PurchaseOrder extends Model
     public function dateIni(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => Dates::utcToPtbr($value),
-            set: fn (string $value) => Dates::ptbrToUtc($value)
+            get: fn (string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn (string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
         );
     }
 }
