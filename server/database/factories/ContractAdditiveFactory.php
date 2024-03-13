@@ -14,7 +14,7 @@ class ContractAdditiveFactory extends Factory
     {
         return [
             'contract_id' => fake()->numberBetween(1, Contract::all()->count()),
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'obj' => fake()->text(),
             'description' => fake()->text()
         ];

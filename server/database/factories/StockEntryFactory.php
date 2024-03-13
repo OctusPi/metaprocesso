@@ -14,7 +14,7 @@ class StockEntryFactory extends Factory
     public function definition(): array
     {
         return [
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'invoice' => fake()->text(50),
             'danfe' => fake()->text(),
             'purchaseorder_id' => fake()->numberBetween(1, PurchaseOrder::all()->count()),

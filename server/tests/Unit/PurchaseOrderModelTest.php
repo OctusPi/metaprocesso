@@ -31,7 +31,7 @@ class PurchaseOrderModelTest extends TestCase
     {
         $purchaseOrder = (new PurchaseOrder())->fill([
             'cod' => fake()->text(20),
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'organ_id' => $this->organ->id,
             'unit_id' => $this->unit->id,
             'contract_id' => $this->contract->id,
@@ -43,6 +43,7 @@ class PurchaseOrderModelTest extends TestCase
         $this->assertEquals($purchaseOrder->organ->id, $this->organ->id);
         $this->assertEquals($purchaseOrder->unit->id, $this->unit->id);
         $this->assertEquals($purchaseOrder->contract->id, $this->contract->id);
+        $this->assertEquals($purchaseOrder->date_ini, "12/12/2023");
     }
 
     public function test_purchase_order_invalid(): void
@@ -51,7 +52,7 @@ class PurchaseOrderModelTest extends TestCase
 
         $purchaseOrder = (new PurchaseOrder())->fill([
             'cod' => fake()->text(20),
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'organ_id' => $this->organ->id,
             'unit_id' => 0,
             'contract_id' => $this->contract->id,

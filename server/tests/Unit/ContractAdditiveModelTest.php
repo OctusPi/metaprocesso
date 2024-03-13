@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use App\Models\Contract;
 use App\Models\ContractAdditive;
-use App\Models\Item;
 use App\Models\Organ;
 use App\Models\Supplier;
 use App\Models\Unit;
@@ -30,7 +29,7 @@ class ContractAdditiveModelTest extends TestCase
     {
         $contractAdditive = (new ContractAdditive())->fill([
             'contract_id' => $this->contract->id,
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'obj' => fake()->text(),
             'description' => fake()->text()
         ]);
@@ -38,13 +37,14 @@ class ContractAdditiveModelTest extends TestCase
         $this->assertTrue($contractAdditive->save());
 
         $this->assertEquals($contractAdditive->contract->id, $this->contract->id);
+        $this->assertEquals($contractAdditive->date_ini, "12/12/2023");
     }
 
     public function test_contract_additive_nullables(): void
     {
         $contractAdditive = (new ContractAdditive())->fill([
             'contract_id' => $this->contract->id,
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'obj' => fake()->text(),
         ]);
 
@@ -57,7 +57,7 @@ class ContractAdditiveModelTest extends TestCase
 
         $contractAdditive = (new ContractAdditive())->fill([
             'contract_id' => 0,
-            'date_ini' => fake()->date(),
+            'date_ini' => "12/12/2023",
             'obj' => fake()->text(),
             'description' => fake()->text()
         ]);

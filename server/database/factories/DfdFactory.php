@@ -15,7 +15,7 @@ class DfdFactory extends Factory
     {
         return [
             'cod' => fake()->text(20),
-            'date_ini' => fake()->date(),
+            'date_ini' => '12/12/2023',
             'category' => 1,
             'obj' => fake()->text(),
             'description' => fake()->text(),
