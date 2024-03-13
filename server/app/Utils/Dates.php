@@ -22,6 +22,17 @@ class Dates
     }
 
     /**
+     * Returns the current PT_BR datetime value
+     * @return string
+     */
+    public static function nowPTBR(): string
+    {
+        $current = Carbon::now();
+        $current->locale('pt_BR');
+        return $current->format(self::PTBR_TIME);
+    }
+
+    /**
      * Converts a UTC date string to PTBR format
      * 
      * @param string $utcDate Defines the date in the UTC format
@@ -58,7 +69,7 @@ class Dates
     /**
      * Converts a date string from a given format to other
      * 
-     * @param string $date Defines the date string
+     * @param ?string $date Defines the date string
      * 
      * @param string $from Defines the **$date** current format
      * 
@@ -67,12 +78,15 @@ class Dates
      * @return string
      */
     public static function convert(?string $date, string $from, string $to) {
+        if(!is_null($date)) {
         
-        if (!Carbon::canBeCreatedFromFormat($date, $from)) {
-            throw new DateException("The given date does not match the given format");
+            if (!Carbon::canBeCreatedFromFormat($date, $from)) {
+                throw new DateException("The given date does not match the given format");
+            }
+
+            return Carbon::createFromFormat($from, $date)->format($to);
         }
 
-        return $date != null ? Carbon::createFromFormat($from, $date)->format($to) : null;
-       
+        return null;
     }
 }

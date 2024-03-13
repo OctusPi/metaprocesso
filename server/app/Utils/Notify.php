@@ -38,7 +38,7 @@ class Notify
     }
 
     /**
-     * Make a success notification object with given message
+     * Make a warning notification object with given message
      * 
      * @param ?string $msg Defines the notification message
      * 

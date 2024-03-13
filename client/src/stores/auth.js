@@ -17,11 +17,16 @@ export const useJwt = defineStore('auth', () => {
 
   function getUser(){
     try {
-      return JSON.parse(user);
+      return JSON.parse(user.value);
     } catch (e) {
       console.log('Fail parse string to JSON')
       return {}
     }
+  }
+
+  function clear(){
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
   }
 
   return {
@@ -29,6 +34,7 @@ export const useJwt = defineStore('auth', () => {
     user,
     setToken,
     setUser,
-    getUser
+    getUser,
+    clear
   }
 })

@@ -28,13 +28,13 @@ class Auth extends Controller
 
         $token = JWT::create($user);
         $user->lastlogin = $user->nowlogin ?? Dates::nowUTC();
-        $user->nowlogin = Dates::nowUTC();
+        $user->nowlogin = Dates::nowPTBR();
         $user->save();
 
         return response()->json([
             'token'    => $token,
             'user'     => ['name'=>$user->name, 'profile' => $user->profile, 'last_login' => $user->lastlogin],
-            'notify'   => ['type' => Notify::success('Login realizado com sucesso...')],
+            'notify'   => ['type' => Notify::SUCCESS],
             'redirect' => '/home'
         ], 200);
     }

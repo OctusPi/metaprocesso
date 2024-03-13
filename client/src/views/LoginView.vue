@@ -1,12 +1,13 @@
 <script setup>
 import { inject, ref } from 'vue';
-import http from '@/services/http';
 import { useJwt } from '@/stores/auth';
+import http from '@/services/http';
 import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
 
-
 const sysapp = inject('sysapp')
+const auth = useJwt()
+const user = ref(auth.getUser())
 
 const emit = defineEmits(['callAlert'])
 const page = ref({
@@ -23,7 +24,6 @@ const page = ref({
     }
 })
 
-
 function login(){
     
     const validation = forms.checkform(page.value.data, page.value.rules);
@@ -34,7 +34,6 @@ function login(){
 
     function resplogin(response, emit){
         if(response.status === 200){
-            const auth = useJwt()
             auth.setToken(response.data.token)
             auth.setUser(response.data.user)
         }
@@ -43,6 +42,11 @@ function login(){
     }
 
     http.post('/auth', page.value.data, emit, resplogin)
+}
+
+function logout(){
+    auth.clear()
+    user.value = null
 }
 
 </script>
@@ -57,7 +61,20 @@ function login(){
                     <p class="p-0 m-0 text-color-sec small ms-0 ms-lg-2">{{ sysapp.desc }}</p>
                 </div>
             </header>
-            <form class="row g-3" @submit.prevent="login">
+
+            <div v-if="user" class="text-center">
+                <i class="bi bi-person-circle icon-user"></i>
+                <h2 class="mt-4">{{ user.name }}</h2>
+                <p class="small txt-color-sec p-0 m-0">Perfil: {{ user.profile }}</p>
+                <p class="small txt-color-sec p-0 m-0">Ultimo Acesso: {{ user.last_login }}</p>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="button" class="btn btn-sm btn-outline-warning" @click="logout"><i class="bi bi-door-open me-2"></i> Sair do Sistema</button>
+                    <RouterLink to="/home" class="btn btn-sm btn-outline-primary">Ir para Home <i class="bi bi-house-gear ms-2"></i></RouterLink>
+                </div>
+            </div>
+
+            <form v-else class="row g-3" @submit.prevent="login">
                 <div class="mb-2">
                     <label for="username" class="form-label">Usuário</label>
                     <input type="email" name="username" class="form-control" :class="{'form-control-alert' : page.rules.valids.username}"
@@ -87,3 +104,9 @@ function login(){
         </div>
     </main>
 </template>
+
+<style>
+    .icon-user{
+        font-size: 3rem;
+    }
+</style>
