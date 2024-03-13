@@ -54,4 +54,24 @@ class Dates
         return Carbon::createFromFormat(self::PTBR, $ptbrDate)
             ->format(self::UTC);
     }
+
+    /**
+     * Converts a date string from a given format to other
+     * 
+     * @param string $date Defines the date string
+     * 
+     * @param string $from Defines the **$date** current format
+     * 
+     * @param string $to Defines the expected **$date** format
+     * 
+     * @return string
+     */
+    public static function convert(string $date, string $from, string $to) {
+        if (!Carbon::canBeCreatedFromFormat($date, $from)) {
+            throw new DateException("The given date does not match the given format");
+        }
+
+        return Carbon::createFromFormat($from, $date)
+            ->format($to);
+    }
 }

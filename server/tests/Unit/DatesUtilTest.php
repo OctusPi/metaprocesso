@@ -23,6 +23,8 @@ class DatesUtilTest extends TestCase
 
         $this->assertEquals(Dates::utcToPtbr($dateUtc), $datePtbr);
         $this->assertEquals(Dates::ptbrToUtc($datePtbr), $dateUtc);
+        $this->assertEquals(Dates::convert($dateUtc, Dates::UTC, Dates::PTBR), $datePtbr);
+        $this->assertEquals(Dates::convert($datePtbr, Dates::PTBR, Dates::UTC), $dateUtc);
     }
 
     public function test_utc_invalid(): void

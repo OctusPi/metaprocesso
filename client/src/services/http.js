@@ -41,7 +41,7 @@ function post (url, data, emit, resp= null){
     const opt = {
         url: url,
         method: 'POST',
-        data : forms.buildata(data)
+        data : forms.builddata(data)
     }
     
     request(opt, emit, resp)
