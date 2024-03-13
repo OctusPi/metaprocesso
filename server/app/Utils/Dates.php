@@ -75,7 +75,7 @@ class Dates
             throw new DateException("The given date does not match the given format");
         }
 
-        return Carbon::createFromFormat($from, $date)
-            ->format($to);
+        return Carbon::createFromFormat($from, $date)->format($to);
+       
     }
 }
