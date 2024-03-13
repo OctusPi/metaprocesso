@@ -22,11 +22,13 @@ class DatesUtilTest extends TestCase
         $dateTimeUtc = "2023-12-12 12:12:12";
         $datePtbr = "12/12/2023";
         $dateTimePtbr = "12/12/2023 12:12:12";
+        $nullDate = null;
 
         $this->assertEquals(Dates::convert($dateUtc, Dates::UTC, Dates::PTBR), $datePtbr);
         $this->assertEquals(Dates::convert($datePtbr, Dates::PTBR, Dates::UTC), $dateUtc);
         $this->assertEquals(Dates::convert($dateTimeUtc, Dates::UTC_TIME, Dates::PTBR_TIME), $dateTimePtbr);
         $this->assertEquals(Dates::convert($dateTimePtbr, Dates::PTBR_TIME, Dates::UTC_TIME), $dateTimeUtc);
+        $this->assertEquals(Dates::convert($nullDate, Dates::UTC, Dates::PTBR), $nullDate);
     }
 
     public function test_utc_invalid(): void
