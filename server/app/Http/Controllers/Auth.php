@@ -7,6 +7,7 @@ use App\Utils\Dates;
 use App\Security\JWT;
 use App\Utils\Notify;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class Auth extends Controller
 {
@@ -45,5 +46,31 @@ class Auth extends Controller
         return JWT::validate($authorization)
         ? Response()->json(['token_valid' => true], 200)
         : Response()->json(Notify::warning('Sessão Expirada, realize o login novamente'), 403);
+    }
+
+    public function recover(Request $request)
+    {
+        $user = User::where("username", $request->username)->first();
+        
+        if (!$user) {
+            return response()->json(Notify::warning('Usuário não localizado!'), 401);
+        }
+
+        try {
+            $token = JWT::create($user->password);
+            $user->passchange = true;
+            $user->token = $token;
+
+            if($user->save()){
+                
+            }
+
+
+
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            return response()->json(Notify::warning('Falha ao processar dados!'), 500);
+        }
+        
     }
 }

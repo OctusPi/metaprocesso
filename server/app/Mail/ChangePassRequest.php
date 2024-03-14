@@ -2,23 +2,26 @@
 
 namespace App\Mail;
 
+use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class ChangePassRequest extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private string $urlReset;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(protected User $user)
     {
-        //
+        $this->urlReset = env('APP_URL_FRONT', '').'/renew/'.$user->token;
     }
 
     /**
@@ -27,7 +30,7 @@ class ChangePassRequest extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Change Pass Request',
+            subject: env('APP_NAME', '').' Solicitação de Recuperação de Senha',
         );
     }
 
@@ -37,7 +40,7 @@ class ChangePassRequest extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'mail.name',
         );
     }
 
