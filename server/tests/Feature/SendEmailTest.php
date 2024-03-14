@@ -8,9 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class SendEmailTest extends TestCase
 {
-    /**
-     * A basic unit test example.
-     */
     public function test_email_send(): void
     {
         // Mail::fake();

@@ -3,13 +3,12 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Utils\Dates;
 
-class ChangePassNotification extends Mailable
+class ChangePassNotification extends BaseMail
 {
     use Queueable, SerializesModels;
 
@@ -18,7 +17,6 @@ class ChangePassNotification extends Mailable
      */
     public function __construct()
     {
-        //
     }
 
     /**
@@ -27,7 +25,7 @@ class ChangePassNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Change Pass Notification',
+            subject: $this->system . ' Senha atualizada com sucesso!',
         );
     }
 
@@ -37,7 +35,10 @@ class ChangePassNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            markdown: 'mail.changepassnotification',
+            with: [
+                'date' => Dates::nowPTBR(),
+            ]
         );
     }
 

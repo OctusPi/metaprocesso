@@ -15,7 +15,7 @@ class DatesUtilTest extends TestCase
             Carbon::createFromFormat(Dates::UTC_TIME, Dates::nowUTC())->isValid()
         );
     }
-
+    
     public function test_convert(): void
     {
         $dateUtc = "2023-12-12";

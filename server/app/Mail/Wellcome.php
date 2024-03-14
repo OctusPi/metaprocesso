@@ -4,13 +4,11 @@ namespace App\Mail;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class Wellcome extends Mailable
+class Wellcome extends BaseMail
 {
     use Queueable, SerializesModels;
 
@@ -19,7 +17,6 @@ class Wellcome extends Mailable
      */
     public function __construct(protected User $user)
     {
-        //
     }
 
     /**
@@ -28,8 +25,7 @@ class Wellcome extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            to: $this->user->email,
-            subject: sprintf('Bem Vindo(a), %s!', $this->user->name),
+            subject: 'Bem Vindo(a)' . $this->user->name . "."
         );
     }
 
@@ -39,7 +35,12 @@ class Wellcome extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.wellcome',
+            markdown: 'mail.wellcome',
+            with: [
+                'name' => $this->user->name,
+                'system' => $this->system,
+                'sender' => $this->sender
+            ]
         );
     }
 
