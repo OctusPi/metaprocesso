@@ -14,13 +14,14 @@ const router = createRouter({
       component: () => import('../views/RecoverView.vue')
     },
     {
-      path: '/renew',
+      path: '/renew/:token?',
       name: 'renew',
       component: () => import('../views/RenewView.vue')
     },
     {
       path: '/home',
       name: 'home',
+      meta:{auth:true},
       component: () => import('../views/HomeView.vue')
     }
   ]

@@ -1,6 +1,25 @@
 <script setup>
-import http from '@/services/http'
+import { inject, ref } from 'vue';
 
+const sysapp = inject('sysapp')
+const emit = defineEmits(['callAlert'])
+
+const user = ref({})
+const page = ref({
+    data: {
+        username:'',
+    },
+    rules:{
+        fields: {
+            username:'required|email',
+        },
+        valids:{}
+    }
+})
+
+function recover(){
+    
+}
 </script>
 
 <template>
@@ -9,39 +28,56 @@ import http from '@/services/http'
             <header class="d-lg-flex align-items-center text-center text-lg-start mb-4">
                 <img src="../assets/imgs/logo.svg" class="logomarca-box mb-3 mb-lg-0">
                 <div>
-                    <h1 class="m-0 p-0 ms-0 ms-lg-2 sistem-title-box">Contratos Plus</h1>
-                    <p class="p-0 m-0 text-color-sec small ms-0 ms-lg-2">Gestão e Fiscalização de Contratos</p>
+                    <h1 class="m-0 p-0 ms-0 ms-lg-2 sistem-title-box">{{ sysapp.name }}</h1>
+                    <p class="p-0 m-0 text-color-sec small ms-0 ms-lg-2">{{ sysapp.desc }}</p>
                 </div>
             </header>
             
-            <h1 class="my-2 text-center txt-color">Alteração de senha obrigatória</h1>
-            
-            <form class="row g-3" @submit.prevent="login">
-                <div class="mb-2">
-                    <label for="username" class="form-label">Usuário</label>
-                    <input type="email" name="username" class="form-control" id="username"
-                        placeholder="nome@example.com">
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label d-flex justify-content-between">
-                        Senha
-                        <RouterLink to="/" class="box-link">Esqueceu sua senha?</RouterLink>
+            <h1 class="my-2 mb-4 text-center txt-color"> Cadastrar Nova Senha </h1>
+
+            <div v-if="user" class="text-center mb-4">
+                <i class="bi bi-person-circle icon-user"></i>
+                <h2 class="mt-4">{{ user.name ?? 'Username' }}</h2>
+                <p class="small txt-color-sec p-0 m-0">Perfil: {{ user.profile }}</p>
+                <p class="small txt-color-sec p-0 m-0">Ultimo Acesso: {{ user.last_login }}</p>
+            </div>
+
+            <form class="row g-3" @submit.prevent="renew">
+                
+                <div>
+                    <label for="newpass" class="form-label d-flex justify-content-between">
+                        Nova Senha
                     </label>
-                    <input type="password" name="password" class="form-control" id="password"
-                        placeholder="***********">
+                    <input type="password" name="newpass" v-model="page.data.newpass"
+                    :class="{'form-control-alert' : page.rules.valids.newpass}"
+                    class="form-control" id="newpass" placeholder="*********">
+                </div>
+
+                <div class="mb-3">
+                    <label for="newpass" class="form-label d-flex justify-content-between">
+                        Confirmar Senha
+                    </label>
+                    <input type="password" name="confpass" v-model="page.data.confpass"
+                    :class="{'form-control-alert' : page.rules.valids.confpass}"
+                    class="form-control" id="confpass" placeholder="*********">
                 </div>
 
                 <div class="mb-4">
-                    <button type="button" class="btn btn-outline-primary w-100">Entrar <i class="bi bi-check2-circle"></i></button>
+                    <button type="button" class="btn btn-outline-warning w-100">Cadastrar <i class="bi bi-check-circle"></i></button>
                 </div>
-                
 
                 <div class="box-copyr">
                     <p class="txt-color-sec small p-0 m-0 text-center">Todos os direitos reservados.</p>
-                    <p class="txt-color-sec small p-0 m-0 text-center">Octuspi 2024&copy;</p>
+                    <p class="txt-color-sec small p-0 m-0 text-center">{{ sysapp.copy }}&copy;</p>
                 </div>
                 
             </form>
         </div>
     </main>
 </template>
+
+<style>
+.icon-user{
+    font-size: 3rem;
+}
+</style>
