@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 export const useJwt = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token'))
   const user = ref(localStorage.getItem('user'))
+  const navigation = ref(localStorage.getItem('navigation'))
 
   function setToken(tokenValue){
     localStorage.setItem('token', tokenValue)
@@ -15,6 +16,11 @@ export const useJwt = defineStore('auth', () => {
     user.value = userValue
   }
 
+  function setNavigation(navValue){
+    localStorage.setItem('navigation', JSON.stringify(navValue))
+    navigation.value = navValue
+  }
+
   function getUser(){
     try {
       return JSON.parse(user.value);
@@ -24,17 +30,30 @@ export const useJwt = defineStore('auth', () => {
     }
   }
 
+  function getNavigation(){
+    try {
+      return JSON.parse(navigation.value);
+    } catch (e) {
+      console.log('Fail parse string to JSON')
+      return {}
+    }
+  }
+
   function clear(){
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+    localStorage.removeItem('navigation')
   }
 
   return {
     token,
     user,
+    navigation,
     setToken,
     setUser,
+    setNavigation,
     getUser,
+    getNavigation,
     clear
   }
 })

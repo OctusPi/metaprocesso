@@ -30,13 +30,16 @@ class Auth extends Controller
         $token = JWT::create($user);
         $user->lastlogin = $user->nowlogin ?? Dates::nowUTC();
         $user->nowlogin = Dates::nowPTBR();
+        $user->modules = json_encode(User::list_modules());
         $user->save();
 
+
         return response()->json([
-            'token'    => $token,
-            'user'     => ['name'=>$user->name, 'profile' => $user->profile, 'last_login' => $user->lastlogin],
-            'notify'   => ['type' => Notify::SUCCESS],
-            'redirect' => '/home'
+            'token'      => $token,
+            'user'       => ['name'=>$user->name, 'profile' => $user->profile, 'last_login' => $user->lastlogin],
+            'navigation' => $user->modules,
+            'notify'     => ['type' => Notify::SUCCESS],
+            'redirect'   => '/home'
         ], 200);
     }
 

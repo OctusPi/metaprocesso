@@ -12,8 +12,8 @@ const user = ref(auth.getUser())
 const emit = defineEmits(['callAlert'])
 const page = ref({
     data: {
-        username:'',
-        password:''
+        username:'octuspi@gmail.com',
+        password:'senha123'
     },
     rules:{
         fields: {
@@ -36,6 +36,7 @@ function login(){
         if(response.status === 200){
             auth.setToken(response.data.token)
             auth.setUser(response.data.user)
+            auth.setNavigation(response.data.navigation)
         }
         
         http.response(response, emit)

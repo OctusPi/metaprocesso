@@ -1,12 +1,32 @@
 <script setup>
-    import { ref } from 'vue';
+    import { onMounted, ref } from 'vue';
+    import { useJwt } from '@/stores/auth';
 
-    const menu = ref([
-    {href: '/', icon:'bi-cake2-fill', title:'Bolo de Niver', description:'Vamos Comemorar Again'},
-    {href: '/about', icon:'bi-backpack3-fill', title:'Lets Travel', description:'O Mundo é minha morada'},
-    {href: '/cart', icon:'bi-box-seam-fill', title:'Controle de Estoque', description:'Entrada e Saída de Mercadorias'},
-    {href: '/login', icon:'bi-browser-firefox', title:'Navigation', description:'World Wide Web is Coming'},
-    {href: '/logout', icon:'bi-chat-square-heart-fill', title:'Notifications', description:'Visualize suas mensagens'},])
+    const auth = useJwt()
+
+    const menuitens = {
+        'catalogs': {href: '/catalogs', icon:'bi-book-half', title:'Catálogos', description:'Catálogos de Itens GOV'},
+        'suppliers': {href: '/suppliers', icon:'bi-person-lines-fill', title:'Fornecedores', description:'Lista de Fornecedores Habilitados'},
+        'dfds': {href: '/dfds', icon:'bi-file-earmark-ruled-fill', title:'DFDs', description:'Formalização de Demandas'},
+        'pricerecords': {href: '/pricerecords', icon:'bi-journal-album', title:'Registro de Preços', description:'Atas de Registro de Preços'},
+        'contracts': {href: '/contracts', icon:'bi-file-earmark-text-fill', title:'Contratos', description:'Contratos de Bens e Serviços'},
+        'purchases': {href: '/purchases', icon:'bi-basket-fill', title:'Compras', description:'Ordens de Compras de Contratos'},
+        'stock': {href: '/stock', icon:'bi-inboxes-fill', title:'Estoque', description:'Controle de Entrada e Saída'},
+        'ocurrencys': {href: '/ocurrencys', icon:'bi-exclamation-diamond-fill', title:'Ocorrências', description:'Livro de Ocorrências de Fornecimento'},
+        'constructions': {href: '/constructions', icon:'bi-building-fill-gear', title:'Obras', description:'Fiscalização e Acompanhamento de Obras'},
+        'lightings': {href: '/lightings', icon:'bi-lightning-charge-fill', title:'Iluminação', description:'Fiscalização Iluminação Pública'},
+        'trashcollect': {href: '/trashcollect', icon:'bi-truck-front-fill', title:'Coleta e Limpeza', description:'Coleta e Limpeza de Lixo'},
+        'sanctions': {href: '/sanctions', icon:'bi-x-octagon-fill', title:'Sanções', description:'Processos de Sançao e Penalização'},
+        'reports': {href: '/reports', icon:'bi-clipboard-data-fill', title:'Relatórios', description:'Relatórios de Acompanhamento e Planejamento'},
+        'management': {href: '/management', icon:'bi-house-gear-fill', title:'Gestão', description:'Dados Administrativos e Estruturais'}
+    }
+
+
+    const menu = ref([])
+
+    onMounted(() => {
+        menu.value = auth.getNavigation()
+    })
 </script>
 
 <template>
@@ -26,11 +46,11 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li v-for="i in menu" class="nav-item"> 
-                        <RouterLink class="nav-link nav-link-item" :to="i.href">
-                            <i class="bi nav-link-icon" :class="i.icon"></i>
+                        <RouterLink v-if="menuitens[i.module]" class="nav-link nav-link-item" :to="menuitens[i.module].href">
+                            <i class="bi nav-link-icon" :class="menuitens[i.module].icon"></i>
                             <div class="nav-link-body">
-                                <span class="nav-link-title">{{ i.title }}</span>
-                                <span class="nav-link-description">{{ i.description }}</span>
+                                <span class="nav-link-title">{{ menuitens[i.module].title }}</span>
+                                <span class="nav-link-description">{{ menuitens[i.module].description }}</span>
                             </div>
                         </RouterLink>
                     </li>
