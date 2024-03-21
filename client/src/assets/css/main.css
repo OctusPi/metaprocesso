@@ -150,6 +150,7 @@
 .dropdown-item{
   border-radius: 10px;
   font-size: 0.9rem;
+  color: var(--color-text-secondary);
 }
 
 .box{

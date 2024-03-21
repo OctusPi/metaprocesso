@@ -1,6 +1,7 @@
 <script setup>
-import { provide, ref } from 'vue'
+import { onMounted, provide, ref } from 'vue'
 import { RouterView } from 'vue-router'
+import { useTheme } from '@/stores/theme';
 import Alert from './components/Alert.vue';
 
 provide('sysapp', {
@@ -14,6 +15,20 @@ const alert = ref({show: false, data:{type:'success', msg: ''}})
 function showAlert(data){
   alert.value = data
 }
+
+onMounted(() => {
+  const screen = document.getElementById('screen')
+  if(screen){
+    const style = useTheme()
+    //remove theme
+    screen.classList.forEach(cl => {
+      screen.classList.remove(cl)
+    })
+
+    //set theme
+    screen.classList.add(style.theme)
+  }
+})
 
 </script>
 

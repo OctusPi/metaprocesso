@@ -1,5 +1,23 @@
 <script setup>
 
+    import { useTheme } from '@/stores/theme';
+    const style = useTheme()
+
+    function changeTheme(mode){
+        const screen = document.getElementById('screen')
+        if(screen){
+
+            //remove theme
+            screen.classList.forEach(cl => {
+                screen.classList.remove(cl)
+            })
+
+            //set theme
+            screen.classList.add(mode)
+            style.setTheme(mode)
+
+        }
+    }
 </script>
 
 <template>
@@ -10,9 +28,14 @@
             <i class="bi bi-palette2"></i>
         </button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li><a class="dropdown-item" href="#" @click="changeTheme('ligth')">
+                <i class="bi bi-sun me-2"></i>
+                Tema Claro
+            </a></li>
+            <li><a class="dropdown-item" href="#" @click="changeTheme('dark')">
+                <i class="bi bi-moon-stars me-2"></i>
+                Tema Escuro
+            </a></li>
         </ul>
     </div>
 </template>
