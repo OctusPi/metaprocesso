@@ -26,7 +26,7 @@ class Wellcome extends BaseMail
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Bem Vindo(a)' . $this->user->name . "."
+            subject: 'Bem Vindo(a) ' . $this->user->name . "."
         );
     }
 

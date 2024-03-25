@@ -13,7 +13,7 @@ class BaseMail extends Mailable
 
     public function __construct(){
         $this->system = env('APP_NAME','');
-        $this->sender = 'Administração' . env('APP_NAME', '');
+        $this->sender = 'Administração ' . env('APP_NAME', '');
         $this->appUrl = env('CLIENT_URL', '');
     }
 
