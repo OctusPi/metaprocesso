@@ -9,7 +9,7 @@ class BaseMail extends Mailable
     private string $system;
     private string $sender;
     private string $appUrl;
-    private final string $renewRoute = 'renew';
+    private string $renewRoute = 'renew';
 
     public function __construct(){
         $this->system = env('APP_NAME','');
