@@ -3,10 +3,10 @@
     import { useJwt } from '@/stores/auth';
 
     const auth = useJwt()
-
+    const menu = ref([])
     const menuitens = {
+        'management': {href: '/management', icon:'bi-house-gear-fill', title:'Gestão', description:'Dados Administrativos e Estruturais'},
         'catalogs': {href: '/catalogs', icon:'bi-book-half', title:'Catálogos', description:'Catálogos de Itens GOV'},
-        'suppliers': {href: '/suppliers', icon:'bi-person-lines-fill', title:'Fornecedores', description:'Lista de Fornecedores Habilitados'},
         'dfds': {href: '/dfds', icon:'bi-file-earmark-ruled-fill', title:'DFDs', description:'Formalização de Demandas'},
         'pricerecords': {href: '/pricerecords', icon:'bi-journal-album', title:'Registro de Preços', description:'Atas de Registro de Preços'},
         'contracts': {href: '/contracts', icon:'bi-file-earmark-text-fill', title:'Contratos', description:'Contratos de Bens e Serviços'},
@@ -17,12 +17,8 @@
         'lightings': {href: '/lightings', icon:'bi-lightning-charge-fill', title:'Iluminação', description:'Fiscalização Iluminação Pública'},
         'trashcollect': {href: '/trashcollect', icon:'bi-truck-front-fill', title:'Coleta e Limpeza', description:'Coleta e Limpeza de Lixo'},
         'sanctions': {href: '/sanctions', icon:'bi-x-octagon-fill', title:'Sanções', description:'Processos de Sançao e Penalização'},
-        'reports': {href: '/reports', icon:'bi-clipboard-data-fill', title:'Relatórios', description:'Relatórios de Acompanhamento e Planejamento'},
-        'management': {href: '/management', icon:'bi-house-gear-fill', title:'Gestão', description:'Dados Administrativos e Estruturais'}
+        'reports': {href: '/reports', icon:'bi-clipboard-data-fill', title:'Relatórios', description:'Relatórios de Acompanhamento e Planejamento'}
     }
-
-
-    const menu = ref([])
 
     onMounted(() => {
         menu.value = auth.getNavigation()
@@ -65,7 +61,7 @@
         z-index: 1000;
         height: calc(100% - 48px);
         top:24px;
-        width: 120px;
+        width: 130px;
         overflow: auto;
         padding: 0;
         position: fixed;
@@ -84,6 +80,8 @@
     .navbar-nav{
         width: 100%;
         display: block;
+        margin: 0;
+        padding: 0;
         margin-top: 20px;
     }
 
@@ -98,22 +96,28 @@
         margin-bottom: 20px;
     }
 
-    .nav-link-body{
-        display: none;
-    }
-
     .nav-link-item{
+        width: 100%;
         text-align: center;
-        margin: 10px;
         color: var(--color-nav-itens);
     }
 
     .nav-link-icon{
-        font-size: 1.8rem;
+        font-size: 1.3rem;
     }
 
     .nav-link-item:hover{
         color: var(--color-base);
+    }
+
+    .nav-link-title{
+        display: block;
+        font-weight: bold;
+        font-size: 0.7rem;
+    }
+
+    .nav-link-description{
+        display: none;
     }
 
     @media (max-width: 991px) {
@@ -142,6 +146,7 @@
         .nav-link-item{
             display: flex;
             text-align: start;
+            margin: 10px;
         }
 
         .nav-link-item span{
@@ -156,10 +161,11 @@
         }
 
         .nav-link-title{
-            font-weight: bold;
+            font-size: 0.9rem;
         }
 
         .nav-link-description{
+            display: block;
             font-size: small;
         }
     }

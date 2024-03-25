@@ -101,14 +101,14 @@
 
 .container-main{
   width: 100%;
-  padding: 90px 0 15px 142px;
+  padding: 90px 0 15px 152px;
 }
 
 .header-main{
-  width: calc(100% - 168px);
+  width: calc(100% - 178px);
   background-color: var(--color-fundo);
   top: 0;
-  left: 168px;
+  left: 178px;
   padding: 24px 24px 10px 0;
   position: fixed;
 }

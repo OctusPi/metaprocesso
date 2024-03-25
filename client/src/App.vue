@@ -4,19 +4,14 @@ import { RouterView } from 'vue-router'
 import { useTheme } from '@/stores/theme';
 import Alert from './components/Alert.vue';
 
-provide('sysapp', {
-  name: import.meta.env.VITE_APP_NAME ?? 'Gestor Contratos',
-  desc: import.meta.env.VITE_APP_DESC ?? 'Gestão e Fiscalização de Contratos',
-  copy: import.meta.env.VITE_APP_COPY ?? 'OctusPi 2024'
-})
-
 const alert = ref({show: false, data:{type:'success', msg: ''}})
 
 function showAlert(data){
   alert.value = data
 }
 
-onMounted(() => {
+function setTheme()
+{
   const screen = document.getElementById('screen')
   if(screen){
     const style = useTheme()
@@ -28,6 +23,16 @@ onMounted(() => {
     //set theme
     screen.classList.add(style.theme)
   }
+}
+
+provide('sysapp', {
+  name: import.meta.env.VITE_APP_NAME ?? 'Gestor Contratos',
+  desc: import.meta.env.VITE_APP_DESC ?? 'Gestão e Fiscalização de Contratos',
+  copy: import.meta.env.VITE_APP_COPY ?? 'OctusPi 2024'
+})
+
+onMounted(() => {
+  setTheme()
 })
 
 </script>
