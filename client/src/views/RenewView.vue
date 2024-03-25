@@ -1,13 +1,18 @@
 <script setup>
-import { inject, ref } from 'vue';
+import http from '@/services/http';
+import { inject, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+
 
 const sysapp = inject('sysapp')
 const emit = defineEmits(['callAlert'])
 
-const user = ref({})
+const route = useRoute()
+const token = route.params.token
+const user = ref(undefined)
 const page = ref({
     data: {
-        username:'',
+        token: token
     },
     rules:{
         fields: {
@@ -17,9 +22,23 @@ const page = ref({
     }
 })
 
+function checktoken(){
+    function respCheckToken(response){
+        if(response.status === 200){
+            user.value = response.data?.user
+        }
+    }
+
+    http.post('auth/checktoken', {token:token}, emit, respCheckToken)
+}
+
 function recover(){
     
 }
+
+onMounted(() => {
+    checktoken()
+})
 </script>
 
 <template>
@@ -35,43 +54,52 @@ function recover(){
             
             <h1 class="my-2 mb-4 text-center txt-color"> Cadastrar Nova Senha </h1>
 
-            <div v-if="user" class="text-center mb-4">
-                <i class="bi bi-person-circle icon-user"></i>
-                <h2 class="mt-4">{{ user.name ?? 'Username' }}</h2>
-                <p class="small txt-color-sec p-0 m-0">Perfil: {{ user.profile }}</p>
-                <p class="small txt-color-sec p-0 m-0">Ultimo Acesso: {{ user.last_login }}</p>
+            <div v-if="user && token">
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-circle icon-user"></i>
+                    <h2 class="mt-4">{{ user.name ?? 'Username' }}</h2>
+                    <p class="small txt-color-sec p-0 m-0">Perfil: {{ user.profile }}</p>
+                    <p class="small txt-color-sec p-0 m-0">Ultimo Acesso: {{ user.last_login }}</p>
+                </div>
+
+                <form class="row g-3" @submit.prevent="renew">
+                    
+                    <div>
+                        <label for="newpass" class="form-label d-flex justify-content-between">
+                            Nova Senha
+                        </label>
+                        <input type="password" name="newpass" v-model="page.data.newpass"
+                        :class="{'form-control-alert' : page.rules.valids.newpass}"
+                        class="form-control" id="newpass" placeholder="*********">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="newpass" class="form-label d-flex justify-content-between">
+                            Confirmar Senha
+                        </label>
+                        <input type="password" name="confpass" v-model="page.data.confpass"
+                        :class="{'form-control-alert' : page.rules.valids.confpass}"
+                        class="form-control" id="confpass" placeholder="*********">
+                    </div>
+
+                    <div class="mb-4">
+                        <button type="button" class="btn btn-outline-warning w-100">Cadastrar <i class="bi bi-check-circle"></i></button>
+                    </div>
+
+                    <div class="box-copyr">
+                        <p class="txt-color-sec small p-0 m-0 text-center">Todos os direitos reservados.</p>
+                        <p class="txt-color-sec small p-0 m-0 text-center">{{ sysapp.copy }}&copy;</p>
+                    </div>
+                    
+                </form>
+            </div>
+            <div v-else class="text-center">
+                <i class="bi bi-exclamation-diamond fs-1"></i>
+                <p class="mb-4">Token expirado ou inválido, solicite uma nova recuperação de senha.</p>
+
+                <RouterLink to="/recover">Recuperar Senha</RouterLink>
             </div>
 
-            <form class="row g-3" @submit.prevent="renew">
-                
-                <div>
-                    <label for="newpass" class="form-label d-flex justify-content-between">
-                        Nova Senha
-                    </label>
-                    <input type="password" name="newpass" v-model="page.data.newpass"
-                    :class="{'form-control-alert' : page.rules.valids.newpass}"
-                    class="form-control" id="newpass" placeholder="*********">
-                </div>
-
-                <div class="mb-3">
-                    <label for="newpass" class="form-label d-flex justify-content-between">
-                        Confirmar Senha
-                    </label>
-                    <input type="password" name="confpass" v-model="page.data.confpass"
-                    :class="{'form-control-alert' : page.rules.valids.confpass}"
-                    class="form-control" id="confpass" placeholder="*********">
-                </div>
-
-                <div class="mb-4">
-                    <button type="button" class="btn btn-outline-warning w-100">Cadastrar <i class="bi bi-check-circle"></i></button>
-                </div>
-
-                <div class="box-copyr">
-                    <p class="txt-color-sec small p-0 m-0 text-center">Todos os direitos reservados.</p>
-                    <p class="txt-color-sec small p-0 m-0 text-center">{{ sysapp.copy }}&copy;</p>
-                </div>
-                
-            </form>
         </div>
     </main>
 </template>

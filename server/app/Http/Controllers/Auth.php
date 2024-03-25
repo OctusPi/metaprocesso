@@ -62,7 +62,7 @@ class Auth extends Controller
         }
 
         try {
-            $token = JWT::create($user->password);
+            $token = JWT::create($user);
             $user->passchange = true;
             $user->token = $token;
 
@@ -73,9 +73,31 @@ class Auth extends Controller
 
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
-            Log::error($th->getTraceAsString());
             return Response()->json(Notify::warning('Falha ao processar dados!'), 500);
         }
         
+    }
+
+    public function renew(Request $request){
+
+    }
+
+    public function checktoken(Request $request)
+    {
+        $token = $request->token;
+        $check  = JWT::validate($token);
+        $user   = User::where('token', $token)->first();
+
+        if (!$check || !$user) {
+            return Response()->json(Notify::warning('Token inválido ou expirado!'), 401);
+        }
+
+        return Response()->json(
+            [
+                'user' => [
+                    'name'=>$user->name, 
+                    'profile' => $user->profile, 
+                    'last_login' => $user->lastlogin]
+            ], 200);
     }
 }

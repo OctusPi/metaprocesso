@@ -8,6 +8,7 @@ Route::post('/auth', [Auth::class, 'auth']);
 Route::get('/auth/verify', [Auth::class,'verify']);
 Route::post('/auth/recover', [Auth::class,'recover']);
 Route::post('/auth/renew', [Auth::class,'renew']);
+Route::post('/auth/checktoken', [Auth::class,'checktoken']);
 
 Route::fallback(function () {  
     return Response()->json(Notify::warning('Destino solicitado não existe...'),404);
