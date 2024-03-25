@@ -17,6 +17,7 @@ class ChangePassNotification extends BaseMail
      */
     public function __construct()
     {
+        parent::__construct();
     }
 
     /**

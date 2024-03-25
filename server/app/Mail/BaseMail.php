@@ -6,10 +6,16 @@ use Illuminate\Mail\Mailable;
 
 class BaseMail extends Mailable
 {
-    private string $system = env('APP_NAME', '');
-    private string $sender = 'Administração' . env('APP_NAME', '');
-    private string $appUrl = env('APP_URL', '');
-    private string $renewRoute = 'renew';
+    private string $system;
+    private string $sender;
+    private string $appUrl;
+    private final string $renewRoute = 'renew';
+
+    public function __construct(){
+        $this->system = env('APP_NAME','');
+        $this->sender = 'Administração' . env('APP_NAME', '');
+        $this->appUrl = env('CLIENT_URL', '');
+    }
 
     private function makeUrl(string ...$routes): string
     {

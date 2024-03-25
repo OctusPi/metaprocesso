@@ -1,5 +1,8 @@
 <script setup>
 import { inject, ref } from 'vue';
+import http from '@/services/http';
+import forms from '@/services/forms';
+import notifys from '@/utils/notifys';
 
 const sysapp = inject('sysapp')
 const emit = defineEmits(['callAlert'])
@@ -16,7 +19,13 @@ const page = ref({
 })
 
 function recover(){
-    
+    const validation = forms.checkform(page.value.data, page.value.rules);
+    if(!validation.isvalid){
+        emit('callAlert', notifys.warning(validation.message))
+        return
+    }
+
+    http.post('/auth/recover', page.value.data, emit, http.response)
 }
 </script>
 
@@ -46,9 +55,8 @@ function recover(){
                 </div>
 
                 <div class="mb-4">
-                    <button type="button" class="btn btn-outline-warning w-100">Recuperar <i class="bi bi-unlock"></i></button>
+                    <button type="submit" class="btn btn-outline-warning w-100">Recuperar <i class="bi bi-unlock"></i></button>
                 </div>
-                
 
                 <div class="box-copyr">
                     <p class="txt-color-sec small p-0 m-0 text-center">Todos os direitos reservados.</p>

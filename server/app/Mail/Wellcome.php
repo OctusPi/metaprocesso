@@ -17,6 +17,7 @@ class Wellcome extends BaseMail
      */
     public function __construct(protected User $user)
     {
+        parent::__construct();
     }
 
     /**

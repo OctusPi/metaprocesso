@@ -10,7 +10,7 @@ class JWT
 {
     private static string $algorithm = 'HS256';
     
-    public static function create(User $data):string
+    public static function create($data):string
     {
         $key = env('APP_KEY', '');
         $url = env('APP_URL', '');

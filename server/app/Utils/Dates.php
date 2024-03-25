@@ -33,6 +33,17 @@ class Dates
     }
 
     /**
+     * Returns the future PT_BR datetime value
+     * @param int $hour Define numb hours to add in date
+     */
+    public static function futurePTBR(int $hour): string
+    {
+        $dataHora = Carbon::now();
+        $dataHora-> addHours($hour);
+        return $dataHora->format(self::PTBR_TIME);
+    }
+
+    /**
      * Converts a UTC date string to PTBR format
      * 
      * @param string $utcDate Defines the date in the UTC format

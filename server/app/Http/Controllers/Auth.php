@@ -7,7 +7,9 @@ use App\Utils\Dates;
 use App\Security\JWT;
 use App\Utils\Notify;
 use Illuminate\Http\Request;
+use App\Mail\ChangePassRequest;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class Auth extends Controller
 {
@@ -56,7 +58,7 @@ class Auth extends Controller
         $user = User::where("username", $request->username)->first();
         
         if (!$user) {
-            return response()->json(Notify::warning('Usuário não localizado!'), 401);
+            return Response()->json(Notify::warning('Usuário não localizado!'), 401);
         }
 
         try {
@@ -65,14 +67,13 @@ class Auth extends Controller
             $user->token = $token;
 
             if($user->save()){
-                
+                Mail::to($user)->send(new ChangePassRequest($user, Dates::futurePTBR(1)));
+                return Response()->json(Notify::success('E-mail para redefinição de senha enviado!'), 200);
             }
-
-
 
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
-            return response()->json(Notify::warning('Falha ao processar dados!'), 500);
+            return Response()->json(Notify::warning('Falha ao processar dados!'), 500);
         }
         
     }

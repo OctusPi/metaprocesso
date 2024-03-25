@@ -17,6 +17,7 @@ class ChangePassRequest extends BaseMail
      */
     public function __construct(protected User $user, protected $expiration)
     {
+        parent::__construct();
     }
 
     /**
