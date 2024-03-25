@@ -25,8 +25,10 @@ class ChangePassRequest extends BaseMail
      */
     public function envelope(): Envelope
     {
+        $subject = $this->system . ' Solicitação de Recuperação de Senha';
+
         return new Envelope(
-            subject: $this->system . ' Solicitação de Recuperação de Senha',
+            subject: $subject,
         );
     }
 
@@ -36,11 +38,11 @@ class ChangePassRequest extends BaseMail
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.name',
+            markdown: 'mail.changepassrequest',
             with: [
                 'name' => $this->user->name,
                 'system' => $this->system,
-                'resetUrl' => $this->makeUrl($this->renewRoute, $this->user->token),
+                'resetUrl' => $this->makeUrl([$this->renewRoute, $this->user->token]),
                 'expiration' => $this->expiration,
                 'sender' => $this->sender
             ]

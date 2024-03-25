@@ -73,6 +73,7 @@ class Auth extends Controller
 
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
+            Log::error($th->getTraceAsString());
             return Response()->json(Notify::warning('Falha ao processar dados!'), 500);
         }
         
