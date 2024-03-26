@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\ChangePassNotification;
 use App\Models\User;
+use App\Security\Guardian;
 use App\Utils\Dates;
 use App\Security\JWT;
 use App\Utils\Notify;
@@ -46,14 +47,6 @@ class Auth extends Controller
             'notify'     => ['type' => Notify::SUCCESS],
             'redirect'   => '/home'
         ], 200);
-    }
-
-    public function verify(Request $request)
-    {
-        $authorization = $request->server('HTTP_AUTHORIZATION');
-        return JWT::validate($authorization)
-        ? Response()->json(['token_valid' => true], 200)
-        : Response()->json(Notify::warning('Sessão Expirada, realize o login novamente'), 403);
     }
 
     public function recover(Request $request)
@@ -116,7 +109,7 @@ class Auth extends Controller
         return Response()->json(Notify::error('Falha ao cadastrar senha'), 500);
     }
 
-    public function checktoken(Request $request)
+    public function verify(Request $request)
     {
         $token = $request->token;
         $check  = JWT::validate($token);

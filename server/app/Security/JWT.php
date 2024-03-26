@@ -3,8 +3,9 @@
 namespace App\Security;
 
 use App\Models\User;
-use Firebase\JWT\JWT as FirebaseJWT;
 use Firebase\JWT\Key;
+use Illuminate\Support\Facades\Log;
+use Firebase\JWT\JWT as FirebaseJWT;
 
 class JWT
 {
@@ -24,6 +25,24 @@ class JWT
         ];
 
         return FirebaseJWT::encode($payload, $key, self::$algorithm);
+    }
+
+    public static function decoded(?string $token):?User
+    {
+        try {
+            if(!is_null($token)) {
+                $key = env('APP_KEY', '');
+                $stdUser = FirebaseJWT::decode($token, new Key($key, self::$algorithm));
+                $user = User::make((array) $stdUser);
+                return $user;
+            }
+
+            return null;
+            
+        } catch (\Throwable $th) {
+            Log::error("Falha ao decodificar Token: ".$th->getMessage());
+            return null;
+        } 
     }
 
     public static function validate(string $token):bool
