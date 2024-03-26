@@ -12,11 +12,16 @@ async function request(opt, emit, resp = null){
             return
         }
 
-        emit('callAlert', {show: true, data:{type:'danger', msg: 'Falha ao receber dados...'}})
+        if(emit != null){
+            emit('callAlert', {show: true, data:{type:'danger', msg: 'Falha ao receber dados...'}})
+        }
+        
 
     }).catch((error) => {
         console.log(error.message)
-        emit('callAlert', {show: true, data:error?.response.data?.notify ?? {type:'danger', msg:'Que feio servidor, não faz assim!'}})
+        if(emit != null){
+            emit('callAlert', {show: true, data:error?.response.data?.notify ?? {type:'danger', msg:'Que feio servidor, não faz assim!'}})
+        }
     }).finally(() => {
         utils.load(false)
     })

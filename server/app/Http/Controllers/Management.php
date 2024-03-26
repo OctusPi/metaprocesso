@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Security\Guardian;
 use Illuminate\Http\Request;
 
-class Managements extends Controller
+class Management extends Controller
 {
     public function __construct()
     {

@@ -33,7 +33,7 @@ function checktoken(){
         }
     }
 
-    http.post('auth/checktoken', {token:token}, emit, respCheckToken)
+    http.post('/auth/verify', {token:token}, emit, respCheckToken)
 }
 
 function renew(){

@@ -39,13 +39,12 @@ class Auth extends Controller
         $user->modules = json_encode(User::list_modules());
         $user->save();
 
-
         return response()->json([
             'token'      => $token,
             'user'       => ['name'=>$user->name, 'profile' => $user->profile, 'last_login' => $user->lastlogin],
             'navigation' => $user->modules,
             'notify'     => ['type' => Notify::SUCCESS],
-            'redirect'   => '/home'
+            'redirect'   => '/dashboard'
         ], 200);
     }
 
@@ -126,5 +125,12 @@ class Auth extends Controller
                     'profile' => $user->profile, 
                     'last_login' => $user->lastlogin]
             ], 200);
+    }
+
+    public function check()
+    {
+        return Guardian::checkToken()
+        ? Response()->json(['token_valid' => true], 200)
+        : Response()->json(Notify::warning('Acesso não permitido!'), 403);
     }
 }
