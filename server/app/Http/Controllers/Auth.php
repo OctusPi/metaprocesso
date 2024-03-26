@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ChangePassNotification;
 use App\Models\User;
 use App\Utils\Dates;
 use App\Security\JWT;
@@ -9,7 +10,9 @@ use App\Utils\Notify;
 use Illuminate\Http\Request;
 use App\Mail\ChangePassRequest;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class Auth extends Controller
 {
@@ -79,14 +82,45 @@ class Auth extends Controller
     }
 
     public function renew(Request $request){
+        $rules = ['newpass' => 'required','confpass'=> 'required'];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return Response()->json(Notify::warning('Campos Obrigatórios não informados!'), 400);
+        }
 
+        if($request->newpass !== $request->confpass){
+            return Response()->json(Notify::warning('Senhas divergentes informadas!'), 400);
+        }
+
+        if(!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[^a-zA-Z]).{8,}$/', $request->newpass)){
+            return Response()->json(Notify::warning('Senhas não atende aos critérios de segurança!'), 400);
+        }
+
+        $token = $request->token;
+        $check  = JWT::validate($token);
+        $user   = User::where('token', $token)->where('passchange', true)->first();
+
+        if (!$check || !$user) {
+            return Response()->json(Notify::warning('Token inválido ou expirado!'), 401);
+        }
+
+        $user->password = Hash::make($request->newpass);
+        $user->token = null;
+        $user->passchange = false;
+
+        if($user->update()){
+            Mail::to($user)->send(new ChangePassNotification());
+            return Response()->json(Notify::success('Senha alterada com sucesso!'),200);
+        }
+
+        return Response()->json(Notify::error('Falha ao cadastrar senha'), 500);
     }
 
     public function checktoken(Request $request)
     {
         $token = $request->token;
         $check  = JWT::validate($token);
-        $user   = User::where('token', $token)->first();
+        $user   = User::where('token', $token)->where('passchange', true)->first();
 
         if (!$check || !$user) {
             return Response()->json(Notify::warning('Token inválido ou expirado!'), 401);

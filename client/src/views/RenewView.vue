@@ -1,7 +1,9 @@
 <script setup>
-import http from '@/services/http';
 import { inject, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import http from '@/services/http';
+import forms from '@/services/forms';
+import notifys from '@/utils/notifys';
 
 
 const sysapp = inject('sysapp')
@@ -10,13 +12,15 @@ const emit = defineEmits(['callAlert'])
 const route = useRoute()
 const token = route.params.token
 const user = ref(undefined)
+const success = ref(false)
 const page = ref({
     data: {
         token: token
     },
     rules:{
         fields: {
-            username:'required|email',
+            newpass:'required',
+            confpass:'required',
         },
         valids:{}
     }
@@ -32,8 +36,22 @@ function checktoken(){
     http.post('auth/checktoken', {token:token}, emit, respCheckToken)
 }
 
-function recover(){
-    
+function renew(){
+    const validation = forms.checkform(page.value.data, page.value.rules);
+    if(!validation.isvalid){
+        emit('callAlert', notifys.warning(validation.message))
+        return
+    }
+
+    function respRenewPass(response, emit){
+        if(response.status === 200){
+            success.value = true
+        }
+
+        http.response(response, emit)
+    }
+
+    http.post('/auth/renew', page.value.data, emit, respRenewPass)
 }
 
 onMounted(() => {
@@ -54,7 +72,7 @@ onMounted(() => {
             
             <h1 class="my-2 mb-4 text-center txt-color"> Cadastrar Nova Senha </h1>
 
-            <div v-if="user && token">
+            <div v-if="user && token && !success">
                 <div class="text-center mb-4">
                     <i class="bi bi-person-circle icon-user"></i>
                     <h2 class="mt-4">{{ user.name ?? 'Username' }}</h2>
@@ -82,8 +100,10 @@ onMounted(() => {
                         class="form-control" id="confpass" placeholder="*********">
                     </div>
 
+                    <p class="small text-danger text-center">Sua deve ter pelo menos 08 caracteres, com letras, maiusculas, minusculas, números e simbolos!</p>
+
                     <div class="mb-4">
-                        <button type="button" class="btn btn-outline-warning w-100">Cadastrar <i class="bi bi-check-circle"></i></button>
+                        <button type="submit" class="btn btn-outline-warning w-100">Cadastrar <i class="bi bi-check-circle"></i></button>
                     </div>
 
                     <div class="box-copyr">
@@ -93,8 +113,16 @@ onMounted(() => {
                     
                 </form>
             </div>
+
+            <div v-else-if="success" class="text-center">
+                <i class="bi bi-check2-square text-success fs-1"></i>
+                <p class="mb-4">Sua senha foi alterada, uma notificação por e-mail foi enviada, por favor realize seu acesso normalmente com sua nova senha.</p>
+
+                <RouterLink to="/">Realizar Login</RouterLink>
+            </div>
+
             <div v-else class="text-center">
-                <i class="bi bi-exclamation-diamond fs-1"></i>
+                <i class="bi bi-exclamation-diamond text-warning fs-1"></i>
                 <p class="mb-4">Token expirado ou inválido, solicite uma nova recuperação de senha.</p>
 
                 <RouterLink to="/recover">Recuperar Senha</RouterLink>
