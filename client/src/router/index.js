@@ -1,6 +1,5 @@
-import axios from 'axios'
-import { nextTick } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
+import { useJwt } from '@/stores/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,16 +47,11 @@ const router = createRouter({
 
 router.beforeEach((to, from) => {
   if(to.meta?.auth){
-    let approved = false
-    
-    function respcheck(response){
-      approved = response.status === 200
-    }
-
-    if(approved){
-      
-    }else{
-      
+    const auth = useJwt()
+    if(!auth.isLoggedIn){
+      return {
+        path: '/'
+      }
     }
   }
 })

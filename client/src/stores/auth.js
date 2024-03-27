@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
@@ -5,6 +6,16 @@ export const useJwt = defineStore('auth', () => {
   const token = ref(localStorage.getItem('token'))
   const user = ref(localStorage.getItem('user'))
   const navigation = ref(localStorage.getItem('navigation'))
+
+  async function isLoggedIn(){
+    const {data} = await axios.get(import.meta.env.VITE_URL_API+'/auth/check', {
+      headers:{
+        Authorization:token.value
+      }
+    });
+
+    return data.status === 200
+  }
 
   function setToken(tokenValue){
     localStorage.setItem('token', tokenValue)
@@ -49,6 +60,7 @@ export const useJwt = defineStore('auth', () => {
     token,
     user,
     navigation,
+    isLoggedIn,
     setToken,
     setUser,
     setNavigation,
