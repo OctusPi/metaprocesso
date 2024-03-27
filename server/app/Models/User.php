@@ -12,6 +12,12 @@ class User extends Model
 {
     use HasFactory;
 
+    public const PRF_ADMIN = 1;
+    public const PRF_GESTOR = 2;
+    public const PRF_TECNICO = 3;
+    public const PRF_AGENTE = 4;
+    public const PRF_AUTIDOR = 5;
+
     public const MOD_INI = 0;
     public const MOD_CATALOGS = 1;
     public const MOD_SUPPLIERS = 2;
@@ -75,12 +81,17 @@ class User extends Model
         return Attribute::make(
             get: fn(?int $value) => self::list_profiles()[$value] ?? ''
         );
-        
     }
 
     public static function list_profiles(): array
     {
-        return [1 => 'Administrador', 2 => 'Gestor', 3 => 'Técnico', 4 => 'Agente', 5 => 'Auditor'];
+        return [
+            self::PRF_ADMIN => 'Administrador', 
+            self::PRF_GESTOR => 'Gestor', 
+            self::PRF_TECNICO => 'Técnico', 
+            self::PRF_AGENTE => 'Agente', 
+            self::PRF_AUTIDOR => 'Auditor'
+        ];
     }
     
 
