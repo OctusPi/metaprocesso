@@ -1,8 +1,17 @@
 <script setup>
+import { ref } from 'vue';
 import Notifications from './Notifications.vue';
 import DarkMode from './DarkMode.vue';
 import UserID from './UserID.vue';
 import SearchBar from './SearchBar.vue';
+
+const props = defineProps({
+    header:Object
+})
+
+const icon          = ref(props?.header?.icon)
+const title         = ref(props?.header?.title)
+const description   = ref(props?.header?.description)
 
 </script>
 
@@ -16,10 +25,10 @@ import SearchBar from './SearchBar.vue';
             <UserID />
         </div>
         <div class="header-main-title d-flex align-items-center flex-fill mb-2">
-            <i class="bi nav-link-icon bi-grid me-2 rounded-circle txt-color-base"></i>
+            <i class="bi fs-3 me-2 rounded-circle txt-color-base" :class="icon"></i>
             <div>
-                <h1 class="p-0 m-0 txt-color">Title Page</h1>
-                <span class="m-0 p-0 small txt-color-sec">Description about functionality page</span>
+                <h1 class="p-0 m-0 txt-color">{{ title }}</h1>
+                <span class="m-0 p-0 small txt-color-sec">{{ description }}</span>
             </div>
         </div>
     </header>

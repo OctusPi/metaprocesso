@@ -153,6 +153,10 @@
   color: var(--color-text-secondary);
 }
 
+.submenu-item{
+  font-size: small;
+}
+
 .box{
   background-color: var(--color-box);
   border: var(--border-box);
