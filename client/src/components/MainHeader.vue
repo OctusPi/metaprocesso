@@ -16,10 +16,8 @@ const description   = ref(props?.header?.description)
 </script>
 
 <template>
-    <header class="header-main d-md-flex justify-content-between align-items-center flex-row-reverse">
-        
+    <header class="header-main d-md-flex justify-content-between align-items-center flex-row-reverse z-3">
         <div class="header-main-action d-flex flex-fill justify-content-end mb-2">
-            <SearchBar />
             <Notifications />
             <DarkMode />
             <UserID />

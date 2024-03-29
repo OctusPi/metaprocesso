@@ -77,6 +77,32 @@
   color: var(--color-base);
 }
 
+.btn{
+  font-size: 0.9rem;
+  font-weight: 450;
+}
+
+.btn-action{
+  border-radius: 10px;
+}
+
+.btn-action-primary{
+  /* #36B37E */
+  background-color:var(--color-base);
+  color: white;
+}
+
+.btn-action-primary:hover{
+  background-color:var(--color-hover);
+  color: white;
+}
+
+.custom-tooltip {
+  --bs-tooltip-bg: var(--bd-violet-bg);
+  --bs-tooltip-color: var(--bs-white);
+}
+
+
 .container-back-box {
   height: 100vh;
 }
