@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->text('token')->nullable();
             $table->json('organs')->nullable();
             $table->json('units')->nullable();
-            $table->json('sectors');
+            $table->json('sectors')->nullable();
             $table->integer('profile');
             $table->json('modules')->nullable();
             $table->boolean('passchange')->default(false);
