@@ -131,6 +131,6 @@ class Auth extends Controller
     {
         return Guardian::checkToken()
         ? Response()->json(['token_valid' => true], 200)
-        : Response()->json(Notify::warning('Acesso não permitido!'), 403);
+        : Response()->json(Notify::warning('Login expirado!'), 403);
     }
 }

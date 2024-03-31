@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import { useJwt } from '@/stores/auth';
 import http from '@/services/http';
 import forms from '@/services/forms';
@@ -45,10 +45,29 @@ function login(){
     http.post('/auth', page.value.data, emit, resplogin)
 }
 
+function islogged(){
+    function respIsLogged(response){
+        
+        if(response.status == 200){
+            return
+        }
+        
+        logout()
+    }
+
+    if(user.value){
+        http.get('/auth/check', emit, respIsLogged);
+    }
+}
+
 function logout(){
     auth.clear()
     user.value = null
 }
+
+onMounted(() => {
+    islogged()
+})
 
 </script>
 

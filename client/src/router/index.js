@@ -2,58 +2,60 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { useJwt } from '@/stores/auth'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'login',
-      component: () => import('../views/LoginView.vue')
-    },
-    {
-      path: '/recover',
-      name: 'recover',
-      component: () => import('../views/RecoverView.vue')
-    },
-    {
-      path: '/renew/:token?',
-      name: 'renew',
-      component: () => import('../views/RenewView.vue')
-    },
-    {
-      path: '/home',
-      name: 'home',
-      meta:{auth:true},
-      component: () => import('../views/DashboardView.vue')
-    },
-    {
-      path: '/dashboard',
-      name: 'dashboard',
-      meta:{auth:true},
-      component: () => import('../views/DashboardView.vue')
-    },
-    {
-      path: '/management',
-      name:'management',
-      meta: {auth:true},
-      component: () => import('../views/ManagementView.vue')
-    },
-    {
+	history: createWebHistory(import.meta.env.BASE_URL),
+	routes: [
+		{
+			path: '/',
+			name: 'login',
+			component: () => import('../views/LoginView.vue')
+		},
+		{
+			path: '/recover',
+			name: 'recover',
+			component: () => import('../views/RecoverView.vue')
+		},
+		{
+			path: '/renew/:token?',
+			name: 'renew',
+			component: () => import('../views/RenewView.vue')
+		},
+		{
+			path: '/home',
+			name: 'home',
+			meta: { auth: true },
+			component: () => import('../views/DashboardView.vue')
+		},
+		{
+			path: '/dashboard',
+			name: 'dashboard',
+			meta: { auth: true },
+			component: () => import('../views/DashboardView.vue')
+		},
+		{
+			path: '/management',
+			name: 'management',
+			meta: { auth: true },
+			component: () => import('../views/ManagementView.vue')
+		},
+		{
 			path: '/:pathMatch(.*)*',
 			name: 'notfound',
 			component: () => import('../views/NotFoundView.vue')
 		}
-  ]
+	]
 })
 
 router.beforeEach((to) => {
-  if(to.meta?.auth){
-    const auth = useJwt()
-    if(!auth.isLoggedIn){
-      return {
-        path: '/'
-      }
-    }
-  }
+	if (to.meta?.auth) {
+		console.log('required auth')
+		const auth = useJwt()
+		if (!auth.isLoggedIn) {
+			console.log('denny auth')
+			return {
+				path: '/'
+			}
+		}
+	}
 })
 
 export default router
