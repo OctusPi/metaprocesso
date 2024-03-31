@@ -1,6 +1,12 @@
 <script setup>
+import { onMounted } from 'vue'
+
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
+
+onMounted(() => {
+   
+})
 
 </script>
 
@@ -40,7 +46,9 @@ import MainHeader from '@/components/MainHeader.vue';
                     </div>
                     <div class="action-buttons d-flex">
                         <button type="button"
-                        title="Adicionar Usuário"
+                        data-bs-toggle="tooltip" data-bs-placement="top"
+                        data-bs-custom-class="custom-tooltip"
+                        data-bs-title="This top tooltip is themed via CSS variables."
                         class="btn btn-sm btn-action btn-action-primary ms-2"><i class="bi bi-plus-circle"></i></button>
                         <div class="dropdown">
                             <button class="btn btn-sm btn-action btn-action-primary ms-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
