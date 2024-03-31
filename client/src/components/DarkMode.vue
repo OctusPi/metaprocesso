@@ -29,11 +29,11 @@
         </button>
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="#" @click="changeTheme('ligth')">
-                <i class="bi bi-sun me-2"></i>
+                <i class="bi bi-sun-fill me-1"></i>
                 Tema Claro
             </a></li>
             <li><a class="dropdown-item" href="#" @click="changeTheme('dark')">
-                <i class="bi bi-moon-stars me-2"></i>
+                <i class="bi bi-moon-stars-fill me-1"></i>
                 Tema Escuro
             </a></li>
         </ul>
