@@ -45,7 +45,7 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach((to) => {
   if(to.meta?.auth){
     const auth = useJwt()
     if(!auth.isLoggedIn){

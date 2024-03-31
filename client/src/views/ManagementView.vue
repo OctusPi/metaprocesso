@@ -1,8 +1,11 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
+
+const showSearch = ref(false)
+const showRegister = ref(false)
 
 onMounted(() => {
 
@@ -20,26 +23,8 @@ onMounted(() => {
                 description: 'Estrutura e Perminissionamento de Usuários'
             }" />
 
-                <!-- <ul class="nav justify-content-end mb-4">
-                    <li class="nav-item">
-                        <RouterLink to="/organs" class="submenu-item btn btn-sm btn-outline-primary small fw-medium ms-2" href="#">
-                            <i class="bi bi-building-fill-gear me-1"></i> Orgãos
-                        </RouterLink>
-                    </li>
-                    <li class="nav-item">
-                        <RouterLink to="/units" class="submenu-item btn btn-sm btn-outline-primary small fw-medium ms-2" href="#">
-                            <i class="bi bi-house-gear-fill me-1"></i> Unidades
-                        </RouterLink>
-                    </li>
-                    <li class="nav-item">
-                        <RouterLink to="/management" class="submenu-item btn btn-sm btn-outline-primary small fw-medium ms-2" href="#">
-                            <i class="bi bi-people-fill me-1"></i> Usuários
-                        </RouterLink>
-                    </li>
-                </ul> -->
-
             <div class="box p-4 mb-4 rounded-4">
-                <div class="d-md-flex justify-content-between align-items-center">
+                <div class="d-md-flex justify-content-between align-items-center mb-4">
                     <div class="info-list">
                         <h2 class="txt-color p-0 m-0">Info Principal</h2>
                         <p class="small txt-color-sec p-0 m-0">Info Secundária</p>
@@ -83,11 +68,11 @@ onMounted(() => {
                                 </li>
                             </ul>
                         </div>
-                        <button type="button" class="btn btn-action btn-action-primary ms-2">
+                        <button @click="showRegister = !showRegister" type="button" class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-plus-circle"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
                         </button>
-                        <button type="button" class="btn btn-action btn-action-primary ms-2">
+                        <button @click="showSearch = !showSearch" type="button" class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-search"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Pesquisar</span>
                         </button>
@@ -97,6 +82,14 @@ onMounted(() => {
                         </button>
                         
                     </div>
+                </div>
+
+                <div v-if="showSearch" id="search-box" class="container">
+                    sdasda
+                </div>
+
+                <div v-if="showRegister" id="register-box" class="container">
+                    adicionar
                 </div>
             </div>
         </section>

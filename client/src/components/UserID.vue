@@ -6,17 +6,22 @@ import { onMounted, ref } from 'vue';
     const user = auth.getUser() ?? {}
     const timesession = ref('60:00')
 
+    function isLoggedIn(){
+        if(!auth.token || !auth.getUser){
+            logout()
+        }
+    }
+
     function logout(){
         auth.clear()
         window.location = '/'
     }
 
-    onMounted(() => {
-        
+    function countTimeSession(){
         let minutes = 59
         let seconds = 59
         
-        function countsession(){
+        function regressivecount(){
             if(seconds > 0){
                 seconds--
             }else{
@@ -31,7 +36,12 @@ import { onMounted, ref } from 'vue';
             }
         }
 
-        setInterval(countsession, 1000);
+        setInterval(regressivecount, 1000);
+    }
+
+    onMounted(() => {
+        isLoggedIn()
+        countTimeSession()
     })
 
 </script>

@@ -13,8 +13,10 @@ function showAlert(data){
 function setTheme()
 {
   const screen = document.getElementById('screen')
+  
   if(screen){
     const style = useTheme()
+
     //remove theme
     screen.classList.forEach(cl => {
       screen.classList.remove(cl)

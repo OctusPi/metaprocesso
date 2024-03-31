@@ -43,7 +43,7 @@
 
 .dark:root{
   --color-fundo: #000000;
-  --color-box: #373737;
+  --color-box: #1E293B;
 
   --color-base : #0da5f0;
   --color-hover : #058ed3;
@@ -63,11 +63,11 @@
   --color-input-border:#e2e2e3;
   --color-input-placeholder:#787878;
   
-  --color-nav:rgba(53, 53, 53, 0.984);
+  --color-nav: #1e293be9;
   --color-nav-itens:#cfcfcf;
   --color-wall-load:rgba(39, 39, 39, 0.661);
 
-  --border-box: 1px solid #525252;
+  --border-box: 1px solid #334155;
 }
 
 

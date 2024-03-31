@@ -2,7 +2,6 @@
 
 namespace App\Security;
 use App\Utils\Notify;
-use Illuminate\Support\Facades\Response;
 
 class Guardian
 {
@@ -17,17 +16,21 @@ class Guardian
         }
     }
 
+    public static function getToken(): string
+    {
+        $authorization = Request()->server('HTTP_AUTHORIZATION');
+        return str_replace('Bearer ', '', $authorization ?? '');
+    }
+
 
     public static function checkToken(): bool
     {
-        $authorization = Request()->server('HTTP_AUTHORIZATION');
-        return JWT::validate($authorization);
+        return JWT::validate(self::getToken());
     }
 
     public static function checkAccess(int $module_id = 0): bool
     {
-        $authorization = Request()->server('HTTP_AUTHORIZATION');
-        $user = JWT::decoded($authorization);
+        $user = JWT::decoded(self::getToken());
         
         if ($user == null) {
             return false;
