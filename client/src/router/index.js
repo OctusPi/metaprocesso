@@ -47,7 +47,7 @@ const router = createRouter({
 
 router.beforeEach((to) => {
 	if (to.meta?.auth) {
-		console.log('required auth')
+		
 		const auth = useJwt()
 		if (!auth.isLoggedIn) {
 			console.log('denny auth')

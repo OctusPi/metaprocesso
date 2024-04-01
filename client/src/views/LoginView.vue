@@ -48,9 +48,11 @@ function login(){
 function islogged(){
     function respIsLogged(response){
         
-        if(response.status == 200){
+        if(response.status === 200){
             return
         }
+
+        console.log('aaaaaa')
         
         logout()
     }

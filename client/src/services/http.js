@@ -17,6 +17,8 @@ async function request(opt, emit, resp = null){
     }).catch((error) => {
         console.log(error.message)
         emit('callAlert', {show: true, data:error?.response?.data?.notify ?? {type:'danger', msg:'Que feio servidor, não faz assim!'}})
+        callresp(error?.response, emit)
+        
     }).finally(() => {
         utils.load(false)
     })
