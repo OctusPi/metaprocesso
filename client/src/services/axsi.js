@@ -1,9 +1,11 @@
 import axios from 'axios'
-import {useJwt} from '@/stores/auth'
-
-const auth = useJwt()
+import auth from '@/stores/auth'
 
 const axiosInstance = axios.create({
+    baseURL: import.meta.env.VITE_URL_API
+})
+
+const axiosInstanceAuth = axios.create({
     baseURL: import.meta.env.VITE_URL_API,
     headers: {
         'Content-Type':'multipart/form-data',
@@ -11,4 +13,7 @@ const axiosInstance = axios.create({
     }
 })
 
-export default axiosInstance
+export default {
+    axiosInstance,
+    axiosInstanceAuth
+}

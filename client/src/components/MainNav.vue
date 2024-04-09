@@ -1,8 +1,7 @@
 <script setup>
     import { onMounted, ref } from 'vue';
-    import { useJwt } from '@/stores/auth';
+    import auth from '@/stores/auth';
 
-    const auth = useJwt()
     const menu = ref([])
     const menuitens = {
         'management': {href: '/management', icon:'bi-house-gear-fill', title:'Gestão', description:'Dados Administrativos e Estruturais'},
@@ -41,7 +40,7 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li v-for="i in menu" class="nav-item"> 
+                    <li v-for="i in menu" :key="i.module" class="nav-item"> 
                         <RouterLink v-if="menuitens[i.module]" class="nav-link nav-link-item" :to="menuitens[i.module].href">
                             <i class="bi nav-link-icon" :class="menuitens[i.module].icon"></i>
                             <div class="nav-link-body">

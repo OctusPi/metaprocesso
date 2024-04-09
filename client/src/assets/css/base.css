@@ -95,6 +95,7 @@ body {
   background-repeat:no-repeat;
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
   transition:color 0.5s, background-color 0.5s;
   font-family:
     Inter,

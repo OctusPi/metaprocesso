@@ -3,7 +3,6 @@ import { ref } from 'vue';
 import Notifications from './Notifications.vue';
 import DarkMode from './DarkMode.vue';
 import UserID from './UserID.vue';
-import SearchBar from './SearchBar.vue';
 
 const props = defineProps({
     header:Object

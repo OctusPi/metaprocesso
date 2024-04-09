@@ -1,21 +1,21 @@
 <script setup>
 import { onMounted, provide, ref } from 'vue'
 import { RouterView } from 'vue-router'
-import { useTheme } from '@/stores/theme';
-import Alert from './components/Alert.vue';
+import style from '@/stores/theme';
+import UiAlert from './components/UiAlert.vue';
 
 const alert = ref({show: false, data:{type:'success', msg: ''}})
 
-function showAlert(data){
-  alert.value = data
-}
+provide('sysapp', {
+  name: import.meta.env.VITE_APP_NAME ?? 'Gestor Contratos',
+  desc: import.meta.env.VITE_APP_DESC ?? 'Gestão e Fiscalização de Contratos',
+  copy: import.meta.env.VITE_APP_COPY ?? 'OctusPi 2024'
+})
 
-function setTheme()
-{
+onMounted(() => {
   const screen = document.getElementById('screen')
   
   if(screen){
-    const style = useTheme()
 
     //remove theme
     screen.classList.forEach(cl => {
@@ -25,16 +25,6 @@ function setTheme()
     //set theme
     screen.classList.add(style.theme)
   }
-}
-
-provide('sysapp', {
-  name: import.meta.env.VITE_APP_NAME ?? 'Gestor Contratos',
-  desc: import.meta.env.VITE_APP_DESC ?? 'Gestão e Fiscalização de Contratos',
-  copy: import.meta.env.VITE_APP_COPY ?? 'OctusPi 2024'
-})
-
-onMounted(() => {
-  setTheme()
 })
 
 </script>
@@ -45,10 +35,10 @@ onMounted(() => {
     <img id="load-img" class="load-img" src="./assets/imgs/load.svg">
   </div>
 
-  <Alert :alert="alert" />
+  <UiAlert :alert="alert" />
 
   <div class="container-fluid px-4">
-      <RouterView @callAlert="showAlert"/>
+      <RouterView @callAlert="(data) => { alert = data}"/>
   </div>
   
 </template>

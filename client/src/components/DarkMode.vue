@@ -1,7 +1,6 @@
 <script setup>
 
-    import { useTheme } from '@/stores/theme';
-    const style = useTheme()
+    import style from '@/stores/theme';
 
     function changeTheme(mode){
         const screen = document.getElementById('screen')

@@ -1,71 +1,68 @@
-import axios from 'axios'
 import { ref } from 'vue'
-import { defineStore } from 'pinia'
+import axios from 'axios'
 
-export const useJwt = defineStore('auth', () => {
-  const token = ref(localStorage.getItem('token'))
-  const user = ref(localStorage.getItem('user'))
-  const navigation = ref(localStorage.getItem('navigation'))
+const token = ref(localStorage.getItem('token'))
+const user = ref(localStorage.getItem('user'))
+const navigation = ref(localStorage.getItem('navigation'))
 
-  async function isLoggedIn(){
-    const {data} = await axios.get(import.meta.env.VITE_URL_API+'/auth/check', {
-      headers:{
-        Authorization:token.value
-      }
-    });
-
-    return data.status === 200
-  }
-
-  function setToken(tokenValue){
+function setToken(tokenValue){
     localStorage.setItem('token', tokenValue)
     token.value = tokenValue
-  }
+}
 
-  function setUser(userValue){
-    localStorage.setItem('user', JSON.stringify(userValue))
-    user.value = userValue
-  }
+function setUser(userValue){
+  localStorage.setItem('user', JSON.stringify(userValue))
+  user.value = userValue
+}
 
-  function setNavigation(navValue){
-    localStorage.setItem('navigation', JSON.stringify(navValue))
-    navigation.value = navValue
-  }
+function setNavigation(navValue){
+  localStorage.setItem('navigation', JSON.stringify(navValue))
+  navigation.value = navValue
+}
 
-  function getUser(){
-    try {
-      return JSON.parse(user.value);
-    } catch (e) {
-      console.log('Fail parse string to JSON')
-      return {}
+function getUser(){
+  try {
+    return JSON.parse(user.value);
+  } catch (e) {
+    console.log('Fail parse string to JSON')
+    return {}
+  }
+}
+
+function getNavigation(){
+  try {
+    return JSON.parse(navigation.value);
+  } catch (e) {
+    console.log('Fail parse string to JSON')
+    return {}
+  }
+}
+
+function clear(){
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+  localStorage.removeItem('navigation')
+}
+
+async function isLoggedIn(){
+  const {data} = await axios.get(import.meta.env.VITE_URL_API+'/auth/check', {
+    headers:{
+      Authorization:token.value
     }
-  }
+  });
 
-  function getNavigation(){
-    try {
-      return JSON.parse(navigation.value);
-    } catch (e) {
-      console.log('Fail parse string to JSON')
-      return {}
-    }
-  }
+  return data.status === 200
+}
 
-  function clear(){
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    localStorage.removeItem('navigation')
-  }
-
-  return {
-    token,
-    user,
-    navigation,
-    isLoggedIn,
-    setToken,
-    setUser,
-    setNavigation,
-    getUser,
-    getNavigation,
-    clear
-  }
-})
+export default {
+  token:token.value,
+  user:user.value,
+  navigation:navigation.value,
+  setToken,
+  setUser,
+  setNavigation,
+  getUser,
+  getNavigation,
+  clear,
+  isLoggedIn
+}

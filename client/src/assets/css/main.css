@@ -38,6 +38,7 @@
   background-color: var(--color-imput);
   padding: 10px 14px;
   color: var(--color-text);
+  font-weight: 500;
 }
 
 .form-control:focus{
@@ -58,7 +59,7 @@
 }
 
 .alert{
-  position: absolute;
+  position: fixed;
   width: 340px;
   z-index: 3000;
   bottom: 20px;
@@ -102,7 +103,6 @@
   --bs-tooltip-color: var(--bs-white);
 }
 
-
 .container-back-box {
   height: 100vh;
 }
@@ -134,7 +134,7 @@
   width: calc(100% - 178px);
   background-color: var(--color-fundo);
   top: 0;
-  left: 178px;
+  left: 176px;
   padding: 24px 24px 10px 0;
   position: fixed;
 }

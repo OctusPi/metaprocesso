@@ -1,12 +1,11 @@
 <script setup>
 import { inject, onMounted, ref } from 'vue';
-import { useJwt } from '@/stores/auth';
+import auth from '@/stores/auth';
 import http from '@/services/http';
 import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
 
 const sysapp = inject('sysapp')
-const auth = useJwt()
 const user = ref(auth.getUser())
 
 const emit = defineEmits(['callAlert'])

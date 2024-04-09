@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useJwt } from '@/stores/auth'
+import auth from '@/stores/auth'
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -47,9 +47,8 @@ const router = createRouter({
 
 router.beforeEach((to) => {
 	if (to.meta?.auth) {
-		
-		const auth = useJwt()
-		if (!auth.isLoggedIn) {
+
+		if (!auth.isLoggedIn()) {
 			console.log('denny auth')
 			return {
 				path: '/'

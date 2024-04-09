@@ -12,17 +12,17 @@ const showSearch = ref(false)
 const showRegister = ref(false)
 const titlePrimaty = ref('')
 const titleSecondary = ref('')
-const frmSelects = ref({
-    status: [],
-    profiles:[],
-    organs: [],
-    units: [],
-    sectors: [],
-    modules: []
-})
 
 const page = ref({
     data: {id:0},
+    selects:{
+        status: [],
+        profiles:[],
+        organs: [],
+        units: [],
+        sectors: [],
+        modules: []
+    },
     rules:{
         fields: {
             name:'required',
@@ -161,7 +161,7 @@ onMounted(() => {
                                 <select name="status" class="form-control" :class="{'form-control-alert' : page.rules.valids.status}"
                                 id="status"  v-model="page.data.status">
                                     <option value=""></option>
-                                    <option v-for="s in frmSelects.status" :value="s.id" :key="s.id">{{ s.title }}</option>
+                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{ s.title }}</option>
                                 </select>
                             </div>
                         </div>
@@ -172,7 +172,7 @@ onMounted(() => {
                                 <select name="organs" class="form-control" :class="{'form-control-alert' : page.rules.valids.organs}"
                                 id="organs"  v-model="page.data.organs">
                                     <option value=""></option>
-                                    <option v-for="s in frmSelects.organs" :value="s.id" :key="s.id">{{ s.title }}</option>
+                                    <option v-for="s in page.selects.organs" :value="s.id" :key="s.id">{{ s.title }}</option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
@@ -180,7 +180,7 @@ onMounted(() => {
                                 <select name="units" class="form-control" :class="{'form-control-alert' : page.rules.valids.units}"
                                 id="units"  v-model="page.data.units">
                                     <option value=""></option>
-                                    <option v-for="s in frmSelects.units" :value="s.id" :key="s.id">{{ s.title }}</option>
+                                    <option v-for="s in page.selects.units" :value="s.id" :key="s.id">{{ s.title }}</option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
@@ -188,7 +188,7 @@ onMounted(() => {
                                 <select name="sectors" class="form-control" :class="{'form-control-alert' : page.rules.valids.sectors}"
                                 id="sectors"  v-model="page.data.sectors">
                                     <option value=""></option>
-                                    <option v-for="s in frmSelects.sectors" :value="s.id" :key="s.id">{{ s.title }}</option>
+                                    <option v-for="s in page.selects.sectors" :value="s.id" :key="s.id">{{ s.title }}</option>
                                 </select>
                             </div>
                         </div>
@@ -199,7 +199,7 @@ onMounted(() => {
                                 <select name="profile" class="form-control" :class="{'form-control-alert' : page.rules.valids.profile}"
                                 id="profile"  v-model="page.data.profile">
                                     <option value=""></option>
-                                    <option v-for="s in frmSelects.profiles" :value="s.id" :key="s.id">{{ s.title }}</option>
+                                    <option v-for="s in page.selects.profiles" :value="s.id" :key="s.id">{{ s.title }}</option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-8">
@@ -207,7 +207,7 @@ onMounted(() => {
                                 <select name="modules" class="form-control" :class="{'form-control-alert' : page.rules.valids.modules}"
                                 id="modules"  v-model="page.data.modules">
                                     <option value=""></option>
-                                    <option v-for="s in frmSelects.modules" :value="s.id" :key="s.id">{{ s.title }}</option>
+                                    <option v-for="s in page.selects.modules" :value="s.id" :key="s.id">{{ s.title }}</option>
                                 </select>
                             </div>
                         </div>

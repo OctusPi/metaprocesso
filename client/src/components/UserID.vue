@@ -1,8 +1,7 @@
 <script setup>
-    import { useJwt } from '@/stores/auth';
-import { onMounted, ref } from 'vue';
+    import { onMounted, ref } from 'vue';
+    import auth from '@/stores/auth';
 
-    const auth = useJwt()
     const user = auth.getUser() ?? {}
     const timesession = ref('60:00')
 
