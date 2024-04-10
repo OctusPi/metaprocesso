@@ -1,21 +1,23 @@
 <?php
 
 namespace App\Middleware;
+
 use App\Models\Organ;
 use App\Models\Unit;
 use App\Models\User;
-use App\Security\JWT;
+use App\Security\Guardian;
 
 class Data
 {
     public static function list(string $model, array $params = [])
     {
-        $user = JWT::decoded(Request()->server('HTTP_AUTHORIZATION'));
-        if(!is_null($user)) {
-            $iModel = new $model();
-            $query  = $iModel->query();
+        $user = Guardian::getUser();
 
-            if($user->getOriginal('profile') != User::PRF_ADMIN) {
+        if(!is_null($user)) {
+
+            $query = $model::query();
+
+            if($user->profile != User::PRF_ADMIN) {
                 $conditionsUser = match ($model) {
                     Organ::class => self::conditionsOrgan($user),
                     Unit::class => self::conditionsUnit($user),
@@ -46,6 +48,8 @@ class Data
                     }
                 });
             }
+
+            return $query->get();
         }
 
         return [];

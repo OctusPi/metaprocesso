@@ -31,33 +31,20 @@ function login(){
         return
     }
 
-    function resplogin(response, emit){
-        if(response.status === 200){
-            auth.setToken(response.data.token)
-            auth.setUser(response.data.user)
-            auth.setNavigation(response.data.navigation)
-        }
-        
-        http.response(response, emit)
-    }
-
-    http.post('/auth', page.value.data, emit, resplogin)
+    http.post('/auth', page.value.data, emit, (response) => {
+        auth.setToken(response.data.token)
+        auth.setUser(response.data.user)
+        auth.setNavigation(response.data.navigation)
+    })
 }
 
 function islogged(){
-    function respIsLogged(response){
-        
-        if(response.status === 200){
-            return
-        }
-
-        console.log('aaaaaa')
-        
-        logout()
-    }
-
+    
     if(user.value){
-        http.get('/auth/check', emit, respIsLogged);
+        http.get('/auth/check', emit, (response) => {
+            if(response.status === 200){ return }
+            logout()
+        });
     }
 }
 

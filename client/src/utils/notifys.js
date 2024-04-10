@@ -15,8 +15,13 @@ function danger(msg){
     return notify('danger', msg)
 }
 
+function info(msg){
+    return notify('info', msg)
+}
+
 export default {
     success,
     warning,
-    danger
+    danger,
+    info
 }

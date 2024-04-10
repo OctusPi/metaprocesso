@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Security;
+use App\Models\User;
 use App\Utils\Notify;
 
 class Guardian
@@ -22,7 +23,6 @@ class Guardian
         return str_replace('Bearer ', '', $authorization ?? '');
     }
 
-
     public static function checkToken(): bool
     {
         return JWT::validate(self::getToken());
@@ -30,12 +30,17 @@ class Guardian
 
     public static function checkAccess(int $module_id = 0): bool
     {
-        $user = JWT::decoded(self::getToken());
+        $user = self::getUser();
         
         if ($user == null) {
             return false;
         }
 
-        return key_exists(strval($module_id), $user->modules);
+        return key_exists(strval($module_id), $user->modules ?? []);
+    }
+
+    public static function getUser():?User
+    {
+        return JWT::decoded(self::getToken());
     }
 }

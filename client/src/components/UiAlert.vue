@@ -8,7 +8,8 @@ const timeview = ref(0)
 const alerts   = {
     success: { style: 'alert-success', icon: 'bi-check-circle-fill', title: 'Sucesso!', msg: 'Operação realizada com sucesso!' },
     warning: { style: 'alert-warning', icon: 'bi-exclamation-triangle-fill', title: 'Alerta!', msg: 'Falha ao realizar solicitação!' },
-    danger: { style: 'alert-danger', icon: 'bi-x-octagon-fill', title: 'Ocorreu um problema!', msg: 'Algo deu errado, verifique e tente novamente!' }
+    danger: { style: 'alert-danger', icon: 'bi-x-octagon-fill', title: 'Ocorreu um problema!', msg: 'Algo deu errado, verifique e tente novamente!' },
+    info: { style: 'alert-info', icon: 'bi-exclamation-triangle-fill', title: 'Atenção!', msg: '' }
 }
 
 watch(() => props.alert, (newValue) => {

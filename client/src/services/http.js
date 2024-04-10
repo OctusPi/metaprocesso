@@ -2,14 +2,13 @@ import axsi from './axsi'
 import forms from './forms'
 import utils from '@/utils/utils'
 
-async function request(opt, emit, resp = null){
+async function request(opt, emit, customresp = null){
     utils.load()
-
-    const callresp = resp ?? response
 
     await axsi.axiosInstanceAuth.request(opt).then(response => {
         if(response){
-            callresp(response, emit)
+            if(customresp && success(response)){ customresp(response, emit) }
+            defresp(response, emit)
             return
         }
 
@@ -17,15 +16,16 @@ async function request(opt, emit, resp = null){
         
     }).catch((error) => {
         console.log(error.message)
+        const resperror = customresp ?? defresp
         emit('callAlert', {show: true, data:error?.response?.data?.notify ?? {type:'danger', msg:'Que feio servidor, não faz assim!'}})
-        callresp(error?.response, emit)
+        resperror(error?.response, emit)
         
     }).finally(() => {
         utils.load(false)
     })
 }
 
-function response(resp, emit){
+function defresp(resp, emit){
 
     const data = resp.data
 
@@ -35,7 +35,7 @@ function response(resp, emit){
     }
 
      //call notifys
-    if(data.notify){
+    if(data?.notify){
         emit('callAlert', {show:true, data:data.notify})
     }
 }
@@ -78,7 +78,7 @@ function patch (url, data, emit, resp= null){
     request(opt, emit, resp)
 }
 
-function remove (url, emit, resp = null){
+function destroy (url, emit, resp = null){
     const opt = {
         method: 'DELETE',
         url: url
@@ -86,12 +86,17 @@ function remove (url, emit, resp = null){
     request(opt, emit, resp)
 }
 
+function success(response){
+    return response?.status === 200 || response?.status === 201 || response?.status === 202
+}
+
 export default {
     request,
-    response,
+    defresp,
     post,
     put,
     patch,
     get,
-    remove
+    destroy,
+    success
 }

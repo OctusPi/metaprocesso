@@ -10,7 +10,7 @@ import MainHeader from '@/components/MainHeader.vue';
             <MainHeader />
 
             <div class="box p-4 mb-4 rounded-4">
-                dasdas
+                Dash
             </div>
         </section>
     </main>

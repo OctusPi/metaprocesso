@@ -14,7 +14,9 @@ Route::get('/auth/check', [Auth::class,'check']);
 Route::post('/management', [Management::class,'list']);
 Route::post('/management/save', [Management::class,'save']);
 Route::put('/management/update', [Management::class,'update']);
-Route::delete('/management/update', [Management::class,'delete']);
+Route::delete('/management/destroy', [Management::class,'delete']);
+Route::get('/management/details', [Management::class,'details']);
+Route::get('/management/selects', [Management::class,'selects']);
 
 Route::fallback(function () {  
     return Response()->json(Notify::warning('Destino solicitado não existe...'), 404);

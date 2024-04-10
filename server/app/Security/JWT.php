@@ -33,7 +33,7 @@ class JWT
             if(!is_null($token)) {
                 $key = env('APP_KEY', '');
                 $stdUser = FirebaseJWT::decode($token, new Key($key, self::$algorithm));
-                $user = User::make((array) $stdUser);
+                $user = new User((array) $stdUser->{'data'} ?? []);
                 return $user;
             }
 

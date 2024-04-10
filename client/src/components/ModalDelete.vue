@@ -2,7 +2,7 @@
     import { ref } from 'vue';
     
     const props = defineProps({
-        route:{type: Object, required:true}
+        params:{type: Object, required:true}
     })
 
     const pass = ref("")

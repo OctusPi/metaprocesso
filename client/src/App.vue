@@ -3,8 +3,11 @@ import { onMounted, provide, ref } from 'vue'
 import { RouterView } from 'vue-router'
 import style from '@/stores/theme';
 import UiAlert from './components/UiAlert.vue';
+import ModalDelete from './components/ModalDelete.vue';
 
-const alert = ref({show: false, data:{type:'success', msg: ''}})
+const datalist = ref([])
+const alert    = ref({show: false, data:{type:'success', msg: ''}})
+const remove   = ref({})
 
 provide('sysapp', {
   name: import.meta.env.VITE_APP_NAME ?? 'Gestor Contratos',
@@ -35,10 +38,13 @@ onMounted(() => {
     <img id="load-img" class="load-img" src="./assets/imgs/load.svg">
   </div>
 
+  <ModalDelete :params="remove" />
   <UiAlert :alert="alert" />
 
   <div class="container-fluid px-4">
-      <RouterView @callAlert="(data) => { alert = data}"/>
+      <RouterView 
+      :datalist = "datalist"
+      @callAlert="(data) => { alert = data}" />
   </div>
   
 </template>

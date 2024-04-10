@@ -7,6 +7,7 @@ class Notify
     const SUCCESS = 'success';
     const WARNING = 'warning';
     const DANGER = 'danger';
+    const INFO   = 'info';
 
     /**
      * Make a notification object with given type and message
@@ -59,5 +60,17 @@ class Notify
     public static function error(?string $msg = null): array
     {
         return ['notify' => self::notify(self::DANGER, $msg)];
+    }
+
+    /**
+     * Make a info notification object with given message
+     * 
+     * @param ?string $msg Defines the notification message
+     * 
+     * @return array
+     */
+    public static function info(?string $msg = null): array
+    {
+        return ['notify'=> self::notify(self::INFO, $msg)];
     }
 }

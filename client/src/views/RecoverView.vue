@@ -25,7 +25,7 @@ function recover(){
         return
     }
 
-    http.post('/auth/recover', page.value.data, emit, http.response)
+    http.post('/auth/recover', page.value.data, emit)
 }
 </script>
 

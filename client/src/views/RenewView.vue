@@ -27,13 +27,12 @@ const page = ref({
 })
 
 function checktoken(){
-    function respCheckToken(response){
-        if(response.status === 200){
+    
+    http.post('/auth/verify', {token:token}, emit, (response) => {
+        if(http.success(response)){
             user.value = response.data?.user
         }
-    }
-
-    http.post('/auth/verify', {token:token}, emit, respCheckToken)
+    })
 }
 
 function renew(){
@@ -43,15 +42,11 @@ function renew(){
         return
     }
 
-    function respRenewPass(response, emit){
-        if(response.status === 200){
+    http.post('/auth/renew', page.value.data, emit, (response) => {
+        if(http.success(response)){
             success.value = true
         }
-
-        http.response(response, emit)
-    }
-
-    http.post('/auth/renew', page.value.data, emit, respRenewPass)
+    })
 }
 
 onMounted(() => {
