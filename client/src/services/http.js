@@ -78,11 +78,13 @@ function patch (url, data, emit, resp= null){
     request(opt, emit, resp)
 }
 
-function destroy (url, emit, resp = null){
+function destroy (url, data, emit, resp= null){
     const opt = {
-        method: 'DELETE',
-        url: url
+        url: url,
+        method: 'POST',
+        data : forms.builddata(data)
     }
+    
     request(opt, emit, resp)
 }
 

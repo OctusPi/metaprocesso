@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Utils\Utils;
 use App\Utils\Notify;
+use App\Mail\Wellcome;
 use App\Middleware\Data;
 use App\Security\Guardian;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class Management extends Controller
 {
@@ -19,7 +23,17 @@ class Management extends Controller
 
     public function save(Request $request)
     {
-        
+        $pass = Str::random(8);
+        $user = new User($request->all());
+        $user->username = $request->get("email");
+        $user->password = Hash::make($pass);
+
+        if($user->save()){
+            Mail::to($user)->send(new Wellcome($user, $pass));
+            return Response()->json(Notify::success("Usuário cadastrado com sucesso"), 200);
+        }
+
+        return Response()->json(Notify::warning("Usuário já cadastrado no sistema"), 400);
     }
     
     public function update(Request $request)
@@ -27,9 +41,23 @@ class Management extends Controller
 
     }
 
-    public function destroy(Request $request)
+    public function delete(Request $request)
     {
+        if(!password_verify($request->password, $this->user_loged->password)) {
+            return Response()->json(Notify::warning('Senha de confirmação inválida!'), 401);
+        }
 
+        $user = User::where('id', $request->get('id'))->first();
+        if($user) {
+    
+            if($user->delete()){
+               return Response()->json(Notify::success('Usuário excluído com sucesso'), 200);
+            }
+
+            return Response()->json(Notify::warning('Ação não permitida, usuário referenciado em outros contextos!'), 400);
+        }
+
+        return Response()->json(Notify::warning('Dados para exclusão nao localizado!'), 404);
     }
 
     public function list(Request $request)

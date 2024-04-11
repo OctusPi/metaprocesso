@@ -15,7 +15,7 @@ class Wellcome extends BaseMail
     /**
      * Create a new message instance.
      */
-    public function __construct(protected User $user)
+    public function __construct(protected User $user, protected String $passwd)
     {
         parent::__construct();
     }
@@ -39,7 +39,10 @@ class Wellcome extends BaseMail
             markdown: 'mail.wellcome',
             with: [
                 'name' => $this->user->name,
+                'username' => $this->user->username,
+                'pass' => $this->passwd,
                 'system' => $this->system,
+                'system_url' => $this->appUrl,
                 'sender' => $this->sender
             ]
         );

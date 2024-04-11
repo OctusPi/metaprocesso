@@ -34,7 +34,7 @@ class Auth extends Controller
         }
 
         $token = JWT::create($user);
-        $user->lastlogin = $user->nowlogin ?? Dates::nowUTC();
+        $user->lastlogin = $user->nowlogin ?? Dates::nowPTBR();
         $user->nowlogin = Dates::nowPTBR();
         $user->modules = json_encode(User::list_modules());
         $user->save();

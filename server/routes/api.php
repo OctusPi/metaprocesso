@@ -17,7 +17,7 @@ Route::controller(Management::class)->group(function () {
     Route::post('/management', 'list');
     Route::post('/management/save', 'save');
     Route::put('/management/update', 'update');
-    Route::delete('/management/destroy', 'delete');
+    Route::post('/management/destroy', 'delete');
     Route::get('/management/details/{id}', 'details');
     Route::get('/management/selects', 'selects');
 });

@@ -38,13 +38,17 @@ onMounted(() => {
     <img id="load-img" class="load-img" src="./assets/imgs/load.svg">
   </div>
 
-  <ModalDelete :params="remove" />
+  <ModalDelete 
+  :params="remove" 
+  @callUpdate="(data) => { datalist = data}"
+  @callAlert="(data) => { alert = data}" />
   <UiAlert :alert="alert" />
 
   <div class="container-fluid px-4">
       <RouterView 
       :datalist = "datalist"
-      @callAlert="(data) => { alert = data}" />
+      @callAlert="(data) => { alert = data}" 
+      @callRemove="(data) => { remove = data }" />
   </div>
   
 </template>

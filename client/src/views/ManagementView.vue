@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
@@ -13,7 +13,6 @@ const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({
     datalist: {type: Array, default: () => []}
 })
-
 
 const page = ref({
     title       :{primary: '', secondary: ''},
@@ -45,6 +44,10 @@ const page = ref({
         },
         valids:{}
     }
+})
+
+watch(() => props.datalist, (newdata) => {
+    page.value.datalist = newdata
 })
 
 function toggleUI(mode = null){
@@ -88,15 +91,19 @@ function save(){
         return
     }
 
+    const dataform = {...page.value.data }
+    dataform.modules = JSON.stringify((page.value.data.modules).map(i => page.value.selects.modules[i]))
+
+
     if(page.value.data?.id){
-        http.put('/management/update', page.value.data, emit, () => {
+        http.put('/management/update', dataform, emit, () => {
             list()
         })
 
         return
     }
 
-    http.post('/management/save', page.value.data, emit, () => {
+    http.post('/management/save', dataform, emit, () => {
         list()
     })
 }

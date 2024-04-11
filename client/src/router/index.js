@@ -49,6 +49,7 @@ router.beforeEach(async (to) => {
 	if (to.meta?.auth) {
 		try{
 			const isAuthenticated = await auth.isLoggedIn()
+			console.log(isAuthenticated)
 			if (!isAuthenticated) {
 				return '/'
 			}

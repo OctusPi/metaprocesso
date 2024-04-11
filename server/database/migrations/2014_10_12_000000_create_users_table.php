@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->timestamps();
             $table->string('name');
             $table->string('email', 220);
-            $table->string('username');
+            $table->string('username')->unique();
             $table->string('password');
             $table->text('token')->nullable();
             $table->json('organs')->nullable();
