@@ -49,9 +49,10 @@ async function isLoggedIn(){
     headers:{
       Authorization:token.value
     }
-  });
+  })
 
-  return data.status === 200
+  return data;
+  
 }
 
 export default {

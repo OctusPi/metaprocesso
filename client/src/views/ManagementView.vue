@@ -20,7 +20,12 @@ const page = ref({
     uiview      :{register:false, search:false},
     data        :{},
     datalist    :props.datalist,
-    dataheader  :[],
+    dataheader  :[
+        {key:'name', title:'NOME'}, 
+        {key:'email', title:'E-MAIL'}, 
+        {key:'profile', title:'PERFIL', sub:[{key:'passchange', title:'Sitiação Senha'}]}, 
+        {key:'status', title:'STATUS', sub:[{key:'lastlogin', title:'Ultimo Acesso'}]}
+    ],
     search      :{},
     selects     :{
         status: [],
@@ -97,8 +102,9 @@ function save(){
 }
 
 function update(id){
-    http.get(`/management/${id}`, emit, (response) => {
+    http.get(`/management/details/${id}`, emit, (response) => {
         page.value.data = response.data
+        page.value.data.modules = (Object.keys(response.data?.modules ?? {})).map(i => parseInt(i));
         toggleUI('update')
     })
 }
@@ -106,13 +112,13 @@ function update(id){
 function remove(id){
     emit('callRemove', {
         id      : id,
-        url     : '/management/destroy',
+        url     : '/management',
         search  : page.value.search
     })
 }
 
 function list(){
-    http.post('/management/list', page.value.search, emit, (response) => {
+    http.post('/management', page.value.search, emit, (response) => {
         page.value.datalist = response.data ?? []
         toggleUI('list')
     })
@@ -125,8 +131,8 @@ function selects(){
 }
 
 onMounted(() => {
-    list()
     selects()
+    list()
 })
 
 </script>
@@ -229,8 +235,16 @@ onMounted(() => {
 
                 <!--BOX LIST-->
                 <div v-if="!page.uiview.register" id="list-box" class="mb-4">
-                    <TableList :header="page.dataheader" :body="page.datalist" :actions="['update', 'delete']"
-                        @action:update="update" @action:delete="remove" />
+                    <TableList 
+                    @action:update="update" 
+                    @action:delete="remove" 
+                    :header="page.dataheader" 
+                    :body="page.datalist" 
+                    :actions="['update', 'delete']"
+                    :casts="{
+                        'profile':page.selects.profiles, 
+                        'status':page.selects.status, 
+                        'passchange':[{id:0, title: 'Ativa'}, {id:1, title:'Mudança de Senha'}]}"/>
                 </div>
 
                 <!--BOX REGISTER-->
@@ -302,7 +316,7 @@ onMounted(() => {
                         </div>
 
                         <div class="d-flex flex-row-reverse mt-4">
-                            <button @click="toggleUi('list')" type="button" class="btn btn-outline-warning">Cancelar <i
+                            <button @click="toggleUI('list')" type="button" class="btn btn-outline-warning">Cancelar <i
                                     class="bi bi-x-circle"></i></button>
                             <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
                                     class="bi bi-check2-circle"></i></button>

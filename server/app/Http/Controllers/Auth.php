@@ -41,7 +41,7 @@ class Auth extends Controller
 
         return response()->json([
             'token'      => $token,
-            'user'       => ['name'=>$user->name, 'profile' => $user->profile, 'last_login' => $user->lastlogin],
+            'user'       => ['name'=>$user->name, 'profile' => User::list_profiles()[$user->profile], 'last_login' => $user->lastlogin],
             'navigation' => $user->modules,
             'notify'     => ['type' => Notify::SUCCESS],
             'redirect'   => '/dashboard'

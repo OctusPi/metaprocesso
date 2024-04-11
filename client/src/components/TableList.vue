@@ -3,13 +3,14 @@
     import ActionNav from './ActionNav.vue'
 
     const props = defineProps({
-        header:Array,
-        body:{type: Array, default: () => []},
-        actions:Array
+        header  :{type: Array},
+        body    :{type: Array, default: () => []},
+        actions :{type: Array},
+        casts   :{type: Object}
     })
     
-    const emit = defineEmits(['action:update', 'action:delete'])
-    const body = ref(props.body)
+    const emit  = defineEmits(['action:update', 'action:delete'])
+    const body  = ref(props.body)
     
     watch(() => props.body, (newValue) => {
         body.value = newValue
@@ -23,6 +24,11 @@
             
             return a[key] - b[key]
         })
+    }
+
+    function casting(key, search, subject, extract = null){
+        const findObj = subject.find(obj => obj[key] === search)
+        return extract && findObj && findObj[extract] ? findObj[extract] : findObj
     }
 
     function propagateEmit(emt){
@@ -41,8 +47,17 @@
             </thead>
             <tbody v-if="body">
                 <tr v-for="b in body" :key="b.id">
-                    <td v-for="h in props.header" :key="`${b.id}-${h.key}`">{{ b[h.key] }}</td>
-                    <td v-if="props.actions"><ActionNav :id="b.id" :calls="props.actions" @action="propagateEmit" /></td>
+                    <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle">
+                        {{ props.casts[h.key] ? casting('id', b[h.key], props.casts[h.key], 'title') :  b[h.key] }}
+                        <p v-if="h.sub" class="small txt-color-sec p-0 m-0">
+                            <span 
+                                v-for="s in h.sub" :key="s.key" 
+                                class="inline-block small">
+                                {{ `${s.title}: ${props.casts[s.key] ? casting('id', b[s.key], props.casts[s.key], 'title') :  b[s.key] }` }} 
+                            </span>
+                        </p>
+                    </td>
+                    <td v-if="props.actions" class="align-middle"><ActionNav :id="b.id" :calls="props.actions" @action="propagateEmit" /></td>
                 </tr>
             </tbody>
         </table>

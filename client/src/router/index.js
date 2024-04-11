@@ -45,15 +45,18 @@ const router = createRouter({
 	]
 })
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
 	if (to.meta?.auth) {
-
-		if (!auth.isLoggedIn()) {
-			console.log('denny auth')
-			return {
-				path: '/'
+		try{
+			const isAuthenticated = await auth.isLoggedIn()
+			if (!isAuthenticated) {
+				return '/'
 			}
+		}catch(e){
+			console.log(e.message)
+			return '/'
 		}
+		
 	}
 })
 

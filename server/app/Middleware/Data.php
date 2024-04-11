@@ -82,6 +82,11 @@ class Data
         return $conditions;
     }
 
+    private static function conditionsUser(User $user):array
+    {
+        return [['column' => 'organs', 'operator' => '=', 'value' => json_encode($user->organs)]];
+    }
+
     private static function conditionsGeneric(User $user):array
     {
         $conditions = [];

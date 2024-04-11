@@ -45,7 +45,7 @@ function toggleSelection(optionId) {
 }
 
 .select-multipe option {
-	padding: 8px;
+	padding: 8px 16px;
 	cursor: pointer;
 }
 </style>
