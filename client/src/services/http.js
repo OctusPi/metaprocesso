@@ -54,7 +54,10 @@ function put (url, data, emit, resp= null){
     const opt = {
         url: url,
         method: 'PUT',
-        data : forms.builddata(data)
+        data : forms.builddata(data),
+        headers:{
+            'Content-Type':'application/json',
+        }
     }
     
     request(opt, emit, resp)

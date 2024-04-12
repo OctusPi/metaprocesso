@@ -2,6 +2,8 @@
 
 namespace App\Utils;
 
+use Illuminate\Support\Facades\Log;
+
 class Utils
 {
    public static function map_search(array $search, array $subject, string $mode = 'AND'):array
@@ -25,10 +27,12 @@ class Utils
         }
 
         foreach ($subject as $key => $value) {
-            if(in_array($key, $search)){
-                $map[] = ['column' => $key, 'operador' => map_operator($value), 'value' => map_value($value), 'mode' => $mode];
+            if(in_array($key, $search) && !empty($value)){
+                $map[] = ['column' => $key, 'operator' => map_operator($value), 'value' => map_value($value), 'mode' => $mode];
             }
         }
+
+        Log::info(json_encode($map));
 
         return $map;
    }

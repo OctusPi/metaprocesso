@@ -44,8 +44,8 @@ function clear(){
   localStorage.removeItem('navigation')
 }
 
-async function isLoggedIn(){
-  const {data} = await axios.get(import.meta.env.VITE_URL_API+'/auth/check', {
+async function isLoggedIn(path){
+  const {data} = await axios.get(import.meta.env.VITE_URL_API+path, {
     headers:{
       Authorization:token.value
     }

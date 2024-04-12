@@ -76,7 +76,7 @@ function toggleUI(mode = null){
         page.value.title.secondary = 'Insira os dados para registro e permissionamento de usuários'
     }else{
         page.value.title.primary = 'Listagem de Usuários'
-        page.value.title.secondary = `Foram localizados ${(props.datalist.length).toString().padStart(2, '0')} inseridos no sistema`
+        page.value.title.secondary = `Foram localizados ${(page.value.datalist.length).toString().padStart(2, '0')} inseridos no sistema`
     }
 }
 
@@ -111,7 +111,7 @@ function save(){
 function update(id){
     http.get(`/management/details/${id}`, emit, (response) => {
         page.value.data = response.data
-        page.value.data.modules = (Object.keys(response.data?.modules ?? {})).map(i => parseInt(i));
+        page.value.data.modules = (response.data?.modules ?? {}).map(obj => obj['id'])
         toggleUI('update')
     })
 }
@@ -125,7 +125,7 @@ function remove(id){
 }
 
 function list(){
-    http.post('/management', page.value.search, emit, (response) => {
+    http.post('/management/list', page.value.search, emit, (response) => {
         page.value.datalist = response.data ?? []
         toggleUI('list')
     })

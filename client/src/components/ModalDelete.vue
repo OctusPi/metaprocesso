@@ -28,7 +28,7 @@ import { ref } from 'vue';
 
         http.destroy(`${props.params.url}/destroy`, data, emit, (resp) => {
             if(http.success(resp)){
-                    http.post(`${props.params.url}`, props.params.search, emit, (resp) => {
+                    http.post(`${props.params.url}/list`, props.params.search, emit, (resp) => {
                     emit('callUpdate', resp.data)
                 })
             }

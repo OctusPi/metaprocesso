@@ -19,4 +19,8 @@ class Controller extends BaseController
         $this->module_id = $module_id;
         $this->user_loged = Guardian::getUser();
     }
+
+    public function index(){
+        return response()->json('success', 200);
+    }
 }

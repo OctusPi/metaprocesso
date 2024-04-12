@@ -3,17 +3,15 @@
 namespace App\Security;
 use App\Models\User;
 use App\Utils\Notify;
+use Illuminate\Support\Facades\Log;
+use Response;
 
 class Guardian
 {
-    public static function validateAccess(int $module_id = 0)
+    public static function validateAccess(int $module_id = 0): void
     {
-        if(!self::checkToken()){
-            return Response()->json(Notify::warning("Token de acesso inválido ou expirado"), 401);
-        }
-
-        if(!self::checkAccess($module_id)){
-            return Response()->json(Notify::warning("Você não possui acesso a este módulo!"), 401);
+        if(!self::checkAccessModuleID($module_id)){
+            die();
         }
     }
 
@@ -28,15 +26,26 @@ class Guardian
         return JWT::validate(self::getToken());
     }
 
-    public static function checkAccess(int $module_id = 0): bool
+    public static function checkAccess(string $module_name): bool
     {
         $user = self::getUser();
-        
-        if ($user == null) {
-            return false;
+        if (!is_null($user)) {
+            $auth_modules = array_column($user->modules, 'module');
+            return in_array(str_replace('api/', '', $module_name), $auth_modules);
         }
 
-        return key_exists(strval($module_id), $user->modules ?? []);
+        return false;
+    }
+
+    public static function checkAccessModuleID(int $module_id): bool
+    {
+        $user = self::getUser();
+        if (!is_null($user)) {
+            $auth_modules = array_column($user->modules, 'id');
+            return in_array($module_id, $auth_modules);
+        }
+
+        return false;
     }
 
     public static function getUser():?User

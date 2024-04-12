@@ -40,12 +40,12 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li v-for="i in menu" :key="i.module" class="nav-item"> 
-                        <RouterLink v-if="menuitens[i.module]" class="nav-link nav-link-item" :to="menuitens[i.module].href">
-                            <i class="bi nav-link-icon" :class="menuitens[i.module].icon"></i>
+                    <li v-for="(i, j) in menuitens" :key="i.module" class="nav-item"> 
+                        <RouterLink v-if="menu.find(m => m.module == j)" class="nav-link nav-link-item" :to="i.href">
+                            <i class="bi nav-link-icon" :class="i.icon"></i>
                             <div class="nav-link-body">
-                                <span class="nav-link-title">{{ menuitens[i.module].title }}</span>
-                                <span class="nav-link-description">{{ menuitens[i.module].description }}</span>
+                                <span class="nav-link-title">{{ i.title }}</span>
+                                <span class="nav-link-description">{{ i.description }}</span>
                             </div>
                         </RouterLink>
                     </li>

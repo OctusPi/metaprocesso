@@ -38,6 +38,11 @@ const router = createRouter({
 			component: () => import('../views/ManagementView.vue')
 		},
 		{
+			path: '/forbidden',
+			name: 'forbidden',
+			component: () => import('../views/ForbiddenView.vue')
+		},
+		{
 			path: '/:pathMatch(.*)*',
 			name: 'notfound',
 			component: () => import('../views/NotFoundView.vue')
@@ -47,15 +52,14 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 	if (to.meta?.auth) {
+		
 		try{
-			const isAuthenticated = await auth.isLoggedIn()
-			console.log(isAuthenticated)
+			const isAuthenticated = await auth.isLoggedIn(to.path)
 			if (!isAuthenticated) {
 				return '/'
 			}
 		}catch(e){
-			console.log(e.message)
-			return '/'
+			return e.response?.status === 403 ? '/forbidden' : '/'
 		}
 		
 	}

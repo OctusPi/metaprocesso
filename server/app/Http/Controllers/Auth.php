@@ -36,7 +36,6 @@ class Auth extends Controller
         $token = JWT::create($user);
         $user->lastlogin = $user->nowlogin ?? Dates::nowPTBR();
         $user->nowlogin = Dates::nowPTBR();
-        $user->modules = json_encode(User::list_modules());
         $user->save();
 
         return response()->json([
@@ -129,8 +128,8 @@ class Auth extends Controller
 
     public function check()
     {
-        return Guardian::checkToken()
-        ? Response()->json(['token_valid' => true], 200)
-        : Response()->json(Notify::info('Login expirado, realize o login novamente!'), 403);
+       return Guardian::checkToken() 
+       ? Response()->json(['token_valid' => true],200) 
+       : Response()->json(Notify::info('Login expirado, realize o login novamente...'), 401);
     }
 }

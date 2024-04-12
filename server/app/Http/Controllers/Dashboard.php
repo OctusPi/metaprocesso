@@ -11,7 +11,6 @@ class Dashboard extends Controller
     public function __construct()
     {
         parent::__construct(User::MOD_INI);
-        Guardian::validateAccess($this->module_id);
     }
 
     public function save(Request $request)

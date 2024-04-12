@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Security\Guardian;
 use App\Utils\Utils;
 use App\Utils\Notify;
 use App\Mail\Wellcome;
 use App\Middleware\Data;
-use App\Security\Guardian;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -38,7 +38,13 @@ class Management extends Controller
     
     public function update(Request $request)
     {
+        $user = User::findOrFail($request->get("id"));
 
+        if($user->update($request->all())){
+            return Response()->json(Notify::success("Usuário atualizado com sucesso."), 200);
+        }else{
+            return Response()->json(Notify::warning("Falha ao editar usuário!"), 400);
+        }
     }
 
     public function delete(Request $request)
@@ -63,11 +69,11 @@ class Management extends Controller
     public function list(Request $request)
     {
         try {
-            $search = Utils::map_search(['name', 'email', 'status'], $request->all());
+            $search = Utils::map_search(['name', 'email', 'profile'], $request->all());
             $query  = Data::list(User::class, $search);
             return Response()->json($query ?? [], 200);
         } catch (\Throwable $th) {
-            return Response()->json(Notify::error('Falha ao recuperar dados!'), 500);
+            return Response()->json(Notify::error($th->getMessage().'Falha ao recuperar dados!'), 500);
         }
     }
 

@@ -78,7 +78,7 @@ onMounted(() => {
 
                 <div class="d-flex justify-content-between mt-4">
                     <button type="button" class="btn btn-sm btn-outline-warning" @click="logout"><i class="bi bi-door-open me-2"></i> Sair do Sistema</button>
-                    <RouterLink to="/home" class="btn btn-sm btn-outline-primary">Ir para Home <i class="bi bi-house-gear ms-2"></i></RouterLink>
+                    <RouterLink to="/dashboard" class="btn btn-sm btn-outline-primary">Ir para Home <i class="bi bi-house-gear ms-2"></i></RouterLink>
                 </div>
             </div>
 
