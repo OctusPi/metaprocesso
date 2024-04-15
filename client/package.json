@@ -15,6 +15,7 @@
     "axios": "^1.6.7",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "maska": "^2.1.11",
     "vue": "^3.4.15",
     "vue-router": "^4.2.5"
   },

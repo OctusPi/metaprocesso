@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->timestamps();
             $table->string('name');
-            $table->string('cnpj', 20);
+            $table->string('cnpj', 20)->unique();
             $table->string('phone', 20);
             $table->string('email', 220);
             $table->string('address');

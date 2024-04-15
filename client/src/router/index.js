@@ -32,6 +32,12 @@ const router = createRouter({
 			component: () => import('../views/DashboardView.vue')
 		},
 		{
+			path: '/organs',
+			name: 'organs',
+			meta: { auth: true },
+			component: () => import('../views/OrgansView.vue')
+		},
+		{
 			path: '/management',
 			name: 'management',
 			meta: { auth: true },
@@ -59,7 +65,8 @@ router.beforeEach(async (to) => {
 				return '/'
 			}
 		}catch(e){
-			return e.response?.status === 403 ? '/forbidden' : '/'
+			return e.response?.status === 403 ? '/forbidden' :
+			e.response?.status === 404 ? '/notfound' :'/'
 		}
 		
 	}

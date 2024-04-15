@@ -1,0 +1,292 @@
+<script setup>
+import { onMounted, ref, watch } from 'vue'
+import forms from '@/services/forms';
+import notifys from '@/utils/notifys';
+import http from '@/services/http';
+import masks from '@/utils/masks'
+
+import MainNav from '@/components/MainNav.vue';
+import MainHeader from '@/components/MainHeader.vue';
+import TableList from '@/components/TableList.vue';
+
+const emit = defineEmits(['callAlert', 'callRemove'])
+const props = defineProps({
+    datalist: {type: Array, default: () => []}
+})
+
+const page = ref({
+    title       :{primary: '', secondary: ''},
+    uiview      :{register:false, search:false},
+    data        :{},
+    datalist    :props.datalist,
+    dataheader  :[
+        {key:'name', title:'IDENTIFICAÇÃO', sub:[{key:'cnpj'}]}, 
+        {key:'email', title:'E-MAIL'}, 
+        {key:'profile', title:'PERFIL', sub:[{key:'passchange', title:'Sitiação Senha'}]}, 
+        {key:'status', title:'STATUS', sub:[{key:'lastlogin', title:'Ultimo Acesso'}]}
+    ],
+    search      :{},
+    selects     :{
+        status: [],
+        profiles:[],
+        organs: [],
+        units: [],
+        sectors: [],
+        modules: []
+    },
+    rules       :{
+        fields: {
+            name:'required',
+            cnpj:'required',
+            phone:'required',
+            email:'required|email',
+            address:'required',
+            postalcity:'required',
+            postalcode:'required',
+            status:'required'
+        },
+        valids:{}
+    }
+})
+
+watch(() => props.datalist, (newdata) => {
+    page.value.datalist = newdata
+})
+
+function toggleUI(mode = null){
+    
+    switch (mode) {
+        case 'register':
+            page.value.uiview.search   = false
+            page.value.uiview.register = !page.value.uiview.register
+            page.value.data = {}
+            break;
+        case 'update':
+            page.value.uiview.search   = false
+            page.value.uiview.register = !page.value.uiview.register
+            break;
+        case 'search':
+            page.value.uiview.search   = !page.value.uiview.search
+            page.value.uiview.register = false
+            break;
+        default:
+            page.value.uiview.register = false
+            break;
+    }
+    
+    if(page.value.uiview.register){
+        page.value.title.primary = 'Registro de Orgãos'
+        page.value.title.secondary = 'Insira os dados para registro da Entidade, Prefeitura, Consorcio...'
+    }else{
+        page.value.title.primary = 'Listagem de Orgãos'
+        page.value.title.secondary = `Foram localizados ${(page.value.datalist.length).toString().padStart(2, '0')} orgãos inseridos no sistema`
+    }
+}
+
+function save(){
+    const validation = forms.checkform(page.value.data, page.value.rules);
+    if(!validation.isvalid){
+        emit('callAlert', notifys.warning(validation.message))
+        return
+    }
+
+    const dataform = {...page.value.data }
+    dataform.modules = JSON.stringify((page.value.data.modules).map(i => page.value.selects.modules[i]))
+
+
+    if(page.value.data?.id){
+        http.put('/organs/update', dataform, emit, () => {
+            list()
+        })
+
+        return
+    }
+
+    http.post('/organs/save', dataform, emit, () => {
+        list()
+    })
+}
+
+function update(id){
+    http.get(`/organs/details/${id}`, emit, (response) => {
+        page.value.data = response.data
+        page.value.data.modules = (response.data?.modules ?? {}).map(obj => obj['id'])
+        toggleUI('update')
+    })
+}
+
+function remove(id){
+    emit('callRemove', {
+        id      : id,
+        url     : '/organs',
+        search  : page.value.search
+    })
+}
+
+function list(){
+    http.post('/organs/list', page.value.search, emit, (response) => {
+        page.value.datalist = response.data ?? []
+        toggleUI('list')
+    })
+}
+
+function selects(){
+    http.get('/organs/selects', emit, (response) => {
+        page.value.selects = response.data
+    })
+}
+
+onMounted(() => {
+    selects()
+    list()
+})
+
+</script>
+
+<template>
+    <main class="container-primary">
+        <MainNav />
+        <section class="container-main">
+            <MainHeader :header="{
+                icon: 'bi-building-gear',
+                title: 'Gerenciamento de Orgão',
+                description: 'Registro de Unidades Executoras Centralizadoras'
+            }" />
+
+            <div class="box p-0 mb-4 rounded-4">
+                <!--HEDER PAGE-->
+                <div class="d-md-flex justify-content-between align-items-center px-4 px-md-5 pt-5 mb-4">
+                    <div class="info-list">
+                        <h2 class="txt-color p-0 m-0">{{ page.title.primary }}</h2>
+                        <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
+                    </div>
+                    <div class="action-buttons d-flex my-2">
+                        <button @click="toggleUI('register')" type="button" class="btn btn-action btn-action-primary ms-2">
+                            <i class="bi bi-plus-circle"></i>
+                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
+                        </button>
+                        <button @click="toggleUI('search')" type="button" class="btn btn-action btn-action-primary ms-2">
+                            <i class="bi bi-search"></i>
+                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Pesquisar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!--BOX SEARCH-->
+                <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
+                    <form @submit.prevent="list" class="row g-3">
+                        <div class="col-sm-12 col-md-4">
+                            <label for="s-name" class="form-label">Nome</label>
+                            <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
+                                placeholder="Pesquise por partes do nome do orgão">
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <label for="s-cnpj" class="form-label">Cnpj</label>
+                            <input type="cnpj" name="cnpj" class="form-control" id="s-cnpj"
+                                v-model="page.search.cnpj" placeholder="000.000.00/0000-00"
+                                v-maska:[masks.maskcnpj] >
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <label for="s-postalcity" class="form-label">Cidade</label>
+                            <input type="postalcity" name="postalcity" class="form-control" id="s-postalcity"
+                                v-model="page.search.postalcity" placeholder="000.000.00/0000-00">
+                        </div>
+
+                        <div class="d-flex flex-row-reverse mt-4">
+                            <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
+                                    class="bi bi-check2-circle"></i></button>
+                        </div>
+                    </form>
+                </div>
+
+                <!--BOX LIST-->
+                <div v-if="!page.uiview.register" id="list-box" class="mb-4">
+                    <TableList 
+                    @action:update="update" 
+                    @action:delete="remove" 
+                    :header="page.dataheader" 
+                    :body="page.datalist" 
+                    :actions="['update', 'delete']"
+                    :casts="{'status':page.selects.status}"/>
+                </div>
+
+                <!--BOX REGISTER-->
+                <div v-if="page.uiview.register" id="register-box" class="px-4 px-md-5 mb-4">
+                    <form class="form-row" @submit.prevent="save(page.data.id)">
+                        <input type="hidden" name="id" v-model="page.data.id">
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="name" class="form-label">Nome</label>
+                                <input type="text" name="name" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.name }" id="name"
+                                    placeholder="Entidade Central" v-model="page.data.name">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="cnpj" class="form-label">CNPJ</label>
+                                <input type="text" name="cnpj" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.cnpj }" id="cnpj"
+                                    placeholder="00.000.000/0000-00" v-model="page.data.cnpj"
+                                    v-maska:[masks.maskcnpj]>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="phone" class="form-label">Telefone</label>
+                                <input type="text" name="phone" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.phone }" id="phone"
+                                    placeholder="(00)9.0000-0000" v-model="page.data.phone"
+                                    v-maska:[masks.maskphone]>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="email" class="form-label">E-mail</label>
+                                <input type="email" name="email" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.email }" id="email"
+                                    placeholder="user@example.com" v-model="page.data.email">
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <label for="address" class="form-label">Endereço</label>
+                                <input type="text" name="address" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.address }" id="address"
+                                    placeholder="Logradouro, número - bairro (Rua do Amor, 110 - Centro)" v-model="page.data.address">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="postalcity" class="form-label">Cidade</label>
+                                <input type="text" name="postalcity" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.postalcity }" id="postalcity"
+                                    placeholder="Campos Sales - CE" v-model="page.data.postalcity">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="postalcode" class="form-label">CEP</label>
+                                <input type="text" name="postalcode" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.postalcode }" id="postalcode"
+                                    placeholder="00000-000" v-model="page.data.postalcode"
+                                    v-maska:[masks.maskcep]>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="status" class="form-label">Status</label>
+                                <select name="status" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.status }" id="status"
+                                    v-model="page.data.status">
+                                    <option value=""></option>
+                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{ s.title }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-row-reverse mt-4">
+                            <button @click="toggleUI('list')" type="button" class="btn btn-outline-warning">Cancelar <i
+                                    class="bi bi-x-circle"></i></button>
+                            <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
+                                    class="bi bi-check2-circle"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+</template>

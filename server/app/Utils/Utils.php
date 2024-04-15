@@ -2,7 +2,6 @@
 
 namespace App\Utils;
 
-use Illuminate\Support\Facades\Log;
 
 class Utils
 {
@@ -31,8 +30,6 @@ class Utils
                 $map[] = ['column' => $key, 'operator' => map_operator($value), 'value' => map_value($value), 'mode' => $mode];
             }
         }
-
-        Log::info(json_encode($map));
 
         return $map;
    }

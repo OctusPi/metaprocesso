@@ -19,6 +19,6 @@ class Organ extends Model
         'address',
         'postalcity',
         'postalcode',
-        'status',
+        'status'
     ];
 }

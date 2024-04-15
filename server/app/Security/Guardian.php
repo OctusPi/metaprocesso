@@ -2,9 +2,6 @@
 
 namespace App\Security;
 use App\Models\User;
-use App\Utils\Notify;
-use Illuminate\Support\Facades\Log;
-use Response;
 
 class Guardian
 {
@@ -28,8 +25,10 @@ class Guardian
 
     public static function checkAccess(string $module_name): bool
     {
+
         $user = self::getUser();
         if (!is_null($user)) {
+            $module_name  = str_replace(['organs', 'units', 'sectors', 'programs',  'dotations'], 'management', $module_name);
             $auth_modules = array_column($user->modules, 'module');
             return in_array(str_replace('api/', '', $module_name), $auth_modules);
         }

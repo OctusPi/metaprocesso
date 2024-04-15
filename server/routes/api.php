@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Management;
+use App\Http\Controllers\Organs;
 use App\Http\Middleware\CheckPermission;
 use App\Utils\Notify;
 use Illuminate\Support\Facades\Route;
@@ -29,6 +30,21 @@ Route::controller(Dashboard::class)->group(function () {
     });
 
 })->name('dashboard');
+
+Route::controller(Organs::class)->group(function () {
+    
+    Route::prefix('/organs')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects', 'selects');
+        });
+    });
+})->name('organs');
 
 Route::controller(Management::class)->group(function () {
     

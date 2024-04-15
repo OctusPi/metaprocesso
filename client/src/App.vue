@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, provide, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { RouterView } from 'vue-router'
 import style from '@/stores/theme';
 import UiAlert from './components/UiAlert.vue';
@@ -9,11 +9,7 @@ const datalist = ref([])
 const alert    = ref({show: false, data:{type:'success', msg: ''}})
 const remove   = ref({})
 
-provide('sysapp', {
-  name: import.meta.env.VITE_APP_NAME ?? 'Gestor Contratos',
-  desc: import.meta.env.VITE_APP_DESC ?? 'Gestão e Fiscalização de Contratos',
-  copy: import.meta.env.VITE_APP_COPY ?? 'OctusPi 2024'
-})
+
 
 onMounted(() => {
   const screen = document.getElementById('screen')
