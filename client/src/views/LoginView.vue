@@ -41,7 +41,8 @@ function login(){
 function islogged(){
     
     if(user.value){
-        http.get('/auth/check', emit, (response) => {
+        http.get('/auth/check', emit, null, (response) => {
+            console.log('assasa')
             if(response.status === 200){ return }
             logout()
         });

@@ -2,7 +2,7 @@ import axsi from './axsi'
 import forms from './forms'
 import utils from '@/utils/utils'
 
-async function request(opt, emit, customresp = null){
+async function request(opt, emit, customresp = null, callback = null){
     utils.load()
 
     await axsi.axiosInstanceAuth.request(opt).then(response => {
@@ -16,7 +16,7 @@ async function request(opt, emit, customresp = null){
         
     }).catch((error) => {
         console.log(error.message)
-        const resperror = customresp ?? defresp
+        const resperror = callback ?? defresp
         emit('callAlert', {show: true, data:error?.response?.data?.notify ?? {type:'danger', msg:'Que feio servidor, não faz assim!'}})
         resperror(error?.response, emit)
         
@@ -40,17 +40,17 @@ function defresp(resp, emit){
     }
 }
 
-function post (url, data, emit, resp= null){
+function post (url, data, emit, resp = null, back = null){
     const opt = {
         url: url,
         method: 'POST',
         data : forms.builddata(data)
     }
     
-    request(opt, emit, resp)
+    request(opt, emit, resp, back)
 }
 
-function put (url, data, emit, resp= null){
+function put (url, data, emit, resp= null, back = null){
     const opt = {
         url: url,
         method: 'PUT',
@@ -60,35 +60,36 @@ function put (url, data, emit, resp= null){
         }
     }
     
-    request(opt, emit, resp)
+    request(opt, emit, resp, back)
 }
 
-function get (url, emit, resp = null){
+function get (url, emit, resp = null, back = null){
     const opt = {
         method: 'GET',
         url: url
     }
-    request(opt, emit, resp)
+
+    request(opt, emit, resp, back)
 }
 
-function patch (url, data, emit, resp= null){
+function patch (url, data, emit, resp= null, back = null){
     const opt = {
         url: url,
         method: 'PATCH',
         data : forms.builddata(data)
     }
     
-    request(opt, emit, resp)
+    request(opt, emit, resp, back)
 }
 
-function destroy (url, data, emit, resp= null){
+function destroy (url, data, emit, resp= null, back = null){
     const opt = {
         url: url,
         method: 'POST',
         data : forms.builddata(data)
     }
     
-    request(opt, emit, resp)
+    request(opt, emit, resp, back)
 }
 
 function success(response){

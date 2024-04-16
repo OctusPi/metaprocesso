@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Utils\Notify;
 use App\Security\Guardian;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -23,4 +26,22 @@ class Controller extends BaseController
     public function index(){
         return response()->json('success', 200);
     }
+
+    public function validateCheck(string $model, ?array $data = [])
+    {
+        return Validator::make($data, $model::validateFields(), $model::validateMsg());
+    }
+
+    public function validateErros(string $model, ?array $data = []):?string
+    {
+        $validator = Validator::make($data, $model::validateFields(), $model::validateMsg());
+        
+        if($validator->fails()){
+            Log::alert(json_encode($validator->errors(), JSON_UNESCAPED_UNICODE));
+            return $validator->errors()->first();
+        }
+
+        return null;
+    }
 }
+

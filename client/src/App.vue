@@ -9,21 +9,9 @@ const datalist = ref([])
 const alert    = ref({show: false, data:{type:'success', msg: ''}})
 const remove   = ref({})
 
-
-
 onMounted(() => {
   const screen = document.getElementById('screen')
-  
-  if(screen){
-
-    //remove theme
-    screen.classList.forEach(cl => {
-      screen.classList.remove(cl)
-    })
-
-    //set theme
-    screen.classList.add(style.theme)
-  }
+  if(screen){ screen.classList.add(style.theme)}
 })
 
 </script>

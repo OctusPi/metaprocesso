@@ -2,17 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Organ;
 use App\Models\User;
-use App\Security\Guardian;
 use App\Utils\Utils;
+use App\Models\Organ;
 use App\Utils\Notify;
 use App\Mail\Wellcome;
 use App\Middleware\Data;
+use App\Security\Guardian;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class Organs extends Controller
 {
@@ -24,17 +26,21 @@ class Organs extends Controller
 
     public function save(Request $request)
     {
-        $pass = Str::random(8);
-        $user = new User($request->all());
-        $user->username = $request->get("email");
-        $user->password = Hash::make($pass);
-
-        if($user->save()){
-            Mail::to($user)->send(new Wellcome($user, $pass));
-            return Response()->json(Notify::success("Usuário cadastrado com sucesso"), 200);
+        $validateErros = $this->validateErros(Organ::class, $request->all());
+        if ($validateErros) {
+            return response()->json(Notify::warning($validateErros), 400);
         }
 
-        return Response()->json(Notify::warning("Usuário já cadastrado no sistema"), 400);
+        try {
+            $organ = new Organ($request->all());
+            if($organ->save()){
+                return Response()->json(Notify::success("Orgão cadastrado com sucesso!"), 200);
+            }
+        }catch(\Exception $e){
+            Log::alert($e->getMessage());
+            return Response()->json(Notify::error("Falha ao cadastrar orgão"), 500);
+        }
+        
     }
     
     public function update(Request $request)

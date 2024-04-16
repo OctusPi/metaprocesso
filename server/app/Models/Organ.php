@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Organ extends Model
 {
@@ -21,4 +22,28 @@ class Organ extends Model
         'postalcode',
         'status'
     ];
+
+    public static function validateFields():array
+    {
+        return [
+            'name'       => 'required',
+            'cnpj'       => 'required|unique:organs',
+            'phone'      => 'required',
+            'email'      => 'required|email',
+            'address'    => 'required',
+            'postalcity' => 'required',
+            'postalcode' => 'required',
+            'status'     => 'required'
+        ];
+    }
+
+    public static function validateMsg():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'email'    => 'Informe um email válido!',
+            'unique'   => 'Orgão já registrado no sistema!'
+        ];
+    }
+
 }

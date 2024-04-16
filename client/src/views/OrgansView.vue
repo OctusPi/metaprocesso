@@ -27,16 +27,11 @@ const page = ref({
     ],
     search      :{},
     selects     :{
-        status: [],
-        profiles:[],
-        organs: [],
-        units: [],
-        sectors: [],
-        modules: []
+        status: []
     },
     rules       :{
         fields: {
-            name:'required',
+            // name:'required',
             cnpj:'required',
             phone:'required',
             email:'required|email',
@@ -90,20 +85,12 @@ function save(){
         return
     }
 
-    const dataform = {...page.value.data }
-    dataform.modules = JSON.stringify((page.value.data.modules).map(i => page.value.selects.modules[i]))
+    const data = {...page.value.data }
+    const url  = page.value.data?.id ? '/organs/update' : '/organs/save'
+    const exec = page.value.data?.id ? http.put : http.post
 
-
-    if(page.value.data?.id){
-        http.put('/organs/update', dataform, emit, () => {
-            list()
-        })
-
-        return
-    }
-
-    http.post('/organs/save', dataform, emit, () => {
-        list()
+    exec(url, data, emit, () => {
+        list();
     })
 }
 
