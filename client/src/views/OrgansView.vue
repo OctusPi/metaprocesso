@@ -21,9 +21,9 @@ const page = ref({
     datalist    :props.datalist,
     dataheader  :[
         {key:'name', title:'IDENTIFICAÇÃO', sub:[{key:'cnpj'}]}, 
-        {key:'email', title:'E-MAIL'}, 
-        {key:'profile', title:'PERFIL', sub:[{key:'passchange', title:'Sitiação Senha'}]}, 
-        {key:'status', title:'STATUS', sub:[{key:'lastlogin', title:'Ultimo Acesso'}]}
+        {key:'phone', title:'CONTATO', sub:[{key:'email'}]}, 
+        {key:'postalcity', title:'LOCALIZAÇÃO', sub:[{key:'address'}]}, 
+        {key:'status', title:'STATUS'}
     ],
     search      :{},
     selects     :{
@@ -31,7 +31,7 @@ const page = ref({
     },
     rules       :{
         fields: {
-            // name:'required',
+            name:'required',
             cnpj:'required',
             phone:'required',
             email:'required|email',
@@ -97,7 +97,6 @@ function save(){
 function update(id){
     http.get(`/organs/details/${id}`, emit, (response) => {
         page.value.data = response.data
-        page.value.data.modules = (response.data?.modules ?? {}).map(obj => obj['id'])
         toggleUI('update')
     })
 }
@@ -176,7 +175,7 @@ onMounted(() => {
                         <div class="col-sm-12 col-md-4">
                             <label for="s-postalcity" class="form-label">Cidade</label>
                             <input type="postalcity" name="postalcity" class="form-control" id="s-postalcity"
-                                v-model="page.search.postalcity" placeholder="000.000.00/0000-00">
+                                v-model="page.search.postalcity" placeholder="Nome da Cidade">
                         </div>
 
                         <div class="d-flex flex-row-reverse mt-4">

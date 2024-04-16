@@ -33,4 +33,15 @@ class Utils
 
         return $map;
    }
+
+   public static function map_select($list)
+   {
+        
+        if($list){ 
+            return $list->map(function($item){
+                return ['id'=>(int)$item->id,'title'=>$item->name];
+            });
+        }
+        return [];
+   }
 }

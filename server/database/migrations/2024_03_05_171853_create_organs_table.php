@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->string('phone', 20);
             $table->string('email', 220);
             $table->string('address');
-            $table->integer('postalcity');
+            $table->string('postalcity', 120);
             $table->string('postalcode', 10);
             $table->integer('status');
         });

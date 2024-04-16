@@ -28,7 +28,7 @@
 
     function casting(key, search, subject, extract = null){
         const findObj = subject.find(obj => obj[key] === search)
-        return extract && findObj && findObj[extract] ? findObj[extract] : findObj
+        return extract && findObj && findObj[extract] ? findObj[extract] ?? '' : findObj
     }
 
     function propagateEmit(emt){
@@ -53,7 +53,7 @@
                             <span 
                                 v-for="s in h.sub" :key="s.key" 
                                 class="inline-block small">
-                                {{ `${s.title}: ${props.casts[s.key] ? casting('id', b[s.key], props.casts[s.key], 'title') :  b[s.key] }` }} 
+                                {{ `${s.title ?? ''} ${props.casts[s.key] ? casting('id', b[s.key], props.casts[s.key], 'title') :  b[s.key] ?? '' }` }} 
                             </span>
                         </p>
                     </td>

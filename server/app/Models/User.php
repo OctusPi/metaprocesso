@@ -54,14 +54,13 @@ class User extends Model
     ];
 
     protected $hidden = [
-        'password',
         'created_at',
         'updated_at'
     ];
 
     protected $casts = [
-        'organs' => Json::class,
-        'units' => Json::class,
+        'organs'  => Json::class,
+        'units'   => Json::class,
         'sectors' => Json::class,
         'modules' => Json::class,
     ];
@@ -82,13 +81,32 @@ class User extends Model
         );
     }
 
+    public static function validateFields(?int $id = null):array
+    {
+        return [
+            'name'   => 'required',
+            'email'  => 'required|email|unique:users'.($id ? ',id,'.$id : ''),
+            'profile' => 'required',
+            'status' => 'required'
+        ];
+    }
+
+    public static function validateMsg():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'email'    => 'Informe um email válido!',
+            'unique'   => 'Usuário já registrado no sistema!'
+        ];
+    }
+
     public static function list_profiles(): array
     {
         return [
-            self::PRF_ADMIN => 'Administrador', 
-            self::PRF_GESTOR => 'Gestor', 
+            self::PRF_ADMIN   => 'Administrador', 
+            self::PRF_GESTOR  => 'Gestor', 
             self::PRF_TECNICO => 'Técnico', 
-            self::PRF_AGENTE => 'Agente', 
+            self::PRF_AGENTE  => 'Agente', 
             self::PRF_AUTIDOR => 'Auditor'
         ];
     }
@@ -97,7 +115,7 @@ class User extends Model
     public static function list_modules(): array
     {
         return [
-            ['id'  => self::MOD_INI, 'module' => 'dashboard', 'title' => 'Acesso Inicial'],
+            ['id' => self::MOD_INI, 'module' => 'dashboard', 'title' => 'Acesso Inicial'],
             ['id' => self::MOD_MANAGEMENT, 'module' => 'management', 'title' => 'Gestão Administrativa'],
             ['id' => self::MOD_CATALOGS, 'module' => 'catalogs', 'title' => 'Catálogos'],
             ['id' => self::MOD_SUPPLIERS, 'module' => 'suppliers', 'title' => 'Fornecedores'], 
@@ -114,5 +132,7 @@ class User extends Model
             ['id' => self::MOD_REPORTS, 'module' => 'reports', 'title' => 'Relatórios'],
         ];
     }
+
+    
 
 }

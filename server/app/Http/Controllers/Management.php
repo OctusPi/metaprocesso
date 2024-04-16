@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Organ;
 use App\Models\User;
-use App\Security\Guardian;
 use App\Utils\Utils;
 use App\Utils\Notify;
 use App\Mail\Wellcome;
 use App\Middleware\Data;
+use App\Security\Guardian;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
@@ -23,9 +25,14 @@ class Management extends Controller
 
     public function save(Request $request)
     {
+        $validateErros = $this->validateErros(User::class, $request->all());
+        if ($validateErros) {
+            return response()->json(Notify::warning($validateErros), 400);
+        }
+
         $pass = Str::random(8);
         $user = new User($request->all());
-        $user->username = $request->get("email");
+        $user->username = $request->input("email");
         $user->password = Hash::make($pass);
 
         if($user->save()){
@@ -38,53 +45,23 @@ class Management extends Controller
     
     public function update(Request $request)
     {
-        $user = User::findOrFail($request->get("id"));
-
-        if($user->update($request->all())){
-            return Response()->json(Notify::success("Usuário atualizado com sucesso."), 200);
-        }else{
-            return Response()->json(Notify::warning("Falha ao editar usuário!"), 400);
-        }
+        return $this->baseUpdate(User::class, $request->id, $request->all());
     }
 
     public function delete(Request $request)
     {
-        if(!password_verify($request->password, $this->user_loged->password)) {
-            return Response()->json(Notify::warning('Senha de confirmação inválida!'), 401);
-        }
-
-        $user = User::where('id', $request->get('id'))->first();
-        if($user) {
-    
-            if($user->delete()){
-               return Response()->json(Notify::success('Usuário excluído com sucesso'), 200);
-            }
-
-            return Response()->json(Notify::warning('Ação não permitida, usuário referenciado em outros contextos!'), 400);
-        }
-
-        return Response()->json(Notify::warning('Dados para exclusão nao localizado!'), 404);
+        return $this->baseDelete(User::class, $request->id, $request->password);
     }
 
     public function list(Request $request)
     {
-        try {
-            $search = Utils::map_search(['name', 'email', 'profile'], $request->all());
-            $query  = Data::list(User::class, $search);
-            return Response()->json($query ?? [], 200);
-        } catch (\Throwable $th) {
-            return Response()->json(Notify::error($th->getMessage().'Falha ao recuperar dados!'), 500);
-        }
+        $search = ['name', 'email', 'profile'];
+        return $this->baseList(User::class, $search, $request->all());
     }
 
     public function details(Request $request)
     {
-        $user = User::where("id", $request->id)->first();
-        if (!$user) {
-            return Response()->json(Notify::warning('Usuário não localizado!'), 404);
-        }
-        
-        return Response()->json($user->toArray(), 200);
+        return $this->baseDetails(User::class, $request->id);
     }
 
     public function selects(Request $request)
@@ -95,21 +72,21 @@ class Management extends Controller
             $profiles[] = ['id' => $key, 'title' => $value];
         }
 
-        if($this->user_loged -> profile != User::PRF_ADMIN){
+        if($this->user_loged ->profile != User::PRF_ADMIN){
             array_shift($profiles);
         }
-
 
         try {
             return Response()->json([
                 'modules'   => $this->user_loged != null ? $this->user_loged->modules : [],
-                'organs'    => [],
+                'organs'    => Utils::map_select(Data::list(Organ::class)),
                 'units'     => [],
                 'sectors'   => [],
                 'profiles'  => $profiles,
                 'status'    => [['id'=> 0,'title'=> 'Inativo'], ['id'=> 1,'title'=> 'Ativo']]
             ], 200);
         } catch (\Throwable $th) {
+            Log::info($th->getMessage());
             return Response()->json(Notify::error('Falha ao recuperar dados!'), 500);
         }
     }

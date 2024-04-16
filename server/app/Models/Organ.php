@@ -13,6 +13,7 @@ class Organ extends Model
     protected $table = 'organs';
 
     protected $fillable = [
+        'id',
         'name',
         'cnpj',
         'phone',
@@ -23,11 +24,11 @@ class Organ extends Model
         'status'
     ];
 
-    public static function validateFields():array
+    public static function validateFields(?int $id = null):array
     {
         return [
             'name'       => 'required',
-            'cnpj'       => 'required|unique:organs',
+            'cnpj'       => 'required|unique:organs'.($id ? ',id,'.$id : ''),
             'phone'      => 'required',
             'email'      => 'required|email',
             'address'    => 'required',
