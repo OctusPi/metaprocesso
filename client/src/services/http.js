@@ -66,7 +66,10 @@ function put (url, data, emit, resp= null, back = null){
 function get (url, emit, resp = null, back = null){
     const opt = {
         method: 'GET',
-        url: url
+        url: url,
+        headers:{
+            'Content-Type':'application/json',
+        }
     }
 
     request(opt, emit, resp, back)

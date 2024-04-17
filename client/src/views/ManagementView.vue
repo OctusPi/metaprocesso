@@ -81,9 +81,6 @@ function toggleUI(mode = null){
     }
 }
 
-function handleUpdateValue({ identifier, value }) {
-    page.value.data[identifier] = value;
-}
 
 function save(){
     const validation = forms.checkform(page.value.data, page.value.rules);
@@ -94,7 +91,9 @@ function save(){
 
     const dataform = {...page.value.data }
     dataform.modules = JSON.stringify((page.value.data.modules).map(i => page.value.selects.modules[i]))
-
+    dataform.organs  = JSON.stringify(page.value.data.organs)
+    dataform.units   = JSON.stringify(page.value.data.units)
+    dataform.sectors = JSON.stringify(page.value.data.sectors)
 
     if(page.value.data?.id){
         http.put('/management/update', dataform, emit, () => {
@@ -107,6 +106,7 @@ function save(){
     http.post('/management/save', dataform, emit, () => {
         list()
     })
+
 }
 
 function update(id){
@@ -156,6 +156,7 @@ onMounted(() => {
             }" />
 
             <div class="box p-0 mb-4 rounded-4">
+                
                 <!--HEDER PAGE-->
                 <div class="d-md-flex justify-content-between align-items-center px-4 px-md-5 pt-5 mb-4">
                     <div class="info-list">
@@ -230,7 +231,7 @@ onMounted(() => {
                                     placeholder="Sr. Snake" v-model="page.data.name">
                             </div>
                         </div>
-
+                        
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="email" class="form-label">E-mail</label>
@@ -263,26 +264,22 @@ onMounted(() => {
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12">
                                 <label for="modules" class="form-label">Modulos</label>
-                                <InputMultSelect :value="page.data.modules" :options="page.selects.modules"
-                                    identifier="modules" @update:value="handleUpdateValue" />
+                                <InputMultSelect v-model="page.data.modules" :options="page.selects.modules" identify="modules"/>
                             </div>
                         </div>
 
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="organs" class="form-label">Orgãos</label>
-                                <InputMultSelect :value="page.data.organs ?? []" :options="page.selects.organs"
-                                    identifier="organs" @update:value="handleUpdateValue" />
+                                <InputMultSelect v-model="page.data.organs" :options="page.selects.organs" identify="organs"/>
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="units" class="form-label">Unidades</label>
-                                <InputMultSelect :value="page.data.units ?? []" :options="page.selects.units"
-                                    identifier="units" @update:value="handleUpdateValue" />
+                                <InputMultSelect v-model="page.data.units" :options="page.selects.units" identify="units"/>
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="sectors" class="form-label">Setores</label>
-                                <InputMultSelect :value="page.data.sectors ?? []" :options="page.selects.sectors"
-                                    identifier="sectors" @update:value="handleUpdateValue" />
+                                <InputMultSelect v-model="page.data.sectors" :options="page.selects.sectors" identify="sectors" />
                             </div>
                         </div>
 

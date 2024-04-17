@@ -7,6 +7,7 @@ use App\Utils\Utils;
 use App\Utils\Notify;
 use App\Middleware\Data;
 use App\Security\Guardian;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -74,6 +75,7 @@ class Controller extends BaseController
                 return Response()->json(Notify::success("Registro atualizado com sucesso!"), 200);
             }
         } catch (\Exception $e) {
+            Log::alert($e->getMessage());
             return Response()->json(Notify::error("Falha ao atualizar registro!"), 500);
         }
     }

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Organ;
+use App\Models\Sector;
+use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
+use App\Models\Organ;
 use App\Utils\Notify;
 use App\Mail\Wellcome;
 use App\Middleware\Data;
@@ -79,9 +81,9 @@ class Management extends Controller
         try {
             return Response()->json([
                 'modules'   => $this->user_loged != null ? $this->user_loged->modules : [],
-                'organs'    => Utils::map_select(Data::list(Organ::class)),
-                'units'     => [],
-                'sectors'   => [],
+                'organs'    => Utils::map_select(Data::list(Organ::class, order:['name'])),
+                'units'     => Utils::map_select(Data::list(Unit::class, order:['name'])),
+                'sectors'   => Utils::map_select(Data::list(Sector::class, order:['name'])),
                 'profiles'  => $profiles,
                 'status'    => [['id'=> 0,'title'=> 'Inativo'], ['id'=> 1,'title'=> 'Ativo']]
             ], 200);

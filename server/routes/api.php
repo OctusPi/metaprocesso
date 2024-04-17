@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\Dotations;
 use App\Http\Controllers\Management;
 use App\Http\Controllers\Organs;
+use App\Http\Controllers\Programs;
 use App\Http\Controllers\Units;
 use App\Http\Controllers\Sectors;
 use App\Http\Middleware\CheckPermission;
@@ -73,10 +75,40 @@ Route::controller(Sectors::class)->group(function () {
             Route::put('/update', 'update');
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
-            Route::get('/selects', 'selects');
+            Route::get('/selects/{key?}/{search?}', 'selects');
         });
     });
 })->name('sectors');
+
+Route::controller(Programs::class)->group(function () {
+    
+    Route::prefix('/programs')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects/{key?}/{search?}', 'selects');
+        });
+    });
+})->name('programs');
+
+Route::controller(Dotations::class)->group(function () {
+    
+    Route::prefix('/dotations')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects/{key?}/{search?}', 'selects');
+        });
+    });
+})->name('dotations');
 
 Route::controller(Management::class)->group(function () {
     
@@ -88,7 +120,7 @@ Route::controller(Management::class)->group(function () {
             Route::put('/update', 'update');
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
-            Route::get('/selects/{type?}/{key?}', 'selects');
+            Route::get('/selects', 'selects');
         });
     });
 })->name('management');

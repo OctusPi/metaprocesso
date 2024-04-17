@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dotation;
+use App\Models\Program;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
@@ -11,7 +13,7 @@ use App\Middleware\Data;
 use App\Security\Guardian;
 use Illuminate\Http\Request;
 
-class Sectors extends Controller
+class Dotations extends Controller
 {
     public function __construct()
     {
@@ -21,28 +23,28 @@ class Sectors extends Controller
 
     public function save(Request $request)
     {
-        return $this->baseSave(Sector::class, $request->all());
+        return $this->baseSave(Dotation::class, $request->all());
     }
 
     public function update(Request $request)
     {
-        return $this->baseUpdate(Sector::class, $request->id, $request->all());
+        return $this->baseUpdate(Dotation::class, $request->id, $request->all());
     }
 
     public function delete(Request $request)
     {
-        return $this->baseDelete(Sector::class, $request->id, $request->password);
+        return $this->baseDelete(Dotation::class, $request->id, $request->password);
     }
 
     public function list(Request $request)
     {
         $search = ['organ_id', 'unit_id', 'name'];
-        return $this->baseList(Sector::class, $search, $request->all());
+        return $this->baseList(Dotation::class, $search, $request->all());
     }
 
     public function details(Request $request)
     {
-        return $this->baseDetails(Sector::class, $request->id);
+        return $this->baseDetails(Dotation::class, $request->id);
     }
 
     public function selects(Request $request)

@@ -230,7 +230,7 @@ onMounted(() => {
                                 <label for="email" class="form-label">E-mail</label>
                                 <input type="email" name="email" class="form-control"
                                     :class="{ 'form-control-alert': page.rules.valids.email }" id="email"
-                                    placeholder="user@example.com" v-model="page.data.email">
+                                    placeholder="orgao@example.com" v-model="page.data.email">
                             </div>
                             <div class="col-sm-12 col-md-8">
                                 <label for="address" class="form-label">Endereço</label>

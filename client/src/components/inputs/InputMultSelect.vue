@@ -1,51 +1,40 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { onMounted } from 'vue';
 
 // Props
-const props = defineProps({
-	value: { type: Array, default: () => [] },
+const props = defineProps({ 
 	options: { type: Array, required: true },
-	identifier: { type: String, required: true }
+	identify: {type: String, required: true}
 });
+const model = defineModel({default: []})
 
-// Emits
-const emit = defineEmits(['update:value']);
-
-// Data
-const selectedValues = ref([...props.value]);
-
-// Watcher para detectar alterações em selectedValues
-watch(() => selectedValues.value, (newValue) => {
-	emit('update:value', { identifier: props.identifier, value: newValue }); // Emitir evento para notificar o componente pai sobre a mudança
-}, { deep: true });
-
-// Método para alternar a seleção de uma opção
-function toggleSelection(optionId) {
-	const index = selectedValues.value.indexOf(optionId);
-	if (index !== -1) {
-		selectedValues.value.splice(index, 1); // Remove o valor se já estiver selecionado
-	} else {
-		selectedValues.value.push(optionId); // Adiciona o valor se não estiver selecionado
+onMounted(() => {
+	if(!model.value){
+		model.value = []
 	}
-}
+})
+
 </script>
 
 <template>
-	<select class="form-control select-multipe" multiple>
-		<option v-for="option in options" :key="option.id" :value="option.id"
-			:selected="selectedValues.includes(option.id)" @mousedown.prevent.stop="toggleSelection(option.id)">
-			{{ option.title }}
-		</option>
-	</select>
+	<div class="form-control select-multipe">
+		<div class="form-check mb-1" v-for="option in props.options" :key="option.id+props.identify">
+			<input class="form-check-input" type="checkbox" :name="option.id+props.identify"
+			v-model="model"
+			:value="option.id" 
+			:id="option.id+props.identify">
+			<label class="form-check-label small" :for="option.id+props.identify">
+				{{ option.title }}
+			</label>
+		</div>
+	</div>
 </template>
 
 <style>
-.select-multipe {
-	padding: 0;
-}
 
-.select-multipe option {
-	padding: 8px 16px;
-	cursor: pointer;
+.select-multipe {
+	height: 200px;
+	overflow: auto;
+	padding: 16px;
 }
 </style>

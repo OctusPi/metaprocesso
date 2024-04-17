@@ -47,7 +47,7 @@ class Units extends Controller
     public function selects(Request $request)
     {
         return Response()->json([
-            'organs' => Utils::map_select(Data::list(Organ::class)),
+            'organs' => Utils::map_select(Data::list(Organ::class, order:['name'])),
             'status' => [['id' => 0, 'title' => 'Inativo'], ['id' => 1, 'title' => 'Ativo']]
         ], 200);
     }

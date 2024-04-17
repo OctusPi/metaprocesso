@@ -9,7 +9,7 @@ use App\Security\Guardian;
 
 class Data
 {
-    public static function list(string $model, array $params = [])
+    public static function list(string $model, array $params = [], ?array $order = null)
     {
         $user = Guardian::getUser();
 
@@ -49,6 +49,10 @@ class Data
                             $query->orWhere($condition['column'], $condition['operator'], $condition['value']);
                         }
                     });
+                }
+
+                if($order){
+                    $query->orderBy(...$order);
                 }
 
                 return $query->get();

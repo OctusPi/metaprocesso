@@ -18,5 +18,3 @@ app.provide('sysapp', {
   copy: import.meta.env.VITE_APP_COPY ?? 'OctusPi 2024'
 })
 app.mount('#app')
-
-

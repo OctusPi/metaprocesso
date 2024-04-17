@@ -30,4 +30,21 @@ class Dotation extends Model
     {
         return $this->belongsTo(Unit::class, 'unit_id');
     }
+
+    public static function validateFields(?int $id = null):array
+    {
+        return [
+            'name'     => 'required',
+            'organ_id' => 'required',
+            'unit_id'  => 'required',
+            'status'   => 'required'
+        ];
+    }
+
+    public static function validateMsg():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!'
+        ];
+    }
 }
