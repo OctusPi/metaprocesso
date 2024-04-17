@@ -25,4 +25,20 @@ class Unit extends Model
     {
         return $this->belongsTo(Organ::class, 'organ_id');
     }
+
+    public static function validateFields(?int $id = null):array
+    {
+        return [
+            'organ_id' => 'required',
+            'name'     => 'required',
+            'cnpj'     => 'required'
+        ];
+    }
+
+    public static function validateMsg():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!'
+        ];
+    }
 }

@@ -38,6 +38,12 @@ const router = createRouter({
 			component: () => import('../views/OrgansView.vue')
 		},
 		{
+			path: '/units',
+			name: 'units',
+			meta: { auth: true },
+			component: () => import('../views/UnitsView.vue')
+		},
+		{
 			path: '/management',
 			name: 'management',
 			meta: { auth: true },

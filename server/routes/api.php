@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Management;
 use App\Http\Controllers\Organs;
+use App\Http\Controllers\Units;
 use App\Http\Middleware\CheckPermission;
 use App\Utils\Notify;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,21 @@ Route::controller(Organs::class)->group(function () {
         });
     });
 })->name('organs');
+
+Route::controller(Units::class)->group(function () {
+    
+    Route::prefix('/units')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects', 'selects');
+        });
+    });
+})->name('units');
 
 Route::controller(Management::class)->group(function () {
     

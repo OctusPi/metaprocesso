@@ -16,9 +16,9 @@ return new class extends Migration {
             $table->foreignId('organ_id')->constrained('organs');
             $table->string('name');
             $table->string('cnpj', 20);
-            $table->string('phone', 20);
-            $table->string('email', 220);
-            $table->string('address');
+            $table->string('phone', 20)->nullable();
+            $table->string('email', 220)->nullable();
+            $table->string('address')->nullable();
         });
     }
 
