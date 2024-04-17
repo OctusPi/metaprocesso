@@ -16,10 +16,7 @@ class Sector extends Model
         'name',
         'organ_id',
         'unit_id',
-        'cnpj',
-        'phone',
-        'email',
-        'address',
+        'description'
     ];
 
     public function organ(): BelongsTo

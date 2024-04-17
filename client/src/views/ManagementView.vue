@@ -6,6 +6,7 @@ import MainHeader from '@/components/MainHeader.vue';
 import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
 import http from '@/services/http';
+import ManagementNav from '@/components/ManagementNav.vue';
 import TableList from '@/components/TableList.vue';
 import InputMultSelect from '@/components/inputs/InputMultSelect.vue';
 
@@ -162,44 +163,7 @@ onMounted(() => {
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
                     </div>
                     <div class="action-buttons d-flex my-2">
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-action btn-action-primary" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical"></i>
-                                <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Gestão</span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <RouterLink to="/organs" class="dropdown-item">
-                                        <i class="bi bi-building-fill-gear me-1"></i> Orgãos
-                                    </RouterLink>
-                                </li>
-                                <li>
-                                    <RouterLink to="/units" class="dropdown-item">
-                                        <i class="bi bi-house-gear-fill me-1"></i> Unidades
-                                    </RouterLink>
-                                </li>
-                                <li>
-                                    <RouterLink to="/sectors" class="dropdown-item">
-                                        <i class="bi bi-grid-fill me-1"></i> Setores
-                                    </RouterLink>
-                                </li>
-                                <li>
-                                    <RouterLink to="/programs" class="dropdown-item">
-                                        <i class="bi bi-circle-square me-1"></i> Programas
-                                    </RouterLink>
-                                </li>
-                                <li>
-                                    <RouterLink to="/dotations" class="dropdown-item">
-                                        <i class="bi bi-piggy-bank-fill me-1"></i> Dotações
-                                    </RouterLink>
-                                </li>
-                                <li>
-                                    <RouterLink to="/management" class="dropdown-item">
-                                        <i class="bi bi-person-bounding-box me-1"></i> Usuários
-                                    </RouterLink>
-                                </li>
-                            </ul>
-                        </div>
+                        <ManagementNav />
                         <button @click="toggleUI('register')" type="button" class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-plus-circle"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>

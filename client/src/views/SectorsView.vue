@@ -3,7 +3,6 @@ import { onMounted, ref, watch } from 'vue'
 import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
 import http from '@/services/http';
-import masks from '@/utils/masks'
 
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
@@ -28,7 +27,7 @@ const page = ref({
     search      :{},
     selects     :{
         organs: [],
-        status: []
+        units: []
     },
     rules       :{
         fields: {
@@ -69,11 +68,11 @@ function toggleUI(mode = null){
     }
     
     if(page.value.uiview.register){
-        page.value.title.primary = 'Registro de Unidades'
-        page.value.title.secondary = 'Insira os dados para registro da Unidade vinculada ao Orgão'
+        page.value.title.primary = 'Registro de Setores'
+        page.value.title.secondary = 'Insira os dados para registro de Setores vinculados as Unidades do Orgão'
     }else{
-        page.value.title.primary = 'Listagem de Unidades'
-        page.value.title.secondary = `Foram localizados ${(page.value.datalist.length).toString().padStart(2, '0')} unidades inseridas no sistema`
+        page.value.title.primary = 'Listagem de Setores'
+        page.value.title.secondary = `Foram localizados ${(page.value.datalist.length).toString().padStart(2, '0')} setores inseridos no sistema`
     }
 }
 
@@ -85,7 +84,7 @@ function save(){
     }
 
     const data = {...page.value.data }
-    const url  = page.value.data?.id ? '/units/update' : '/units/save'
+    const url  = page.value.data?.id ? '/sectors/update' : '/sectors/save'
     const exec = page.value.data?.id ? http.put : http.post
 
     exec(url, data, emit, () => {
@@ -94,7 +93,7 @@ function save(){
 }
 
 function update(id){
-    http.get(`/units/details/${id}`, emit, (response) => {
+    http.get(`/sectors/details/${id}`, emit, (response) => {
         page.value.data = response.data
         toggleUI('update')
     })
@@ -103,20 +102,20 @@ function update(id){
 function remove(id){
     emit('callRemove', {
         id      : id,
-        url     : '/units',
+        url     : '/sectors',
         search  : page.value.search
     })
 }
 
 function list(){
-    http.post('/units/list', page.value.search, emit, (response) => {
+    http.post('/sectors/list', page.value.search, emit, (response) => {
         page.value.datalist = response.data ?? []
         toggleUI('list')
     })
 }
 
 function selects(){
-    http.get('/units/selects', emit, (response) => {
+    http.get('/sectors/selects', emit, (response) => {
         page.value.selects = response.data
     })
 }
@@ -134,8 +133,8 @@ onMounted(() => {
         <section class="container-main">
             <MainHeader :header="{
                 icon: 'bi-house-gear',
-                title: 'Gerenciamento de Unidades',
-                description: 'Registro de secretarias, departamentos e repartições do Orgão'
+                title: 'Gerenciamento de Setor',
+                description: 'Registro de setores vinculados as Unidades do Orgão'
             }" />
 
             <div class="box p-0 mb-4 rounded-4">
@@ -164,13 +163,7 @@ onMounted(() => {
                         <div class="col-sm-12 col-md-4">
                             <label for="s-name" class="form-label">Nome</label>
                             <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                placeholder="Pesquise por partes do nome da unidade">
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-cnpj" class="form-label">Cnpj</label>
-                            <input type="cnpj" name="cnpj" class="form-control" id="s-cnpj"
-                                v-model="page.search.cnpj" placeholder="000.000.00/0000-00"
-                                v-maska:[masks.maskcnpj] >
+                                placeholder="Pesquise por partes do nome do setor">
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-organ_id" class="form-label">Orgão</label>
@@ -178,6 +171,14 @@ onMounted(() => {
                             v-model="page.search.organ_id">
                             <option value=""></option>
                             <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}</option>
+                        </select>
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <label for="s-unit_id" class="form-label">Unidade</label>
+                            <select name="unit_id" class="form-control" id="s-unit_id"
+                            v-model="page.search.unit_id">
+                            <option value=""></option>
+                            <option v-for="o in page.selects.units" :key="o.id" :value="o.id">{{ o.title }}</option>
                         </select>
                         </div>
 
@@ -196,7 +197,7 @@ onMounted(() => {
                     :header="page.dataheader" 
                     :body="page.datalist" 
                     :actions="['update', 'delete']"
-                    :casts="{'status':page.selects.status, 'organ_id':page.selects.organs}"/>
+                    :casts="{ 'organ_id':page.selects.organs, 'unit_id':page.selects.units} "/>
                 </div>
 
                 <!--BOX REGISTER-->
@@ -208,14 +209,7 @@ onMounted(() => {
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control"
                                     :class="{ 'form-control-alert': page.rules.valids.name }" id="name"
-                                    placeholder="Entidade Central" v-model="page.data.name">
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="cnpj" class="form-label">CNPJ</label>
-                                <input type="text" name="cnpj" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.cnpj }" id="cnpj"
-                                    placeholder="00.000.000/0000-00" v-model="page.data.cnpj"
-                                    v-maska:[masks.maskcnpj]>
+                                    placeholder="Nome de identificação do Setor" v-model="page.data.name">
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="organ_id" class="form-label">Orgão</label>
@@ -227,27 +221,24 @@ onMounted(() => {
                                     </option>
                                 </select>
                             </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="unit_id" class="form-label">Orgão</label>
+                                <select name="unit_id" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.unit_id }" id="unit_id"
+                                    v-model="page.data.unit_id">
+                                    <option value=""></option>
+                                    <option v-for="s in page.selects.units" :value="s.id" :key="s.id">{{ s.title }}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
 
                         <div class="row mb-3 g-3">
-                            <div class="col-sm-12 col-md-4">
-                                <label for="phone" class="form-label">Telefone</label>
-                                <input type="text" name="phone" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.phone }" id="phone"
-                                    placeholder="(00)9.0000-0000" v-model="page.data.phone"
-                                    v-maska:[masks.maskphone]>
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="email" class="form-label">E-mail</label>
-                                <input type="email" name="email" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.email }" id="email"
-                                    placeholder="user@example.com" v-model="page.data.email">
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="address" class="form-label">Endereço</label>
-                                <input type="text" name="address" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.address }" id="address"
-                                    placeholder="Logradouro, número - bairro (Rua do Amor, 110 - Centro)" v-model="page.data.address">
+                            <div class="col-sm-12">
+                                <label for="description" class="form-label">Descrição</label>
+                                <input type="text" name="description" class="form-control" id="description"
+                                    placeholder="Tipo de Setor: Escola Municipal, UBS, Setor Administrativo" 
+                                    v-model="page.data.address">
                             </div>
                         </div>
 

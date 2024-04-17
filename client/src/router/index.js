@@ -44,6 +44,12 @@ const router = createRouter({
 			component: () => import('../views/UnitsView.vue')
 		},
 		{
+			path: '/sectors',
+			name: 'sectors',
+			meta: { auth: true },
+			component: () => import('../views/SectorsView.vue')
+		},
+		{
 			path: '/management',
 			name: 'management',
 			meta: { auth: true },

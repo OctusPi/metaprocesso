@@ -5,6 +5,7 @@ use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Management;
 use App\Http\Controllers\Organs;
 use App\Http\Controllers\Units;
+use App\Http\Controllers\Sectors;
 use App\Http\Middleware\CheckPermission;
 use App\Utils\Notify;
 use Illuminate\Support\Facades\Route;
@@ -62,6 +63,21 @@ Route::controller(Units::class)->group(function () {
     });
 })->name('units');
 
+Route::controller(Sectors::class)->group(function () {
+    
+    Route::prefix('/sectors')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects', 'selects');
+        });
+    });
+})->name('sectors');
+
 Route::controller(Management::class)->group(function () {
     
     Route::prefix('/management')->group(function () {
@@ -72,7 +88,7 @@ Route::controller(Management::class)->group(function () {
             Route::put('/update', 'update');
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
-            Route::get('/selects', 'selects');
+            Route::get('/selects/{type?}/{key?}', 'selects');
         });
     });
 })->name('management');

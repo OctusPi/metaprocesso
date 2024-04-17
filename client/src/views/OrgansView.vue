@@ -8,6 +8,7 @@ import masks from '@/utils/masks'
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
+import ManagementNav from '@/components/ManagementNav.vue';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({
@@ -147,6 +148,7 @@ onMounted(() => {
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
                     </div>
                     <div class="action-buttons d-flex my-2">
+                        <ManagementNav />
                         <button @click="toggleUI('register')" type="button" class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-plus-circle"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
