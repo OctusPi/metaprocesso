@@ -68,6 +68,12 @@ const router = createRouter({
 			component: () => import('../views/ManagementView.vue')
 		},
 		{
+			path: '/catalogs',
+			name: 'catalogs',
+			meta: { auth: true },
+			component: () => import('../views/CatalogsView.vue')
+		},
+		{
 			path: '/forbidden',
 			name: 'forbidden',
 			component: () => import('../views/ForbiddenView.vue')

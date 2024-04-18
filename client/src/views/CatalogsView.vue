@@ -7,7 +7,7 @@ import http from '@/services/http';
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
-import ManagementNav from '@/components/ManagementNav.vue';
+import CatalogsNav from '@/components/CatalogsNav.vue';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({
@@ -20,20 +20,23 @@ const page = ref({
     data        :{},
     datalist    :props.datalist,
     dataheader  :[
-        {key:'name', title:'IDENTIFICAÇÃO'}, 
+        {key:'name', title:'PROGRAMA', sub:[{key:'status', title:'Situação: '}]}, 
         {key:'unit_id', title:'VINCULO', sub:[{key:'organ_id'}]},
-        {key:'description', title:'DESCRIÇÃO'}, 
+        {key:'law', title:'DESCRIÇÃO', sub:[{key:'description'}]}
     ],
+    gov: {},
     search      :{},
     selects     :{
         organs: [],
-        units: []
+        units: [],
+        status:[]
     },
     rules       :{
         fields: {
             name:'required',
             organ_id:'required',
-            unit_id:'required'
+            unit_id:'required',
+            status: 'required'
         },
         valids:{}
     }
@@ -65,11 +68,11 @@ function toggleUI(mode = null){
     }
     
     if(page.value.uiview.register){
-        page.value.title.primary = 'Registro de Setores'
-        page.value.title.secondary = 'Insira os dados para registro de Setores vinculados as Unidades do Orgão'
+        page.value.title.primary = 'Registro de Item'
+        page.value.title.secondary = 'Insira os dados para registro de Item no Catálogo'
     }else{
-        page.value.title.primary = 'Listagem de Setores'
-        page.value.title.secondary = `Foram localizados ${(page.value.datalist.length).toString().padStart(2, '0')} setores inseridos no sistema`
+        page.value.title.primary = 'Listagem de Items'
+        page.value.title.secondary = `Foram localizados ${(page.value.datalist.length).toString().padStart(2, '0')} items inseridos no Catálogo`
     }
 }
 
@@ -81,7 +84,7 @@ function save(){
     }
 
     const data = {...page.value.data }
-    const url  = page.value.data?.id ? '/sectors/update' : '/sectors/save'
+    const url  = page.value.data?.id ? '/programs/update' : '/programs/save'
     const exec = page.value.data?.id ? http.put : http.post
 
     exec(url, data, emit, () => {
@@ -90,7 +93,7 @@ function save(){
 }
 
 function update(id){
-    http.get(`/sectors/details/${id}`, emit, (response) => {
+    http.get(`/programs/details/${id}`, emit, (response) => {
         selects('organ_id', response.data?.unit)
         page.value.data = response.data
         toggleUI('update')
@@ -100,13 +103,13 @@ function update(id){
 function remove(id){
     emit('callRemove', {
         id      : id,
-        url     : '/sectors',
+        url     : '/programs',
         search  : page.value.search
     })
 }
 
 function list(){
-    http.post('/sectors/list', page.value.search, emit, (response) => {
+    http.post('/programs/list', page.value.search, emit, (response) => {
         page.value.datalist = response.data ?? []
         toggleUI('list')
     })
@@ -114,7 +117,7 @@ function list(){
 
 function selects(key = null, search = null){
 
-    const urlselect = (key && search) ? `/sectors/selects/${key}/${search}` : '/sectors/selects'
+    const urlselect = (key && search) ? `/programs/selects/${key}/${search}` : '/programs/selects'
 
     http.get(urlselect, emit, (response) => {
         page.value.selects = response.data
@@ -133,9 +136,9 @@ onMounted(() => {
         <MainNav />
         <section class="container-main">
             <MainHeader :header="{
-                icon: 'bi-grid',
-                title: 'Gerenciamento de Setor',
-                description: 'Registro de setores vinculados as Unidades do Orgão'
+                icon: 'bi-book-half',
+                title: 'Catálogo Bens, Serviços e Fornecedores',
+                description: 'Registro de Catálogos Locais vinculados as Unidades do Orgão'
             }" />
 
             <div class="box p-0 mb-4 rounded-4">
@@ -146,7 +149,7 @@ onMounted(() => {
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
                     </div>
                     <div class="action-buttons d-flex my-2">
-                        <ManagementNav />
+                        <CatalogsNav />
                         <button @click="toggleUI('register')" type="button" class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-plus-circle"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
@@ -155,6 +158,10 @@ onMounted(() => {
                             <i class="bi bi-search"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Pesquisar</span>
                         </button>
+                        <button type="button" class="btn btn-action btn-action-primary ms-2">
+                            <i class="bi bi-arrow-up"></i>
+                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Exportar</span>
+                        </button>
                     </div>
                 </div>
 
@@ -162,9 +169,9 @@ onMounted(() => {
                 <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
                     <form @submit.prevent="list" class="row g-3">
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-name" class="form-label">Nome</label>
+                            <label for="s-name" class="form-label">Programa</label>
                             <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                placeholder="Pesquise por partes do nome do setor">
+                                placeholder="Pesquise por partes do nome do programa">
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-organ_id" class="form-label">Orgão</label>
@@ -199,7 +206,7 @@ onMounted(() => {
                     :header="page.dataheader" 
                     :body="page.datalist" 
                     :actions="['update', 'delete']"
-                    :casts="{ 'organ_id':page.selects.organs, 'unit_id':page.selects.units} "/>
+                    :casts="{ 'organ_id':page.selects.organs, 'unit_id':page.selects.units, 'status':page.selects.status} "/>
                 </div>
 
                 <!--BOX REGISTER-->
@@ -207,40 +214,43 @@ onMounted(() => {
                     <form class="form-row" @submit.prevent="save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
-                            <div class="col-sm-12 col-md-4">
-                                <label for="name" class="form-label">Nome</label>
-                                <input type="text" name="name" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.name }" id="name"
-                                    placeholder="Nome de identificação do Setor" v-model="page.data.name">
+                            <div class="col-sm-12">
+                                <label for="base" class="form-label">Localizar Item na Base Federal - Compras GOV</label>
+                                <div class="d-flex">
+                                    <input type="text" name="base" class="form-control" id="base"
+                                    placeholder="Pesquise por partes do nome do bem ou serviço" v-model="page.data.base">
+                                    <button type="button" class="btn btn-outline-primary ms-2"><i class="bi bi-search"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-show="false" class="col-sm-12 form-control">sdasda</div>
+
+                        <div v-show="false">
+                            <div class="row mb-3 g-3">
+                            <div class="col-sm-12 col-md-8">
+                                <label for="law" class="form-label">Lei de Criação</label>
+                                <input type="text" name="law" class="form-control" id="law"
+                                    placeholder="Número ou Link da Lei de Criação do Programa" v-model="page.data.law">
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="organ_id" class="form-label">Orgão</label>
-                                <select name="organ_id" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.organ_id }" id="organ_id"
-                                    v-model="page.data.organ_id"
-                                    @change="selects('organ_id', page.data.organ_id)">
+                                <label for="status" class="form-label">Status</label>
+                                <select name="status" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.status }" id="status"
+                                    v-model="page.data.status">
                                     <option value=""></option>
-                                    <option v-for="s in page.selects.organs" :value="s.id" :key="s.id">{{ s.title }}
+                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{ s.title }}
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="unit_id" class="form-label">Unidade</label>
-                                <select name="unit_id" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.unit_id }" id="unit_id"
-                                    v-model="page.data.unit_id">
-                                    <option value=""></option>
-                                    <option v-for="s in page.selects.units" :value="s.id" :key="s.id">{{ s.title }}
-                                    </option>
-                                </select>
-                            </div>
+                            
                         </div>
 
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12">
                                 <label for="description" class="form-label">Descrição</label>
                                 <input type="text" name="description" class="form-control" id="description"
-                                    placeholder="Tipo de Setor: Escola Municipal, UBS, Setor Administrativo" 
+                                    placeholder="Breve resumo do objetivo do programa" 
                                     v-model="page.data.description">
                             </div>
                         </div>
@@ -250,6 +260,7 @@ onMounted(() => {
                                     class="bi bi-x-circle"></i></button>
                             <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
                                     class="bi bi-check2-circle"></i></button>
+                        </div>
                         </div>
                     </form>
                 </div>

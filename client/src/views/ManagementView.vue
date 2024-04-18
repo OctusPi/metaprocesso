@@ -150,7 +150,7 @@ onMounted(() => {
         <MainNav />
         <section class="container-main">
             <MainHeader :header="{
-                icon: 'bi-house-gear',
+                icon: 'bi-person-bounding-box',
                 title: 'Gestão e Controle Organizacional',
                 description: 'Estrutura e Perminissionamento de Usuários'
             }" />
