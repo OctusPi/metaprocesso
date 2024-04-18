@@ -34,8 +34,8 @@ class Management extends Controller
 
         $pass = Str::random(8);
         $user = new User($request->all());
-        $user->username = $request->input("email");
-        $user->password = Hash::make($pass);
+        $user->setAttribute('username',$request->input("email"));
+        $user->setAttribute('password',Hash::make($pass));
 
         if($user->save()){
             Mail::to($user)->send(new Wellcome($user, $pass));

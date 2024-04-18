@@ -50,6 +50,18 @@ const router = createRouter({
 			component: () => import('../views/SectorsView.vue')
 		},
 		{
+			path: '/programs',
+			name: 'programs',
+			meta: { auth: true },
+			component: () => import('../views/ProgramsView.vue')
+		},
+		{
+			path: '/dotations',
+			name: 'dotations',
+			meta: { auth: true },
+			component: () => import('../views/DotationsView.vue')
+		},
+		{
 			path: '/management',
 			name: 'management',
 			meta: { auth: true },

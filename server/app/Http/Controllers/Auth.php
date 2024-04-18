@@ -34,13 +34,13 @@ class Auth extends Controller
         }
 
         $token = JWT::create($user);
-        $user->lastlogin = $user->nowlogin ?? Dates::nowPTBR();
-        $user->nowlogin = Dates::nowPTBR();
+        $user->setAttribute('lastlogin', $user->nowlogin ?? Dates::nowPTBR());
+        $user->setAttribute('nowlogin', Dates::nowPTBR());
         $user->save();
 
         return response()->json([
             'token'      => $token,
-            'user'       => ['name'=>$user->name, 'profile' => User::list_profiles()[$user->profile], 'last_login' => $user->lastlogin],
+            'user'       => ['name'=>$user->name, 'profile' => User::list_profiles()[$user->profile], 'last_login' => $user->getAttribute('lastlogin')],
             'navigation' => $user->modules,
             'notify'     => ['type' => Notify::SUCCESS],
             'redirect'   => '/dashboard'
@@ -95,7 +95,7 @@ class Auth extends Controller
             return Response()->json(Notify::warning('Token inválido ou expirado!'), 401);
         }
 
-        $user->password = Hash::make($request->newpass);
+        $user->setAttribute('password', Hash::make($request->newpass));
         $user->token = null;
         $user->passchange = false;
 
@@ -122,7 +122,7 @@ class Auth extends Controller
                 'user' => [
                     'name'=>$user->name, 
                     'profile' => $user->profile, 
-                    'last_login' => $user->lastlogin]
+                    'last_login' => $user->getAttribute('lastlogin')]
             ], 200);
     }
 
