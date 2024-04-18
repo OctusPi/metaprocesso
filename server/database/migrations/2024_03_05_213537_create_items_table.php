@@ -13,11 +13,17 @@ return new class extends Migration {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('unit_id')->constrained('units');
             $table->string('cod', 50);
             $table->string('name');
             $table->text('description');
-            $table->string('unit_id', 20);
-            $table->string('volume', 50);
+            $table->string('und', 50);
+            $table->string('volume', 50)->nullable();
+            $table->integer('origin');
+            $table->integer('type');
+            $table->integer('category');
+            $table->integer('status');
         });
     }
 
