@@ -5,6 +5,9 @@ const menu = ref([
     { title: 'Orgãos', icon: 'bi-building-fill-gear', route: '/organs' },
     { title: 'Unidades', icon: 'bi-house-gear-fill', route: '/units' },
     { title: 'Setores', icon: 'bi-grid-fill', route: '/sectors' },
+    { title: 'Ordenadores', icon: 'bi-person-raised-hand', route: '/ordinators' },
+    { title: 'Demandantes', icon: 'bi-person-video2', route: '/demandants' },
+    { title: 'Comissões', icon: 'bi-people-fill', route: '/comissions' },
     { title: 'Programas', icon: 'bi-circle-square', route: '/programs' },
     { title: 'Dotações', icon: 'bi-piggy-bank-fill', route: '/dotations' },
     { title: 'Usuários', icon: 'bi-person-bounding-box', route: '/management' }

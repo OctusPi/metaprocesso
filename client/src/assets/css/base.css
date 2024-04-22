@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
 :root{
-  --color-fundo: #F5F9FC;
+  --color-fundo: #eef6fb;
   --color-box: #ffffff;
 
   --color-base : #19a6ec;
@@ -20,7 +20,7 @@
   --color-input-border:#e2e2e3;
   --color-input-placeholder:#c0c0c0;
 
-  --color-nav:rgba(202, 202, 202, 0.541);
+  --color-nav:#ffffff94;
   --color-nav-itens:rgba(52, 61, 86, 0.984);
   --color-wall-load:rgba(255, 255, 255, 0.661);
 

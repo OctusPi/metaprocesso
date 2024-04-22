@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\Auth;
+use App\Http\Controllers\Comissions;
 use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\Demandants;
 use App\Http\Controllers\Dotations;
 use App\Http\Controllers\Items;
 use App\Http\Controllers\Management;
+use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\Organs;
 use App\Http\Controllers\Programs;
 use App\Http\Controllers\Units;
@@ -80,6 +83,51 @@ Route::controller(Sectors::class)->group(function () {
         });
     });
 })->name('sectors');
+
+Route::controller(Ordinators::class)->group(function () {
+    
+    Route::prefix('/ordinators')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects/{key?}/{search?}', 'selects');
+        });
+    });
+})->name('ordinators');
+
+Route::controller(Demandants::class)->group(function () {
+    
+    Route::prefix('/demandants')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects/{key?}/{search?}', 'selects');
+        });
+    });
+})->name('demandants');
+
+Route::controller(Comissions::class)->group(function () {
+    
+    Route::prefix('/comissions')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects/{key?}/{search?}', 'selects');
+        });
+    });
+})->name('comissions');
 
 Route::controller(Programs::class)->group(function () {
     
