@@ -75,6 +75,19 @@ function get (url, emit, resp = null, back = null){
     request(opt, emit, resp, back)
 }
 
+function download (url, emit, resp = null, back = null){
+    const opt = {
+        method: 'GET',
+        url: url,
+        responseType: 'blob',
+        headers:{
+            'Content-Type':'application/json',
+        }
+    }
+
+    request(opt, emit, resp, back)
+}
+
 function patch (url, data, emit, resp= null, back = null){
     const opt = {
         url: url,
@@ -106,6 +119,7 @@ export default {
     put,
     patch,
     get,
+    download,
     destroy,
     success
 }

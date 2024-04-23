@@ -5,7 +5,7 @@ import { ref } from 'vue'
 const emit  = defineEmits(['action'])
 const props = defineProps({
     id: Number,
-    calls: {type: Array, default:() => []},
+    calls: {type: Array, default:() => []}
 })
 
 const calls   = ref(props.calls)
@@ -19,6 +19,11 @@ const actions = {
         action: (id) => { emit('action', {e:'action:delete', i:id}) }, 
         icon: 'bi-trash',
         title: 'Excluir'
+    },
+    'download':{
+        action: (id) => { emit('action', {e:'action:download', i:id}) }, 
+        icon: 'bi-arrow-down',
+        title: 'Arquivo'
     }
 }
 

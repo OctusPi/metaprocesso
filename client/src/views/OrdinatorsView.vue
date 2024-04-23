@@ -21,9 +21,9 @@ const page = ref({
     data: {},
     datalist: props.datalist,
     dataheader: [
-        { key: 'name', title: 'IDENTIFICAÇÃO' },
+        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cpf' }]},
         { key: 'unit_id', title: 'VINCULO', sub: [{ key: 'organ_id' }] },
-        { key: 'description', title: 'DESCRIÇÃO' },
+        { key: 'status', title: 'STATUS' , sub: [{ key: 'start_term' }, { key: 'end_term' }] },
     ],
     search: {},
     selects: {
@@ -86,7 +86,7 @@ function save() {
     }
 
     const data = { ...page.value.data }
-    const url = page.value.data?.id ? '/ordinators/update' : '/ordinators/save'
+    const url  = page.value.data?.id ? '/ordinators/update' : '/ordinators/save'
     const exec = page.value.data?.id ? http.put : http.post
 
     exec(url, data, emit, () => {
@@ -131,6 +131,24 @@ function handleFile(event){
     if(file){
         page.value.data.document = file
     }
+}
+
+function download(id){
+    http.download(`/ordinators/download/${id}`, emit, (response) => {
+        if(response.headers['content-type'] !== 'application/pdf'){
+            emit('callAlert', notifys.warning('Arquivo Indisponível'))
+            return
+        }
+        
+        const url  = URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}))
+        const link = document.createElement('a')
+        link.href = url;
+        link.download = `Amparo-${id}.pdf`
+        document.body.appendChild(link)
+        link.click()
+        window.URL.revokeObjectURL(url);
+        
+    })
 }
 
 onMounted(() => {
@@ -206,9 +224,13 @@ onMounted(() => {
 
                 <!--BOX LIST-->
                 <div v-if="!page.uiview.register" id="list-box" class="mb-4">
-                    <TableList @action:update="update" @action:delete="remove" :header="page.dataheader"
-                        :body="page.datalist" :actions="['update', 'delete']"
-                        :casts="{ 'organ_id': page.selects.organs, 'unit_id': page.selects.units }" />
+                    <TableList 
+                        @action:update="update" 
+                        @action:delete="remove"
+                        @action:download="download"
+                        :header="page.dataheader"
+                        :body="page.datalist" :actions="['download', 'update', 'delete']"
+                        :casts="{ 'organ_id': page.selects.organs, 'unit_id': page.selects.units, 'status':page.selects.status}" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -220,7 +242,7 @@ onMounted(() => {
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control"
                                     :class="{ 'form-control-alert': page.rules.valids.name }" id="name"
-                                    placeholder="Nome de identificação do Setor" v-model="page.data.name">
+                                    placeholder="Nome do Ordenador" v-model="page.data.name">
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="cpf" class="form-label">CPF</label>
