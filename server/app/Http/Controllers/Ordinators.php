@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Unit;
 use App\Models\User;
+use App\Utils\Notify;
 use App\Utils\Utils;
 use App\Models\Organ;
-use App\Models\Sector;
 use App\Utils\Uploads;
 use App\Middleware\Data;
 use App\Models\Ordinator;
@@ -24,7 +24,7 @@ class Ordinators extends Controller
     public function save(Request $request)
     {
         //upload file
-        $upload = new Uploads($request, ['document']);
+        $upload = new Uploads($request, ['document' => ['nullable' => true]]);
         $values = $upload->mergeUploads($request->all());
 
         return $this->baseSave(Ordinator::class, $values);
@@ -34,7 +34,7 @@ class Ordinators extends Controller
     {
         if(isset($_FILES['document'])){
             $ordinator = Ordinator::findOrFail($request->id);
-            $upload = new Uploads($request, ['document']);
+            $upload = new Uploads($request, ['document' => ['nullable' => true]]);
             $upload->remove($ordinator->document);
             $values = $upload->mergeUploads($request->all());
 
@@ -58,6 +58,16 @@ class Ordinators extends Controller
     public function details(Request $request)
     {
         return $this->baseDetails(Ordinator::class, $request->id);
+    }
+
+    public function download(Request $request)
+    {
+        $ordinator = Ordinator::findOrFail($request->id);
+        if($ordinator && $ordinator->document){
+            return response()->download(storage_path('uploads'.'/'.$ordinator->document), $ordinator->name.'.pdf');
+        }
+
+        return response()->json(Notify::warning('Arquivo Indisponível'));
     }
 
     public function selects(Request $request)

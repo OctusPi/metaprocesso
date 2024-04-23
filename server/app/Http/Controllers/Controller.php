@@ -57,6 +57,8 @@ class Controller extends BaseController
                 return Response()->json(Notify::success("Cadastro realizado com sucesso!"), 200);
             }
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            Log::error(json_encode($requests));
             return Response()->json(Notify::error("Falha ao realizar cadastro!"), 500);
         }
 
@@ -82,7 +84,7 @@ class Controller extends BaseController
 
     public function baseDelete(string $model, ?int $id, string $pass)
     {
-        if (!password_verify($pass, $this->user_loged->password)) {
+        if (!password_verify($pass, $this->user_loged->getAttribute('password'))) {
             return Response()->json(Notify::warning('Senha de confirmação inválida!'), 401);
         }
 

@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use App\Utils\Dates;
-use Illuminate\Database\Eloquent\Model;
 use App\Casts\Json;
+use App\Utils\Dates;
+use Illuminate\Validation\Rule;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -53,13 +54,6 @@ class User extends Model
         'lastlogin'
     ];
 
-    protected $hidden = [
-        'created_at',
-        'updated_at',
-        'username',
-        'password'
-    ];
-
     protected $casts = [
         'organs'  => Json::class,
         'units'   => Json::class,
@@ -87,7 +81,7 @@ class User extends Model
     {
         return [
             'name'   => 'required',
-            'email'  => 'required|email|unique:users'.($id ? ',id,'.$id : ''),
+            'email'  => ['required', 'email', Rule::unique('users')->ignore($id)],
             'profile' => 'required',
             'status' => 'required'
         ];

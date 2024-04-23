@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,7 +29,7 @@ class Organ extends Model
     {
         return [
             'name'       => 'required',
-            'cnpj'       => 'required|unique:organs'.($id ? ',id,'.$id : ''),
+            'cnpj'       => ['required', Rule::unique('organs')->ignore($id)],
             'phone'      => 'required',
             'email'      => 'required|email',
             'address'    => 'required',

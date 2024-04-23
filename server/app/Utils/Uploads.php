@@ -62,7 +62,7 @@ class Uploads
             //upload file no mandatory
             if ($options['nullable']) {
                 if ($hasFile) {
-                    if (!$this->validateMimes($upfile->extension(), $options['mimes'])) {
+                    if (!$this->validateMimes($upfile->extension(), $options['mimes'] ?? null)) {
                         $this->setResult(self::STATUS_WARNING, self::UPLOAD_INVALID_TYPE);
                         return false;
                     }
@@ -71,7 +71,7 @@ class Uploads
             //upload file mandatory
             else {
                 if ($hasFile) {
-                    if (!$this->validateMimes($upfile->extension(), $options['mimes'])) {
+                    if (!$this->validateMimes($upfile->extension(), $options['mimes'] ?? null)) {
                         $this->setResult(self::STATUS_WARNING, self::UPLOAD_INVALID_TYPE);
                         return false;
                     }
@@ -92,7 +92,7 @@ class Uploads
             if ($this->validate([$file => $options]) && $upfile != null) {
                 try {
                     $namefile = md5($upfile->getClientOriginalName() . strtotime('now')) . '.' . $upfile->extension();
-                    $upfile->move(public_path(self::UPLOAD_PATH), $namefile);
+                    $upfile->move(storage_path(self::UPLOAD_PATH), $namefile);
                     $this->uploadedFiles[$file] = $namefile;
                     $this->setResult(self::STATUS_SUCCESS, self::UPLOAD_SUCCESS);
                 } catch (\Throwable $e) {
@@ -121,7 +121,7 @@ class Uploads
         $this->result['info'] = $this->getMessages()[$info];
     }
 
-    private function validateMimes(string $extension, array $mimes): bool
+    private function validateMimes(string $extension, ?array $mimes): bool
     {
         return in_array($extension, $mimes ?? $this->getValidMimeTypes());
     }
