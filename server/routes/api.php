@@ -110,6 +110,7 @@ Route::controller(Demandants::class)->group(function () {
             Route::put('/update', 'update');
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
+            Route::get('/download/{id}', 'download');
             Route::get('/selects/{key?}/{search?}', 'selects');
         });
     });

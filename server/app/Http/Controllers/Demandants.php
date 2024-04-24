@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sector;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Organ;
-use App\Models\Sector;
+use App\Utils\Notify;
+use App\Utils\Uploads;
 use App\Middleware\Data;
+use App\Models\Demandant;
 use App\Security\Guardian;
 use Illuminate\Http\Request;
 
@@ -21,33 +24,56 @@ class Demandants extends Controller
 
     public function save(Request $request)
     {
-        return $this->baseSave(Sector::class, $request->all());
+        //upload file
+        $upload = new Uploads($request, ['document' => ['nullable' => true]]);
+        $values = $upload->mergeUploads($request->all());
+
+        return $this->baseSave(Demandant::class, $values);
     }
 
     public function update(Request $request)
     {
-        return $this->baseUpdate(Sector::class, $request->id, $request->all());
+        if(isset($_FILES['document'])){
+            $ordinator = Demandant::findOrFail($request->id);
+            $upload = new Uploads($request, ['document' => ['nullable' => true]]);
+            $upload->remove($ordinator->document);
+            $values = $upload->mergeUploads($request->all());
+
+            return $this->baseUpdate(Demandant::class, $request->id, $values);
+        }
+
+        return $this->baseUpdate(Demandant::class, $request->id, $request->all());
     }
 
     public function delete(Request $request)
     {
-        return $this->baseDelete(Sector::class, $request->id, $request->password);
+        return $this->baseDelete(Demandant::class, $request->id, $request->password);
     }
 
     public function list(Request $request)
     {
         $search = ['organ_id', 'unit_id', 'name'];
-        return $this->baseList(Sector::class, $search, $request->all());
+        return $this->baseList(Demandant::class, $search, $request->all());
     }
 
     public function details(Request $request)
     {
-        return $this->baseDetails(Sector::class, $request->id);
+        return $this->baseDetails(Demandant::class, $request->id);
+    }
+
+    public function download(Request $request)
+    {
+        $ordinator = Demandant::findOrFail($request->id);
+        if($ordinator && $ordinator->document){
+            return response()->download(storage_path('uploads'.'/'.$ordinator->document), $ordinator->name.'.pdf');
+        }
+
+        return response()->json(Notify::warning('Arquivo Indisponível'));
     }
 
     public function selects(Request $request)
     {
-        $units = $request->key ? Utils::map_select(Data::list(Unit::class, [
+        $units = $request->key && $request->key == 'organ_id' ? Utils::map_select(Data::list(Unit::class, [
             [
                 'column'   => $request->key,
                 'operator' => '=',
@@ -56,9 +82,20 @@ class Demandants extends Controller
             ]
             ], ['name'])) : Utils::map_select(Data::list(Unit::class));
 
+        $sectors = $request->key && $request->key == 'unit_id' ? Utils::map_select(Data::list(Sector::class, [
+            [
+                'column'   => $request->key,
+                'operator' => '=',
+                'value'    => $request->search,
+                'mode'     => 'AND'
+            ]
+            ], ['name'])) : Utils::map_select(Data::list(Sector::class));
+
         return Response()->json([
-            'organs' => Utils::map_select(Data::list(Organ::class, order:['name'])),
-            'units'  => $units,
+            'organs'  => Utils::map_select(Data::list(Organ::class, order:['name'])),
+            'units'   => $units,
+            'sectors' => $sectors,
+            'status'  => Demandant::list_status()
         ], 200);
     }
 }
