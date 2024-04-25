@@ -13,7 +13,7 @@ use App\Models\Comission;
 use App\Security\Guardian;
 use Illuminate\Http\Request;
 
-class Comissions extends Controller
+class ComissionsEnds extends Controller
 {
     public function __construct()
     {

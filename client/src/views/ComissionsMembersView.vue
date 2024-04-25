@@ -31,7 +31,6 @@ const page = ref({
     selects: {
         organs: [],
         units: [],
-        types: [],
         status: []
     },
     rules: {
@@ -156,12 +155,11 @@ function download(id){
 
 function members(id){
     
-    router.replace({name:'comissionsmembers', params:{id:id}})
+    router.replace({name:'comissionmembers', params:{id}})
 }
 
 onMounted(() => {
-    selects()
-    list()
+    
 })
 
 </script>
@@ -172,7 +170,7 @@ onMounted(() => {
         <section class="container-main">
             <MainHeader :header="{
                 icon: 'bi-people-fill',
-                title: 'Gerenciamento de Comissões',
+                title: 'Gerenciamento de Membros da Comissões',
                 description: 'Registro de Comissões vinculados as Unidades do Orgão'
             }" />
 

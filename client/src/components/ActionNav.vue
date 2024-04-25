@@ -24,6 +24,11 @@ const actions = {
         action: (id) => { emit('action', {e:'action:download', i:id}) }, 
         icon: 'bi-arrow-down',
         title: 'Arquivo'
+    },
+    'members':{
+        action: (id) => { emit('action', {e:'action:members', i:id}) }, 
+        icon: 'bi-people',
+        title: 'Membros'
     }
 }
 

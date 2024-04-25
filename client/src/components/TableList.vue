@@ -9,7 +9,7 @@
         casts   :{type: Object}
     })
     
-    const emit  = defineEmits(['action:update', 'action:delete', 'action:download'])
+    const emit  = defineEmits(['action:update', 'action:delete', 'action:download', 'action:members'])
     const body  = ref(props.body)
     
     watch(() => props.body, (newValue) => {
