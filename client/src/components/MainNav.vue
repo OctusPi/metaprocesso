@@ -4,19 +4,23 @@
 
     const menu = ref([])
     const menuitens = {
-        'management': {href: '/management', icon:'bi-house-gear-fill', title:'Gestão', description:'Dados Administrativos e Estruturais'},
+        'management': {href: '/management', icon:'bi-house-gear', title:'Gestão', description:'Dados Administrativos e Estruturais'},
         'catalogs': {href: '/catalogs', icon:'bi-book-half', title:'Catálogos', description:'Catálogos de Itens GOV'},
-        'dfds': {href: '/dfds', icon:'bi-file-earmark-ruled-fill', title:'DFDs', description:'Formalização de Demandas'},
-        'pricerecords': {href: '/pricerecords', icon:'bi-journal-album', title:'Registro de Preços', description:'Atas de Registro de Preços'},
-        'contracts': {href: '/contracts', icon:'bi-file-earmark-text-fill', title:'Contratos', description:'Contratos de Bens e Serviços'},
-        'purchases': {href: '/purchases', icon:'bi-basket-fill', title:'Compras', description:'Ordens de Compras de Contratos'},
-        'stock': {href: '/stock', icon:'bi-inboxes-fill', title:'Estoque', description:'Controle de Entrada e Saída'},
-        'ocurrencys': {href: '/ocurrencys', icon:'bi-exclamation-diamond-fill', title:'Ocorrências', description:'Livro de Ocorrências de Fornecimento'},
-        'constructions': {href: '/constructions', icon:'bi-building-fill-gear', title:'Obras', description:'Fiscalização e Acompanhamento de Obras'},
-        'lightings': {href: '/lightings', icon:'bi-lightning-charge-fill', title:'Iluminação', description:'Fiscalização Iluminação Pública'},
-        'trashcollect': {href: '/trashcollect', icon:'bi-truck-front-fill', title:'Coleta e Limpeza', description:'Coleta e Limpeza de Lixo'},
-        'sanctions': {href: '/sanctions', icon:'bi-x-octagon-fill', title:'Sanções', description:'Processos de Sançao e Penalização'},
-        'reports': {href: '/reports', icon:'bi-clipboard-data-fill', title:'Relatórios', description:'Relatórios de Acompanhamento e Planejamento'}
+        'dfds': {href: '/dfds', icon:'bi-journal-album', title:'DFDs', description:'Formalização de Demandas'},
+        'etps': {href: '/etps', icon:'bi-journal-medical', title:'ETPs', description:'Estudos Técnicos Preliminares'},
+        'pricerecords': {href: '/pricerecords', icon:'bi-cash-coin', title:'Preços', description:'Mapa de Registro de Preços'},
+        'refterms': {href: '/refterms', icon:'bi-file-font', title:'Termos', description:'Termos de Referência'},
+        'riskiness': {href: '/riskiness', icon:'bi-map', title:'Mapa de Riscos', description:'Mapa de Riscos'},
+        'proccess': {href: '/proccess', icon:'bi-journal-bookmark', title:'Processos', description:'Formalização de Processos'},
+        'trasmission': {href: '/trasmission', icon:'bi-send-check', title:'Publicar', description:'Publicação e Transmissão'},
+        'reports': {href: '/reports', icon:'bi-clipboard-data', title:'Relatórios', description:'Relatórios de Acompanhamento e Planejamento'}
+
+        // 'purchases': {href: '/purchases', icon:'bi-basket-fill', title:'Compras', description:'Ordens de Compras de Contratos'},
+        // 'ocurrencys': {href: '/ocurrencys', icon:'bi-exclamation-diamond-fill', title:'Ocorrências', description:'Livro de Ocorrências de Fornecimento'},
+        // 'constructions': {href: '/constructions', icon:'bi-building-fill-gear', title:'Obras', description:'Fiscalização e Acompanhamento de Obras'},
+        // 'lightings': {href: '/lightings', icon:'bi-lightning-charge-fill', title:'Iluminação', description:'Fiscalização Iluminação Pública'},
+        // 'trashcollect': {href: '/trashcollect', icon:'bi-truck-front-fill', title:'Coleta e Limpeza', description:'Coleta e Limpeza de Lixo'},
+        // 'sanctions': {href: '/sanctions', icon:'bi-x-octagon-fill', title:'Sanções', description:'Processos de Sançao e Penalização'},
     }
 
     onMounted(() => {
@@ -66,6 +70,7 @@
         position: fixed;
         align-items: start;
         justify-content: center;
+        border: var(--border-box);
         background-color: var(--color-nav);
         --bs-navbar-toggler-border-color:none;
         --bs-navbar-toggler-focus-width:none;

@@ -71,16 +71,17 @@ class Management extends Controller
         
         $profiles = [];
         foreach (User::list_profiles() as $key => $value) {
-            $profiles[] = ['id' => $key, 'title' => $value];
-        }
-
-        if($this->user_loged ->profile != User::PRF_ADMIN){
-            array_shift($profiles);
+            if($key >= $this->user_loged->profile){
+                $profiles[] = ['id' => $key, 'title' => $value];
+            }
         }
 
         try {
             return Response()->json([
-                'modules'   => $this->user_loged != null ? $this->user_loged->modules : [],
+                'modules'   => $this->user_loged->profile != User::PRF_ADMIN 
+                            ? $this->user_loged->modules 
+                            : User::list_modules(),
+
                 'organs'    => Utils::map_select(Data::list(Organ::class, order:['name'])),
                 'units'     => Utils::map_select(Data::list(Unit::class, order:['name'])),
                 'sectors'   => Utils::map_select(Data::list(Sector::class, order:['name'])),

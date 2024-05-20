@@ -20,20 +20,16 @@ class User extends Model
     public const PRF_AUTIDOR = 5;
 
     public const MOD_INI = 0;
-    public const MOD_CATALOGS = 1;
-    public const MOD_SUPPLIERS = 2;
+    public const MOD_MANAGEMENT = 1;
+    public const MOD_CATALOGS = 2;
     public const MOD_DFDS = 3;
-    public const MOD_PRICERECORDS = 4;
-    public const MOD_CONTRACTS = 5;
-    public const MOD_PURCHASES = 6;
-    public const MOD_STOCK = 7;
-    public const MOD_OCURRENCYS = 8;
-    public const MOD_CONSTRUCTIONS = 9;
-    public const MOD_LIGHTINGS = 10;
-    public const MOD_TRASHCOLECTS = 11;
-    public const MOD_SANCTIONS = 12;
-    public const MOD_REPORTS = 13;
-    public const MOD_MANAGEMENT = 14;
+    public const MOD_ETPS = 4;
+    public const MOD_PRICERECORDS = 5;
+    public const MOD_REFTERM = 6;
+    public const MOD_RISKINESS = 7;
+    public const MOD_PROCCESS = 8;
+    public const MOD_TRANSMISSION = 9;
+    public const MOD_REPORTS= 10;
 
     protected $table = 'users';
 
@@ -113,22 +109,15 @@ class User extends Model
         return [
             ['id' => self::MOD_INI, 'module' => 'dashboard', 'title' => 'Acesso Inicial'],
             ['id' => self::MOD_MANAGEMENT, 'module' => 'management', 'title' => 'Gestão Administrativa'],
-            ['id' => self::MOD_CATALOGS, 'module' => 'catalogs', 'title' => 'Catálogos'],
-            ['id' => self::MOD_SUPPLIERS, 'module' => 'suppliers', 'title' => 'Fornecedores'], 
+            ['id' => self::MOD_CATALOGS, 'module' => 'catalogs', 'title' => 'Catálogos'], 
             ['id' => self::MOD_DFDS, 'module' => 'dfds', 'title' => 'DFDs'], 
+            ['id' => self::MOD_ETPS, 'module' => 'etps', 'title' => 'ETPs'], 
             ['id' => self::MOD_PRICERECORDS, 'module' => 'pricerecords', 'title' => 'Registro de Preços'], 
-            ['id' => self::MOD_CONTRACTS, 'module' => 'contracts', 'title' => 'Contratos'], 
-            ['id' => self::MOD_PURCHASES, 'module' => 'purchases', 'title' => 'Ordens de Compras'],
-            ['id' => self::MOD_STOCK, 'module' => 'stock', 'title' => 'Estoque'],
-            ['id' => self::MOD_OCURRENCYS, 'module' => 'ocurrencys', 'title' => 'Ocorrências'],
-            ['id' => self::MOD_CONSTRUCTIONS, 'module' => 'constructions', 'title' => 'Fical de Obras'],
-            ['id' => self::MOD_LIGHTINGS, 'module' => 'lightings', 'title' => 'Iluminação Pública'],
-            ['id' => self::MOD_TRASHCOLECTS, 'module' => 'trashcollect', 'title' => 'Coleta e Limpeza de Lixo'],
-            ['id' => self::MOD_SANCTIONS, 'module' => 'sanctions', 'title' => 'Processos de Sanções'],
-            ['id' => self::MOD_REPORTS, 'module' => 'reports', 'title' => 'Relatórios'],
+            ['id' => self::MOD_REFTERM, 'module' => 'refterms', 'title' => 'Termos de Referência'], 
+            ['id' => self::MOD_RISKINESS, 'module' => 'riskiness', 'title' => 'Mapas de Risco'],
+            ['id' => self::MOD_PROCCESS, 'module' => 'proccess', 'title' => 'Processos'],
+            ['id' => self::MOD_TRANSMISSION, 'module' => 'trasmission', 'title' => 'Publicação e Transmissão'],
+            ['id' => self::MOD_REPORTS, 'module' => 'reports', 'title' => 'Relatórios']
         ];
     }
-
-    
-
 }

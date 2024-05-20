@@ -77,7 +77,7 @@ function toggleUI(mode = null){
         page.value.title.secondary = 'Insira os dados para registro e permissionamento de usuários'
     }else{
         page.value.title.primary = 'Listagem de Usuários'
-        page.value.title.secondary = `Foram localizados ${(page.value.datalist.length).toString().padStart(2, '0')} inseridos no sistema`
+        page.value.title.secondary = 'Para alterar o registro clique nos três pontos verticais'
     }
 }
 
@@ -155,10 +155,10 @@ onMounted(() => {
                 description: 'Estrutura e Perminissionamento de Usuários'
             }" />
 
-            <div class="box p-0 mb-4 rounded-4">
+            <div class="box box-main p-0 rounded-4">
                 
                 <!--HEDER PAGE-->
-                <div class="d-md-flex justify-content-between align-items-center px-4 px-md-5 pt-5 mb-4">
+                <div class="d-md-flex justify-content-between align-items-center w-100 px-4 px-md-5 pt-5 mb-4">
                     <div class="info-list">
                         <h2 class="txt-color p-0 m-0">{{ page.title.primary }}</h2>
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
@@ -176,37 +176,39 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <!--BOX SEARCH-->
-                <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
-                    <form @submit.prevent="list" class="row g-3">
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-name" class="form-label">Nome</label>
-                            <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                placeholder="Pesquise por partes do nome do usuário">
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-email" class="form-label">E-mail</label>
-                            <input type="email" name="email" class="form-control" id="s-email"
-                                v-model="page.search.email" placeholder="user@mail.com">
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-profile" class="form-label">Perfil</label>
-                            <select name="profile" class="form-control" id="s-profile" v-model="page.search.profile">
-                                <option></option>
-                                <option v-for="s in page.selects.profiles" :value="s.id" :key="s.id">{{ s.title }}
-                                </option>
-                            </select>
-                        </div>
-
-                        <div class="d-flex flex-row-reverse mt-4">
-                            <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
-                                    class="bi bi-check2-circle"></i></button>
-                        </div>
-                    </form>
-                </div>
-
                 <!--BOX LIST-->
-                <div v-if="!page.uiview.register" id="list-box" class="mb-4">
+                <div v-if="!page.uiview.register" id="list-box" class="inside-box mb-4">
+
+                    <!--SEARCH BAR-->
+                    <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
+                        <form @submit.prevent="list" class="row g-3">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-name" class="form-label">Nome</label>
+                                <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
+                                    placeholder="Pesquise por partes do nome do usuário">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-email" class="form-label">E-mail</label>
+                                <input type="email" name="email" class="form-control" id="s-email"
+                                    v-model="page.search.email" placeholder="user@mail.com">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-profile" class="form-label">Perfil</label>
+                                <select name="profile" class="form-control" id="s-profile" v-model="page.search.profile">
+                                    <option></option>
+                                    <option v-for="s in page.selects.profiles" :value="s.id" :key="s.id">{{ s.title }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex flex-row-reverse mt-4">
+                                <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
+                                        class="bi bi-check2-circle"></i></button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- DATA LIST -->
                     <TableList 
                     @action:update="update" 
                     @action:delete="remove" 
@@ -220,7 +222,7 @@ onMounted(() => {
                 </div>
 
                 <!--BOX REGISTER-->
-                <div v-if="page.uiview.register" id="register-box" class="px-4 px-md-5 mb-4">
+                <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
                     <form class="form-row" @submit.prevent="save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">

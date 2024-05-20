@@ -6,10 +6,10 @@ const alert    = ref(props.alert)
 const progress = ref('width:0%;')
 const timeview = ref(0)
 const alerts   = {
-    success: { style: 'alert-success', icon: 'bi-check-circle-fill', title: 'Sucesso!', msg: 'Operação realizada com sucesso!' },
-    warning: { style: 'alert-warning', icon: 'bi-exclamation-triangle-fill', title: 'Alerta!', msg: 'Falha ao realizar solicitação!' },
-    danger: { style: 'alert-danger', icon: 'bi-x-octagon-fill', title: 'Ocorreu um problema!', msg: 'Algo deu errado, verifique e tente novamente!' },
-    info: { style: 'alert-info', icon: 'bi-exclamation-triangle-fill', title: 'Atenção!', msg: '' }
+    success: { style: 'alert-success', icon: 'bi-check-circle-fill', title: 'Sucesso!', msg: 'Operação realizada com sucesso!', bar:'bg-success' },
+    warning: { style: 'alert-warning', icon: 'bi-exclamation-triangle-fill', title: 'Alerta!', msg: 'Falha ao realizar solicitação!', bar:'bg-warning' },
+    danger: { style: 'alert-danger', icon: 'bi-x-octagon-fill', title: 'Ocorreu um problema!', msg: 'Algo deu errado, verifique e tente novamente!', bar:'bg-danger' },
+    info: { style: 'alert-info', icon: 'bi-exclamation-triangle-fill', title: 'Atenção!', msg: '', bar:'bg-info' }
 }
 
 watch(() => props.alert, (newValue) => {
@@ -49,7 +49,7 @@ onMounted(() => {
         <p v-if="props.alert.data.msg" class="small p-0 m-0">{{ props.alert.data.msg }}</p>
         
         <div class="progress mt-3" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="height: 1px">
-            <div class="progress-bar" :style="progress"></div>
+            <div class="progress-bar" :class="alerts[props.alert.data.type].bar" :style="progress"></div>
         </div>
     </div>
 </template>
