@@ -4,19 +4,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('contractitems', function (Blueprint $table) {
+        Schema::create('catalog_items_subcategories', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('contract_id')->constrained('contracts');
-            $table->foreignId('item_id')->constrained('items');
-            $table->integer('quantity');
-            $table->double('unitary_value');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->string('name');
         });
     }
 
@@ -25,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('contractitems');
+        Schema::dropIfExists('catalog_items_subcategories');
     }
 };
