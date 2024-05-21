@@ -12,8 +12,8 @@ import TableList from '@/components/TableList.vue';
 import ManagementNav from '@/components/ManagementNav.vue';
 
 const router = useRouter();
-const emit   = defineEmits(['callAlert', 'callRemove'])
-const props  = defineProps({
+const emit = defineEmits(['callAlert', 'callRemove'])
+const props = defineProps({
     datalist: { type: Array, default: () => [] }
 })
 
@@ -23,9 +23,9 @@ const page = ref({
     data: {},
     datalist: props.datalist,
     dataheader: [
-        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'type' }]},
+        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'type' }] },
         { key: 'unit_id', title: 'VINCULO', sub: [{ key: 'organ_id' }] },
-        { key: 'status', title: 'STATUS' , sub: [{ key: 'start_term' }, { key: 'end_term' }] },
+        { key: 'status', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term' }] },
     ],
     search: {},
     selects: {
@@ -76,8 +76,8 @@ function toggleUI(mode = null) {
         page.value.title.primary = 'Registro de Comissões'
         page.value.title.secondary = 'Insira os dados de Comissões vinculados as Unidades do Orgão'
     } else {
-        page.value.title.primary = 'Listagem de Comissões'
-        page.value.title.secondary = `Foram localizados ${(page.value.datalist.length).toString().padStart(2, '0')} Comissões inseridos no sistema`
+        page.value.title.primary = 'Lista de Comissões'
+        page.value.title.secondary = 'Dados das comissões inseridas no sistema'
     }
 }
 
@@ -89,7 +89,7 @@ function save() {
     }
 
     const data = { ...page.value.data }
-    const url  = page.value.data?.id ? '/comissions/update' : '/comissions/save'
+    const url = page.value.data?.id ? '/comissions/update' : '/comissions/save'
     const exec = page.value.data?.id ? http.put : http.post
 
     exec(url, data, emit, () => {
@@ -129,34 +129,34 @@ function selects(key = null, search = null) {
     })
 }
 
-function handleFile(event){
+function handleFile(event) {
     const file = event.target.files[0]
-    if(file){
+    if (file) {
         page.value.data.document = file
     }
 }
 
-function download(id){
+function download(id) {
     http.download(`/comissions/download/${id}`, emit, (response) => {
-        if(response.headers['content-type'] !== 'application/pdf'){
+        if (response.headers['content-type'] !== 'application/pdf') {
             emit('callAlert', notifys.warning('Arquivo Indisponível'))
             return
         }
-        
-        const url  = URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}))
+
+        const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
         const link = document.createElement('a')
         link.href = url;
         link.download = `Amparo-${id}.pdf`
         document.body.appendChild(link)
         link.click()
         window.URL.revokeObjectURL(url);
-        
+
     })
 }
 
-function members(id){
-    
-    router.replace({name:'comissionsmembers', params:{id:id}})
+function members(id) {
+
+    router.replace({ name: 'comissionsmembers', params: { id: id } })
 }
 
 onMounted(() => {
@@ -176,9 +176,9 @@ onMounted(() => {
                 description: 'Registro de Comissões vinculados as Unidades do Orgão'
             }" />
 
-            <div class="box p-0 mb-4 rounded-4">
+            <div class="box box-main p-0 rounded-4">
                 <!--HEDER PAGE-->
-                <div class="d-md-flex justify-content-between align-items-center px-4 px-md-5 pt-5 mb-4">
+                <div class="d-md-flex justify-content-between align-items-center w-100 px-4 px-md-5 pt-5 mb-4">
                     <div class="info-list">
                         <h2 class="txt-color p-0 m-0">{{ page.title.primary }}</h2>
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
@@ -198,57 +198,54 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <!--BOX SEARCH-->
-                <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
-                    <form @submit.prevent="list" class="row g-3">
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-name" class="form-label">Nome</label>
-                            <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                placeholder="Pesquise por partes do nome do setor">
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-organ_id" class="form-label">Orgão</label>
-                            <select name="organ_id" class="form-control" id="s-organ_id" v-model="page.search.organ_id"
-                                @change="selects('organ_id', page.search.organ_id)">
-                                <option value=""></option>
-                                <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-unit_id" class="form-label">Unidade</label>
-                            <select name="unit_id" class="form-control" id="s-unit_id" v-model="page.search.unit_id">
-                                <option value=""></option>
-                                <option v-for="o in page.selects.units" :key="o.id" :value="o.id">{{ o.title }}</option>
-                            </select>
-                        </div>
-
-                        <div class="d-flex flex-row-reverse mt-4">
-                            <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
-                                    class="bi bi-check2-circle"></i></button>
-                        </div>
-                    </form>
-                </div>
-
                 <!--BOX LIST-->
-                <div v-if="!page.uiview.register" id="list-box" class="mb-4">
-                    <TableList 
-                        @action:update="update" 
-                        @action:delete="remove"
-                        @action:download="download"
-                        @action:members="members"
-                        :header="page.dataheader"
-                        :body="page.datalist" :actions="['members', 'download', 'update', 'delete']"
-                        :casts="{ 
-                            'organ_id': page.selects.organs, 
-                            'unit_id' : page.selects.units, 
-                            'status'  : page.selects.status,
-                            'type'    : page.selects.types
-                            }" />
+                <div v-if="!page.uiview.register" id="list-box" class="inside-box mb-4">
+                    
+                    <!--BOX SEARCH-->
+                    <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
+                        <form @submit.prevent="list" class="row g-3">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-name" class="form-label">Nome</label>
+                                <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
+                                    placeholder="Pesquise por partes do nome do setor">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-organ_id" class="form-label">Orgão</label>
+                                <select name="organ_id" class="form-control" id="s-organ_id" v-model="page.search.organ_id"
+                                    @change="selects('organ_id', page.search.organ_id)">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-unit_id" class="form-label">Unidade</label>
+                                <select name="unit_id" class="form-control" id="s-unit_id" v-model="page.search.unit_id">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.units" :key="o.id" :value="o.id">{{ o.title }}</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex flex-row-reverse mt-4">
+                                <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
+                                        class="bi bi-check2-circle"></i></button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- DATA LIST -->
+                    <TableList @action:update="update" @action:delete="remove" @action:download="download"
+                        @action:members="members" :header="page.dataheader" :body="page.datalist"
+                        :actions="['members', 'download', 'update', 'delete']" :casts="{
+                            'organ_id': page.selects.organs,
+                            'unit_id': page.selects.units,
+                            'status': page.selects.status,
+                            'type': page.selects.types
+                        }" />
                 </div>
 
                 <!--BOX REGISTER-->
-                <div v-if="page.uiview.register" id="register-box" class="px-4 px-md-5 mb-4">
+                <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
                     <form class="form-row" @submit.prevent="save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
@@ -323,11 +320,12 @@ onMounted(() => {
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12">
                                 <label for="description" class="form-label">Descrição das Atividades</label>
-                                <textarea name="description" class="form-control" id="description" v-model="page.data.description"></textarea>
+                                <textarea name="description" class="form-control" id="description"
+                                    v-model="page.data.description"></textarea>
                             </div>
                         </div>
 

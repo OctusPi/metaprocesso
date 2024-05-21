@@ -9,8 +9,8 @@
         casts   :{type: Object}
     })
     
-    const emit  = defineEmits(['action:update', 'action:delete', 'action:download', 'action:members'])
-    const body  = ref(props.body)
+    const emit = defineEmits(['action:update', 'action:delete', 'action:download', 'action:members'])
+    const body = ref(props.body)
     
     watch(() => props.body, (newValue) => {
         body.value = newValue
@@ -37,8 +37,11 @@
 </script>
 
 <template>
+    <p v-if="body.length" class="small txt-color-sec ps-5">
+        <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
+    </p>
     <div v-if="body.length" class="table-responsive-sm">
-        <table class="table table-borderless table-hover">
+        <table class="table table-borderless table-striped table-hover">
             <thead v-if="props.header">
                 <tr>
                     <th scope="col" v-for="h in props.header" :key="h.key" @click="orderBy(h.key)">{{ h.title }}<i class="bi bi-arrow-down-up ms-2 table-order-icon"></i></th>

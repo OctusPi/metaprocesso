@@ -12,38 +12,38 @@ import InputMultSelect from '@/components/inputs/InputMultSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({
-    datalist: {type: Array, default: () => []}
+    datalist: { type: Array, default: () => [] }
 })
 
 const page = ref({
-    title       :{primary: '', secondary: ''},
-    uiview      :{register:false, search:false},
-    data        :{},
-    datalist    :props.datalist,
-    dataheader  :[
-        {key:'name', title:'NOME'}, 
-        {key:'email', title:'E-MAIL'}, 
-        {key:'profile', title:'PERFIL', sub:[{key:'passchange', title:'Sitiação Senha:'}]}, 
-        {key:'status', title:'STATUS', sub:[{key:'lastlogin', title:'Ultimo Acesso:'}]}
+    title: { primary: '', secondary: '' },
+    uiview: { register: false, search: false },
+    data: {},
+    datalist: props.datalist,
+    dataheader: [
+        { key: 'name', title: 'NOME' },
+        { key: 'email', title: 'E-MAIL' },
+        { key: 'profile', title: 'PERFIL', sub: [{ key: 'passchange', title: 'Sitiação Senha:' }] },
+        { key: 'status', title: 'STATUS', sub: [{ key: 'lastlogin', title: 'Ultimo Acesso:' }] }
     ],
-    search      :{},
-    selects     :{
+    search: {},
+    selects: {
         status: [],
-        profiles:[],
+        profiles: [],
         organs: [],
         units: [],
         sectors: [],
         modules: []
     },
-    rules       :{
+    rules: {
         fields: {
-            name:'required',
-            email:'required|email',
-            status:'required',
-            profile:'required',
-            modules:'required'
+            name: 'required',
+            email: 'required|email',
+            status: 'required',
+            profile: 'required',
+            modules: 'required'
         },
-        valids:{}
+        valids: {}
     }
 })
 
@@ -51,51 +51,50 @@ watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
 
-function toggleUI(mode = null){
-    
+function toggleUI(mode = null) {
+
     switch (mode) {
         case 'register':
-            page.value.uiview.search   = false
+            page.value.uiview.search = false
             page.value.uiview.register = !page.value.uiview.register
             page.value.data = {}
             break;
         case 'update':
-            page.value.uiview.search   = false
+            page.value.uiview.search = false
             page.value.uiview.register = !page.value.uiview.register
             break;
         case 'search':
-            page.value.uiview.search   = !page.value.uiview.search
+            page.value.uiview.search = !page.value.uiview.search
             page.value.uiview.register = false
             break;
         default:
             page.value.uiview.register = false
             break;
     }
-    
-    if(page.value.uiview.register){
+
+    if (page.value.uiview.register) {
         page.value.title.primary = 'Registro de Usuários'
         page.value.title.secondary = 'Insira os dados para registro e permissionamento de usuários'
-    }else{
-        page.value.title.primary = 'Listagem de Usuários'
-        page.value.title.secondary = 'Para alterar o registro clique nos três pontos verticais'
+    } else {
+        page.value.title.primary = 'Lista de Usuários'
+        page.value.title.secondary = 'Dados dos usuários inseridos no sistema'
     }
 }
 
-
-function save(){
+function save() {
     const validation = forms.checkform(page.value.data, page.value.rules);
-    if(!validation.isvalid){
+    if (!validation.isvalid) {
         emit('callAlert', notifys.warning(validation.message))
         return
     }
 
-    const dataform = {...page.value.data }
+    const dataform = { ...page.value.data }
     dataform.modules = JSON.stringify((page.value.data.modules).map(i => page.value.selects.modules[i]))
-    dataform.organs  = JSON.stringify(page.value.data.organs)
-    dataform.units   = JSON.stringify(page.value.data.units)
+    dataform.organs = JSON.stringify(page.value.data.organs)
+    dataform.units = JSON.stringify(page.value.data.units)
     dataform.sectors = JSON.stringify(page.value.data.sectors)
 
-    if(page.value.data?.id){
+    if (page.value.data?.id) {
         http.put('/management/update', dataform, emit, () => {
             list()
         })
@@ -109,7 +108,7 @@ function save(){
 
 }
 
-function update(id){
+function update(id) {
     http.get(`/management/details/${id}`, emit, (response) => {
         page.value.data = response.data
         page.value.data.modules = (response.data?.modules ?? {}).map(obj => obj['id'])
@@ -117,22 +116,22 @@ function update(id){
     })
 }
 
-function remove(id){
+function remove(id) {
     emit('callRemove', {
-        id      : id,
-        url     : '/management',
-        search  : page.value.search
+        id: id,
+        url: '/management',
+        search: page.value.search
     })
 }
 
-function list(){
+function list() {
     http.post('/management/list', page.value.search, emit, (response) => {
         page.value.datalist = response.data ?? []
         toggleUI('list')
     })
 }
 
-function selects(){
+function selects() {
     http.get('/management/selects', emit, (response) => {
         page.value.selects = response.data
     })
@@ -156,7 +155,7 @@ onMounted(() => {
             }" />
 
             <div class="box box-main p-0 rounded-4">
-                
+
                 <!--HEDER PAGE-->
                 <div class="d-md-flex justify-content-between align-items-center w-100 px-4 px-md-5 pt-5 mb-4">
                     <div class="info-list">
@@ -165,11 +164,13 @@ onMounted(() => {
                     </div>
                     <div class="action-buttons d-flex my-2">
                         <ManagementNav />
-                        <button @click="toggleUI('register')" type="button" class="btn btn-action btn-action-primary ms-2">
+                        <button @click="toggleUI('register')" type="button"
+                            class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-plus-circle"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
                         </button>
-                        <button @click="toggleUI('search')" type="button" class="btn btn-action btn-action-primary ms-2">
+                        <button @click="toggleUI('search')" type="button"
+                            class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-search"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Pesquisar</span>
                         </button>
@@ -184,8 +185,8 @@ onMounted(() => {
                         <form @submit.prevent="list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-name" class="form-label">Nome</label>
-                                <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                    placeholder="Pesquise por partes do nome do usuário">
+                                <input type="text" name="name" class="form-control" id="s-name"
+                                    v-model="page.search.name" placeholder="Pesquise por partes do nome do usuário">
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-email" class="form-label">E-mail</label>
@@ -194,7 +195,8 @@ onMounted(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-profile" class="form-label">Perfil</label>
-                                <select name="profile" class="form-control" id="s-profile" v-model="page.search.profile">
+                                <select name="profile" class="form-control" id="s-profile"
+                                    v-model="page.search.profile">
                                     <option></option>
                                     <option v-for="s in page.selects.profiles" :value="s.id" :key="s.id">{{ s.title }}
                                     </option>
@@ -209,16 +211,12 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList 
-                    @action:update="update" 
-                    @action:delete="remove" 
-                    :header="page.dataheader" 
-                    :body="page.datalist" 
-                    :actions="['update', 'delete']"
-                    :casts="{
-                        'profile':page.selects.profiles, 
-                        'status':page.selects.status, 
-                        'passchange':[{id:0, title: 'Ativa'}, {id:1, title:'Mudança de Senha'}]}"/>
+                    <TableList @action:update="update" @action:delete="remove" :header="page.dataheader"
+                        :body="page.datalist" :actions="['update', 'delete']" :casts="{
+                            'profile': page.selects.profiles,
+                            'status': page.selects.status,
+                            'passchange': [{ id: 0, title: 'Ativa' }, { id: 1, title: 'Mudança de Senha' }]
+                        }" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -233,7 +231,7 @@ onMounted(() => {
                                     placeholder="Sr. Snake" v-model="page.data.name">
                             </div>
                         </div>
-                        
+
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="email" class="form-label">E-mail</label>
@@ -266,22 +264,26 @@ onMounted(() => {
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12">
                                 <label for="modules" class="form-label">Modulos</label>
-                                <InputMultSelect v-model="page.data.modules" :options="page.selects.modules" identify="modules"/>
+                                <InputMultSelect v-model="page.data.modules" :options="page.selects.modules"
+                                    identify="modules" />
                             </div>
                         </div>
 
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="organs" class="form-label">Orgãos</label>
-                                <InputMultSelect v-model="page.data.organs" :options="page.selects.organs" identify="organs"/>
+                                <InputMultSelect v-model="page.data.organs" :options="page.selects.organs"
+                                    identify="organs" />
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="units" class="form-label">Unidades</label>
-                                <InputMultSelect v-model="page.data.units" :options="page.selects.units" identify="units"/>
+                                <InputMultSelect v-model="page.data.units" :options="page.selects.units"
+                                    identify="units" />
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="sectors" class="form-label">Setores</label>
-                                <InputMultSelect v-model="page.data.sectors" :options="page.selects.sectors" identify="sectors" />
+                                <InputMultSelect v-model="page.data.sectors" :options="page.selects.sectors"
+                                    identify="sectors" />
                             </div>
                         </div>
 

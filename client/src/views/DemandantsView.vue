@@ -74,8 +74,8 @@ function toggleUI(mode = null) {
         page.value.title.primary = 'Registro de Demandantes'
         page.value.title.secondary = 'Insira os dados de Demandantes vinculados as Unidades do Orgão'
     } else {
-        page.value.title.primary = 'Listagem de Demandantes'
-        page.value.title.secondary = `Foram localizados ${(page.value.datalist.length).toString().padStart(2, '0')} Demandantes inseridos no sistema`
+        page.value.title.primary = 'Lista de Demandantes'
+        page.value.title.secondary = 'Dados dos demandantes inseridos no sistema'
     }
 }
 
@@ -168,10 +168,10 @@ onMounted(() => {
                 description: 'Registro de Demandantes vinculados as Unidades do Orgão'
             }" />
 
-            <div class="box p-0 mb-4 rounded-4">
+            <div class="box box-main p-0 rounded-4">
                 
                 <!--HEDER PAGE-->
-                <div class="d-md-flex justify-content-between align-items-center px-4 px-md-5 pt-5 mb-4">
+                <div class="d-md-flex justify-content-between align-items-center w-100 px-4 px-md-5 pt-5 mb-4">
                     <div class="info-list">
                         <h2 class="txt-color p-0 m-0">{{ page.title.primary }}</h2>
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
@@ -191,42 +191,44 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <!--BOX SEARCH-->
-                <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
-                    <form @submit.prevent="list" class="row g-3">
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-name" class="form-label">Nome</label>
-                            <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                placeholder="Pesquise por partes do nome do setor">
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-organ_id" class="form-label">Orgão</label>
-                            <select name="organ_id" class="form-control" id="s-organ_id" v-model="page.search.organ_id"
-                                @change="selects('organ_id', page.search.organ_id)">
-                                <option value=""></option>
-                                <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-unit_id" class="form-label">Unidade</label>
-                            <select name="unit_id" class="form-control" id="s-unit_id" v-model="page.search.unit_id">
-                                <option value=""></option>
-                                <option v-for="o in page.selects.units" :key="o.id" :value="o.id">{{ o.title }}</option>
-                            </select>
-                        </div>
-
-                        <div class="d-flex flex-row-reverse mt-4">
-                            <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
-                                    class="bi bi-check2-circle"></i></button>
-                        </div>
-                    </form>
-                </div>
-
                 <!--BOX LIST-->
-                <div v-if="!page.uiview.register" id="list-box" class="mb-4">
+                <div v-if="!page.uiview.register" id="list-box" class="inside-box mb-4">
+                    
+                    <!-- SEARCH BAR -->
+                    <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
+                        <form @submit.prevent="list" class="row g-3">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-name" class="form-label">Nome</label>
+                                <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
+                                    placeholder="Pesquise por partes do nome do setor">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-organ_id" class="form-label">Orgão</label>
+                                <select name="organ_id" class="form-control" id="s-organ_id" v-model="page.search.organ_id"
+                                    @change="selects('organ_id', page.search.organ_id)">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-unit_id" class="form-label">Unidade</label>
+                                <select name="unit_id" class="form-control" id="s-unit_id" v-model="page.search.unit_id">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.units" :key="o.id" :value="o.id">{{ o.title }}</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex flex-row-reverse mt-4">
+                                <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
+                                        class="bi bi-check2-circle"></i></button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- DATA LIST -->
                     <TableList 
-                        @action:update="update" 
+                        @action:update="update"
                         @action:delete="remove"
                         @action:download="download"
                         :header="page.dataheader"
@@ -235,7 +237,7 @@ onMounted(() => {
                 </div>
 
                 <!--BOX REGISTER-->
-                <div v-if="page.uiview.register" id="register-box" class="px-4 px-md-5 mb-4">
+                <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
                     <form class="form-row" @submit.prevent="save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
