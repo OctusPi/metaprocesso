@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('origin');
             $table->integer('type');
             $table->integer('category');
-            $table->string('subcategory');
+            $table->foreignId('subcategory_id')->constrained('catalog_items_subcategories');
             $table->integer('status');
         });
     }
