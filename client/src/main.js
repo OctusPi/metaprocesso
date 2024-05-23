@@ -13,8 +13,8 @@ const app = createApp(App)
 app.use(router)
 app.directive('maska', vMaska)
 app.provide('sysapp', {
-  name: import.meta.env.VITE_APP_NAME ?? 'Gestor Contratos',
-  desc: import.meta.env.VITE_APP_DESC ?? 'Gestão e Fiscalização de Contratos',
-  copy: import.meta.env.VITE_APP_COPY ?? 'OctusPi 2024'
+  name: import.meta.env.VITE_APP_NAME ?? 'Gestor de Compras',
+  desc: import.meta.env.VITE_APP_DESC ?? 'Gestão de Compras Públicas',
+  copy: import.meta.env.VITE_APP_COPY ?? 'OctusPi Development 2024'
 })
 app.mount('#app')
