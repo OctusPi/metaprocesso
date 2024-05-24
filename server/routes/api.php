@@ -1,13 +1,13 @@
 <?php
 
 use App\Http\Controllers\Auth;
+use App\Http\Controllers\Catalogs;
 use App\Http\Controllers\Comissions;
 use App\Http\Controllers\ComissionsEnds;
 use App\Http\Controllers\ComissionsMembers;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Demandants;
 use App\Http\Controllers\Dotations;
-use App\Http\Controllers\Items;
 use App\Http\Controllers\Management;
 use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\Organs;
@@ -209,7 +209,7 @@ Route::controller(Management::class)->group(function () {
     });
 })->name('management');
 
-Route::controller(Items::class)->group(function () {
+Route::controller(Catalogs::class)->group(function () {
     
     Route::prefix('/catalogs')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
