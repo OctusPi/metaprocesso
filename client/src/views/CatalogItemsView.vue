@@ -8,7 +8,6 @@ import Ui from '@/utils/ui';
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
-import CatalogsNav from '@/components/CatalogsNav.vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter()
@@ -38,8 +37,7 @@ const page   = ref({
         valids: {}
     }
 })
-const ui = new Ui(page, 'Catálogos')
-
+const ui = new Ui(page, 'Itens do Catálogo')
 
 function save() {
     const validation = forms.checkform(page.value.data, page.value.rules);
@@ -49,7 +47,7 @@ function save() {
     }
 
     const data = { ...page.value.data }
-    const url = page.value.data?.id ? '/catalogs/update' : '/catalogs/save'
+    const url = page.value.data?.id ? '/catalogitems/update' : '/catalogitems/save'
     const exec = page.value.data?.id ? http.put : http.post
 
     exec(url, data, emit, () => {
@@ -58,7 +56,7 @@ function save() {
 }
 
 function update(id) {
-    http.get(`/catalogs/details/${id}`, emit, (response) => {
+    http.get(`/catalogitems/details/${id}`, emit, (response) => {
         selects('organ_id', response.data?.unit)
         page.value.data = response.data
         ui.toggle('update')
@@ -74,7 +72,7 @@ function remove(id) {
 }
 
 function list() {
-    http.post('/catalogs/list', page.value.search, emit, (response) => {
+    http.post('/catalogitems/list', page.value.search, emit, (response) => {
         page.value.datalist = response.data ?? []
         ui.toggle('list')
     })
@@ -82,7 +80,7 @@ function list() {
 
 function selects(key = null, search = null) {
 
-    const urlselect = (key && search) ? `/catalogs/selects/${key}/${search}` : '/catalogs/selects'
+    const urlselect = (key && search) ? `/catalogitems/selects/${key}/${search}` : '/catalogitems/selects'
 
     http.get(urlselect, emit, (response) => {
         page.value.selects = response.data
@@ -98,7 +96,7 @@ watch(() => props.datalist, (newdata) => {
 })
 
 onMounted(() => {
-    selects()
+    // selects()
     list()
 })
 
@@ -123,7 +121,6 @@ onMounted(() => {
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
                     </div>
                     <div class="action-buttons d-flex my-2">
-                        <CatalogsNav />
                         <button @click="ui.toggle('register')" type="button"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-plus-circle"></i>
@@ -134,10 +131,12 @@ onMounted(() => {
                             <i class="bi bi-search"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Localizar</span>
                         </button>
-                        <!-- <button type="button" class="btn btn-action btn-action-primary ms-2">
-                            <i class="bi bi-arrow-up"></i>
-                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Exportar</span>
-                        </button> -->
+                        <RouterLink to="/subcategories"
+                            class="btn btn-action btn-action-primary ms-2">
+                            <i class="bi bi-bookmarks"></i>
+                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Categorias</span>
+                        </RouterLink>
+                        
                     </div>
                 </div>
 

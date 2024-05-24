@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth;
+use App\Http\Controllers\CatalogItems;
 use App\Http\Controllers\Catalogs;
 use App\Http\Controllers\Comissions;
 use App\Http\Controllers\ComissionsEnds;
@@ -223,6 +224,21 @@ Route::controller(Catalogs::class)->group(function () {
         });
     });
 })->name('catalogs');
+
+Route::controller(CatalogItems::class)->group(function () {
+    
+    Route::prefix('/catalogitems')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('/{id?}', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects/{key?}/{search?}', 'selects');
+        });
+    });
+})->name('catalogitems');
 
 
 Route::fallback(function () {  

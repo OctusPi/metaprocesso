@@ -15,7 +15,7 @@ class Catalogs extends Controller
 {
     public function __construct()
     {
-        parent::__construct(User::MOD_MANAGEMENT);
+        parent::__construct(User::MOD_CATALOGS);
         Guardian::validateAccess($this->module_id);
     }
 

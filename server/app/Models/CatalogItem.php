@@ -10,9 +10,6 @@ class CatalogItem extends Model
 {
     use HasFactory;
 
-    public const ENDPOINT_CATMAT = 'https://compras.dados.gov.br/materiais/v1/materiais.json?descricao_item=$';
-    public const ENDPOINT_CATSER = 'https://compras.dados.gov.br/servicos/v1/servicos.json?descricao=$';
-
     protected $table = 'catalog_items';
     protected $fillable = [
         'organ_id',
@@ -43,5 +40,28 @@ class CatalogItem extends Model
         return $this->belongsTo(CatalogSubCategoryItem::class, 'subcategory_id');
     }
 
+    public static function validateFields(?int $id = null):array
+    {
+        return [
+            'organ_id'       => 'required',
+            'catalog_id'     => 'required',
+            'code'           => 'required',
+            'name'           => 'required',
+            'description'    => 'required',
+            'und'            => 'required',
+            'origin'         => 'required',
+            'type'           => 'required',
+            'category'       => 'required',
+            'subcategory_id' => 'required',
+            'status'         => 'required',
+        ];
+    }
+
+    public static function validateMsg():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!'
+        ];
+    }
 
 }
