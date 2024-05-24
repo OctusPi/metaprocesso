@@ -9,12 +9,15 @@
         casts   :{type: Object}
     })
     
-    const emit = defineEmits(['action:update', 'action:delete', 'action:download', 'action:members'])
-    const body = ref(props.body)
+    const emit = defineEmits([
+        'action:update', 
+        'action:delete', 
+        'action:download', 
+        'action:members',
+        'action:items'
+    ])
     
-    watch(() => props.body, (newValue) => {
-        body.value = newValue
-    });
+    const body = ref(props.body)
 
     function orderBy(key){
         body.value.sort((a,b) => {
@@ -34,6 +37,10 @@
     function propagateEmit(emt){
         emit(emt.e, emt.i)
     }
+
+    watch(() => props.body, (newValue) => {
+        body.value = newValue
+    });
 </script>
 
 <template>

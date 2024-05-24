@@ -29,7 +29,13 @@ const actions = {
         action: (id) => { emit('action', {e:'action:members', i:id}) }, 
         icon: 'bi-people',
         title: 'Membros'
+    },
+    'items':{
+        action: (id) => { emit('action', {e:'action:items', i:id}) }, 
+        icon: 'bi-boxes',
+        title: 'Itens'
     }
+
 }
 
 </script>
