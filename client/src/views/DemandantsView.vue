@@ -9,6 +9,7 @@ import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import ManagementNav from '@/components/ManagementNav.vue';
+import Ui from '@/utils/ui';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({
@@ -21,16 +22,16 @@ const page = ref({
     data: {},
     datalist: props.datalist,
     dataheader: [
-        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cpf' }]},
+        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cpf' }] },
         { key: 'unit_id', title: 'VINCULO', sub: [{ key: 'organ_id' }] },
-        { key: 'status', title: 'STATUS' , sub: [{ key: 'start_term' }, { key: 'end_term' }] },
+        { key: 'status', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term' }] },
     ],
     search: {},
     selects: {
-        organs:  [],
-        units:   [],
+        organs: [],
+        units: [],
         sectors: [],
-        status:  []
+        status: []
     },
     rules: {
         fields: {
@@ -39,7 +40,7 @@ const page = ref({
             organ_id: 'required',
             unit_id: 'required',
             status: 'required',
-            'start_term': 'required'
+            start_term: 'required'
         },
         valids: {}
     }
@@ -49,35 +50,7 @@ watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
 
-function toggleUI(mode = null) {
-
-    switch (mode) {
-        case 'register':
-            page.value.uiview.search = false
-            page.value.uiview.register = !page.value.uiview.register
-            page.value.data = {}
-            break;
-        case 'update':
-            page.value.uiview.search = false
-            page.value.uiview.register = !page.value.uiview.register
-            break;
-        case 'search':
-            page.value.uiview.search = !page.value.uiview.search
-            page.value.uiview.register = false
-            break;
-        default:
-            page.value.uiview.register = false
-            break;
-    }
-
-    if (page.value.uiview.register) {
-        page.value.title.primary = 'Registro de Demandantes'
-        page.value.title.secondary = 'Insira os dados de Demandantes vinculados as Unidades do Orgão'
-    } else {
-        page.value.title.primary = 'Lista de Demandantes'
-        page.value.title.secondary = 'Dados dos demandantes inseridos no sistema'
-    }
-}
+const ui = new Ui(page, 'Demandantes', 'o')
 
 function save() {
     const validation = forms.checkform(page.value.data, page.value.rules);
@@ -87,7 +60,7 @@ function save() {
     }
 
     const data = { ...page.value.data }
-    const url  = page.value.data?.id ? '/demandants/update' : '/demandants/save'
+    const url = page.value.data?.id ? '/demandants/update' : '/demandants/save'
     const exec = page.value.data?.id ? http.put : http.post
 
     exec(url, data, emit, () => {
@@ -99,7 +72,7 @@ function update(id) {
     http.get(`/demandants/details/${id}`, emit, (response) => {
         selects('organ_id', response.data?.unit)
         page.value.data = response.data
-        toggleUI('update')
+        ui.toggle('update')
     })
 }
 
@@ -114,7 +87,7 @@ function remove(id) {
 function list() {
     http.post('/demandants/list', page.value.search, emit, (response) => {
         page.value.datalist = response.data ?? []
-        toggleUI('list')
+        ui.toggle('list')
     })
 }
 
@@ -127,21 +100,21 @@ function selects(key = null, search = null) {
     })
 }
 
-function handleFile(event){
+function handleFile(event) {
     const file = event.target.files[0]
-    if(file){
+    if (file) {
         page.value.data.document = file
     }
 }
 
-function download(id){
+function download(id) {
     http.download(`/demandants/download/${id}`, emit, (response) => {
-        if(response.headers['content-type'] !== 'application/pdf'){
+        if (response.headers['content-type'] !== 'application/pdf') {
             emit('callAlert', notifys.warning('Arquivo Indisponível'))
             return
         }
-        
-        const url  = URL.createObjectURL(new Blob([response.data], {type: 'application/pdf'}))
+
+        const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
         const link = document.createElement('a')
         link.href = url;
         link.download = `Amparo-${id}.pdf`
@@ -169,7 +142,7 @@ onMounted(() => {
             }" />
 
             <div class="box box-main p-0 rounded-4">
-                
+
                 <!--HEDER PAGE-->
                 <div class="d-md-flex justify-content-between align-items-center w-100 px-4 px-md-5 pt-5 mb-4">
                     <div class="info-list">
@@ -178,12 +151,12 @@ onMounted(() => {
                     </div>
                     <div class="action-buttons d-flex my-2">
                         <ManagementNav />
-                        <button @click="toggleUI('register')" type="button"
+                        <button @click="ui.toggle('register')" type="button"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-plus-circle"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
                         </button>
-                        <button @click="toggleUI('search')" type="button"
+                        <button @click="ui.toggle('search')" type="button"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-search"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Pesquisar</span>
@@ -193,19 +166,19 @@ onMounted(() => {
 
                 <!--BOX LIST-->
                 <div v-if="!page.uiview.register" id="list-box" class="inside-box mb-4">
-                    
+
                     <!-- SEARCH BAR -->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
                         <form @submit.prevent="list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-name" class="form-label">Nome</label>
-                                <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                    placeholder="Pesquise por partes do nome do setor">
+                                <input type="text" name="name" class="form-control" id="s-name"
+                                    v-model="page.search.name" placeholder="Pesquise por partes do nome do setor">
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-organ_id" class="form-label">Orgão</label>
-                                <select name="organ_id" class="form-control" id="s-organ_id" v-model="page.search.organ_id"
-                                    @change="selects('organ_id', page.search.organ_id)">
+                                <select name="organ_id" class="form-control" id="s-organ_id"
+                                    v-model="page.search.organ_id" @change="selects('organ_id', page.search.organ_id)">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
@@ -213,9 +186,11 @@ onMounted(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-unit_id" class="form-label">Unidade</label>
-                                <select name="unit_id" class="form-control" id="s-unit_id" v-model="page.search.unit_id">
+                                <select name="unit_id" class="form-control" id="s-unit_id"
+                                    v-model="page.search.unit_id">
                                     <option value=""></option>
-                                    <option v-for="o in page.selects.units" :key="o.id" :value="o.id">{{ o.title }}</option>
+                                    <option v-for="o in page.selects.units" :key="o.id" :value="o.id">{{ o.title }}
+                                    </option>
                                 </select>
                             </div>
 
@@ -227,13 +202,9 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList 
-                        @action:update="update"
-                        @action:delete="remove"
-                        @action:download="download"
-                        :header="page.dataheader"
-                        :body="page.datalist" :actions="['download', 'update', 'delete']"
-                        :casts="{ 'organ_id': page.selects.organs, 'unit_id': page.selects.units, 'status':page.selects.status}" />
+                    <TableList @action:update="update" @action:delete="remove" @action:download="download"
+                        :header="page.dataheader" :body="page.datalist" :actions="['download', 'update', 'delete']"
+                        :casts="{ 'organ_id': page.selects.organs, 'unit_id': page.selects.units, 'status': page.selects.status }" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -326,7 +297,7 @@ onMounted(() => {
                         </div>
 
                         <div class="d-flex flex-row-reverse mt-4">
-                            <button @click="toggleUI('list')" type="button" class="btn btn-outline-warning">Cancelar <i
+                            <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">Cancelar <i
                                     class="bi bi-x-circle"></i></button>
                             <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
                                     class="bi bi-check2-circle"></i></button>

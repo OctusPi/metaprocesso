@@ -38,8 +38,8 @@ const page   = ref({
         valids: {}
     }
 })
-const ui = new Ui(page, 'Catálogos')
 
+const ui = new Ui(page, 'Catálogos')
 
 function save() {
     const validation = forms.checkform(page.value.data, page.value.rules);

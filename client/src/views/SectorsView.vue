@@ -8,6 +8,7 @@ import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import ManagementNav from '@/components/ManagementNav.vue';
+import Ui from '@/utils/ui';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({
@@ -43,35 +44,7 @@ watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
 
-function toggleUI(mode = null) {
-
-    switch (mode) {
-        case 'register':
-            page.value.uiview.search = false
-            page.value.uiview.register = !page.value.uiview.register
-            page.value.data = {}
-            break;
-        case 'update':
-            page.value.uiview.search = false
-            page.value.uiview.register = !page.value.uiview.register
-            break;
-        case 'search':
-            page.value.uiview.search = !page.value.uiview.search
-            page.value.uiview.register = false
-            break;
-        default:
-            page.value.uiview.register = false
-            break;
-    }
-
-    if (page.value.uiview.register) {
-        page.value.title.primary = 'Registro de Setores'
-        page.value.title.secondary = 'Insira os dados para registro de Setores vinculados as Unidades'
-    } else {
-        page.value.title.primary = 'Lista de Setores'
-        page.value.title.secondary = 'Dados dos setores inseridos no sistema'
-    }
-}
+const ui = new Ui(page, 'Setores')
 
 function save() {
     const validation = forms.checkform(page.value.data, page.value.rules);
@@ -93,7 +66,7 @@ function update(id) {
     http.get(`/sectors/details/${id}`, emit, (response) => {
         selects('organ_id', response.data?.unit)
         page.value.data = response.data
-        toggleUI('update')
+        ui.toggle('update')
     })
 }
 
@@ -108,7 +81,7 @@ function remove(id) {
 function list() {
     http.post('/sectors/list', page.value.search, emit, (response) => {
         page.value.datalist = response.data ?? []
-        toggleUI('list')
+        ui.toggle('list')
     })
 }
 
@@ -147,12 +120,12 @@ onMounted(() => {
                     </div>
                     <div class="action-buttons d-flex my-2">
                         <ManagementNav />
-                        <button @click="toggleUI('register')" type="button"
+                        <button @click="ui.toggle('register')" type="button"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-plus-circle"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
                         </button>
-                        <button @click="toggleUI('search')" type="button"
+                        <button @click="ui.toggle('search')" type="button"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-search"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Pesquisar</span>
@@ -244,7 +217,7 @@ onMounted(() => {
                         </div>
 
                         <div class="d-flex flex-row-reverse mt-4">
-                            <button @click="toggleUI('list')" type="button" class="btn btn-outline-warning">Cancelar <i
+                            <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">Cancelar <i
                                     class="bi bi-x-circle"></i></button>
                             <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
                                     class="bi bi-check2-circle"></i></button>
