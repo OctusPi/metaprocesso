@@ -12,8 +12,8 @@ class CatalogItem extends Model
 
     protected $table = 'catalog_items';
     protected $fillable = [
-        'organ_id',
-        'catalog_id',
+        'organ',
+        'catalog',
         'code',
         'name',
         'description',
@@ -21,7 +21,7 @@ class CatalogItem extends Model
         'volume',
         'origin',
         'category',
-        'subcategory_id',
+        'subcategory',
         'status',
     ];
 

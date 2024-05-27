@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router';
 import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
 import http from '@/services/http';
@@ -8,14 +9,15 @@ import Ui from '@/utils/ui';
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
-import { useRouter } from 'vue-router';
+import ListCatGov from '@/components/ListCatGov.vue';
 
-const router = useRouter()
-const emit   = defineEmits(['callAlert', 'callRemove'])
-const props  = defineProps({ datalist: { type: Array, default: () => [] } })
-const page   = ref({
+const router = useRoute()
+const emit = defineEmits(['callAlert', 'callRemove'])
+const props = defineProps({ datalist: { type: Array, default: () => [] } })
+const page = ref({
     title: {},
     uiview: {},
+    catalog:{},
     data: {},
     datalist: props.datalist,
     dataheader: [
@@ -24,6 +26,7 @@ const page   = ref({
         { key: 'law', title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
     ],
     search: {},
+    catgov: {},
     selects: {
         organs: [],
         comissions: []
@@ -37,6 +40,7 @@ const page   = ref({
         valids: {}
     }
 })
+
 const ui = new Ui(page, 'Itens do Catálogo')
 
 function save() {
@@ -87,8 +91,17 @@ function selects(key = null, search = null) {
     })
 }
 
-function selectCatalog(id){
-    router.replace({ name: 'catalog_items', params: { id } })
+function detailsCatalog() {
+    http.get(`/catalogitems/catalog/${router.params?.id}`, emit, (response) => {
+        page.value.catalog = response.data
+        console.log(response.data)
+    })
+}
+
+function clearSearchCatGov(){
+    if(!page.value.catgov.search){
+        page.value.catgov.search_send = page.value.catgov.search
+    }
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -97,6 +110,7 @@ watch(() => props.datalist, (newdata) => {
 
 onMounted(() => {
     // selects()
+    detailsCatalog()
     list()
 })
 
@@ -131,13 +145,18 @@ onMounted(() => {
                             <i class="bi bi-search"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Localizar</span>
                         </button>
-                        <RouterLink to="/subcategories"
-                            class="btn btn-action btn-action-primary ms-2">
+                        <RouterLink to="/subcategories" class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-bookmarks"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Categorias</span>
                         </RouterLink>
-                        
+
                     </div>
+                </div>
+
+                <div class="px-4 px-md-5 mb-4">
+                    <h2 class="m-0 p-0">Catalog</h2>
+                    <p class="small m-0 p-0 txt-color-sec">Description Catalog</p>
+                    <p class="small m-0 p-0 txt-color-sec">Vincule Catalog</p>
                 </div>
 
                 <!--BOX LIST-->
@@ -177,21 +196,37 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList 
-                    @action:update="update" 
-                    @action:delete="remove" 
-                    @action:items="selectCatalog"
-                    :header="page.dataheader"
-                    :body="page.datalist" :actions="['items', 'update', 'delete']"
-                    :casts="{ 'organ_id': page.selects.organs, 'comission_id': page.selects.comissions }" />
+                    <TableList @action:update="update" @action:delete="remove" @action:items="selectCatalog"
+                        :header="page.dataheader" :body="page.datalist" :actions="['items', 'update', 'delete']"
+                        :casts="{ 'organ_id': page.selects.organs, 'comission_id': page.selects.comissions }" />
                 </div>
 
                 <!--BOX REGISTER-->
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
-                    <form class="form-row" @submit.prevent="save(page.data.id)">
-                        <input type="hidden" name="id" v-model="page.data.id">
+
+                    <!-- IMPORT ITEM CATMAT/CATSER -->
+                    <div class="row position-relative">
+                        <div class="col-sm-12">
+                            <label for="organ_id" class="form-label">Localizar CATMAT/CATSER</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Localizar Material/Serviço Compras Gov"
+                                    aria-label="Localizar Material/Serviço Compras Gov" aria-describedby="button-search-catgov"
+                                    v-model="page.catgov.search"
+                                    @keyup="clearSearchCatGov"
+                                    @keyup.enter="page.catgov.search_send = page.catgov.search">
+                                <button @click="page.catgov.search_send = page.catgov.search" class="btn btn-group-input" type="button"
+                                    id="button-search-catgov"><i class="bi bi-search"></i> </button>
+                            </div>
+                        </div>
+
+                        <ListCatGov :search="page.catgov.search_send" />
+                        
+                    </div>
+
+                    <form class="form-row mt-3" @submit.prevent="save(page.data.id)">
+                        <!-- <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
-                            
+
                             <div class="col-sm-12 col-md-4">
                                 <label for="organ_id" class="form-label">Orgão</label>
                                 <select name="organ_id" class="form-control"
@@ -228,14 +263,12 @@ onMounted(() => {
 
                         </div>
 
-                        
-
                         <div class="d-flex flex-row-reverse mt-4">
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">Cancelar <i
                                     class="bi bi-x-circle"></i></button>
                             <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
                                     class="bi bi-check2-circle"></i></button>
-                        </div>
+                        </div> -->
                     </form>
                 </div>
             </div>

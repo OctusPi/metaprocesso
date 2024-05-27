@@ -23,7 +23,7 @@ class CatGov
     }
 
     getEndpoint(url, search){
-        return url.repleace('$', search)
+        return url.replace('$', search)
     }
 
     async searchItem(search){

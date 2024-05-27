@@ -28,7 +28,7 @@
   animation: rotate 3s linear infinite;
 }
 
-.form-label, .form-label a{
+.accordion-header button, .form-label, .form-label a{
   font-size: small;
   font-weight: 700;
 }
@@ -81,6 +81,17 @@
 .btn{
   font-size: 0.9rem;
   font-weight: 450;
+}
+
+.btn-group-input{
+  border: 2px solid var(--color-input-border);
+  background-color: var(--color-box);
+  color: var(--color-text);
+}
+
+.btn-group-input:hover{
+  border: 2px solid var(--color-input-border);
+  color: var(--color-base);
 }
 
 .title-btn-action{
@@ -148,7 +159,6 @@
 
 .header-main{
   width: calc(100% - 178px);
-  background-color: var(--color-fundo);
   top: 0;
   left: 176px;
   padding: 24px 24px 10px 0;
@@ -197,6 +207,11 @@
 
 .submenu-item{
   font-size: small;
+}
+
+.load-items-cat{
+  max-height: 300px;
+  overflow: auto;
 }
 
 @media (max-width: 991px) {

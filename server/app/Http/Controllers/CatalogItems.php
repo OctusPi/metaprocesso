@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Catalog;
 use App\Models\User;
 use App\Security\Guardian;
 use App\Models\CatalogItem;
@@ -39,5 +40,10 @@ class CatalogItems extends Controller
     public function details(Request $request)
     {
         return $this->baseDetails(CatalogItem::class, $request->id);
+    }
+
+    public function catalog(Request $request)
+    {
+        return $this->baseDetails(Catalog::class, $request->id);
     }
 }

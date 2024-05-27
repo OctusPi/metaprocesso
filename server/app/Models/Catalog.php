@@ -12,8 +12,8 @@ class Catalog extends Model
 
     protected $table = 'catalogs';
     protected $fillable = [
-        'organ_id',
-        'comission_id',
+        'organ',
+        'comission',
         'name',
         'description'
     ];

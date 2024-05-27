@@ -235,6 +235,7 @@ Route::controller(CatalogItems::class)->group(function () {
             Route::put('/update', 'update');
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
+            Route::get('/catalog/{id}', 'catalog');
             Route::get('/selects/{key?}/{search?}', 'selects');
         });
     });
