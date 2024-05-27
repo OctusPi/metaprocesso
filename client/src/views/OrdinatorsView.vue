@@ -23,7 +23,7 @@ const page = ref({
     datalist: props.datalist,
     dataheader: [
         { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cpf' }] },
-        { key: 'unit_id', title: 'VINCULO', sub: [{ key: 'organ_id' }] },
+        { key: 'unit', title: 'VINCULO', sub: [{ key: 'organ' }] },
         { key: 'status', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term' }] },
     ],
     search: {},
@@ -36,8 +36,8 @@ const page = ref({
         fields: {
             name: 'required',
             cpf: 'required',
-            organ_id: 'required',
-            unit_id: 'required',
+            organ: 'required',
+            unit: 'required',
             status: 'required',
             'start_term': 'required'
         },
@@ -69,7 +69,7 @@ function save() {
 
 function update(id) {
     http.get(`/ordinators/details/${id}`, emit, (response) => {
-        selects('organ_id', response.data?.unit)
+        selects('organ', response.data?.unit)
         page.value.data = response.data
         ui.toggle('update')
     })
@@ -175,18 +175,18 @@ onMounted(() => {
                                     v-model="page.search.name" placeholder="Pesquise por partes do nome do setor">
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-organ_id" class="form-label">Orgão</label>
-                                <select name="organ_id" class="form-control" id="s-organ_id"
-                                    v-model="page.search.organ_id" @change="selects('organ_id', page.search.organ_id)">
+                                <label for="s-organ" class="form-label">Orgão</label>
+                                <select name="organ" class="form-control" id="s-organ"
+                                    v-model="page.search.organ" @change="selects('organ', page.search.organ)">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-unit_id" class="form-label">Unidade</label>
-                                <select name="unit_id" class="form-control" id="s-unit_id"
-                                    v-model="page.search.unit_id">
+                                <label for="s-unit" class="form-label">Unidade</label>
+                                <select name="unit" class="form-control" id="s-unit"
+                                    v-model="page.search.unit">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.units" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
@@ -203,7 +203,7 @@ onMounted(() => {
                     <!--DATA LIST-->
                     <TableList @action:update="update" @action:delete="remove" @action:download="download"
                         :header="page.dataheader" :body="page.datalist" :actions="['download', 'update', 'delete']"
-                        :casts="{ 'organ_id': page.selects.organs, 'unit_id': page.selects.units, 'status': page.selects.status }" />
+                        :casts="{ 'organ': page.selects.organs, 'unit': page.selects.units, 'status': page.selects.status }" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -233,20 +233,20 @@ onMounted(() => {
 
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12 col-md-4">
-                                <label for="organ_id" class="form-label">Orgão</label>
-                                <select name="organ_id" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.organ_id }" id="organ_id"
-                                    v-model="page.data.organ_id" @change="selects('organ_id', page.data.organ_id)">
+                                <label for="organ" class="form-label">Orgão</label>
+                                <select name="organ" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.organ }" id="organ"
+                                    v-model="page.data.organ" @change="selects('organ', page.data.organ)">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.organs" :value="s.id" :key="s.id">{{ s.title }}
                                     </option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="unit_id" class="form-label">Unidade</label>
-                                <select name="unit_id" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.unit_id }" id="unit_id"
-                                    v-model="page.data.unit_id">
+                                <label for="unit" class="form-label">Unidade</label>
+                                <select name="unit" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.unit }" id="unit"
+                                    v-model="page.data.unit">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.units" :value="s.id" :key="s.id">{{ s.title }}
                                     </option>

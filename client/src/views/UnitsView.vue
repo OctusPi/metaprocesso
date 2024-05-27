@@ -24,7 +24,7 @@ const page = ref({
     dataheader: [
         { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cnpj' }] },
         { key: 'phone', title: 'CONTATO', sub: [{ key: 'email' }] },
-        { key: 'organ_id', title: 'VINCULO', sub: [{ key: 'address' }] }
+        { key: 'organ', title: 'VINCULO', sub: [{ key: 'address' }] }
     ],
     search: {},
     selects: {
@@ -33,7 +33,7 @@ const page = ref({
     },
     rules: {
         fields: {
-            organ_id: 'required',
+            organ: 'required',
             name: 'required',
             cnpj: 'required',
             phone: 'required',
@@ -151,9 +151,9 @@ onMounted(() => {
                                     v-maska:[masks.maskcnpj]>
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-organ_id" class="form-label">Orgão</label>
-                                <select name="organ_id" class="form-control" id="s-organ_id"
-                                    v-model="page.search.organ_id">
+                                <label for="s-organ" class="form-label">Orgão</label>
+                                <select name="organ" class="form-control" id="s-organ"
+                                    v-model="page.search.organ">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
@@ -170,7 +170,7 @@ onMounted(() => {
                     <!-- DATA LIST -->
                     <TableList @action:update="update" @action:delete="remove" :header="page.dataheader"
                         :body="page.datalist" :actions="['update', 'delete']"
-                        :casts="{ 'status': page.selects.status, 'organ_id': page.selects.organs }" />
+                        :casts="{ 'status': page.selects.status, 'organ': page.selects.organs }" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -191,10 +191,10 @@ onMounted(() => {
                                     placeholder="00.000.000/0000-00" v-model="page.data.cnpj" v-maska:[masks.maskcnpj]>
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="organ_id" class="form-label">Orgão</label>
-                                <select name="organ_id" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.organ_id }" id="organ_id"
-                                    v-model="page.data.organ_id">
+                                <label for="organ" class="form-label">Orgão</label>
+                                <select name="organ" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.organ }" id="organ"
+                                    v-model="page.data.organ">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.organs" :value="s.id" :key="s.id">{{ s.title }}
                                     </option>

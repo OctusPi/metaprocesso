@@ -22,7 +22,7 @@ const page = ref({
     datalist: props.datalist,
     dataheader: [
         { key: 'name', title: 'CATÁLOGO' },
-        { key: 'comission_id', title: 'COMISSÃO', sub: [{ key: 'organ_id' }] },
+        { key: 'comission', title: 'COMISSÃO', sub: [{ key: 'organ' }] },
         { key: 'law', title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
     ],
     search: {},
@@ -34,8 +34,8 @@ const page = ref({
     rules: {
         fields: {
             name: 'required',
-            organ_id: 'required',
-            comission_id: 'required'
+            organ: 'required',
+            comission: 'required'
         },
         valids: {}
     }
@@ -61,7 +61,7 @@ function save() {
 
 function update(id) {
     http.get(`/catalogitems/details/${id}`, emit, (response) => {
-        selects('organ_id', response.data?.unit)
+        selects('organ', response.data?.unit)
         page.value.data = response.data
         ui.toggle('update')
     })
@@ -170,18 +170,18 @@ onMounted(() => {
                                     v-model="page.search.name" placeholder="Pesquise por partes do nome do catálogo">
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-organ_id" class="form-label">Orgão</label>
-                                <select name="organ_id" class="form-control" id="s-organ_id"
-                                    v-model="page.search.organ_id" @change="selects('organ_id', page.search.organ_id)">
+                                <label for="s-organ" class="form-label">Orgão</label>
+                                <select name="organ" class="form-control" id="s-organ"
+                                    v-model="page.search.organ" @change="selects('organ', page.search.organ)">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-comission_id" class="form-label">Comissão</label>
-                                <select name="comission_id" class="form-control" id="s-comission_id"
-                                    v-model="page.search.comission_id">
+                                <label for="s-comission" class="form-label">Comissão</label>
+                                <select name="comission" class="form-control" id="s-comission"
+                                    v-model="page.search.comission">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
@@ -198,7 +198,7 @@ onMounted(() => {
                     <!-- DATA LIST -->
                     <TableList @action:update="update" @action:delete="remove" @action:items="selectCatalog"
                         :header="page.dataheader" :body="page.datalist" :actions="['items', 'update', 'delete']"
-                        :casts="{ 'organ_id': page.selects.organs, 'comission_id': page.selects.comissions }" />
+                        :casts="{ 'organ': page.selects.organs, 'comission': page.selects.comissions }" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -207,7 +207,7 @@ onMounted(() => {
                     <!-- IMPORT ITEM CATMAT/CATSER -->
                     <div class="row position-relative">
                         <div class="col-sm-12">
-                            <label for="organ_id" class="form-label">Localizar CATMAT/CATSER</label>
+                            <label for="organ" class="form-label">Localizar CATMAT/CATSER</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" placeholder="Localizar Material/Serviço Compras Gov"
                                     aria-label="Localizar Material/Serviço Compras Gov" aria-describedby="button-search-catgov"
@@ -228,20 +228,20 @@ onMounted(() => {
                         <div class="row mb-3 g-3">
 
                             <div class="col-sm-12 col-md-4">
-                                <label for="organ_id" class="form-label">Orgão</label>
-                                <select name="organ_id" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.organ_id }" id="organ_id"
-                                    v-model="page.data.organ_id" @change="selects('organ_id', page.data.organ_id)">
+                                <label for="organ" class="form-label">Orgão</label>
+                                <select name="organ" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.organ }" id="organ"
+                                    v-model="page.data.organ" @change="selects('organ', page.data.organ)">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.organs" :value="s.id" :key="s.id">{{ s.title }}
                                     </option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-8">
-                                <label for="comission_id" class="form-label">Comissão</label>
-                                <select name="comission_id" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.comission_id }" id="comission_id"
-                                    v-model="page.data.comission_id">
+                                <label for="comission" class="form-label">Comissão</label>
+                                <select name="comission" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.comission }" id="comission"
+                                    v-model="page.data.comission">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">{{ s.title }}
                                     </option>
