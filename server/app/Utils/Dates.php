@@ -89,8 +89,8 @@ class Dates
      * @return ?string
      */
     public static function convert(?string $date, string $from, string $to): ?string {
-        if ($date == null) {
-            return $date;
+        if ($date == null || empty($date) || $date === 'null') {
+            return null;
         }
 
         if (!Carbon::canBeCreatedFromFormat($date, $from)) {
