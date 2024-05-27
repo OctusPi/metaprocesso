@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Sector extends Model
 {
@@ -13,28 +14,33 @@ class Sector extends Model
     protected $table = 'sectors';
 
     protected $fillable = [
+        'organ',
+        'unit',
         'name',
-        'organ_id',
-        'unit_id',
         'description'
     ];
 
-    public function organ(): BelongsTo
+    public function demandant():BelongsTo
     {
-        return $this->belongsTo(Organ::class, 'organ_id');
+        return $this->belongsTo(Demandant::class);
     }
 
-    public function unit(): BelongsTo
+    public function organ(): HasOne
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->hasOne(Organ::class, 'id');
+    }
+
+    public function unit(): HasOne
+    {
+        return $this->hasOne(Unit::class, 'id');
     }
 
     public static function validateFields(?int $id = null):array
     {
         return [
             'name'     => 'required',
-            'organ_id' => 'required',
-            'unit_id'  => 'required'
+            'organ' => 'required',
+            'unit'  => 'required'
         ];
     }
 

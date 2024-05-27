@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Program extends Model
 {
@@ -13,31 +14,35 @@ class Program extends Model
     protected $table = 'programs';
 
     protected $fillable = [
+        'organ',
+        'unit',
         'name',
-        'organ_id',
-        'unit_id',
         'law',
         'description',
         'status',
     ];
 
-
-    public function organ(): BelongsTo
+    public function organ(): HasOne
     {
-        return $this->belongsTo(Organ::class, 'organ_id');
+        return $this->hasOne(Organ::class, 'id');
     }
 
-    public function unit(): BelongsTo
+    public function unit(): HasOne
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->hasOne(Unit::class, 'id');
+    }
+
+    public function dfditem():BelongsTo
+    {
+        return $this->belongsTo(DfdItem::class);
     }
 
     public static function validateFields(?int $id = null):array
     {
         return [
             'name'     => 'required',
-            'organ_id' => 'required',
-            'unit_id'  => 'required',
+            'organ' => 'required',
+            'unit'  => 'required',
             'status'   => 'required'
         ];
     }

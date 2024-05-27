@@ -14,8 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->timestamps();
             $table->string('name', 100);
-            $table->foreignId('organ_id')->constrained('organs');
-            $table->foreignId('unit_id')->constrained('units');
+            $table->foreignId('organ')->constrained('organs');
+            $table->foreignId('unit')->constrained('units');
             $table->string('law')->nullable();
             $table->text('description')->nullable();
             $table->integer('status');

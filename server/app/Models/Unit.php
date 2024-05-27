@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Unit extends Model
 {
@@ -13,7 +14,7 @@ class Unit extends Model
     protected $table = 'units';
 
     protected $fillable = [
-        'organ_id',
+        'organ',
         'name',
         'cnpj',
         'phone',
@@ -21,15 +22,45 @@ class Unit extends Model
         'address',
     ];
 
-    public function organ(): BelongsTo
+    public function organ():HasOne
     {
-        return $this->belongsTo(Organ::class, 'organ_id');
+        return $this->hasOne(Organ::class, 'id');
+    }
+
+    public function dfd():BelongsTo
+    {
+        return $this->belongsTo(Dfd::class);
+    }
+
+    public function comission():BelongsTo
+    {
+        return $this->belongsTo(Comission::class);
+    }
+
+    public function demandant():BelongsTo
+    {
+        return $this->belongsTo(Demandant::class);
+    }
+
+    public function ordinator():BelongsTo
+    {
+        return $this->belongsTo(Ordinator::class);
+    }
+
+    public function program():BelongsTo
+    {
+        return $this->belongsTo(Program::class);
+    }
+
+    public function sector():BelongsTo
+    {
+        return $this->belongsTo(Sector::class);
     }
 
     public static function validateFields(?int $id = null):array
     {
         return [
-            'organ_id' => 'required',
+            'organ' => 'required',
             'name'     => 'required',
             'cnpj'     => 'required'
         ];

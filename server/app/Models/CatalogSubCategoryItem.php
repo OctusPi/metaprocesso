@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class CatalogSubCategoryItem extends Model
 {
@@ -12,12 +13,17 @@ class CatalogSubCategoryItem extends Model
 
     protected $table = 'catalog_items_subcategories';
     protected $fillable = [
-        'organ_id',
+        'organ',
         'name'
     ];
 
-    public function organ(): BelongsTo
+    public function organ(): HasOne
     {
-        return $this->belongsTo(Organ::class, 'organ_id');
+        return $this->hasOne(Organ::class, 'id');
+    }
+
+    public function catalogitem():BelongsTo
+    {
+        return $this->belongsTo(CatalogItem::class);
     }
 }

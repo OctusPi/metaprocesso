@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('catalog_items_subcategories', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('organ')->constrained('organs');
             $table->string('name');
         });
     }

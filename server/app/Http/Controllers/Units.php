@@ -35,8 +35,8 @@ class Units extends Controller
 
     public function list(Request $request)
     {
-        $search = ['organ_id', 'name', 'cnpj'];
-        return $this->baseList(Unit::class, $search, $request->all());
+        $search = ['organ', 'name', 'cnpj'];
+        return $this->baseList(Unit::class, $search, $request->all(), ['name'], ['organ']);
     }
 
     public function details(Request $request)

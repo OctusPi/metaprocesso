@@ -14,29 +14,24 @@ class Dotation extends Model
 
     protected $fillable = [
         'name',
-        'organ_id',
-        'unit_id',
+        'organ',
+        'unit',
         'law',
         'description',
         'status',
     ];
 
-    public function organ(): BelongsTo
+    public function dfditem():BelongsTo
     {
-        return $this->belongsTo(Organ::class, 'organ_id');
-    }
-
-    public function unit(): BelongsTo
-    {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->belongsTo(DfdItem::class);
     }
 
     public static function validateFields(?int $id = null):array
     {
         return [
             'name'     => 'required',
-            'organ_id' => 'required',
-            'unit_id'  => 'required',
+            'organ' => 'required',
+            'unit'  => 'required',
             'status'   => 'required'
         ];
     }

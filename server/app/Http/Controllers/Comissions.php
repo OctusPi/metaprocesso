@@ -51,7 +51,7 @@ class Comissions extends Controller
 
     public function list(Request $request)
     {
-        $search = ['organ_id', 'unit_id', 'name'];
+        $search = ['organ', 'unit', 'name'];
         return $this->baseList(Comission::class, $search, $request->all());
     }
 

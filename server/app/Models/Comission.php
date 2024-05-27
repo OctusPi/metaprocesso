@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Comission extends Model
 {
@@ -15,8 +16,8 @@ class Comission extends Model
     protected $table = 'comissions';
 
     protected $fillable = [
-        'organ_id',
-        'unit_id',
+        'organ',
+        'unit',
         'name',
         'type',
         'document',
@@ -26,14 +27,24 @@ class Comission extends Model
         'status'
     ];
 
-    public function organ(): BelongsTo
+    public function organ():HasOne
     {
-        return $this->belongsTo(Organ::class, 'organ_id');
+        return $this->hasOne(Organ::class, 'id');
     }
 
-    public function unit(): BelongsTo
+    public function unit():HasOne
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->hasOne(Unit::class, 'id');
+    }
+
+    public function catalog():BelongsTo
+    {
+        return $this->belongsTo(Catalog::class);
+    }
+
+    public function dfd():BelongsTo
+    {
+        return $this->belongsTo(Dfd::class);
     }
 
     public function startTerm(): Attribute
@@ -55,8 +66,8 @@ class Comission extends Model
     public static function validateFields(?int $id = null):array
     {
         return [
-            'organ_id'   => 'required',
-            'unit_id'    => 'required',
+            'organ'   => 'required',
+            'unit'    => 'required',
             'name'       => 'required',
             'type'       => 'required',  
             'start_term' => 'required',

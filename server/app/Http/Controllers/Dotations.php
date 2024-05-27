@@ -36,7 +36,7 @@ class Dotations extends Controller
 
     public function list(Request $request)
     {
-        $search = ['organ_id', 'unit_id', 'name'];
+        $search = ['organ', 'unit', 'name'];
         return $this->baseList(Dotation::class, $search, $request->all());
     }
 

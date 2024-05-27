@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('catalogs', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('organ_id')->constrained('organs');
-            $table->foreignId('comission_id')->nullable()->constrained('comissions')->nullOnDelete();
+            $table->foreignId('organ')->constrained('organs');
+            $table->foreignId('comission')->nullable()->constrained('comissions')->nullOnDelete();
             $table->string('name');
             $table->string('description')->nullable();
         });

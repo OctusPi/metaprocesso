@@ -5,11 +5,12 @@ namespace App\Models;
 use App\Models\Unit;
 use App\Utils\Dates;
 use App\Models\Organ;
+use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Validation\Rule;
 
 class Ordinator extends Model
 {
@@ -18,8 +19,8 @@ class Ordinator extends Model
     protected $table = 'ordinators';
 
     protected $fillable = [
-        'organ_id',
-        'unit_id',
+        'organ',
+        'unit',
         'name',
         'cpf',
         'registration',
@@ -29,14 +30,19 @@ class Ordinator extends Model
         'status',
     ];
 
-    public function organ(): BelongsTo
+    public function organ(): HasOne
     {
-        return $this->belongsTo(Organ::class, 'organ_id');
+        return $this->hasOne(Organ::class, 'id');
     }
 
-    public function unit(): BelongsTo
+    public function unit(): HasOne
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->hasOne(Unit::class, 'id');
+    }
+
+    public function dfd():BelongsTo
+    {
+        return $this->belongsTo(Dfd::class);
     }
 
     public function startTerm(): Attribute
@@ -58,8 +64,8 @@ class Ordinator extends Model
     public static function validateFields(?int $id = null):array
     {
         return [
-            'organ_id'   => 'required',
-            'unit_id'    => 'required',
+            'organ'   => 'required',
+            'unit'    => 'required',
             'name'       => 'required',
             'cpf'        => ['required', Rule::unique('ordinators')->ignore($id)],
             'start_term' => 'required',

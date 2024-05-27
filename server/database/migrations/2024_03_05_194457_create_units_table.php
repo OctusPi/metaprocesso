@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('organ')->constrained('organs');
             $table->string('name');
             $table->string('cnpj', 20);
             $table->string('phone', 20)->nullable();

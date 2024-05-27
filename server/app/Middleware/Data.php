@@ -9,7 +9,7 @@ use App\Security\Guardian;
 
 class Data
 {
-    public static function list(string $model, array $params = [], ?array $order = null)
+    public static function list(string $model, array $params = [], ?array $order = null, ?array $with = null)
     {
         $user = Guardian::getUser();
 
@@ -53,6 +53,10 @@ class Data
 
                 if($order){
                     $query->orderBy(...$order);
+                }
+
+                if($with){
+                    $query->with($with);
                 }
 
                 return $query->get();

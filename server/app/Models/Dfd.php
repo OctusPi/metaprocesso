@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Utils\Dates;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Dfd extends Model
 {
@@ -15,23 +16,46 @@ class Dfd extends Model
     protected $table = 'dfds';
 
     protected $fillable = [
+        'organ',
+        'unit',
+        'demandant',
+        'ordinator',
+        'comission',
         'cod',
         'date_ini',
         'category',
         'obj',
         'description',
-        'organ_id',
-        'unit_id',
     ];
 
-    public function organ(): BelongsTo
+    public function dfditem():BelongsTo
     {
-        return $this->belongsTo(Organ::class, 'organ_id');
+        return $this->belongsTo(DfdItem::class);
     }
 
-    public function unit(): BelongsTo
+    public function organ(): HasOne
     {
-        return $this->belongsTo(Unit::class, 'unit_id');
+        return $this->hasOne(Organ::class, 'id');
+    }
+
+    public function unit(): HasOne
+    {
+        return $this->hasOne(Unit::class, 'id');
+    }
+
+    public function demandant(): HasOne
+    {
+        return $this->hasOne(Demandant::class, 'id');
+    }
+
+    public function ordinator(): HasOne
+    {
+        return $this->hasOne(Ordinator::class, 'id');
+    }
+
+    public function comission(): HasOne
+    {
+        return $this->hasOne(Comission::class, 'id');
     }
 
     public function dateIni(): Attribute

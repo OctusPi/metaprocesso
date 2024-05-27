@@ -100,11 +100,11 @@ class Controller extends BaseController
         
     }
 
-    public function baseList(string $model, array $search, array $requests)
+    public function baseList(string $model, array $search, array $requests, ?array $order =null, ?array $with = null)
     {
         try {
             $search = Utils::map_search($search, $requests);
-            $query = Data::list($model, $search);
+            $query = Data::list($model, $search, $order, $with);
             return Response()->json($query ?? [], 200);
         } catch (\Throwable $th) {
             return Response()->json(Notify::error($th->getMessage() . 'Falha ao recuperar dados!'), 500);

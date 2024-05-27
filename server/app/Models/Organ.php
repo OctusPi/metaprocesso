@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
@@ -24,6 +25,51 @@ class Organ extends Model
         'postalcode',
         'status'
     ];
+
+    public function dfd():BelongsTo
+    {
+        return $this->belongsTo(Dfd::class);
+    }
+
+    public function demandant():BelongsTo
+    {
+        return $this->belongsTo(Demandant::class);
+    }
+
+    public function comission():BelongsTo
+    {
+        return $this->belongsTo(Comission::class);
+    }
+
+    public function catalog():BelongsTo
+    {
+        return $this->belongsTo(Catalog::class);
+    }
+
+    public function catalogitem():BelongsTo
+    {
+        return $this->belongsTo(CatalogItem::class);
+    }
+
+    public function catalogsubcategoryitem():BelongsTo
+    {
+        return $this->belongsTo(CatalogSubCategoryItem::class);
+    }
+
+    public function ordinator():BelongsTo
+    {
+        return $this->belongsTo(Ordinator::class);
+    }
+
+    public function program():BelongsTo
+    {
+        return $this->belongsTo(Program::class);
+    }
+
+    public function sector():BelongsTo
+    {
+        return $this->belongsTo(Sector::class);
+    }
 
     public static function validateFields(?int $id = null):array
     {

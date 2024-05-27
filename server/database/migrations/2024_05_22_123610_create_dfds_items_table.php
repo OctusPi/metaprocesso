@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('dfds_items', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('dfd_id')->constrained('dfds');
-            $table->foreignId('item_id')->constrained('catalog_items');
+            $table->foreignId('dfd')->constrained('dfds');
+            $table->foreignId('item')->constrained('catalog_items');
             $table->integer('quantity');
-            $table->foreignId('program_id')->nullable()->constrained('programs')->nullOnDelete();
-            $table->foreignId('dotation_id')->nullable()->constrained('dotations')->nullOnDelete();
+            $table->foreignId('program')->nullable()->constrained('programs')->nullOnDelete();
+            $table->foreignId('dotation')->nullable()->constrained('dotations')->nullOnDelete();
         });
     }
 

@@ -6,6 +6,8 @@ use App\Utils\Dates;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Demandant extends Model
@@ -15,9 +17,9 @@ class Demandant extends Model
     protected $table = 'demandants';
 
     protected $fillable = [
-        'organ_id',
-        'unit_id',
-        'sector_id',
+        'organ',
+        'unit',
+        'sector',
         'name',
         'cpf',
         'registration',
@@ -26,6 +28,26 @@ class Demandant extends Model
         'end_term',
         'status'
     ];
+
+    public function dfd():BelongsTo
+    {
+        return $this->belongsTo(Dfd::class);
+    }
+
+    public function organ(): HasOne
+    {
+        return $this->hasOne(Organ::class, 'id');
+    }
+
+    public function comission(): HasOne
+    {
+        return $this->hasOne(Comission::class, 'id');
+    }
+
+    public function sector(): HasOne
+    {
+        return $this->hasOne(Sector::class, 'id');
+    }
 
     public function startTerm(): Attribute
     {
@@ -46,8 +68,8 @@ class Demandant extends Model
     public static function validateFields(?int $id = null):array
     {
         return [
-            'organ_id'   => 'required',
-            'unit_id'    => 'required',
+            'organ'   => 'required',
+            'unit'    => 'required',
             'name'       => 'required',
             'cpf'        => ['required', Rule::unique('demandants')->ignore($id)],
             'start_term' => 'required',

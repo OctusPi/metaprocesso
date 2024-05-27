@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('dfds', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('organ_id')->constrained('organs');
-            $table->foreignId('unit_id')->constrained('units');
-            $table->foreignId('demandant_id')->constrained('demandants');
-            $table->foreignId('ordinator_id')->constrained('ordinators');
-            $table->foreignId('comission_id')->constrained('comissions');
+            $table->foreignId('organ')->constrained('organs');
+            $table->foreignId('unit')->constrained('units');
+            $table->foreignId('demandant')->constrained('demandants');
+            $table->foreignId('ordinator')->constrained('ordinators');
+            $table->foreignId('comission')->constrained('comissions');
             $table->string('code', 50);
             $table->date('date_ini');
             $table->string('year_pca', 5);

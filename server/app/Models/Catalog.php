@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Catalog extends Model
 {
@@ -18,22 +19,27 @@ class Catalog extends Model
         'description'
     ];
 
-    public function organ(): BelongsTo
+    public function organ(): HasOne
     {
-        return $this->belongsTo(Organ::class, 'organ_id');
+        return $this->hasOne(Organ::class, 'id');
     }
 
-    public function comission(): BelongsTo
+    public function comission(): HasOne
     {
-        return $this->belongsTo(Comission::class, 'comission_id');
+        return $this->hasOne(Comission::class, 'id');
+    }
+
+    public function catalogitem():BelongsTo
+    {
+        return $this->belongsTo(CatalogItem::class);
     }
 
     public static function validateFields(?int $id = null):array
     {
         return [
-            'name'     => 'required',
-            'organ_id' => 'required',
-            'comission_id'  => 'required'
+            'name'      => 'required',
+            'organ'     => 'required',
+            'comission' => 'required'
         ];
     }
 

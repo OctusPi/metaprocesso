@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class DfdItem extends Model
 {
@@ -13,30 +14,30 @@ class DfdItem extends Model
     protected $table = 'dfditems';
 
     protected $fillable = [
-        'dfd_id',
-        'item_id',
+        'dfd',
+        'item',
         'quantity',
-        'program_id',
-        'dotation_id',
+        'program',
+        'dotation',
     ];
 
-    public function dfd(): BelongsTo
+    public function dfd():HasOne
     {
-        return $this->belongsTo(Dfd::class, 'dfd_id');
+        return $this->hasOne(Dfd::class, 'id');
     }
 
-    public function item(): BelongsTo
+    public function item():HasOne
     {
-        return $this->belongsTo(Item::class, 'item_id');
+        return $this->hasOne(CatalogItem::class, 'id');
     }
 
-    public function program(): BelongsTo
+    public function program():HasOne
     {
-        return $this->belongsTo(Program::class, 'program_id');
+        return $this->hasOne(Program::class, 'id');
     }
 
-    public function dotation(): BelongsTo
+    public function dotation():HasOne
     {
-        return $this->belongsTo(Dotation::class, 'dotation_id');
+        return $this->hasOne(Dotation::class, 'id');
     }
 }

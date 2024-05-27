@@ -52,7 +52,7 @@ class Demandants extends Controller
 
     public function list(Request $request)
     {
-        $search = ['organ_id', 'unit_id', 'name'];
+        $search = ['organ', 'unit', 'name'];
         return $this->baseList(Demandant::class, $search, $request->all());
     }
 
@@ -73,7 +73,7 @@ class Demandants extends Controller
 
     public function selects(Request $request)
     {
-        $units = $request->key && $request->key == 'organ_id' ? Utils::map_select(Data::list(Unit::class, [
+        $units = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
             [
                 'column'   => $request->key,
                 'operator' => '=',
@@ -82,7 +82,7 @@ class Demandants extends Controller
             ]
             ], ['name'])) : Utils::map_select(Data::list(Unit::class));
 
-        $sectors = $request->key && $request->key == 'unit_id' ? Utils::map_select(Data::list(Sector::class, [
+        $sectors = $request->key && $request->key == 'unit' ? Utils::map_select(Data::list(Sector::class, [
             [
                 'column'   => $request->key,
                 'operator' => '=',

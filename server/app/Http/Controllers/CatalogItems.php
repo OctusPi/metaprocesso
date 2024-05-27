@@ -33,7 +33,7 @@ class CatalogItems extends Controller
 
     public function list(Request $request)
     {
-        $search = ['code', 'type', 'category', 'subcategory_id', 'name', 'description'];
+        $search = ['code', 'type', 'category', 'subcategory', 'name', 'description'];
         return $this->baseList(CatalogItem::class, $search, $request->all());
     }
 
