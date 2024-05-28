@@ -14,6 +14,7 @@
         'action:delete', 
         'action:download', 
         'action:members',
+        'action:extinction',
         'action:items'
     ])
     

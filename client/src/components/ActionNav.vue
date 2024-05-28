@@ -30,6 +30,11 @@ const actions = {
         icon: 'bi-people',
         title: 'Membros'
     },
+    'extinction':{
+        action: (id) => { emit('action', {e:'action:extinction', i:id}) }, 
+        icon: 'bi-calendar2-minus',
+        title: 'Extinguir'
+    },
     'items':{
         action: (id) => { emit('action', {e:'action:items', i:id}) }, 
         icon: 'bi-boxes',
