@@ -146,6 +146,7 @@ Route::controller(ComissionsMembers::class)->group(function () {
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
             Route::get('/download/{id}', 'download');
+            Route::get('/{comission}/selects', 'selects');
         });
     });
 })->name('comissionsmembers');

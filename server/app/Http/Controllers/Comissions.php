@@ -57,6 +57,20 @@ class Comissions extends Controller
 
     public function details(Request $request)
     {
+        if ($request->query('display') == 1) {
+            $instance = Comission::with(['organ', 'unit'])->find($request->id);
+            if (!$instance) {
+                return Response()->json(Notify::warning('Registro não localizado!'), 404);
+            }
+
+            $displayMode = array_merge($instance->toArray(), [
+                'type' => Comission::get_type($instance->type),
+                'status' => Comission::get_status($instance->status),
+            ]);
+
+            return Response()->json($displayMode, 200);
+        }
+
         return $this->baseDetails(Comission::class, $request->id);
     }
 

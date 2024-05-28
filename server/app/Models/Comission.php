@@ -107,6 +107,17 @@ class Comission extends Model
         ];
     }
 
+    public static function get_type(int $type): string
+    {
+        foreach (self::list_types() as $t) {
+            if ($t['id'] == $type) {
+                return $t['title'];
+            }
+        }
+
+        return '';
+    }
+
     public static function list_status(): array
     {
         return [
@@ -115,5 +126,16 @@ class Comission extends Model
             ['id' => self::STATUS_SUSPENDED, 'title' => 'Suspensa'],
             ['id' => self::STATUS_EXTINGUED, 'title' => 'Finalizada']
         ];
+    }
+
+    public static function get_status(int $type): string
+    {
+        foreach (self::list_status() as $t) {
+            if ($t['id'] == $type) {
+                return $t['title'];
+            }
+        }
+
+        return '';
     }
 }

@@ -41,6 +41,16 @@ class Organ extends Model
         return $this->belongsTo(Comission::class);
     }
 
+    public function comissionend(): BelongsTo
+    {
+        return $this->belongsTo(ComissionEnd::class);
+    }
+
+    public function comissionmember(): BelongsTo
+    {
+        return $this->belongsTo(ComissionMember::class);
+    }
+
     public function catalog():BelongsTo
     {
         return $this->belongsTo(Catalog::class);

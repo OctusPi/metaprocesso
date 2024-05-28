@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ComissionMember;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
@@ -9,7 +10,6 @@ use App\Models\Organ;
 use App\Utils\Notify;
 use App\Utils\Uploads;
 use App\Middleware\Data;
-use App\Models\Comission;
 use App\Security\Guardian;
 use Illuminate\Http\Request;
 
@@ -27,44 +27,44 @@ class ComissionsMembers extends Controller
         $upload = new Uploads($request, ['document' => ['nullable' => true]]);
         $values = $upload->mergeUploads($request->all());
 
-        return $this->baseSave(Comission::class, $values);
+        return $this->baseSave(ComissionMember::class, $values);
     }
 
     public function update(Request $request)
     {
-        if(isset($_FILES['document'])){
-            $comission = Comission::findOrFail($request->id);
+        if (isset($_FILES['document'])) {
+            $comission = ComissionMember::findOrFail($request->id);
             $upload = new Uploads($request, ['document' => ['nullable' => true]]);
             $upload->remove($comission->document);
             $values = $upload->mergeUploads($request->all());
 
-            return $this->baseUpdate(Comission::class, $request->id, $values);
+            return $this->baseUpdate(ComissionMember::class, $request->id, $values);
         }
 
-        return $this->baseUpdate(Comission::class, $request->id, $request->all());
+        return $this->baseUpdate(ComissionMember::class, $request->id, $request->all());
     }
 
     public function delete(Request $request)
     {
-        return $this->baseDelete(Comission::class, $request->id, $request->password);
+        return $this->baseDelete(ComissionMember::class, $request->id, $request->password);
     }
 
     public function list(Request $request)
     {
-        $search = ['organ', 'unit', 'name'];
-        return $this->baseList(Comission::class, $search, $request->all());
+        $search = ['status', 'responsibility', 'name'];
+        return $this->baseList(ComissionMember::class, $search, $request->all());
     }
 
     public function details(Request $request)
     {
-        return $this->baseDetails(Comission::class, $request->id);
+        return $this->baseDetails(ComissionMember::class, $request->id);
     }
 
     public function download(Request $request)
     {
-        $ordinator = Comission::findOrFail($request->id);
-        if($ordinator && $ordinator->document){
-            return response()->download(storage_path('uploads'.'/'.$ordinator->document), $ordinator->name.'.pdf');
+        $ordinator = ComissionMember::findOrFail($request->id);
+        if ($ordinator && $ordinator->document) {
+            return response()->download(storage_path('uploads' . '/' . $ordinator->document), $ordinator->name . '.pdf');
         }
 
         return response()->json(Notify::warning('Arquivo Indisponível'));
@@ -72,20 +72,9 @@ class ComissionsMembers extends Controller
 
     public function selects(Request $request)
     {
-        $units = $request->key ? Utils::map_select(Data::list(Unit::class, [
-            [
-                'column'   => $request->key,
-                'operator' => '=',
-                'value'    => $request->search,
-                'mode'     => 'AND'
-            ]
-            ], ['name'])) : Utils::map_select(Data::list(Unit::class));
-
         return Response()->json([
-            'organs' => Utils::map_select(Data::list(Organ::class, order:['name'])),
-            'units'  => $units,
-            'types'  => Comission::list_types(),
-            'status' => Comission::list_status()
+            'responsibilities' => ComissionMember::list_responsabilities(),
+            'status' => ComissionMember::list_status(),
         ], 200);
     }
 }

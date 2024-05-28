@@ -15,9 +15,9 @@ class ComissionMember extends Model
     protected $table = 'comissions_members';
 
     protected $fillable = [
-        'organ_id',
-        'unit_id',
-        'comission_id',
+        'organ',
+        'unit',
+        'comission',
         'name',
         'responsibility',
         'document',
@@ -76,5 +76,20 @@ class ComissionMember extends Model
     public function comission(): HasOne
     {
         return $this->hasOne(Comission::class, 'id');
+    }
+
+    public static function list_responsabilities(): array
+    {
+        return [
+            ['id' => 0, 'title' => 'R1'],
+        ];
+    }
+
+    public static function list_status(): array
+    {
+        return [
+            ['id' => 0, 'title' => 'Inativo'],
+            ['id' => 1, 'title' => 'Ativo'],
+        ];
     }
 }
