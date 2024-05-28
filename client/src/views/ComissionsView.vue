@@ -25,9 +25,9 @@ const page = ref({
     data: {},
     datalist: props.datalist,
     dataheader: [
-        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'type' }] },
-        { key: 'unit', title: 'VINCULO', sub: [{ key: 'organ' }] },
-        { key: 'status', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term' }] },
+        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'type', cast:'title' }] },
+        { obj:'unit', key: 'name', title: 'VINCULO', sub: [{ obj:'organ', key: 'name' }] },
+        { key: 'status', cast:'title', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term' }] },
     ],
     search: {},
     selects: {

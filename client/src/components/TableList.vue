@@ -6,7 +6,7 @@
         header  :{type: Array},
         body    :{type: Array, default: () => []},
         actions :{type: Array},
-        casts   :{type: Object}
+        casts: {type: Object}
     })
     
     const emit = defineEmits([
@@ -30,9 +30,16 @@
         })
     }
 
-    function casting(key, search, subject, extract = null){
-        const findObj = subject.find(obj => obj[key] === search)
-        return extract && findObj && findObj[extract] ? findObj[extract] ?? '' : findObj
+    function getdata(data, obj, key, cast = null, subject = 'id'){
+        
+        const value = obj ? data[obj][key] : data[key] ?? '';
+
+        if(cast && props?.casts[key]){
+            const datacast = (props.casts[key]).find(obj => obj[subject] === value)
+            return datacast[cast] ?? ''
+        }
+
+        return value
     }
 
     function propagateEmit(emt){
@@ -59,12 +66,10 @@
             <tbody v-if="body">
                 <tr v-for="b in body" :key="b.id">
                     <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle">
-                        {{ props.casts[h.key] ? casting('id', b[h.key], props.casts[h.key], 'title') :  b[h.key] }}
+                        {{ getdata(b, h?.obj, h.key, h?.cast) }}
                         <p v-if="h.sub" class="small txt-color-sec p-0 m-0">
-                            <span 
-                                v-for="s in h.sub" :key="s.key" 
-                                class="inline-block small">
-                                {{ `${s.title ?? ''} ${props.casts[s.key] ? casting('id', b[s.key], props.casts[s.key], 'title') :  b[s.key] ?? '' }` }} 
+                            <span v-for="s in h.sub" :key="s.key" class="inline-block small">
+                                {{ `${s.title ?? ''} ${getdata(b, s?.obj, s.key, s?.cast)}` }} 
                             </span>
                         </p>
                     </td>

@@ -27,7 +27,7 @@ async function request(opt, emit, customresp = null, callback = null){
 
 function defresp(resp, emit){
 
-    const data = resp.data
+    const data = resp?.data ?? {}
 
     //call redirect
     if(data.redirect){
