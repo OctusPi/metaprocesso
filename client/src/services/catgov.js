@@ -58,7 +58,7 @@ class CatGov
         for(let i in endpoints){
             utils.load()
             await axios.get(endpoints[i]).then(resp => {
-                datafind[endpoints[i]] = resp.data
+                datafind[i] = resp.data
             }).catch((error) => {
                 datafind.error = 'Falha ao tentar localizar Materiais no CATMAT...'
                 console.log(error.message)
@@ -83,7 +83,7 @@ class CatGov
         for(let i in endpoints){
             utils.load()
             await axios.get(endpoints[i]).then(resp => {
-                datafind[endpoints[i]] = resp.data
+                datafind[i] = resp.data
             }).catch((error) => {
                 datafind.error = 'Falha ao tentar localizar Materiais no CATSER...'
                 console.log(error.message)

@@ -97,12 +97,6 @@ function detailsCatalog() {
     })
 }
 
-function clearSearchCatGov(){
-    if(!page.value.catgov.search){
-        page.value.catgov.search_send = page.value.catgov.search
-    }
-}
-
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
@@ -203,23 +197,7 @@ onMounted(() => {
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
 
                     <!-- IMPORT ITEM CATMAT/CATSER -->
-                    <div class="row position-relative">
-                        <div class="col-sm-12">
-                            <label for="organ" class="form-label">Localizar CATMAT/CATSER</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Localizar Material/Serviço Compras Gov"
-                                    aria-label="Localizar Material/Serviço Compras Gov" aria-describedby="button-search-catgov"
-                                    v-model="page.catgov.search"
-                                    @keyup="clearSearchCatGov"
-                                    @keyup.enter="page.catgov.search_send = page.catgov.search">
-                                <button @click="page.catgov.search_send = page.catgov.search" class="btn btn-group-input" type="button"
-                                    id="button-search-catgov"><i class="bi bi-search"></i> </button>
-                            </div>
-                        </div>
-
-                        <ListCatGov :search="page.catgov.search_send" />
-                        
-                    </div>
+                    <ListCatGov />
 
                     <form class="form-row mt-3" @submit.prevent="save(page.data.id)">
                         <!-- <input type="hidden" name="id" v-model="page.data.id">
