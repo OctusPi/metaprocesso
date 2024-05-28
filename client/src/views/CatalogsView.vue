@@ -21,7 +21,7 @@ const page   = ref({
     datalist: props.datalist,
     dataheader: [
         { key: 'name', title: 'CATÁLOGO' },
-        { key: 'comission', title: 'COMISSÃO', sub: [{ key: 'organ' }] },
+        { obj:'comission', key: 'name', title: 'COMISSÃO', sub: [{ obj:'organ', key: 'name' }] },
         { key: 'law', title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
     ],
     search: {},
@@ -183,8 +183,7 @@ onMounted(() => {
                     @action:delete="remove" 
                     @action:items="selectCatalog"
                     :header="page.dataheader"
-                    :body="page.datalist" :actions="['items', 'update', 'delete']"
-                    :casts="{ 'organ': page.selects.organs, 'comission': page.selects.comissions }" />
+                    :body="page.datalist" :actions="['items', 'update', 'delete']" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -224,12 +223,10 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-8">
                                 <label for="description" class="form-label">Descrição</label>
                                 <input type="text" name="description" class="form-control" id="description"
-                                    placeholder="Breve resumo do objetivo do programa" v-model="page.data.description">
+                                    placeholder="Breve resumo do descrito sobre o catálogo" v-model="page.data.description">
                             </div>
 
                         </div>
-
-                        
 
                         <div class="d-flex flex-row-reverse mt-4">
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">Cancelar <i

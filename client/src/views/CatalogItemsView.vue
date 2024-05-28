@@ -94,7 +94,6 @@ function selects(key = null, search = null) {
 function detailsCatalog() {
     http.get(`/catalogitems/catalog/${router.params?.id}`, emit, (response) => {
         page.value.catalog = response.data
-        console.log(response.data)
     })
 }
 
@@ -154,9 +153,8 @@ onMounted(() => {
                 </div>
 
                 <div class="px-4 px-md-5 mb-4">
-                    <h2 class="m-0 p-0">Catalog</h2>
-                    <p class="small m-0 p-0 txt-color-sec">Description Catalog</p>
-                    <p class="small m-0 p-0 txt-color-sec">Vincule Catalog</p>
+                    <h2 class="m-0 p-0">Catálogo: {{ page.catalog.name }}</h2>
+                    <p class="small m-0 p-0 txt-color-sec">{{ page.catalog.description }}</p>
                 </div>
 
                 <!--BOX LIST-->

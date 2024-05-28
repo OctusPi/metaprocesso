@@ -37,7 +37,7 @@ class Catalogs extends Controller
     public function list(Request $request)
     {
         $search = ['organ', 'comission', 'name'];
-        return $this->baseList(Catalog::class, $search, $request->all());
+        return $this->baseList(Catalog::class, $search, $request->all(), ['name'], ['organ', 'comission']);
     }
 
     public function details(Request $request)

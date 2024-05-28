@@ -50,7 +50,7 @@ class CatGov
             units: this.getEndpoint(this.mat_url_und, obj.codigo),
             accounting: this.getEndpoint(this.mat_url_clb, obj.codigo),
             characteristics: this.getEndpoint(this.mat_url_cpmd, obj.codigo),
-            materials: this.getEndpoint(this.mat_url_cmat, obj.codigo)
+            items: this.getEndpoint(this.mat_url_cmat, obj.codigo)
         }
 
         datafind.obj = obj
@@ -75,7 +75,7 @@ class CatGov
         const endpoints = {
             units: this.getEndpoint(this.ser_url_und, obj.codigo),
             accounting: this.getEndpoint(this.ser_url_clb, obj.codigo),
-            services: this.getEndpoint(this.ser_url_data, obj.codigo)
+            items: this.getEndpoint(this.ser_url_data, obj.codigo)
         }
 
         datafind.obj = obj
