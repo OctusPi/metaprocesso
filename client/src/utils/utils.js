@@ -5,6 +5,11 @@ function load(status = true){
     }
 }
 
+function dateNow() {
+    return (new Date()).toLocaleDateString()
+}
+
 export default {
-    load
+    load,
+    dateNow
 }

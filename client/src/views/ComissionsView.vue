@@ -11,6 +11,7 @@ import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import ManagementNav from '@/components/ManagementNav.vue';
 import Ui from '@/utils/ui';
+import utils from '@/utils/utils';
 
 const router = useRouter();
 const emit = defineEmits(['callAlert', 'callRemove'])
@@ -20,7 +21,7 @@ const props = defineProps({
 
 const page = ref({
     title: { primary: '', secondary: '' },
-    uiview: { register: false, search: false },
+    uiview: { register: false, search: false, prepare: false },
     data: {},
     datalist: props.datalist,
     dataheader: [
@@ -67,7 +68,7 @@ function save() {
     const exec = page.value.data?.id ? http.put : http.post
 
     exec(url, data, emit, () => {
-        list();
+        list()
     })
 }
 
@@ -79,11 +80,39 @@ function update(id) {
     })
 }
 
-function remove(id) {
-    emit('callRemove', {
-        id: id,
-        url: '/comissions',
-        search: page.value.search
+const extinct = ref({
+    data: {},
+    rules: {
+        fields: {
+            end_term: 'required',
+            description: 'required',
+            organ: 'required',
+            unit: 'required',
+            comission: 'required',
+        },
+        valids: {}
+    }
+})
+
+function extinction(id) {
+    http.get(`/comissions/details/${id}`, emit, (response) => {
+        extinct.value.data.comission = response.data.id
+        extinct.value.data.organ = response.data.organ
+        extinct.value.data.unit = response.data.unit
+        extinct.value.data.end_term = utils.dateNow()
+        ui.toggle('prepare')
+    })
+}
+
+function saveExtinction() {
+    const validation = forms.checkform(extinct.value.data, extinct.value.rules);
+    if (!validation.isvalid) {
+        emit('callAlert', notifys.warning(validation.message))
+        return
+    }
+
+    http.post('/comissionsends/save', extinct.value.data, emit, () => {
+        list()
     })
 }
 
@@ -105,9 +134,12 @@ function selects(key = null, search = null) {
 
 function handleFile(event) {
     const file = event.target.files[0]
-    if (file) {
-        page.value.data.document = file
-    }
+    if (file) page.value.data.document = file
+}
+
+function handleExtinctFile(event) {
+    const file = event.target.files[0]
+    if (file) extinct.value.data.document = file
 }
 
 function download(id) {
@@ -129,7 +161,6 @@ function download(id) {
 }
 
 function members(id) {
-
     router.replace({ name: 'comissionsmembers', params: { id: id } })
 }
 
@@ -173,7 +204,7 @@ onMounted(() => {
                 </div>
 
                 <!--BOX LIST-->
-                <div v-if="!page.uiview.register" id="list-box" class="inside-box mb-4">
+                <div v-if="!page.uiview.register && !page.uiview.prepare" id="list-box" class="inside-box mb-4">
 
                     <!--BOX SEARCH-->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
@@ -185,8 +216,8 @@ onMounted(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-organ" class="form-label">Orgão</label>
-                                <select name="organ" class="form-control" id="s-organ"
-                                    v-model="page.search.organ" @change="selects('organ', page.search.organ)">
+                                <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ"
+                                    @change="selects('organ', page.search.organ)">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
@@ -194,8 +225,7 @@ onMounted(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-unit" class="form-label">Unidade</label>
-                                <select name="unit" class="form-control" id="s-unit"
-                                    v-model="page.search.unit">
+                                <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.units" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
@@ -210,12 +240,48 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList @action:update="update" @action:delete="remove" @action:download="download"
+                    <TableList @action:update="update" @action:extinction="extinction" @action:download="download"
                         @action:members="members" :header="page.dataheader" :body="page.datalist"
-                        :actions="['members', 'download', 'update', 'delete']" :casts="{
+                        :actions="['members', 'download', 'update', 'extinction']" :casts="{
+                            'organ': page.selects.organs,
+                            'unit': page.selects.units,
                             'status': page.selects.status,
                             'type': page.selects.types
                         }" />
+                </div>
+
+                <!-- BOX PREPARE -->
+                <div v-if="page.uiview.prepare" id="register-box" class="inside-box px-4 px-md-5 mb-4">
+                    <form class="form-row" @submit.prevent="saveExtinction">
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="end_term" class="form-label">Data de Extinção</label>
+                                <input type="text" name="end_term" class="form-control" id="end_term"
+                                    :class="{ 'form-control-alert': extinct.rules.valids.end_term }"
+                                    placeholder="dd/mm/aaaa" v-maska:[masks.maskdate] v-model="extinct.data.end_term">
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <label for="document" class="form-label">Anexar Documento de Extinção</label>
+                                <input @change="handleExtinctFile" type="file" name="document" class="form-control">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12">
+                                <label for="description" class="form-label">Descrição da Extinção</label>
+                                <textarea name="description" class="form-control" id="description"
+                                    :class="{ 'form-control-alert': extinct.rules.valids.description }"
+                                    v-model="extinct.data.description"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-row-reverse mt-4">
+                            <button @click="ui.toggle()" type="button" class="btn btn-outline-warning">Cancelar <i
+                                    class="bi bi-x-circle"></i></button>
+                            <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
+                                    class="bi bi-check2-circle"></i></button>
+                        </div>
+                    </form>
                 </div>
 
                 <!--BOX REGISTER-->

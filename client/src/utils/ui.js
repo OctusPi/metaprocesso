@@ -9,19 +9,28 @@ class Ui {
         switch (mode) {
             case 'register':
                 this.page.value.uiview.search = false
+                this.page.value.uiview.prepare = false
                 this.page.value.uiview.register = !this.page.value.uiview.register
                 this.page.value.data = {}
                 break;
             case 'update':
                 this.page.value.uiview.search = false
                 this.page.value.uiview.register = !this.page.value.uiview.register
+                this.page.value.uiview.prepare = false
                 break;
             case 'search':
                 this.page.value.uiview.search = !this.page.value.uiview.search
                 this.page.value.uiview.register = false
+                this.page.value.uiview.prepare = false
+                break;
+            case 'prepare':
+                this.page.value.uiview.prepare = !this.page.value.uiview.prepare
+                this.page.value.uiview.register = false
+                this.page.value.uiview.search = false
                 break;
             default:
                 this.page.value.uiview.register = false
+                this.page.value.uiview.prepare = false
                 break;
         }
 

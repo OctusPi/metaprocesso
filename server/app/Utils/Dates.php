@@ -27,9 +27,17 @@ class Dates
      */
     public static function nowPTBR(): string
     {
-        $current = Carbon::now();
-        $current->locale('pt_BR');
-        return $current->format(self::PTBR_TIME);
+        return Carbon::now('UTC')->format(self::PTBR_TIME);
+    }
+
+    /**
+     * Returns the current date with a given format
+     * @param string $format Defines the format, example **dd/mm/YY**
+     * @return string or FALSE in order to invalid formats
+     */
+    public static function nowWithFormat(string $format): string
+    {
+        return Carbon::now('UTC')->format($format);
     }
 
     /**
@@ -39,7 +47,7 @@ class Dates
     public static function futurePTBR(int $hour): string
     {
         $dataHora = Carbon::now();
-        $dataHora-> addHours($hour);
+        $dataHora->addHours($hour);
         return $dataHora->format(self::PTBR_TIME);
     }
 
@@ -88,7 +96,8 @@ class Dates
      * 
      * @return ?string
      */
-    public static function convert(?string $date, string $from, string $to): ?string {
+    public static function convert(?string $date, string $from, string $to): ?string
+    {
         if ($date == null || empty($date) || $date === 'null') {
             return null;
         }
@@ -98,6 +107,6 @@ class Dates
         }
 
         return Carbon::createFromFormat($from, $date)->format($to);
-       
+
     }
 }

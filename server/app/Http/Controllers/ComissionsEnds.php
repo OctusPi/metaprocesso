@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ComissionEnd;
 use App\Models\Unit;
 use App\Models\User;
+use App\Utils\Dates;
 use App\Utils\Utils;
 use App\Models\Organ;
 use App\Utils\Notify;
@@ -27,37 +29,46 @@ class ComissionsEnds extends Controller
         $upload = new Uploads($request, ['document' => ['nullable' => true]]);
         $values = $upload->mergeUploads($request->all());
 
-        return $this->baseSave(Comission::class, $values);
+        $creation = $this->baseSave(ComissionEnd::class, $values);
+
+        if ($creation->status() != 200) {
+            return $creation;
+        }
+
+        return $this->baseUpdate(Comission::class, $request->id, [
+            'end_term' => Dates::nowWithFormat(Dates::PTBR),
+            'status' => Comission::STATUS_EXTINGUED,
+        ]);
     }
 
     public function update(Request $request)
     {
         if(isset($_FILES['document'])){
-            $comission = Comission::findOrFail($request->id);
+            $comission = ComissionEnd::findOrFail($request->id);
             $upload = new Uploads($request, ['document' => ['nullable' => true]]);
             $upload->remove($comission->document);
             $values = $upload->mergeUploads($request->all());
 
-            return $this->baseUpdate(Comission::class, $request->id, $values);
+            return $this->baseUpdate(ComissionEnd::class, $request->id, $values);
         }
 
-        return $this->baseUpdate(Comission::class, $request->id, $request->all());
+        return $this->baseUpdate(ComissionEnd::class, $request->id, $request->all());
     }
 
     public function delete(Request $request)
     {
-        return $this->baseDelete(Comission::class, $request->id, $request->password);
+        return $this->baseDelete(ComissionEnd::class, $request->id, $request->password);
     }
 
     public function list(Request $request)
     {
         $search = ['organ', 'unit', 'name'];
-        return $this->baseList(Comission::class, $search, $request->all());
+        return $this->baseList(ComissionEnd::class, $search, $request->all());
     }
 
     public function details(Request $request)
     {
-        return $this->baseDetails(Comission::class, $request->id);
+        return $this->baseDetails(ComissionEnd::class, $request->id);
     }
 
     public function download(Request $request)

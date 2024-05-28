@@ -11,6 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Comission extends Model
 {
+    const STATUS_INACTIVE = 0;
+    const STATUS_ACTIVE = 1;
+    const STATUS_SUSPENDED = 2;
+    const STATUS_EXTINGUED = 3;
+
     use HasFactory;
 
     protected $table = 'comissions';
@@ -27,24 +32,34 @@ class Comission extends Model
         'status'
     ];
 
-    public function organ():HasOne
+    public function organ(): HasOne
     {
         return $this->hasOne(Organ::class, 'id');
     }
 
-    public function unit():HasOne
+    public function unit(): HasOne
     {
         return $this->hasOne(Unit::class, 'id');
     }
 
-    public function catalog():BelongsTo
+    public function catalog(): BelongsTo
     {
         return $this->belongsTo(Catalog::class);
     }
 
-    public function dfd():BelongsTo
+    public function dfd(): BelongsTo
     {
         return $this->belongsTo(Dfd::class);
+    }
+
+    public function comissionend(): BelongsTo
+    {
+        return $this->belongsTo(ComissionEnd::class);
+    }
+
+    public function comissionmember(): BelongsTo
+    {
+        return $this->belongsTo(ComissionMember::class);
     }
 
     public function startTerm(): Attribute
@@ -63,43 +78,43 @@ class Comission extends Model
         );
     }
 
-    public static function validateFields(?int $id = null):array
+    public static function validateFields(?int $id = null): array
     {
         return [
-            'organ'   => 'required',
-            'unit'    => 'required',
-            'name'       => 'required',
-            'type'       => 'required',  
+            'organ' => 'required',
+            'unit' => 'required',
+            'name' => 'required',
+            'type' => 'required',
             'start_term' => 'required',
-            'status'     => 'required',
+            'status' => 'required',
         ];
     }
 
-    public static function validateMsg():array
+    public static function validateMsg(): array
     {
         return [
             'required' => 'Campo obrigatório não informado!',
-            'unique'   => 'Ordenador já registrado no sistema!'
+            'unique' => 'Comissão já registrado no sistema!'
         ];
     }
 
     public static function list_types(): array
     {
         return [
-            ['id'=>0,'title'=> 'Comissão de Planejamento e Contratação'],
-            ['id'=>1,'title'=> 'Comissão de Licitação'],
-            ['id'=>2,'title'=> 'Comissão de Gestão e Fiscalização de Contratos'],
-            ['id'=>3,'title'=> 'Comissão de Auditoria de Processo de Contratação']
+            ['id' => 0, 'title' => 'Comissão de Planejamento e Contratação'],
+            ['id' => 1, 'title' => 'Comissão de Licitação'],
+            ['id' => 2, 'title' => 'Comissão de Gestão e Fiscalização de Contratos'],
+            ['id' => 3, 'title' => 'Comissão de Auditoria de Processo de Contratação']
         ];
     }
 
     public static function list_status(): array
     {
         return [
-            ['id'=>0,'title'=> 'Inativa'],
-            ['id'=>1,'title'=> 'Ativa'],
-            ['id'=>2,'title'=> 'Suspensa'],
-            ['id'=>3,'title'=> 'Finalizada']
+            ['id' => self::STATUS_INACTIVE, 'title' => 'Inativa'],
+            ['id' => self::STATUS_ACTIVE, 'title' => 'Ativa'],
+            ['id' => self::STATUS_SUSPENDED, 'title' => 'Suspensa'],
+            ['id' => self::STATUS_EXTINGUED, 'title' => 'Finalizada']
         ];
     }
 }
