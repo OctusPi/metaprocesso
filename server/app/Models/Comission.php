@@ -94,7 +94,6 @@ class Comission extends Model
     {
         return [
             'required' => 'Campo obrigatório não informado!',
-            'unique' => 'Comissão já registrado no sistema!'
         ];
     }
 

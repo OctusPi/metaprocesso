@@ -2,41 +2,41 @@
 
 import { ref } from 'vue'
 
-const emit  = defineEmits(['action'])
+const emit = defineEmits(['action'])
 const props = defineProps({
     id: Number,
-    calls: {type: Array, default:() => []}
+    calls: { type: Array, default: () => [] }
 })
 
-const calls   = ref(props.calls)
+const calls = ref(props.calls)
 const actions = {
     'update': {
-        action: (id) => { emit('action', {e:'action:update', i:id}) }, 
+        action: (id) => { emit('action', { e: 'action:update', i: id }) },
         icon: 'bi-pencil-square',
         title: 'Editar'
     },
     'delete': {
-        action: (id) => { emit('action', {e:'action:delete', i:id}) }, 
+        action: (id) => { emit('action', { e: 'action:delete', i: id }) },
         icon: 'bi-trash',
         title: 'Excluir'
     },
-    'download':{
-        action: (id) => { emit('action', {e:'action:download', i:id}) }, 
+    'download': {
+        action: (id) => { emit('action', { e: 'action:download', i: id }) },
         icon: 'bi-arrow-down',
         title: 'Arquivo'
     },
-    'members':{
-        action: (id) => { emit('action', {e:'action:members', i:id}) }, 
+    'members': {
+        action: (id) => { emit('action', { e: 'action:members', i: id }) },
         icon: 'bi-people',
         title: 'Membros'
     },
-    'extinction':{
-        action: (id) => { emit('action', {e:'action:extinction', i:id}) }, 
+    'extinction': {
+        action: (id) => { emit('action', { e: 'action:extinction', i: id }) },
         icon: 'bi-calendar2-minus',
         title: 'Extinguir'
     },
-    'items':{
-        action: (id) => { emit('action', {e:'action:items', i:id}) }, 
+    'items': {
+        action: (id) => { emit('action', { e: 'action:items', i: id }) },
         icon: 'bi-boxes',
         title: 'Itens'
     }
@@ -52,9 +52,7 @@ const actions = {
         </button>
         <ul class="dropdown-menu px-2 py-3">
             <li>
-                <a class="dropdown-item item-action-menu" href="#"
-                    v-for="c in calls"
-                    :key="actions[c].title"
+                <a class="dropdown-item item-action-menu" href="#" v-for="c in calls" :key="actions[c].title"
                     :data-bs-toggle="c === 'delete' ? 'modal' : null"
                     :data-bs-target="c === 'delete' ? '#modalDelete' : null"
                     @click.prevent="actions[c].action(props.id)">
@@ -67,7 +65,7 @@ const actions = {
 </template>
 
 <style>
-.item-action-menu{
+.item-action-menu {
     font-size: 0.9rem;
 }
 </style>

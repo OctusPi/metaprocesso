@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\ComissionEnd;
 use App\Models\Unit;
 use App\Models\User;
-use App\Utils\Dates;
 use App\Utils\Utils;
 use App\Models\Organ;
 use App\Utils\Notify;
@@ -25,25 +24,33 @@ class ComissionsEnds extends Controller
 
     public function save(Request $request)
     {
-        //upload file
+        $comission = Comission::find($request->comission);
+        if (!$comission) {
+            return response()->json(Notify::warning('Comissão não existe!'), 404);
+        }
+        if ($comission->status == Comission::STATUS_EXTINGUED) {
+            return response()->json(Notify::info('Comissão já extinta!'), 200);
+        }
+
         $upload = new Uploads($request, ['document' => ['nullable' => true]]);
         $values = $upload->mergeUploads($request->all());
 
         $creation = $this->baseSave(ComissionEnd::class, $values);
-
         if ($creation->status() != 200) {
             return $creation;
         }
 
-        return $this->baseUpdate(Comission::class, $request->id, [
-            'end_term' => Dates::nowWithFormat(Dates::PTBR),
+        $update = array_merge($comission->toArray(), [
+            'end_term' => $request->end_term,
             'status' => Comission::STATUS_EXTINGUED,
         ]);
+
+        return $this->baseUpdate(Comission::class, $request->comission, $update);
     }
 
     public function update(Request $request)
     {
-        if(isset($_FILES['document'])){
+        if (isset($_FILES['document'])) {
             $comission = ComissionEnd::findOrFail($request->id);
             $upload = new Uploads($request, ['document' => ['nullable' => true]]);
             $upload->remove($comission->document);
@@ -74,8 +81,8 @@ class ComissionsEnds extends Controller
     public function download(Request $request)
     {
         $ordinator = Comission::findOrFail($request->id);
-        if($ordinator && $ordinator->document){
-            return response()->download(storage_path('uploads'.'/'.$ordinator->document), $ordinator->name.'.pdf');
+        if ($ordinator && $ordinator->document) {
+            return response()->download(storage_path('uploads' . '/' . $ordinator->document), $ordinator->name . '.pdf');
         }
 
         return response()->json(Notify::warning('Arquivo Indisponível'));
@@ -85,17 +92,17 @@ class ComissionsEnds extends Controller
     {
         $units = $request->key ? Utils::map_select(Data::list(Unit::class, [
             [
-                'column'   => $request->key,
+                'column' => $request->key,
                 'operator' => '=',
-                'value'    => $request->search,
-                'mode'     => 'AND'
+                'value' => $request->search,
+                'mode' => 'AND'
             ]
-            ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+        ], ['name'])) : Utils::map_select(Data::list(Unit::class));
 
         return Response()->json([
-            'organs' => Utils::map_select(Data::list(Organ::class, order:['name'])),
-            'units'  => $units,
-            'types'  => Comission::list_types(),
+            'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
+            'units' => $units,
+            'types' => Comission::list_types(),
             'status' => Comission::list_status()
         ], 200);
     }

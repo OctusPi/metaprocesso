@@ -1,54 +1,53 @@
 <script setup>
-    import { ref, watch } from 'vue'
-    import ActionNav from './ActionNav.vue'
+import { ref, watch } from 'vue'
+import ActionNav from './ActionNav.vue'
 
-    const props = defineProps({
-        header  :{type: Array},
-        body    :{type: Array, default: () => []},
-        actions :{type: Array},
-        casts: {type: Object}
-    })
-    
-    const emit = defineEmits([
-        'action:update', 
-        'action:delete', 
-        'action:download', 
-        'action:members',
-        'action:extinction',
-        'action:items'
-    ])
-    
-    const body = ref(props.body)
+const props = defineProps({
+    header: { type: Array },
+    body: { type: Array, default: () => [] },
+    actions: { type: Array },
+    casts: { type: Object }
+})
 
-    function orderBy(key){
-        body.value.sort((a,b) => {
-            if(typeof a[key] === 'string'){
-                return a[key].localeCompare(b[key])
-            }
-            
-            return a[key] - b[key]
-        })
-    }
+const emit = defineEmits([
+    'action:update',
+    'action:delete',
+    'action:download',
+    'action:members',
+    'action:extinction',
+    'action:items'
+])
 
-    function getdata(data, obj, key, cast = null, subject = 'id'){
-        
-        const value = obj ? data[obj][key] : data[key] ?? '';
+const body = ref(props.body)
 
-        if(cast && props?.casts[key]){
-            const datacast = (props.casts[key]).find(obj => obj[subject] === value)
-            return datacast[cast] ?? ''
+function orderBy(key) {
+    body.value.sort((a, b) => {
+        if (typeof a[key] === 'string') {
+            return a[key].localeCompare(b[key])
         }
 
-        return value
+        return a[key] - b[key]
+    })
+}
+
+function getdata(data, obj, key, cast = null, subject = 'id') {
+    const value = obj ? data[obj][key] : data[key] ?? '';
+
+    if (cast && props?.casts[key]) {
+        const datacast = (props.casts[key]).find(obj => obj[subject] === value)
+        return datacast[cast] ?? ''
     }
 
-    function propagateEmit(emt){
-        emit(emt.e, emt.i)
-    }
+    return value
+}
 
-    watch(() => props.body, (newValue) => {
-        body.value = newValue
-    });
+function propagateEmit(emt) {
+    emit(emt.e, emt.i)
+}
+
+watch(() => props.body, (newValue) => {
+    body.value = newValue
+});
 </script>
 
 <template>
@@ -59,7 +58,8 @@
         <table class="table table-borderless table-striped table-hover">
             <thead v-if="props.header">
                 <tr>
-                    <th scope="col" v-for="h in props.header" :key="h.key" @click="orderBy(h.key)">{{ h.title }}<i class="bi bi-arrow-down-up ms-2 table-order-icon"></i></th>
+                    <th scope="col" v-for="h in props.header" :key="h.key" @click="orderBy(h.key)">{{ h.title }}<i
+                            class="bi bi-arrow-down-up ms-2 table-order-icon"></i></th>
                     <th v-if="props.actions" scope="col"></th>
                 </tr>
             </thead>
@@ -69,11 +69,13 @@
                         {{ getdata(b, h?.obj, h.key, h?.cast) }}
                         <p v-if="h.sub" class="small txt-color-sec p-0 m-0">
                             <span v-for="s in h.sub" :key="s.key" class="inline-block small">
-                                {{ `${s.title ?? ''} ${getdata(b, s?.obj, s.key, s?.cast)}` }} 
+                                {{ `${s.title ?? ''} ${getdata(b, s?.obj, s.key, s?.cast)}` }}
                             </span>
                         </p>
                     </td>
-                    <td v-if="props.actions" class="align-middle"><ActionNav :id="b.id" :calls="props.actions" @action="propagateEmit" /></td>
+                    <td v-if="props.actions" class="align-middle">
+                        <ActionNav :id="b.id" :calls="props.actions" @action="propagateEmit" />
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -85,37 +87,37 @@
 </template>
 
 <style>
+.table tr th:first-child {
+    padding-left: 50px;
+}
 
-    .table tr th:first-child{
-        padding-left: 50px;
-    }
+.table tr td:first-child {
+    padding-left: 50px;
+}
 
-    .table tr td:first-child{
-        padding-left: 50px;
-    }
+.table tr td:last-child {
+    padding-right: 4cap;
+    text-align: end;
+}
 
-    .table tr td:last-child{
-        padding-right: 4cap;
-        text-align: end;
-    }
+.table,
+.table th,
+.table td {
+    background-color: transparent !important;
+    color: var(--color-text);
+}
 
-    .table, .table th, .table td{
-        background-color: transparent !important;
-        color: var(--color-text);
-    }
+.table th {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: small;
+}
 
-    .table th{
-        cursor: pointer;
-        font-weight: 600;
-        font-size: small;
-    }
-    .table-order-icon{
-        font-size: small;
-    }
+.table-order-icon {
+    font-size: small;
+}
 
-    .table th:hover i{
-        color: var(--color-base);
-    }
-    
-   
+.table th:hover i {
+    color: var(--color-base);
+}
 </style>

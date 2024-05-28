@@ -25,9 +25,9 @@ const page = ref({
     data: {},
     datalist: props.datalist,
     dataheader: [
-        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'type', cast:'title' }] },
-        { obj:'unit', key: 'name', title: 'VINCULO', sub: [{ obj:'organ', key: 'name' }] },
-        { key: 'status', cast:'title', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term' }] },
+        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'type', cast: 'title' }] },
+        { obj: 'unit', key: 'name', title: 'VINCULO', sub: [{ obj: 'organ', key: 'name' }] },
+        { key: 'status', cast: 'title', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term' }] },
     ],
     search: {},
     selects: {
@@ -110,6 +110,8 @@ function saveExtinction() {
         emit('callAlert', notifys.warning(validation.message))
         return
     }
+
+    console.log(extinct.value.data)
 
     http.post('/comissionsends/save', extinct.value.data, emit, () => {
         list()
@@ -278,8 +280,8 @@ onMounted(() => {
                         <div class="d-flex flex-row-reverse mt-4">
                             <button @click="ui.toggle()" type="button" class="btn btn-outline-warning">Cancelar <i
                                     class="bi bi-x-circle"></i></button>
-                            <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
-                                    class="bi bi-check2-circle"></i></button>
+                            <button type="submit" class="btn btn-outline-primary mx-2">Extinguir <i
+                                    class="bi bi-calendar2-minus"></i></button>
                         </div>
                     </form>
                 </div>
