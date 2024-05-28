@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ComissionEnd;
 use App\Models\Unit;
 use App\Models\User;
+use App\Utils\Dates;
 use App\Utils\Utils;
 use App\Models\Organ;
 use App\Utils\Notify;
@@ -32,7 +34,7 @@ class Comissions extends Controller
 
     public function update(Request $request)
     {
-        if(isset($_FILES['document'])){
+        if (isset($_FILES['document'])) {
             $comission = Comission::findOrFail($request->id);
             $upload = new Uploads($request, ['document' => ['nullable' => true]]);
             $upload->remove($comission->document);
@@ -63,8 +65,8 @@ class Comissions extends Controller
     public function download(Request $request)
     {
         $ordinator = Comission::findOrFail($request->id);
-        if($ordinator && $ordinator->document){
-            return response()->download(storage_path('uploads'.'/'.$ordinator->document), $ordinator->name.'.pdf');
+        if ($ordinator && $ordinator->document) {
+            return response()->download(storage_path('uploads' . '/' . $ordinator->document), $ordinator->name . '.pdf');
         }
 
         return response()->json(Notify::warning('Arquivo Indisponível'));
@@ -74,17 +76,17 @@ class Comissions extends Controller
     {
         $units = $request->key ? Utils::map_select(Data::list(Unit::class, [
             [
-                'column'   => $request->key,
+                'column' => $request->key,
                 'operator' => '=',
-                'value'    => $request->search,
-                'mode'     => 'AND'
+                'value' => $request->search,
+                'mode' => 'AND'
             ]
-            ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+        ], ['name'])) : Utils::map_select(Data::list(Unit::class));
 
         return Response()->json([
-            'organs' => Utils::map_select(Data::list(Organ::class, order:['name'])),
-            'units'  => $units,
-            'types'  => Comission::list_types(),
+            'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
+            'units' => $units,
+            'types' => Comission::list_types(),
             'status' => Comission::list_status()
         ], 200);
     }
