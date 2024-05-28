@@ -68,7 +68,7 @@ const router = createRouter({
 			component: () => import('../views/ComissionsView.vue')
 		},
 		{
-			path: '/comissionsmembers/:id(\\d)',
+			path: '/comissionsmembers/:id(\\d+)',
 			name: 'comissionsmembers',
 			meta: { auth: true },
 			component: () => import('../views/ComissionsMembersView.vue')
