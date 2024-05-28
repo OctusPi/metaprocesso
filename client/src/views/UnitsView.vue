@@ -24,7 +24,7 @@ const page = ref({
     dataheader: [
         { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cnpj' }] },
         { key: 'phone', title: 'CONTATO', sub: [{ key: 'email' }] },
-        { key: 'organ', title: 'VINCULO', sub: [{ key: 'address' }] }
+        { obj:'organ', key: 'name', title: 'VINCULO', sub: [{ key: 'address' }] }
     ],
     search: {},
     selects: {
@@ -170,7 +170,7 @@ onMounted(() => {
                     <!-- DATA LIST -->
                     <TableList @action:update="update" @action:delete="remove" :header="page.dataheader"
                         :body="page.datalist" :actions="['update', 'delete']"
-                        :casts="{ 'status': page.selects.status, 'organ': page.selects.organs }" />
+                        :casts="{ 'status': page.selects.status }" />
                 </div>
 
                 <!--BOX REGISTER-->

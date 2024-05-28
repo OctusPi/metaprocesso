@@ -52,7 +52,7 @@ class Ordinators extends Controller
     public function list(Request $request)
     {
         $search = ['organ', 'unit', 'name'];
-        return $this->baseList(Ordinator::class, $search, $request->all());
+        return $this->baseList(Ordinator::class, $search, $request->all(), ['name'], ['organ', 'unit']);
     }
 
     public function details(Request $request)

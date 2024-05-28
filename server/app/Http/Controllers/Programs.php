@@ -37,7 +37,7 @@ class Programs extends Controller
     public function list(Request $request)
     {
         $search = ['organ', 'unit', 'name'];
-        return $this->baseList(Program::class, $search, $request->all());
+        return $this->baseList(Program::class, $search, $request->all(), ['name'], ['organ', 'unit']);
     }
 
     public function details(Request $request)

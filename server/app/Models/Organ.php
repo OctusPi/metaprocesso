@@ -66,6 +66,11 @@ class Organ extends Model
         return $this->belongsTo(Program::class);
     }
 
+    public function dotation():BelongsTo
+    {
+        return $this->belongsTo(Dotation::class);
+    }
+
     public function sector():BelongsTo
     {
         return $this->belongsTo(Sector::class);

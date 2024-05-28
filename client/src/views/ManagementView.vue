@@ -24,8 +24,8 @@ const page = ref({
     dataheader: [
         { key: 'name', title: 'NOME' },
         { key: 'email', title: 'E-MAIL' },
-        { key: 'profile', title: 'PERFIL', sub: [{ key: 'passchange', title: 'Sitiação Senha:' }] },
-        { key: 'status', title: 'STATUS', sub: [{ key: 'lastlogin', title: 'Ultimo Acesso:' }] }
+        { key: 'profile', cast:'title', title: 'PERFIL', sub: [{ key: 'passchange', cast:'title', title: 'Sitiação Senha:' }] },
+        { key: 'status', cast:'title', title: 'STATUS', sub: [{ key: 'lastlogin', title: 'Ultimo Acesso:' }] }
     ],
     search: {},
     selects: {

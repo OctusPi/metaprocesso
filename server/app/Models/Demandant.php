@@ -39,9 +39,9 @@ class Demandant extends Model
         return $this->hasOne(Organ::class, 'id');
     }
 
-    public function comission(): HasOne
+    public function unit(): HasOne
     {
-        return $this->hasOne(Comission::class, 'id');
+        return $this->hasOne(Unit::class, 'id');
     }
 
     public function sector(): HasOne
