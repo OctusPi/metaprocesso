@@ -35,7 +35,7 @@
 
         if(cast && props?.casts[key]){
             const datacast = (props.casts[key]).find(obj => obj[subject] === value)
-            return datacast[cast]
+            return datacast[cast] ?? ''
         }
 
         return value

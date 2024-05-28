@@ -84,7 +84,7 @@ function save() {
 function update(id) {
     http.get(`/management/details/${id}`, emit, (response) => {
         page.value.data = response.data
-        page.value.data.modules = (response.data?.modules ?? {}).map(obj => obj['id'])
+        page.value.data.modules = (response.data?.modules ?? []).map(obj => obj['id']) ?? []
         ui.toggle('update')
     })
 }
