@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ComissionEnd;
 use App\Models\Unit;
 use App\Models\User;
-use App\Utils\Dates;
 use App\Utils\Utils;
 use App\Models\Organ;
 use App\Utils\Notify;
@@ -64,9 +62,9 @@ class Comissions extends Controller
 
     public function download(Request $request)
     {
-        $ordinator = Comission::findOrFail($request->id);
-        if ($ordinator && $ordinator->document) {
-            return response()->download(storage_path('uploads' . '/' . $ordinator->document), $ordinator->name . '.pdf');
+        $comission = Comission::findOrFail($request->id);
+        if ($comission && $comission->document) {
+            return response()->download(storage_path('uploads' . '/' . $comission->document), $comission->name . '.pdf');
         }
 
         return response()->json(Notify::warning('Arquivo Indisponível'));
