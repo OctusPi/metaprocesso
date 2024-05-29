@@ -58,8 +58,9 @@ watch(() => props.body, (newValue) => {
         <table class="table table-borderless table-striped table-hover">
             <thead v-if="props.header">
                 <tr>
-                    <th scope="col" v-for="h in props.header" :key="h.key" @click="orderBy(h.key)">{{ h.title }}<i
-                            class="bi bi-arrow-down-up ms-2 table-order-icon"></i></th>
+                    <th scope="col" v-for="h in props.header" :key="h.key" @click="orderBy(h.key)">
+                        {{ h.title }} <i class="bi bi-arrow-down table-order-icon"></i>
+                    </th>
                     <th v-if="props.actions" scope="col"></th>
                 </tr>
             </thead>
@@ -114,7 +115,7 @@ watch(() => props.body, (newValue) => {
 }
 
 .table-order-icon {
-    font-size: small;
+    font-size: 0.6rem;
 }
 
 .table th:hover i {

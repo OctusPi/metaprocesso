@@ -81,9 +81,9 @@ function clear(){
                             <div class="me-3 item-type">{{ component.selected?.tipo }}</div>
                             <div class="item-desc">
                                 <h3 class="m-0 p-0 small">{{ `${l.codigoItem} - ${l.nomePdm}` }}</h3>
-                                <spam class="m-0 p-0 me-2 small" v-for="c in l.buscaItemCaracteristica" :key="c.codigoCaracteristica">
+                                <span class="m-0 p-0 me-2 small" v-for="c in l.buscaItemCaracteristica" :key="c.codigoCaracteristica">
                                     {{ `${c.nomeCaracteristica}: ${c.nomeValorCaracteristica};` }}
-                                </spam>
+                                </span>
                             </div>
                         </li>
                     </template>
