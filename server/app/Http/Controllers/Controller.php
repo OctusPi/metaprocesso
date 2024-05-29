@@ -111,9 +111,9 @@ class Controller extends BaseController
         }
     }
 
-    public function baseDetails(string $model, ?int $id)
+    public function baseDetails(string $model, ?int $id, ?array $with = [])
     {
-        $instance = $model::where("id", $id)->first();
+        $instance = $model::where("id", $id)->with($with)->first();
         if (!$instance) {
             return Response()->json(Notify::warning('Registro não localizado!'), 404);
         }

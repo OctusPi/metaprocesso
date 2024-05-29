@@ -1,10 +1,12 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router';
 import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
 import http from '@/services/http';
 import Ui from '@/utils/ui';
+import utils from '@/utils/utils';
+import defines from '@/utils/defines';
 
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
@@ -14,10 +16,11 @@ import ListCatGov from '@/components/ListCatGov.vue';
 const router = useRoute()
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
+const catalogID = router.params?.catalog
 const page = ref({
     title: {},
     uiview: {},
-    catalog:{},
+    catalog: {},
     data: {},
     datalist: props.datalist,
     dataheader: [
@@ -26,15 +29,22 @@ const page = ref({
         { key: 'law', title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
     ],
     search: {},
-    catgov: {},
     selects: {
         unds: [],
+        types: [],
+        categories: [],
+        subcategories: [],
+        status: []
     },
     rules: {
         fields: {
+            code: 'requierd',
             name: 'required',
-            organ: 'required',
-            comission: 'required'
+            type: 'required',
+            und: 'required',
+            category:'required',
+            status: 'required',
+            description: 'required'
         },
         valids: {}
     }
@@ -50,7 +60,7 @@ function save() {
     }
 
     const data = { ...page.value.data }
-    const url = page.value.data?.id ? '/catalogitems/update' : '/catalogitems/save'
+    const url = page.value.data?.id ? `/catalogitems/${catalogID}/update` : `/catalogitems/${catalogID}/save`
     const exec = page.value.data?.id ? http.put : http.post
 
     exec(url, data, emit, () => {
@@ -59,7 +69,7 @@ function save() {
 }
 
 function update(id) {
-    http.get(`/catalogitems/details/${id}`, emit, (response) => {
+    http.get(`/catalogitems/${catalogID}/details/${id}`, emit, (response) => {
         selects('organ', response.data?.unit)
         page.value.data = response.data
         ui.toggle('update')
@@ -69,13 +79,13 @@ function update(id) {
 function remove(id) {
     emit('callRemove', {
         id: id,
-        url: '/catalogs',
+        url: `/catalogs/${catalogID}`,
         search: page.value.search
     })
 }
 
 function list() {
-    http.post('/catalogitems/list', page.value.search, emit, (response) => {
+    http.post(`/catalogitems/${catalogID}/list`, page.value.search, emit, (response) => {
         page.value.datalist = response.data ?? []
         ui.toggle('list')
     })
@@ -83,7 +93,7 @@ function list() {
 
 function selects(key = null, search = null) {
 
-    const urlselect = (key && search) ? `/catalogitems/selects/${key}/${search}` : '/catalogitems/selects'
+    const urlselect = (key && search) ? `/catalogitems/${catalogID}/selects/${key}/${search}` : `/catalogitems/${catalogID}/selects`
 
     http.get(urlselect, emit, (response) => {
         page.value.selects = response.data
@@ -91,37 +101,60 @@ function selects(key = null, search = null) {
 }
 
 function detailsCatalog() {
-    http.get(`/catalogitems/catalog/${router.params?.id}`, emit, (response) => {
+    http.get(`/catalogitems/${catalogID}/catalog`, emit, (response) => {
         page.value.catalog = response.data
     })
 }
 
-function selectItem(data){
-    //selects
-    page.value.selects.unds = data.units
+function selectItem(data) {
 
     page.value.data.origin = 1
-    
 
-    if(data.category.tipo === 'M'){
+    if (data.category.tipo === 'M') {
+
+        let description = ''
+        data.item.buscaItemCaracteristica.forEach(element => {
+            description += `${element.nomeCaracteristica}: ${element.nomeValorCaracteristica}; `
+        });
+
+        page.value.data.type = 1
+        page.value.data.category = 1
+        page.value.selects.unds = data.units
         page.value.data.code = data.item.codigoItem
         page.value.data.name = data.item.nomePdm
-        page.value.data.type = 1
-        
-    }else{
+        page.value.data.description = description
+
+    } else {
+
+        const unds = data.units.map(obj => {
+            return { "siglaUnidadeFornecimento": obj.siglaUnidadeMedida, "nomeUnidadeFornecimento": obj.nomeUnidadeMedida }
+        })
+
+        page.value.data.type = 2
+        page.value.data.category = 2
+        page.value.selects.unds = unds
         page.value.data.code = data.item.codigoServico
+        page.value.data.name = data.item.descricaoServicoAcentuado
+        page.value.data.description = data.item.nomeGrupo + '; ' + data.item.descricaoServicoAcentuado
     }
-    
-    console.log(data)
 }
 
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
 
-onMounted(() => {
+watch(() => page.value.uiview.register, (value) => {
+    if (value === true) {
+        page.value.data.code = utils.randCode()
+        page.value.selects.unds = defines.unds
+    }
+})
+
+onBeforeMount(() => {
     detailsCatalog()
+    selects()
     list()
+    
 })
 
 </script>
@@ -157,7 +190,7 @@ onMounted(() => {
                         </button>
                         <RouterLink to="/subcategories" class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-bookmarks"></i>
-                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Categorias</span>
+                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Grupos</span>
                         </RouterLink>
 
                     </div>
@@ -166,6 +199,8 @@ onMounted(() => {
                 <div class="px-4 px-md-5 mb-4">
                     <h2 class="m-0 p-0">Catálogo: {{ page.catalog.name }}</h2>
                     <p class="small m-0 p-0 txt-color-sec">{{ page.catalog.description }}</p>
+                    <p class="small m-0 p-0 txt-color-sec">Orgão: {{ page.catalog?.organ?.name }}</p>
+                    <p class="small m-0 p-0 txt-color-sec">Comissão: {{ page.catalog?.comission?.name }}</p>  
                 </div>
 
                 <!--BOX LIST-->
@@ -174,25 +209,50 @@ onMounted(() => {
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
                         <form @submit.prevent="list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-name" class="form-label">Catálogo</label>
+                                <label for="s-name" class="form-label">Item</label>
                                 <input type="text" name="name" class="form-control" id="s-name"
-                                    v-model="page.search.name" placeholder="Pesquise por partes do nome do catálogo">
+                                    v-model="page.search.name" placeholder="Pesquise por partes do nome do item">
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-organ" class="form-label">Orgão</label>
-                                <select name="organ" class="form-control" id="s-organ"
-                                    v-model="page.search.organ" @change="selects('organ', page.search.organ)">
-                                    <option value=""></option>
-                                    <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
-                                    </option>
-                                </select>
+                                <label for="s-description" class="form-label">Descrição</label>
+                                <input type="text" name="description" class="form-control" id="s-description"
+                                    v-model="page.search.description" placeholder="Pesquise pela descrição do item">
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-comission" class="form-label">Comissão</label>
+                                <label for="s-comission" class="form-label">Status</label>
                                 <select name="comission" class="form-control" id="s-comission"
                                     v-model="page.search.comission">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">{{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-type" class="form-label">Tipo</label>
+                                <select name="type" class="form-control" id="s-type"
+                                    v-model="page.search.type">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.types" :key="o.id" :value="o.id">{{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-category" class="form-label">Categoria</label>
+                                <select name="category" class="form-control" id="s-category"
+                                    v-model="page.search.category">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.categories" :key="o.id" :value="o.id">{{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-subcategory" class="form-label">Grupo</label>
+                                <select name="subcategory" class="form-control" id="s-subcategory"
+                                    v-model="page.search.subcategory">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.subcategories" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
                                 </select>
                             </div>
@@ -205,7 +265,7 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList @action:update="update" @action:delete="remove" @action:items="selectCatalog"
+                    <TableList @action:update="update" @action:delete="remove"
                         :header="page.dataheader" :body="page.datalist" :actions="['items', 'update', 'delete']"
                         :casts="{ 'organ': page.selects.organs, 'comission': page.selects.comissions }" />
                 </div>
@@ -224,7 +284,7 @@ onMounted(() => {
                                 <label for="organ" class="form-label">Código Item</label>
                                 <input type="text" name="code" class="form-control"
                                     :class="{ 'form-control-alert': page.rules.valids.code }" id="code"
-                                    v-model="page.data.code" >
+                                    v-model="page.data.code">
                             </div>
                             <div class="col-sm-12 col-md-8">
                                 <label for="name" class="form-label">Item</label>
@@ -238,19 +298,19 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="type" class="form-label">Tipo</label>
                                 <select name="type" class="form-control" id="type"
-                                :class="{ 'form-control-alert': page.rules.valids.type }"
-                                v-model="page.data.type">
+                                    :class="{ 'form-control-alert': page.rules.valids.type }" v-model="page.data.type">
                                     <option></option>
+                                    <option v-for="(t, i) in page.selects.types" :key="i" :value="i">{{ t }}</option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="und" class="form-label">Unidade</label>
                                 <select name="und" class="form-control" id="und"
-                                :class="{ 'form-control-alert': page.rules.valids.und }"
-                                v-model="page.data.und">
+                                    :class="{ 'form-control-alert': page.rules.valids.und }" v-model="page.data.und">
                                     <option></option>
                                     <option v-for="u in page.selects.unds" :key="u.siglaUnidadeFornecimento"
-                                    :value="u.siglaUnidadeFornecimento">{{ `${u.siglaUnidadeFornecimento} - ${u.nomeUnidadeFornecimento}` }}</option>
+                                        :value="u.siglaUnidadeFornecimento">{{ `${u.siglaUnidadeFornecimento} -
+                                        ${u.nomeUnidadeFornecimento}` }}</option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
@@ -264,24 +324,27 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="category" class="form-label">Categoria</label>
                                 <select name="category" class="form-control" id="category"
-                                :class="{ 'form-control-alert': page.rules.valids.category }"
-                                v-model="page.data.category">
+                                    :class="{ 'form-control-alert': page.rules.valids.category }"
+                                    v-model="page.data.category">
                                     <option></option>
+                                    <option v-for="(c, i) in page.selects.categories" :key="i" :value="i">{{ c }}
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="subcategory" class="form-label">Agrupamento</label>
                                 <select name="subcategory" class="form-control" id="subcategory"
-                                v-model="page.data.subcategory">
+                                    v-model="page.data.subcategory">
                                     <option></option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="status" class="form-label">Status</label>
                                 <select name="status" class="form-control" id="status"
-                                :class="{ 'form-control-alert': page.rules.valids.status }"
-                                v-model="page.data.status">
+                                    :class="{ 'form-control-alert': page.rules.valids.status }"
+                                    v-model="page.data.status">
                                     <option></option>
+                                    <option v-for="(s, i) in page.selects.status" :key="i" :value="i">{{ s }}</option>
                                 </select>
                             </div>
                         </div>
@@ -290,7 +353,9 @@ onMounted(() => {
                             <div class="col-sm-12">
                                 <label for="description" class="form-label">Descrição</label>
                                 <input type="text" name="description" class="form-control" id="description"
-                                    placeholder="Características do Item" v-model="page.data.description">
+                                    placeholder="Características do Item" 
+                                    :class="{ 'form-control-alert': page.rules.valids.description }"
+                                    v-model="page.data.description">
                             </div>
                         </div>
 
@@ -306,3 +371,16 @@ onMounted(() => {
         </section>
     </main>
 </template>
+
+<style scoped>
+.inside-box{
+    height: calc(100% - 270px);
+    overflow: scroll;
+}
+
+@media (max-width: 991px) {
+    .inside-box{
+        height: calc(100% - 315px);
+    }
+}
+</style>

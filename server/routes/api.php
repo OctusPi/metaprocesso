@@ -230,14 +230,14 @@ Route::controller(CatalogItems::class)->group(function () {
     
     Route::prefix('/catalogitems')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('/{id?}', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/catalog/{id}', 'catalog');
-            Route::get('/selects/{key?}/{search?}', 'selects');
+            Route::get('/{catalog}', 'index');
+            Route::post('/{catalog}/list', 'list');
+            Route::post('/{catalog}/save', 'save');
+            Route::put('/{catalog}/update', 'update');
+            Route::post('/{catalog}/destroy', 'delete');
+            Route::get('/{catalog}/details/{id}', 'details');
+            Route::get('/{catalog}/catalog', 'catalog');
+            Route::get('/{catalog}/selects/{key?}/{search?}', 'selects');
         });
     });
 })->name('catalogitems');

@@ -90,7 +90,7 @@ function selects(key = null, search = null) {
 }
 
 function selectCatalog(id){
-    router.replace({ name: 'catalogitems', params: { id } })
+    router.replace({ name: 'catalogitems', params: { catalog:id } })
 }
 
 watch(() => props.datalist, (newdata) => {

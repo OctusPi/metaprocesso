@@ -19,7 +19,7 @@ class JWT
         $payload = [
             'iss' => $url,
             'aud' => $url,
-            'exp' => time() + 3600,
+            'exp' => time() + 7200,
             'iat' => time(),
             'data' => $data
         ];

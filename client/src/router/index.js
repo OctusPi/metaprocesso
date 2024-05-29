@@ -98,7 +98,7 @@ const router = createRouter({
 			component: () => import('../views/CatalogsView.vue')
 		},
 		{
-			path: '/catalogitems/:id(\\d+)?',
+			path: '/catalogitems/:catalog(\\d+)?',
 			name: 'catalogitems',
 			meta: {auth: true},
 			component: () => import('../views/CatalogItemsView.vue')
