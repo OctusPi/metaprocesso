@@ -22,7 +22,7 @@ const page   = ref({
     dataheader: [
         { key: 'name', title: 'CATÁLOGO' },
         { obj:'comission', key: 'name', title: 'COMISSÃO', sub: [{ obj:'organ', key: 'name' }] },
-        { key: 'law', title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
+        { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
     ],
     search: {},
     selects: {

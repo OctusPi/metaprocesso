@@ -3,7 +3,7 @@
 import { ref } from 'vue'
 import CatGov from '@/services/catgov'
 
-const emit   = defineEmits(['respCatGov'])
+const emit   = defineEmits(['resp-catgov'])
 const catgov = new CatGov()
 const component = ref({
     search: '',
@@ -28,16 +28,18 @@ async function getItems(i) {
     component.value.items = list
     component.value.list  = null
     component.value.items.items = i.tipo === 'S' ? [list?.items] : list?.items
-    console.log(component.value.items)
 }
 
 function selectItem(item){
-    emit('respCatGov', {
-        categoty: component.value.selected,
+    emit('resp-catgov', {
+        category: component.value.selected,
         item: item,
         units: component.value.items?.units,
         accounting: component.value.items?.accounting
     });
+
+    component.value.search = null
+    clear()
 }
 
 function clear(){
@@ -70,14 +72,14 @@ function clear(){
                     <!-- list categories -->
                     <li v-for="i in component.list" :key="i.codigo" @click="getItems(i)" class="d-flex px-3 py-2">
                         <div class="me-3 item-type">{{ i.tipo }}</div>
-                        <div class="flex-grow-1 item-desc">{{ i.nome }}</div>
+                        <div class="item-desc">{{ i.nome }}</div>
                     </li>
 
                     <!-- list items -->
                     <template v-if="component.selected?.tipo === 'M'">
                         <li v-for="l in component.items?.items" :key="l.codigoItem" @click="selectItem(l)" class="d-flex align-items-center px-3 py-2">
                             <div class="me-3 item-type">{{ component.selected?.tipo }}</div>
-                            <div class="flex-grow-1 item-desc">
+                            <div class="item-desc">
                                 <h3 class="m-0 p-0 small">{{ `${l.codigoItem} - ${l.nomePdm}` }}</h3>
                                 <spam class="m-0 p-0 me-2 small" v-for="c in l.buscaItemCaracteristica" :key="c.codigoCaracteristica">
                                     {{ `${c.nomeCaracteristica}: ${c.nomeValorCaracteristica};` }}
@@ -89,7 +91,7 @@ function clear(){
                     <template v-if="component.selected?.tipo === 'S'">
                         <li v-for="l in component.items?.items" :key="l.codigoServico" @click="selectItem(l)" class="d-flex align-items-center px-3 py-2">
                             <div class="me-3 item-type">{{ component.selected?.tipo }}</div>
-                            <div class="flex-grow-1 item-desc">
+                            <div class="item-desc">
                                 <h3 class="m-0 p-0 small">{{ `${l.codigoServico} - ${component.selected.nome}` }}</h3>
                                 <p class="m-0 p-0 me-2 small"> Nome do Grupo: {{ l.nomeGrupo }}</p>
                                 <p class="m-0 p-0 me-2 small"> Descrição: {{ l.descricaoServicoAcentuado }}</p>

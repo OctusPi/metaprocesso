@@ -28,8 +28,7 @@ const page = ref({
     search: {},
     catgov: {},
     selects: {
-        organs: [],
-        comissions: []
+        unds: [],
     },
     rules: {
         fields: {
@@ -97,12 +96,30 @@ function detailsCatalog() {
     })
 }
 
+function selectItem(data){
+    //selects
+    page.value.selects.unds = data.units
+
+    page.value.data.origin = 1
+    
+
+    if(data.category.tipo === 'M'){
+        page.value.data.code = data.item.codigoItem
+        page.value.data.name = data.item.nomePdm
+        page.value.data.type = 1
+        
+    }else{
+        page.value.data.code = data.item.codigoServico
+    }
+    
+    console.log(data)
+}
+
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
 
 onMounted(() => {
-    // selects()
     detailsCatalog()
     list()
 })
@@ -197,46 +214,84 @@ onMounted(() => {
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
 
                     <!-- IMPORT ITEM CATMAT/CATSER -->
-                    <ListCatGov />
+                    <ListCatGov @resp-catgov="selectItem" />
 
                     <form class="form-row mt-3" @submit.prevent="save(page.data.id)">
-                        <!-- <input type="hidden" name="id" v-model="page.data.id">
+                        <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
 
                             <div class="col-sm-12 col-md-4">
-                                <label for="organ" class="form-label">Orgão</label>
-                                <select name="organ" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.organ }" id="organ"
-                                    v-model="page.data.organ" @change="selects('organ', page.data.organ)">
-                                    <option value=""></option>
-                                    <option v-for="s in page.selects.organs" :value="s.id" :key="s.id">{{ s.title }}
-                                    </option>
-                                </select>
+                                <label for="organ" class="form-label">Código Item</label>
+                                <input type="text" name="code" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.code }" id="code"
+                                    v-model="page.data.code" >
                             </div>
                             <div class="col-sm-12 col-md-8">
-                                <label for="comission" class="form-label">Comissão</label>
-                                <select name="comission" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.comission }" id="comission"
-                                    v-model="page.data.comission">
-                                    <option value=""></option>
-                                    <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">{{ s.title }}
-                                    </option>
-                                </select>
+                                <label for="name" class="form-label">Item</label>
+                                <input type="text" name="name" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.name }" id="name"
+                                    v-model="page.data.name">
                             </div>
                         </div>
 
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12 col-md-4">
-                                <label for="name" class="form-label">Catálogo</label>
-                                <input type="text" name="name" class="form-control" id="name"
-                                    placeholder="Identificação do Catálogo" v-model="page.data.name">
+                                <label for="type" class="form-label">Tipo</label>
+                                <select name="type" class="form-control" id="type"
+                                :class="{ 'form-control-alert': page.rules.valids.type }"
+                                v-model="page.data.type">
+                                    <option></option>
+                                </select>
                             </div>
-                            <div class="col-sm-12 col-md-8">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="und" class="form-label">Unidade</label>
+                                <select name="und" class="form-control" id="und"
+                                :class="{ 'form-control-alert': page.rules.valids.und }"
+                                v-model="page.data.und">
+                                    <option></option>
+                                    <option v-for="u in page.selects.unds" :key="u.siglaUnidadeFornecimento"
+                                    :value="u.siglaUnidadeFornecimento">{{ `${u.siglaUnidadeFornecimento} - ${u.nomeUnidadeFornecimento}` }}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="volume" class="form-label">Volume</label>
+                                <input type="text" name="volume" class="form-control" id="volume"
+                                    placeholder="Total de Gramas, UNDs, Pacotes..." v-model="page.data.volume">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="category" class="form-label">Categoria</label>
+                                <select name="category" class="form-control" id="category"
+                                :class="{ 'form-control-alert': page.rules.valids.category }"
+                                v-model="page.data.category">
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="subcategory" class="form-label">Agrupamento</label>
+                                <select name="subcategory" class="form-control" id="subcategory"
+                                v-model="page.data.subcategory">
+                                    <option></option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="status" class="form-label">Status</label>
+                                <select name="status" class="form-control" id="status"
+                                :class="{ 'form-control-alert': page.rules.valids.status }"
+                                v-model="page.data.status">
+                                    <option></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12">
                                 <label for="description" class="form-label">Descrição</label>
                                 <input type="text" name="description" class="form-control" id="description"
-                                    placeholder="Breve resumo do objetivo do programa" v-model="page.data.description">
+                                    placeholder="Características do Item" v-model="page.data.description">
                             </div>
-
                         </div>
 
                         <div class="d-flex flex-row-reverse mt-4">
@@ -244,7 +299,7 @@ onMounted(() => {
                                     class="bi bi-x-circle"></i></button>
                             <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
                                     class="bi bi-check2-circle"></i></button>
-                        </div> -->
+                        </div>
                     </form>
                 </div>
             </div>

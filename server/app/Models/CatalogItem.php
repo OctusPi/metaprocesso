@@ -21,6 +21,7 @@ class CatalogItem extends Model
         'und',
         'volume',
         'origin',
+        'type',
         'category',
         'subcategory',
         'status',
