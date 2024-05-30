@@ -26,6 +26,7 @@ return new class extends Migration
             $table->integer('suggested_hiring'); // tipo de contrataçoes possiveis vide lei
             $table->string('description');
             $table->string('justification');
+            $table->text('justification_quantity')->nullable();
             $table->double('estimated_value');
             $table->date('estimated_date');
             $table->integer('priority');

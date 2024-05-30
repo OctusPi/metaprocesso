@@ -36,9 +36,11 @@ class Controller extends BaseController
 
     public function validateErros(string $model, ?array $data = [], ?int $id = null):?string
     {
-        $validator = Validator::make($data, $model::validateFields($id), $model::validateMsg());
-        if($validator->fails()){
-            return $validator->errors()->first();
+        if(method_exists($model, 'validateFields') && method_exists($model,'validateMsg')){
+            $validator = Validator::make($data, $model::validateFields($id), $model::validateMsg());
+            if($validator->fails()){
+                return $validator->errors()->first();
+            }
         }
 
         return null;
