@@ -182,7 +182,7 @@ onMounted(() => {
                                 <h2 class="accordion-header">
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        Dados do Documento Formalização de Demanda
+                                        <i class="bi bi-file-earmark-text me-2"></i> Dados do DFD
                                     </button>
                                 </h2>
                                 <div id="collapseOne" class="accordion-collapse collapse show"
@@ -381,7 +381,7 @@ onMounted(() => {
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        Items Demandados
+                                        <i class="bi bi-boxes me-2"></i> Materiais ou Serviços Demandados
                                     </button>
                                 </h2>
                                 <div id="collapseTwo" class="accordion-collapse collapse"
