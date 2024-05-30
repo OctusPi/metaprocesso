@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Utils\Notify;
 use App\Models\Catalog;
 use App\Security\Guardian;
 use App\Models\CatalogItem;
@@ -19,7 +20,13 @@ class CatalogItems extends Controller
 
     public function save(Request $request)
     {
-        return $this->baseSave(CatalogItem::class, $request->all());
+        $catalog = Catalog::where('id', $request->catalog)->first();
+        if($catalog){
+            $req = array_merge($request->all(), ['catalog' => $catalog->id, 'organ' => $catalog->organ]);
+            return $this->baseSave(CatalogItem::class, $req);
+        }
+
+        return response()->json(Notify::warning("Registro atualizado com sucesso!"), 404);
     }
 
     public function update(Request $request)
@@ -34,7 +41,7 @@ class CatalogItems extends Controller
 
     public function list(Request $request)
     {
-        $search = ['code', 'type', 'category', 'subcategory', 'name', 'description'];
+        $search = ['name', 'description', 'status', 'type', 'category', 'subcategory'];
         return $this->baseList(CatalogItem::class, $search, $request->all());
     }
 
@@ -55,7 +62,7 @@ class CatalogItems extends Controller
             'categories' => CatalogItem::list_categoria(),
             'groups' => [],
             'status' => CatalogItem::list_status(),
-            'unds' => CatalogItem::list_unds()
+            'origins' => CatalogItem::list_origem()
         ], 200);
 
         

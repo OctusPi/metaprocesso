@@ -8,6 +8,7 @@ use App\Http\Controllers\ComissionsEnds;
 use App\Http\Controllers\ComissionsMembers;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Demandants;
+use App\Http\Controllers\Dfds;
 use App\Http\Controllers\Dotations;
 use App\Http\Controllers\Management;
 use App\Http\Controllers\Ordinators;
@@ -257,6 +258,20 @@ Route::controller(CatalogItems::class)->group(function () {
     });
 })->name('catalogitems');
 
+Route::controller(Dfds::class)->group(function () {
+    
+    Route::prefix('/dfds')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects/{key?}/{search?}', 'selects');
+        });
+    });
+})->name('dfds');
 
 Route::fallback(function () {
     return Response()->json(Notify::warning('Destino solicitado não existe...'), 404);

@@ -24,9 +24,11 @@ const page = ref({
     data: {},
     datalist: props.datalist,
     dataheader: [
-        { key: 'name', title: 'CATÁLOGO' },
-        { key: 'comission', title: 'COMISSÃO', sub: [{ key: 'organ' }] },
-        { key: 'law', title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
+        { key: 'code', title: 'COD.', sub:[{key:'origin', cast:'title'}]},
+        { key: 'name', title: 'ITEM', sub: [{ key: 'category', cast:'title' }]},
+        { key: 'und', title: 'UND.', sub: [{ key: 'volume' }] },
+        { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] },
+        { key:'status', cast:'title', title:'STATUS'}
     ],
     search: {},
     selects: {
@@ -34,7 +36,8 @@ const page = ref({
         types: [],
         categories: [],
         subcategories: [],
-        status: []
+        status: [],
+        origins:[]
     },
     rules: {
         fields: {
@@ -79,7 +82,7 @@ function update(id) {
 function remove(id) {
     emit('callRemove', {
         id: id,
-        url: `/catalogs/${catalogID}`,
+        url: `/catalogitems/${catalogID}`,
         search: page.value.search
     })
 }
@@ -97,6 +100,7 @@ function selects(key = null, search = null) {
 
     http.get(urlselect, emit, (response) => {
         page.value.selects = response.data
+        page.value.selects.unds = defines.unds
     })
 }
 
@@ -144,7 +148,8 @@ watch(() => props.datalist, (newdata) => {
 })
 
 watch(() => page.value.uiview.register, (value) => {
-    if (value === true) {
+    if (value === true && !page.value.data.code) {
+        page.value.data.origin = 2
         page.value.data.code = utils.randCode()
         page.value.selects.unds = defines.unds
     }
@@ -192,10 +197,10 @@ onBeforeMount(() => {
                             <i class="bi bi-bookmarks"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Grupos</span>
                         </RouterLink>
-
                     </div>
                 </div>
 
+                <!-- DETAILS CATALOG -->
                 <div class="px-4 px-md-5 mb-4">
                     <h2 class="m-0 p-0">Catálogo: {{ page.catalog.name }}</h2>
                     <p class="small m-0 p-0 txt-color-sec">{{ page.catalog.description }}</p>
@@ -219,11 +224,11 @@ onBeforeMount(() => {
                                     v-model="page.search.description" placeholder="Pesquise pela descrição do item">
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-comission" class="form-label">Status</label>
-                                <select name="comission" class="form-control" id="s-comission"
-                                    v-model="page.search.comission">
+                                <label for="s-status" class="form-label">Status</label>
+                                <select name="status" class="form-control" id="s-status"
+                                    v-model="page.search.status">
                                     <option value=""></option>
-                                    <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">{{ o.title }}
+                                    <option v-for="s in page.selects.status" :key="s.id" :value="s.id">{{ s.title }}
                                     </option>
                                 </select>
                             </div>
@@ -265,9 +270,14 @@ onBeforeMount(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList @action:update="update" @action:delete="remove"
-                        :header="page.dataheader" :body="page.datalist" :actions="['items', 'update', 'delete']"
-                        :casts="{ 'organ': page.selects.organs, 'comission': page.selects.comissions }" />
+                    <TableList 
+                        @action:update="update" 
+                        @action:delete="remove"
+                        :header="page.dataheader" :body="page.datalist" :actions="['update', 'delete']"
+                        :casts="{ 
+                            'category': page.selects.categories, 
+                            'status': page.selects.status,
+                            'origin': page.selects.origins }" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -300,7 +310,7 @@ onBeforeMount(() => {
                                 <select name="type" class="form-control" id="type"
                                     :class="{ 'form-control-alert': page.rules.valids.type }" v-model="page.data.type">
                                     <option></option>
-                                    <option v-for="(t, i) in page.selects.types" :key="i" :value="i">{{ t }}</option>
+                                    <option v-for="t in page.selects.types" :key="t.id" :value="t.id">{{ t.title }}</option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
@@ -327,7 +337,7 @@ onBeforeMount(() => {
                                     :class="{ 'form-control-alert': page.rules.valids.category }"
                                     v-model="page.data.category">
                                     <option></option>
-                                    <option v-for="(c, i) in page.selects.categories" :key="i" :value="i">{{ c }}
+                                    <option v-for="c in page.selects.categories" :key="c.id" :value="c.id">{{ c.title }}
                                     </option>
                                 </select>
                             </div>
@@ -344,7 +354,7 @@ onBeforeMount(() => {
                                     :class="{ 'form-control-alert': page.rules.valids.status }"
                                     v-model="page.data.status">
                                     <option></option>
-                                    <option v-for="(s, i) in page.selects.status" :key="i" :value="i">{{ s }}</option>
+                                    <option v-for="s in page.selects.status" :key="s.id" :value="s.id">{{ s.title }}</option>
                                 </select>
                             </div>
                         </div>
