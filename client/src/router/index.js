@@ -104,6 +104,12 @@ const router = createRouter({
 			component: () => import('../views/CatalogItemsView.vue')
 		},
 		{
+			path: '/suppliers',
+			name: 'suppliers',
+			meta: { auth: true },
+			component: () => import('../views/SuppliersView.vue')
+		},
+		{
 			path: '/forbidden',
 			name: 'forbidden',
 			component: () => import('../views/ForbiddenView.vue')
@@ -118,7 +124,6 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 	if (to.meta?.auth) {
-		
 		try{
 			const isAuthenticated = await auth.isLoggedIn(to.path)
 			if (!isAuthenticated) {
