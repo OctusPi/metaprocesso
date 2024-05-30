@@ -20,4 +20,22 @@ class Supplier extends Model
         'email',
         'address',
     ];
+
+    public static function validateFields(?int $id = null):array
+    {
+        return [
+            'name'     => 'required',
+            'cnpj' => 'required',
+            'phone'  => 'required',
+            'email'  => 'required',
+            'address'  => 'required',
+        ];
+    }
+
+    public static function validateMsg():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!'
+        ];
+    }
 }

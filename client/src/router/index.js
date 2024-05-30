@@ -100,8 +100,14 @@ const router = createRouter({
 		{
 			path: '/catalogitems/:catalog(\\d+)?',
 			name: 'catalogitems',
-			meta: {auth: true},
+			meta: { auth: true },
 			component: () => import('../views/CatalogItemsView.vue')
+		},
+		{
+			path: '/suppliers',
+			name: 'suppliers',
+			meta: { auth: true },
+			component: () => import('../views/SuppliersView.vue')
 		},
 		{
 			path: '/dfds',
@@ -124,17 +130,16 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 	if (to.meta?.auth) {
-		
-		try{
+		try {
 			const isAuthenticated = await auth.isLoggedIn(to.path)
 			if (!isAuthenticated) {
 				return '/'
 			}
-		}catch(e){
+		} catch (e) {
 			return e.response?.status === 403 ? '/forbidden' :
-			e.response?.status === 404 ? '/notfound' :'/'
+				e.response?.status === 404 ? '/notfound' : '/'
 		}
-		
+
 	}
 })
 
