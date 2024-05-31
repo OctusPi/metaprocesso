@@ -4,6 +4,7 @@ import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
 import http from '@/services/http';
 import Ui from '@/utils/ui';
+import masks from '@/utils/masks';
 
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
@@ -31,9 +32,11 @@ const page = ref({
     },
     rules: {
         fields: {
-            name: 'required',
             organ: 'required',
-            unit: 'required'
+            unit: 'required',
+            ordinator: 'required',
+            demandant: 'required',
+            comission: 'required',
         },
         valids: {}
     }
@@ -78,10 +81,11 @@ function remove(id) {
 }
 
 function list() {
-    http.post('/dfds/list', page.value.search, emit, (response) => {
-        page.value.datalist = response.data ?? []
-        ui.toggle('list')
-    })
+    // http.post('/dfds/list', page.value.search, emit, (response) => {
+    //     page.value.datalist = response.data ?? []
+    //     ui.toggle('list')
+    // })
+    ui.toggle('list')
 }
 
 function selects(key = null, search = null) {
@@ -94,7 +98,7 @@ function selects(key = null, search = null) {
 }
 
 onMounted(() => {
-    selects()
+    // selects()
     list()
 })
 
@@ -177,26 +181,18 @@ onMounted(() => {
                     <form class="form-row" @submit.prevent="save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
 
-                        <div class="accordion" id="accordionExample">
+                        <div class="accordion" id="accordionDfd">
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        <i class="bi bi-file-earmark-text me-2"></i> Dados do DFD
+                                        <i class="bi bi-bounding-box me-2"></i> Origem
                                     </button>
                                 </h2>
                                 <div id="collapseOne" class="accordion-collapse collapse show"
-                                    data-bs-parent="#accordionExample">
+                                    data-bs-parent="#accordionDfd">
                                     <div class="accordion-body">
-
                                         <div class="row mb-3 g-3">
-                                            <div class="col-sm-12 col-md-4">
-                                                <label for="code" class="form-label">Código</label>
-                                                <input type="text" name="code" class="form-control"
-                                                    :class="{ 'form-control-alert': page.rules.valids.code }" id="code"
-                                                    placeholder="Nome de identificação do Setor"
-                                                    v-model="page.data.code">
-                                            </div>
                                             <div class="col-sm-12 col-md-4">
                                                 <label for="organ" class="form-label">Orgão</label>
                                                 <select name="organ" class="form-control"
@@ -220,9 +216,6 @@ onMounted(() => {
                                                     </option>
                                                 </select>
                                             </div>
-                                        </div>
-
-                                        <div class="row mb-3 g-3">
                                             <div class="col-sm-12 col-md-4">
                                                 <label for="ordinator" class="form-label">Ordenador</label>
                                                 <select name="ordinator" class="form-control"
@@ -234,6 +227,9 @@ onMounted(() => {
                                                     </option>
                                                 </select>
                                             </div>
+                                        </div>
+
+                                        <div class="row mb-3 g-3">
                                             <div class="col-sm-12 col-md-4">
                                                 <label for="demandant" class="form-label">Demandante</label>
                                                 <select name="demandant" class="form-control"
@@ -245,8 +241,8 @@ onMounted(() => {
                                                     </option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-12 col-md-4">
-                                                <label for="comission" class="form-label">Comissão</label>
+                                            <div class="col-sm-12 col-md-8">
+                                                <label for="comission" class="form-label">Comissão/Equipe de Planejamento</label>
                                                 <select name="comission" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.comission }"
                                                     id="comission" v-model="page.data.comission">
@@ -255,15 +251,31 @@ onMounted(() => {
                                                         :key="s.id">{{ s.title }}
                                                     </option>
                                                 </select>
+                                                <div id="comissionHelpBlock" class="form-text txt-color-sec">
+                                                    Ao selecionar a comissão/equipe de planejamento seus integrantes serão vinculados ao documento
+                                                </div>
                                             </div>
                                         </div>
-
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        <i class="bi bi-chat-square-dots me-2"></i> Informações
+                                    </button>
+                                </h2>
+                                <div id="collapseTwo" class="accordion-collapse collapse"
+                                    data-bs-parent="#accordionDfd">
+                                    <div class="accordion-body">
                                         <div class="row mb-3 g-3">
                                             <div class="col-sm-12 col-md-4">
-                                                <label for="date_ini" class="form-label">Data Demanda</label>
+                                                <label for="date_ini" class="form-label">Data Envio Demanda</label>
                                                 <input type="text" name="date_ini" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.date_ini }"
-                                                    id="date_ini" placeholder="DD/MM/AAAA" v-model="page.data.date_ini">
+                                                    id="date_ini" placeholder="DD/MM/AAAA" v-model="page.data.date_ini"
+                                                    v-maska:[masks.maskdate]>
                                             </div>
                                             <div class="col-sm-12 col-md-4">
                                                 <label for="year_pca" class="form-label">Ano do PCA</label>
@@ -271,86 +283,7 @@ onMounted(() => {
                                                     :class="{ 'form-control-alert': page.rules.valids.year_pca }"
                                                     id="year_pca" placeholder="AAAA" v-model="page.data.year_pca">
                                             </div>
-
                                             <div class="col-sm-12 col-md-4">
-                                                <label for="unit" class="form-label">Tipo de Aquisição</label>
-                                                <select name="unit" class="form-control"
-                                                    :class="{ 'form-control-alert': page.rules.valids.unit }" id="unit"
-                                                    v-model="page.data.unit">
-                                                    <option value=""></option>
-                                                    <option v-for="s in page.selects.units" :value="s.id" :key="s.id">{{
-                                                        s.title }}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3 g-3">
-                                            <div class="col-sm-12">
-                                                <label for="suggested_hiring" class="form-label">Forma de Contratação
-                                                    Sugerida</label>
-                                                <select name="suggested_hiring" class="form-control"
-                                                    :class="{ 'form-control-alert': page.rules.valids.suggested_hiring }"
-                                                    id="suggested_hiring" v-model="page.data.suggested_hiring">
-                                                    <option value=""></option>
-                                                    <option v-for="s in page.selects.suggested_hirings" :value="s.id"
-                                                        :key="s.id">{{
-                                                        s.title }}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3 g-3">
-                                            <div class="col-sm-12">
-                                                <label for="description" class="form-label">Descrição sucinta do
-                                                    objeto</label>
-                                                <textarea name="description" class="form-control"
-                                                    :class="{ 'form-control-alert': page.rules.valids.description }"
-                                                    id="description" v-model="page.data.description"></textarea>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3 g-3">
-                                            <div class="col-sm-12">
-                                                <label for="justification" class="form-label">Justificativa da
-                                                    necessidade da
-                                                    contratação</label>
-                                                <textarea name="justification" class="form-control"
-                                                    :class="{ 'form-control-alert': page.rules.valids.justification }"
-                                                    id="justification" v-model="page.data.justification"></textarea>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3 g-3">
-                                            <div class="col-sm-12">
-                                                <label for="justification_quantity" class="form-label">Justificativa dos
-                                                    quantitativos
-                                                    demandados</label>
-                                                <textarea name="justification_quantity" class="form-control"
-                                                    :class="{ 'form-control-alert': page.rules.valids.justification_quantity }"
-                                                    id="justification_quantity"
-                                                    v-model="page.data.justification_quantity"></textarea>
-                                            </div>
-                                        </div>
-
-                                        <div class="row mb-3 g-3">
-                                            <div class="col-sm-12 col-md-3">
-                                                <label for="estimated_value" class="form-label">Valor estimado</label>
-                                                <input type="text" name="estimated_value" class="form-control"
-                                                    :class="{ 'form-control-alert': page.rules.valids.estimated_value }"
-                                                    id="estimated_value" placeholder="R$0,00"
-                                                    v-model="page.data.estimated_value">
-                                            </div>
-                                            <div class="col-sm-12 col-md-3">
-                                                <label for="estimated_date" class="form-label">Data prevista</label>
-                                                <input type="text" name="estimated_date" class="form-control"
-                                                    :class="{ 'form-control-alert': page.rules.valids.estimated_date }"
-                                                    id="estimated_date" placeholder="DD/MM/AAAA"
-                                                    v-model="page.data.estimated_date">
-                                            </div>
-
-                                            <div class="col-sm-12 col-md-3">
                                                 <label for="priority" class="form-label">Prioridade</label>
                                                 <select name="priority" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.priority }"
@@ -361,7 +294,60 @@ onMounted(() => {
                                                     </option>
                                                 </select>
                                             </div>
-                                            <div class="col-sm-12 col-md-3">
+                                        </div>
+                                        <div class="row mb-3 g-3">
+                                            <div class="col-sm-12 col-md-4">
+                                                <label for="acquisition_type" class="form-label">Tipo de Aquisição</label>
+                                                <select name="acquisition_type" class="form-control"
+                                                    :class="{ 'form-control-alert': page.rules.valids.acquisition_type }" id="acquisition_type"
+                                                    v-model="page.data.acquisition_type">
+                                                    <option value=""></option>
+                                                    <option v-for="s in page.selects.acquisition_types" :value="s.id" :key="s.id">{{
+                                                        s.title }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-12 col-md-4">
+                                                <label for="estimated_value" class="form-label">Valor estimado</label>
+                                                <input type="text" name="estimated_value" class="form-control"
+                                                    :class="{ 'form-control-alert': page.rules.valids.estimated_value }"
+                                                    id="estimated_value" placeholder="R$0,00"
+                                                    v-model="page.data.estimated_value">
+                                            </div>
+                                            <div class="col-sm-12 col-md-4">
+                                                <label for="estimated_date" class="form-label">Data prevista</label>
+                                                <input type="text" name="estimated_date" class="form-control"
+                                                    :class="{ 'form-control-alert': page.rules.valids.estimated_date }"
+                                                    id="estimated_date" placeholder="DD/MM/AAAA"
+                                                    v-model="page.data.estimated_date">
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="row mb-3 g-3">
+                                            <div class="col-sm-12">
+                                                <label for="description" class="form-label d-flex justify-content-between">
+                                                    Descrição sucinta do objeto
+                                                    <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
+                                                </label>
+                                                <textarea name="description" class="form-control"
+                                                    :class="{ 'form-control-alert': page.rules.valids.description }"
+                                                    id="description" v-model="page.data.description"></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3 g-3">
+                                            <div class="col-sm-12 col-md-6">
+                                                <label for="suggested_hiring" class="form-label">Forma de Contratação Sugerida</label>
+                                                <select name="suggested_hiring" class="form-control"
+                                                    :class="{ 'form-control-alert': page.rules.valids.suggested_hiring }"
+                                                    id="suggested_hiring" v-model="page.data.suggested_hiring">
+                                                    <option value=""></option>
+                                                    <option v-for="s in page.selects.suggested_hirings" :value="s.id" :key="s.id">{{
+                                                        s.title }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-12 col-md-6">
                                                 <label for="bonds" class="form-label">Vinculo ou Dependência</label>
                                                 <select name="bonds" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.bonds }"
@@ -374,24 +360,63 @@ onMounted(() => {
                                             </div>
                                         </div>
 
+                                        
                                     </div>
                                 </div>
                             </div>
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        <i class="bi bi-boxes me-2"></i> Materiais ou Serviços Demandados
+                                        data-bs-target="#collapseThree" aria-expanded="false"
+                                        aria-controls="collapseThree">
+                                        <i class="bi bi-boxes me-2"></i> Lista de Itens
                                     </button>
                                 </h2>
-                                <div id="collapseTwo" class="accordion-collapse collapse"
-                                    data-bs-parent="#accordionExample">
+                                <div id="collapseThree" class="accordion-collapse collapse"
+                                    data-bs-parent="#accordionDfd">
                                     <div class="accordion-body">
                                         ...
                                     </div>
                                 </div>
                             </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseFor" aria-expanded="false" aria-controls="collapseFor">
+                                        <i class="bi bi-file-earmark-text me-2"></i> Justificativas
+                                    </button>
+                                </h2>
+                                <div id="collapseFor" class="accordion-collapse collapse"
+                                    data-bs-parent="#accordionDfd">
+                                    <div class="accordion-body">
+                                        <div class="row mb-3 g-3">
+                                            <div class="col-sm-12">
+                                                <label for="justification" class="form-label d-flex justify-content-between">
+                                                    Justificativa da necessidade da contratação
+                                                    <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
+                                                </label>
+                                                <textarea name="justification" class="form-control"
+                                                    :class="{ 'form-control-alert': page.rules.valids.justification }"
+                                                    id="justification" v-model="page.data.justification"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3 g-3">
+                                            <div class="col-sm-12">
+                                                <label for="justification_quantity" class="form-label d-flex justify-content-between">
+                                                    Justificativa dos quantitativos demandados
+                                                    <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
+                                                </label>
+                                                <textarea name="justification_quantity" class="form-control"
+                                                    :class="{ 'form-control-alert': page.rules.valids.justification_quantity }"
+                                                    id="justification_quantity"
+                                                    v-model="page.data.justification_quantity"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
                         <div class="d-flex flex-row-reverse mt-4">
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">Cancelar <i
                                     class="bi bi-x-circle"></i></button>

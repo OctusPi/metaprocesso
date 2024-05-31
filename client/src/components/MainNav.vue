@@ -107,7 +107,7 @@
     }
 
     .nav-link-icon{
-        font-size: 1.3rem;
+        font-size: 1.6rem;
     }
 
     .nav-link-item:hover{
