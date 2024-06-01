@@ -23,8 +23,7 @@ const page = ref({
     data: {},
     datalist: props.datalist,
     dataheader: [
-        { key: 'name', title: 'FORNECEDOR', sub: [{ key: 'cnpj' }] },
-        { key: 'phone', title: 'CONTATO', sub: [{ key: 'email', title: 'Email: ' }] },
+        { key: 'name', title: 'FORNECEDOR', sub: [{ key: 'cnpj', title: 'CNPJ: ' }] },
         { key: 'address', title: 'ENDEREÇO' },
     ],
     search: {},
@@ -33,8 +32,6 @@ const page = ref({
             name: 'required',
             address: 'required',
             cnpj: 'required',
-            email: 'required',
-            phone: 'required',
         },
         valids: {}
     }
@@ -82,6 +79,15 @@ function list() {
         page.value.datalist = response.data ?? []
         ui.toggle('list')
     })
+}
+
+function populateWithGovData(govdata) {
+    page.value.data.name = null
+    page.value.data.cnpj = null
+    page.value.data.address = null
+    page.value.data.name = govdata.nome
+    page.value.data.cnpj = govdata.cnpj
+    page.value.data.address = govdata.address
 }
 
 onMounted(() => {
@@ -159,11 +165,9 @@ onMounted(() => {
 
                 <!--BOX REGISTER-->
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
+                    <ListSuppliersGov class="mb-3" @resp-select="populateWithGovData" />
                     <form class="form-row" @submit.prevent="save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
-                        <div class="row mb-3 g-3">
-                            <ListSuppliersGov />
-                        </div>
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12 col-md-8">
                                 <label for="name" class="form-label">Fornecedor</label>

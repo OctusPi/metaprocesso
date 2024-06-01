@@ -17,8 +17,8 @@ return new class extends Migration {
             $table->string('cnpj', 20);
             $table->string('agent')->nullable();
             $table->string('cpf', 20)->nullable();
-            $table->string('phone', 20);
-            $table->string('email', 220);
+            $table->string('phone', 20)->nullable();
+            $table->string('email', 220)->nullable();
             $table->string('address');
         });
     }

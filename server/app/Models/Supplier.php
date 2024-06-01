@@ -26,8 +26,6 @@ class Supplier extends Model
         return [
             'name'     => 'required',
             'cnpj' => 'required',
-            'phone'  => 'required',
-            'email'  => 'required',
             'address'  => 'required',
         ];
     }
