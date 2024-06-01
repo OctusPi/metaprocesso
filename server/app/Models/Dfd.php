@@ -150,4 +150,12 @@ class Dfd extends Model
             ['id' => 9, 'title' => 'Obras e Serviços de Engenharia'],
         ];
     }
+
+    public static function list_bonds():array
+    {
+        return [
+            ['id' => 1, 'title' => 'Sim Possui Dependencia'],
+            ['id' => 2, 'title' => 'Não Possui']
+        ];
+    }
 }
