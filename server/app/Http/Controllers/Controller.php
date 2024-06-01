@@ -7,7 +7,9 @@ use App\Utils\Utils;
 use App\Utils\Notify;
 use App\Middleware\Data;
 use App\Security\Guardian;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -19,10 +21,12 @@ class Controller extends BaseController
 
     protected int $module_id;
     protected ?User $user_loged;
+    protected ?String $model;
 
-    public function __construct(int $module_id = User::MOD_INI){
-        $this->module_id = $module_id;
+    public function __construct(?String $model = null, int $module_id = User::MOD_INI){
+        $this->module_id  = $module_id;
         $this->user_loged = Guardian::getUser();
+        $this->model = $model;
     }
 
     public function index(){
@@ -65,7 +69,6 @@ class Controller extends BaseController
         }
 
     }
-
     public function baseUpdate(string $model, ?int $id, array $requests)
     {
         $validateErros = $this->validateErros($model, $requests, $id);
@@ -102,11 +105,11 @@ class Controller extends BaseController
         
     }
 
-    public function baseList(string $model, array $search, array $requests, ?array $order =null, ?array $with = null)
+    public function baseList(array $search, ?array $order =null, ?array $with = null)
     {
         try {
-            $search = Utils::map_search($search, $requests);
-            $query = Data::list($model, $search, $order, $with);
+            $search = Utils::map_search($search, Request()->all());
+            $query = Data::list($this->model, $search, $order, $with);
             return Response()->json($query ?? [], 200);
         } catch (\Throwable $th) {
             return Response()->json(Notify::error($th->getMessage() . 'Falha ao recuperar dados!'), 500);
@@ -121,6 +124,26 @@ class Controller extends BaseController
         }
 
         return Response()->json($instance->toArray(), 200);
+    }
+
+    public function save(Request $request)
+    {
+        return $this->baseSave($this->model, $request->all());
+    }
+
+    public function update(Request $request)
+    {
+        return $this->baseUpdate($this->model, $request->id, $request->all());
+    }
+
+    public function delete(Request $request)
+    {
+        return $this->baseDelete($this->model, $request->id, $request->password);
+    }
+
+    public function details(Request $request)
+    {
+        return $this->baseDetails($this->model, $request->id);
     }
 }
 

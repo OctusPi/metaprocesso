@@ -14,34 +14,13 @@ class Units extends Controller
 {
     public function __construct()
     {
-        parent::__construct(User::MOD_MANAGEMENT);
+        parent::__construct(Unit::class, User::MOD_MANAGEMENT);
         Guardian::validateAccess($this->module_id);
-    }
-
-    public function save(Request $request)
-    {
-        return $this->baseSave(Unit::class, $request->all());
-    }
-
-    public function update(Request $request)
-    {
-        return $this->baseUpdate(Unit::class, $request->id, $request->all());
-    }
-
-    public function delete(Request $request)
-    {
-        return $this->baseDelete(Unit::class, $request->id, $request->password);
     }
 
     public function list(Request $request)
     {
-        $search = ['organ', 'name', 'cnpj'];
-        return $this->baseList(Unit::class, $search, $request->all(), ['name'], ['organ']);
-    }
-
-    public function details(Request $request)
-    {
-        return $this->baseDetails(Unit::class, $request->id);
+        return $this->baseList(['organ', 'name', 'cnpj'], ['name'], ['organ']);
     }
 
     public function selects(Request $request)

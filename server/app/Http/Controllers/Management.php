@@ -21,7 +21,7 @@ class Management extends Controller
 {
     public function __construct()
     {
-        parent::__construct(User::MOD_MANAGEMENT);
+        parent::__construct(User::class, User::MOD_MANAGEMENT);
         Guardian::validateAccess($this->module_id);
     }
 
@@ -44,26 +44,10 @@ class Management extends Controller
 
         return Response()->json(Notify::warning("Usuário já cadastrado no sistema"), 400);
     }
-    
-    public function update(Request $request)
-    {
-        return $this->baseUpdate(User::class, $request->id, $request->all());
-    }
-
-    public function delete(Request $request)
-    {
-        return $this->baseDelete(User::class, $request->id, $request->password);
-    }
 
     public function list(Request $request)
     {
-        $search = ['name', 'email', 'profile'];
-        return $this->baseList(User::class, $search, $request->all());
-    }
-
-    public function details(Request $request)
-    {
-        return $this->baseDetails(User::class, $request->id);
+        return $this->baseList(['name', 'email', 'profile'], ['name']);
     }
 
     public function selects(Request $request)

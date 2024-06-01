@@ -18,7 +18,7 @@ class ComissionsEnds extends Controller
 {
     public function __construct()
     {
-        parent::__construct(User::MOD_MANAGEMENT);
+        parent::__construct(ComissionEnd::class, User::MOD_MANAGEMENT);
         Guardian::validateAccess($this->module_id);
     }
 
@@ -62,20 +62,9 @@ class ComissionsEnds extends Controller
         return $this->baseUpdate(ComissionEnd::class, $request->id, $request->all());
     }
 
-    public function delete(Request $request)
-    {
-        return $this->baseDelete(ComissionEnd::class, $request->id, $request->password);
-    }
-
     public function list(Request $request)
     {
-        $search = ['organ', 'unit', 'name'];
-        return $this->baseList(ComissionEnd::class, $search, $request->all());
-    }
-
-    public function details(Request $request)
-    {
-        return $this->baseDetails(ComissionEnd::class, $request->id);
+        return $this->baseList(['organ', 'unit', 'name'], ['name']);
     }
 
     public function download(Request $request)

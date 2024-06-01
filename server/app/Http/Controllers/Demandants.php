@@ -18,7 +18,7 @@ class Demandants extends Controller
 {
     public function __construct()
     {
-        parent::__construct(User::MOD_MANAGEMENT);
+        parent::__construct(Demandant::class, User::MOD_MANAGEMENT);
         Guardian::validateAccess($this->module_id);
     }
 
@@ -45,20 +45,9 @@ class Demandants extends Controller
         return $this->baseUpdate(Demandant::class, $request->id, $request->all());
     }
 
-    public function delete(Request $request)
-    {
-        return $this->baseDelete(Demandant::class, $request->id, $request->password);
-    }
-
     public function list(Request $request)
     {
-        $search = ['organ', 'unit', 'name'];
-        return $this->baseList(Demandant::class, $search, $request->all(), ['name'], ['organ', 'unit']);
-    }
-
-    public function details(Request $request)
-    {
-        return $this->baseDetails(Demandant::class, $request->id);
+        return $this->baseList(['organ', 'unit', 'name'], ['name'], ['organ', 'unit']);
     }
 
     public function download(Request $request)

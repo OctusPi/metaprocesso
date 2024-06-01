@@ -15,36 +15,15 @@ class Dotations extends Controller
 {
     public function __construct()
     {
-        parent::__construct(User::MOD_MANAGEMENT);
+        parent::__construct(Dotation::class, User::MOD_MANAGEMENT);
         Guardian::validateAccess($this->module_id);
-    }
-
-    public function save(Request $request)
-    {
-        return $this->baseSave(Dotation::class, $request->all());
-    }
-
-    public function update(Request $request)
-    {
-        return $this->baseUpdate(Dotation::class, $request->id, $request->all());
-    }
-
-    public function delete(Request $request)
-    {
-        return $this->baseDelete(Dotation::class, $request->id, $request->password);
     }
 
     public function list(Request $request)
     {
-        $search = ['organ', 'unit', 'name'];
-        return $this->baseList(Dotation::class, $search, $request->all(), ['name'], ['organ', 'unit']);
+        return $this->baseList(['organ', 'unit', 'name'], ['name'], ['organ', 'unit']);
     }
-
-    public function details(Request $request)
-    {
-        return $this->baseDetails(Dotation::class, $request->id);
-    }
-
+    
     public function selects(Request $request)
     {
         $units = $request->key ? Utils::map_select(Data::list(Unit::class, [

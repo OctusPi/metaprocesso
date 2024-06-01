@@ -10,25 +10,6 @@ class Dashboard extends Controller
 {
     public function __construct()
     {
-        parent::__construct(User::MOD_INI);
-    }
-
-    public function save(Request $request)
-    {
-        
-    }
-    public function update(Request $request)
-    {
-
-    }
-
-    public function destroy(Request $request)
-    {
-
-    }
-
-    public function list(Request $request)
-    {
-        
+        parent::__construct(module_id:User::MOD_INI);
     }
 }

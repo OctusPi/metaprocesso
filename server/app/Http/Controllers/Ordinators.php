@@ -17,7 +17,7 @@ class Ordinators extends Controller
 {
     public function __construct()
     {
-        parent::__construct(User::MOD_MANAGEMENT);
+        parent::__construct(Ordinator::class, User::MOD_MANAGEMENT);
         Guardian::validateAccess($this->module_id);
     }
 
@@ -44,20 +44,9 @@ class Ordinators extends Controller
         return $this->baseUpdate(Ordinator::class, $request->id, $request->all());
     }
 
-    public function delete(Request $request)
-    {
-        return $this->baseDelete(Ordinator::class, $request->id, $request->password);
-    }
-
     public function list(Request $request)
     {
-        $search = ['organ', 'unit', 'name'];
-        return $this->baseList(Ordinator::class, $search, $request->all(), ['name'], ['organ', 'unit']);
-    }
-
-    public function details(Request $request)
-    {
-        return $this->baseDetails(Ordinator::class, $request->id);
+        return $this->baseList(['organ', 'unit', 'name'], ['name'], ['organ', 'unit']);
     }
 
     public function download(Request $request)
