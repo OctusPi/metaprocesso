@@ -247,6 +247,10 @@
   color: var(--color-hover);
 }
 
+.c-pointer{
+  cursor: pointer;
+}
+
 @media (max-width: 991px) {
   .container-main{
     width: 100%;

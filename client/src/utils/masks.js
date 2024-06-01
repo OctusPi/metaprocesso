@@ -26,7 +26,11 @@ const maskphone = reactive({
 })
 
 const maskmoney = {
-    preProcess: val => val.replace(/[R$ .]/g, '').replace(/[,]/g, '.'),
+    preProcess: val => {
+        const preval = val.replace(/[R$ .]/g, '').replace(/[,]/g, '.')
+        console.log('preval', preval)
+        return preval
+    },
     postProcess: val => {
 
     if(!val){
@@ -35,10 +39,13 @@ const maskmoney = {
 
     const sub = 3 - (val.includes('.') ? val.length - val.indexOf('.') : 0)
 
-    return Intl.NumberFormat('pt-BR', {
+    const postval = Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
-    }).format(val).replace(/[R$ ]/g, '').slice(0, sub ? -sub : undefined)
+    }).format(val).replace(/R\$\s/g, '').slice(0, sub ? -sub : undefined)
+
+    console.log('postval', postval)
+    return postval
   }
 }
 

@@ -98,7 +98,7 @@ function selects(key = null, search = null) {
 }
 
 onMounted(() => {
-    // selects()
+    selects()
     list()
 })
 
@@ -122,11 +122,23 @@ onMounted(() => {
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
                     </div>
                     <div class="action-buttons d-flex my-2">
-                        <button @click="ui.toggle('register')" type="button"
-                            class="btn btn-action btn-action-primary ms-2">
-                            <i class="bi bi-plus-circle"></i>
-                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
-                        </button>
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-action btn-action-primary" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                                <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-item c-pointer" @click="ui.toggle('register')">
+                                    <i class="bi bi-plus-circle me-1" ></i> Novo em branco
+                                </li>
+                                <li class="dropdown-item c-pointer">
+                                    <i class="bi bi-journal-bookmark me-1" ></i> Novo a partir de contrato
+                                </li>
+                                <li class="dropdown-item c-pointer">
+                                    <i class="bi bi-journal-album me-1" ></i> Novo a partir de DFD anterior
+                                </li>
+                            </ul>
+                        </div>
                         <button @click="ui.toggle('search')" type="button"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-search"></i>
@@ -209,6 +221,7 @@ onMounted(() => {
                                                 <label for="unit" class="form-label">Unidade</label>
                                                 <select name="unit" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.unit }" id="unit"
+                                                    @change="selects('unit', page.data.unit)"
                                                     v-model="page.data.unit">
                                                     <option value=""></option>
                                                     <option v-for="s in page.selects.units" :value="s.id" :key="s.id">{{
@@ -281,7 +294,8 @@ onMounted(() => {
                                                 <label for="year_pca" class="form-label">Ano do PCA</label>
                                                 <input type="text" name="year_pca" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.year_pca }"
-                                                    id="year_pca" placeholder="AAAA" v-model="page.data.year_pca">
+                                                    id="year_pca" placeholder="AAAA" v-maska:[masks.masknumbs]
+                                                    v-model="page.data.year_pca">
                                             </div>
                                             <div class="col-sm-12 col-md-4">
                                                 <label for="priority" class="form-label">Prioridade</label>
@@ -302,24 +316,24 @@ onMounted(() => {
                                                     :class="{ 'form-control-alert': page.rules.valids.acquisition_type }" id="acquisition_type"
                                                     v-model="page.data.acquisition_type">
                                                     <option value=""></option>
-                                                    <option v-for="s in page.selects.acquisition_types" :value="s.id" :key="s.id">{{
+                                                    <option v-for="s in page.selects.acquisitions" :value="s.id" :key="s.id">{{
                                                         s.title }}
                                                     </option>
                                                 </select>
                                             </div>
                                             <div class="col-sm-12 col-md-4">
-                                                <label for="estimated_value" class="form-label">Valor estimado</label>
+                                                <label for="estimated_value" class="form-label">Valor Estimado</label>
                                                 <input type="text" name="estimated_value" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.estimated_value }"
                                                     id="estimated_value" placeholder="R$0,00"
-                                                    v-model="page.data.estimated_value">
+                                                    v-maska:[masks.maskmoney] v-model="page.data.estimated_value">
                                             </div>
                                             <div class="col-sm-12 col-md-4">
-                                                <label for="estimated_date" class="form-label">Data prevista</label>
+                                                <label for="estimated_date" class="form-label">Data Prevista Contratação</label>
                                                 <input type="text" name="estimated_date" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.estimated_date }"
                                                     id="estimated_date" placeholder="DD/MM/AAAA"
-                                                    v-model="page.data.estimated_date">
+                                                    v-maska:[masks.maskdate] v-model="page.data.estimated_date">
                                             </div>
                                             
                                         </div>
@@ -334,7 +348,6 @@ onMounted(() => {
                                                     id="description" v-model="page.data.description"></textarea>
                                             </div>
                                         </div>
-
                                         <div class="row mb-3 g-3">
                                             <div class="col-sm-12 col-md-6">
                                                 <label for="suggested_hiring" class="form-label">Forma de Contratação Sugerida</label>
@@ -342,7 +355,7 @@ onMounted(() => {
                                                     :class="{ 'form-control-alert': page.rules.valids.suggested_hiring }"
                                                     id="suggested_hiring" v-model="page.data.suggested_hiring">
                                                     <option value=""></option>
-                                                    <option v-for="s in page.selects.suggested_hirings" :value="s.id" :key="s.id">{{
+                                                    <option v-for="s in page.selects.hirings" :value="s.id" :key="s.id">{{
                                                         s.title }}
                                                     </option>
                                                 </select>
@@ -357,10 +370,11 @@ onMounted(() => {
                                                         s.title }}
                                                     </option>
                                                 </select>
+                                                <div id="bondsHelpBlock" class="form-text txt-color-sec">
+                                                    Indicação de vinculação ou dependência com o objeto de outro documento de formalização de demanda
+                                                </div>
                                             </div>
                                         </div>
-
-                                        
                                     </div>
                                 </div>
                             </div>
