@@ -3,13 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\ComissionMember;
-use App\Models\Unit;
 use App\Models\User;
-use App\Utils\Utils;
-use App\Models\Organ;
 use App\Utils\Notify;
 use App\Utils\Uploads;
-use App\Middleware\Data;
 use App\Security\Guardian;
 use Illuminate\Http\Request;
 
@@ -17,7 +13,7 @@ class ComissionsMembers extends Controller
 {
     public function __construct()
     {
-        parent::__construct(ComissionMember::class, User::MOD_MANAGEMENT);
+        parent::__construct(ComissionMember::class, User::MOD_COMISSIONS);
         Guardian::validateAccess($this->module_id);
     }
 

@@ -17,7 +17,7 @@ class Comissions extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Comission::class, User::MOD_MANAGEMENT);
+        parent::__construct(Comission::class, User::MOD_COMISSIONS);
         Guardian::validateAccess($this->module_id);
     }
 

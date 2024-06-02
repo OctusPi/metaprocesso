@@ -15,7 +15,7 @@ class Dotations extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Dotation::class, User::MOD_MANAGEMENT);
+        parent::__construct(Dotation::class, User::MOD_DOTATIONS);
         Guardian::validateAccess($this->module_id);
     }
 

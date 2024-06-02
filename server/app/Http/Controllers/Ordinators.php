@@ -17,7 +17,7 @@ class Ordinators extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Ordinator::class, User::MOD_MANAGEMENT);
+        parent::__construct(Ordinator::class, User::MOD_ORDINATORS);
         Guardian::validateAccess($this->module_id);
     }
 

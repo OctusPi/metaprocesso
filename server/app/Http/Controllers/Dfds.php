@@ -18,7 +18,7 @@ class Dfds extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Dfd::class, User::MOD_MANAGEMENT);
+        parent::__construct(Dfd::class, User::MOD_DFDS);
         Guardian::validateAccess($this->module_id);
     }
 

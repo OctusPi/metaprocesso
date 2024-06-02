@@ -21,7 +21,7 @@ class Management extends Controller
 {
     public function __construct()
     {
-        parent::__construct(User::class, User::MOD_MANAGEMENT);
+        parent::__construct(User::class, User::MOD_USERS);
         Guardian::validateAccess($this->module_id);
     }
 

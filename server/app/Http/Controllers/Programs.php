@@ -15,7 +15,7 @@ class Programs extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Program::class, User::MOD_MANAGEMENT);
+        parent::__construct(Program::class, User::MOD_PROGRAMS);
         Guardian::validateAccess($this->module_id);
     }
 

@@ -1,8 +1,57 @@
+import http from './http';
+import forms from './forms'
+import notifys from '@/utils/notifys';
 class Data{
 
-    constructor(page, emit){
+    constructor(page, emit, ui){
         this.page = page
         this.emit = emit
+        this.ui = ui
+    }
+
+    save = () => {
+        const validation = forms.checkform(this.page.value.data, this.page.value.rules);
+        if (!validation.isvalid) {
+            this.emit('callAlert', notifys.warning(validation.message))
+            return
+        }
+
+        const data = { ...this.page.value.data }
+        const url = this.page.value.data?.id ? `${this.page.value.baseURL}/update` : `${this.page.value.baseURL}/save`
+        const exec = this.page.value.data?.id ? http.put : http.post
+
+        exec(url, data, this.emit, () => {
+            this.list();
+        })
+    }
+
+    update = (id) => {
+        
+        http.get(`${this.page.value.baseURL}/details/${id}`, this.emit, (response) => {
+            this.page.value.data = response.data
+            this.ui.toggle('update')
+        })
+    }
+
+    remove = (id) => {
+        this.emit('callRemove', {
+            id: id,
+            url: this.page.value.baseURL,
+            search: this.page.value.search
+        })
+    }
+
+    list = () => {
+        http.post(`${this.page.value.baseURL}/list`, this.page.value.search, this.emit, (response) => {
+            this.page.value.datalist = response.data ?? []
+            this.ui.toggle('list')
+        })
+    }
+
+    selects = () => {
+        http.get(`${this.page.value.baseURL}/selects`, this.emit, (response) => {
+            this.page.value.selects = response.data
+        })
     }
 
 }

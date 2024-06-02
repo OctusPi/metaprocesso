@@ -88,8 +88,13 @@ const router = createRouter({
 		{
 			path: '/management',
 			name: 'management',
-			meta: { auth: true },
 			component: () => import('../views/ManagementView.vue')
+		},
+		{
+			path: '/users',
+			name: 'users',
+			meta: { auth: true },
+			component: () => import('../views/UsersView.vue')
 		},
 		{
 			path: '/catalogs',

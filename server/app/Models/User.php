@@ -30,6 +30,15 @@ class User extends Model
     public const MOD_PROCCESS = 8;
     public const MOD_TRANSMISSION = 9;
     public const MOD_REPORTS= 10;
+    public const MOD_USERS= 11;
+    public const MOD_ORGANS= 12;
+    public const MOD_UNITS = 13;
+    public const MOD_SECTORS = 14;
+    public const MOD_ORDINATORS = 15;
+    public const MOD_DEMANDANTS = 16;
+    public const MOD_COMISSIONS = 17;
+    public const MOD_PROGRAMS = 18;
+    public const MOD_DOTATIONS = 19;
 
     protected $table = 'users';
 
@@ -102,18 +111,26 @@ class User extends Model
             self::PRF_AUTIDOR => 'Auditor'
         ];
     }
-    
 
     public static function list_modules(): array
     {
         return [
             ['id' => self::MOD_INI, 'module' => 'dashboard', 'title' => 'Acesso Inicial'],
             ['id' => self::MOD_MANAGEMENT, 'module' => 'management', 'title' => 'Gestão Administrativa'],
+            ['id' => self::MOD_USERS, 'module' => 'users', 'title' => 'Gestão de Usuários'],
+            ['id' => self::MOD_ORGANS, 'module' => 'organs', 'title' => 'Gestão de Orgãos'],
+            ['id' => self::MOD_UNITS, 'module' => 'units', 'title' => 'Gestão de Unidades'],
+            ['id' => self::MOD_SECTORS, 'module' => 'sectors', 'title' => 'Gestão de Setores'],
+            ['id' => self::MOD_ORDINATORS, 'module' => 'ordinators', 'title' => 'Gestão de Ordenadores'],
+            ['id' => self::MOD_DEMANDANTS, 'module' => 'demandants', 'title' => 'Gestão de Demandantes'],
+            ['id' => self::MOD_COMISSIONS, 'module' => 'comissions', 'title' => 'Gestão de Comissões'],
+            ['id' => self::MOD_PROGRAMS, 'module' => 'programs', 'title' => 'Gestão de Programas'],
+            ['id' => self::MOD_DOTATIONS, 'module' => 'dotations', 'title' => 'Gestão de Dotações'],
             ['id' => self::MOD_CATALOGS, 'module' => 'catalogs', 'title' => 'Catálogos'], 
-            ['id' => self::MOD_DFDS, 'module' => 'dfds', 'title' => 'DFDs'], 
-            ['id' => self::MOD_ETPS, 'module' => 'etps', 'title' => 'ETPs'], 
-            ['id' => self::MOD_PRICERECORDS, 'module' => 'pricerecords', 'title' => 'Registro de Preços'], 
-            ['id' => self::MOD_REFTERM, 'module' => 'refterms', 'title' => 'Termos de Referência'], 
+            ['id' => self::MOD_DFDS, 'module' => 'dfds', 'title' => 'DFDs'],
+            ['id' => self::MOD_ETPS, 'module' => 'etps', 'title' => 'ETPs'],
+            ['id' => self::MOD_PRICERECORDS, 'module' => 'pricerecords', 'title' => 'Registro de Preços'],
+            ['id' => self::MOD_REFTERM, 'module' => 'refterms', 'title' => 'Termos de Referência'],
             ['id' => self::MOD_RISKINESS, 'module' => 'riskiness', 'title' => 'Mapas de Risco'],
             ['id' => self::MOD_PROCCESS, 'module' => 'proccess', 'title' => 'Processos'],
             ['id' => self::MOD_TRANSMISSION, 'module' => 'trasmission', 'title' => 'Publicação e Transmissão'],

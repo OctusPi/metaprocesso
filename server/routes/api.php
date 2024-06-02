@@ -200,7 +200,7 @@ Route::controller(Dotations::class)->group(function () {
 
 Route::controller(Management::class)->group(function () {
 
-    Route::prefix('/management')->group(function () {
+    Route::prefix('/users')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
             Route::post('/list', 'list');
@@ -211,7 +211,7 @@ Route::controller(Management::class)->group(function () {
             Route::get('/selects', 'selects');
         });
     });
-})->name('management');
+})->name('users');
 
 Route::controller(Catalogs::class)->group(function () {
 

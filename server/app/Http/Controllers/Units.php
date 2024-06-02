@@ -14,7 +14,7 @@ class Units extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Unit::class, User::MOD_MANAGEMENT);
+        parent::__construct(Unit::class, User::MOD_UNITS);
         Guardian::validateAccess($this->module_id);
     }
 

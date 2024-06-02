@@ -1,5 +1,5 @@
 <script setup>
-    import { onMounted, ref } from 'vue';
+    import { onBeforeMount, ref } from 'vue';
     import auth from '@/stores/auth';
 
     const menu = ref([])
@@ -23,7 +23,7 @@
         // 'sanctions': {href: '/sanctions', icon:'bi-x-octagon-fill', title:'Sanções', description:'Processos de Sançao e Penalização'},
     }
 
-    onMounted(() => {
+    onBeforeMount(() => {
         menu.value = auth.getNavigation()
     })
 </script>
@@ -44,7 +44,7 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li v-for="(i, j) in menuitens" :key="i.module" class="nav-item"> 
+                    <li v-for="(i, j) in menuitens" :key="j" class="nav-item"> 
                         <RouterLink v-if="menu.find(m => m.module == j)" class="nav-link nav-link-item" :to="i.href">
                             <i class="bi nav-link-icon" :class="i.icon"></i>
                             <div class="nav-link-body">

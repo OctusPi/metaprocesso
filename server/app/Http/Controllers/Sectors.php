@@ -15,7 +15,7 @@ class Sectors extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Sector::class, User::MOD_MANAGEMENT);
+        parent::__construct(Sector::class, User::MOD_SECTORS);
         Guardian::validateAccess($this->module_id);
     }
 

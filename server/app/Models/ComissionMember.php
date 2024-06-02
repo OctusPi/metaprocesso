@@ -81,7 +81,8 @@ class ComissionMember extends Model
     public static function list_responsabilities(): array
     {
         return [
-            ['id' => 0, 'title' => 'R1'],
+            ['id' => 0, 'title' => 'Presidente'],
+            ['id' => 1, 'title' => 'Membro'],
         ];
     }
 

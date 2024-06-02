@@ -18,7 +18,7 @@ class Demandants extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Demandant::class, User::MOD_MANAGEMENT);
+        parent::__construct(Demandant::class, User::MOD_DEMANDANTS);
         Guardian::validateAccess($this->module_id);
     }
 

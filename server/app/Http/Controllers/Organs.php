@@ -11,7 +11,7 @@ class Organs extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Organ::class, User::MOD_MANAGEMENT);
+        parent::__construct(Organ::class, User::MOD_ORGANS);
         Guardian::validateAccess($this->module_id);
     }
 
