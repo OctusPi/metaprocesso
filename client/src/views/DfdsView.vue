@@ -1,21 +1,19 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import forms from '@/services/forms';
-import notifys from '@/utils/notifys';
-import http from '@/services/http';
 import Ui from '@/utils/ui';
 import masks from '@/utils/masks';
 
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
+import Data from '@/services/data';
+import http from '@/services/http';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
-const props = defineProps({
-    datalist: { type: Array, default: () => [] }
-})
+const props = defineProps({ datalist: { type: Array, default: () => [] } })
 
 const page = ref({
+    baseURL: '/dfds',
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
     data: {},
@@ -28,7 +26,14 @@ const page = ref({
     search: {},
     selects: {
         organs: [],
-        units: []
+        units: [],
+        ordinators: [],
+        demandants: [],
+        comissions: [],
+        prioritys: [],
+        hirings: [],
+        acquisitions: [],
+        bonds: [],
     },
     rules: {
         fields: {
@@ -42,64 +47,47 @@ const page = ref({
     }
 })
 
+const ui = new Ui(page, 'DFDs')
+const data = new Data(page, emit, ui)
+
+function generate(type){
+    
+    const dfd  = page.value.data
+    const slc  = page.value.selects
+    const base = {
+        organ : slc?.organs.find(o => o.id === dfd.organ),
+        unit  : slc?.units.find(o => o.id === dfd.unit),
+        type  : slc?.acquisitions.find(o => o.id === dfd.acquisition_type),
+    }
+    let   payload = ''
+
+    switch(type){
+        case 'object':
+            payload = `Solicitação: gere DESCRIÇÃO DO OBJETO de contrataçao de empresa especializada para fornecimento de ${base.type?.title} para ${dfd?.description} para atender as necessidades da ${base.unit?.title} vinculado a ${base.organ?.title}. `
+            break
+        case 'jsutify':
+            payload = {}
+            break
+        case 'quantify':
+            payload = {}
+            break
+        default:
+            break
+    }
+
+    http.post('/dfds/generate', {payload}, emit, (resp) => {
+        console.log(resp)
+        page.value.data.description = resp.data.choices[0].text.replaceAll('\n', ' ')
+    })
+}
+
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
 
-const ui = new Ui(page, 'DFDs')
-
-function save() {
-    const validation = forms.checkform(page.value.data, page.value.rules);
-    if (!validation.isvalid) {
-        emit('callAlert', notifys.warning(validation.message))
-        return
-    }
-
-    const data = { ...page.value.data }
-    const url = page.value.data?.id ? '/dfds/update' : '/dfds/save'
-    const exec = page.value.data?.id ? http.put : http.post
-
-    exec(url, data, emit, () => {
-        list();
-    })
-}
-
-function update(id) {
-    http.get(`/dfds/details/${id}`, emit, (response) => {
-        selects('organ', response.data?.unit)
-        page.value.data = response.data
-        ui.toggle('update')
-    })
-}
-
-function remove(id) {
-    emit('callRemove', {
-        id: id,
-        url: '/dfds',
-        search: page.value.search
-    })
-}
-
-function list() {
-    // http.post('/dfds/list', page.value.search, emit, (response) => {
-    //     page.value.datalist = response.data ?? []
-    //     ui.toggle('list')
-    // })
-    ui.toggle('list')
-}
-
-function selects(key = null, search = null) {
-
-    const urlselect = (key && search) ? `/dfds/selects/${key}/${search}` : '/dfds/selects'
-
-    http.get(urlselect, emit, (response) => {
-        page.value.selects = response.data
-    })
-}
-
 onMounted(() => {
-    selects()
-    list()
+    data.selects()
+    data.list()
 })
 
 </script>
@@ -107,6 +95,7 @@ onMounted(() => {
 <template>
     <main class="container-primary">
         <MainNav />
+
         <section class="container-main">
             <MainHeader :header="{
                 icon: 'bi-journal-album',
@@ -129,13 +118,13 @@ onMounted(() => {
                             </button>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-item c-pointer" @click="ui.toggle('register')">
-                                    <i class="bi bi-plus-circle me-1" ></i> Novo em branco
+                                    <i class="bi bi-plus-circle me-1" ></i> Novo em Branco
                                 </li>
                                 <li class="dropdown-item c-pointer">
-                                    <i class="bi bi-journal-bookmark me-1" ></i> Novo a partir de contrato
+                                    <i class="bi bi-journal-bookmark me-1" ></i> Novo a partir de Contrato
                                 </li>
                                 <li class="dropdown-item c-pointer">
-                                    <i class="bi bi-journal-album me-1" ></i> Novo a partir de DFD anterior
+                                    <i class="bi bi-journal-album me-1" ></i> Novo a partir de DFD
                                 </li>
                             </ul>
                         </div>
@@ -152,7 +141,7 @@ onMounted(() => {
 
                     <!--SEARCH BAR-->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
-                        <form @submit.prevent="list" class="row g-3">
+                        <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control" id="s-name"
@@ -161,7 +150,7 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-organ" class="form-label">Orgão</label>
                                 <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ"
-                                    @change="selects('organ', page.search.organ)">
+                                    @change="data.selects('organ', page.search.organ)">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
@@ -184,13 +173,17 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList @action:update="update" @action:delete="remove" :header="page.dataheader"
-                        :body="page.datalist" :actions="['update', 'delete']" />
+                    <TableList 
+                        @action:update="data.update" 
+                        @action:delete="data.remove" 
+                        :header="page.dataheader"
+                        :body="page.datalist" 
+                        :actions="['update', 'delete']" />
                 </div>
 
                 <!--BOX REGISTER-->
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
-                    <form class="form-row" @submit.prevent="save(page.data.id)">
+                    <form class="form-row" @submit.prevent="data.save()">
                         <input type="hidden" name="id" v-model="page.data.id">
 
                         <div class="accordion" id="accordionDfd">
@@ -210,7 +203,7 @@ onMounted(() => {
                                                 <select name="organ" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.organ }"
                                                     id="organ" v-model="page.data.organ"
-                                                    @change="selects('organ', page.data.organ)">
+                                                    @change="data.selects('organ', page.data.organ)">
                                                     <option value=""></option>
                                                     <option v-for="s in page.selects.organs" :value="s.id" :key="s.id">
                                                         {{ s.title }}
@@ -221,7 +214,7 @@ onMounted(() => {
                                                 <label for="unit" class="form-label">Unidade</label>
                                                 <select name="unit" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.unit }" id="unit"
-                                                    @change="selects('unit', page.data.unit)"
+                                                    @change="data.selects('unit', page.data.unit)"
                                                     v-model="page.data.unit">
                                                     <option value=""></option>
                                                     <option v-for="s in page.selects.units" :value="s.id" :key="s.id">{{
@@ -341,9 +334,9 @@ onMounted(() => {
                                             <div class="col-sm-12">
                                                 <label for="description" class="form-label d-flex justify-content-between">
                                                     Descrição sucinta do objeto
-                                                    <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
+                                                    <a href="#" class="a-ia" @click="generate('object')"><i class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
                                                 </label>
-                                                <textarea name="description" class="form-control"
+                                                <textarea name="description" class="form-control" rows="5"
                                                     :class="{ 'form-control-alert': page.rules.valids.description }"
                                                     id="description" v-model="page.data.description"></textarea>
                                             </div>
@@ -407,9 +400,9 @@ onMounted(() => {
                                             <div class="col-sm-12">
                                                 <label for="justification" class="form-label d-flex justify-content-between">
                                                     Justificativa da necessidade da contratação
-                                                    <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
+                                                    <a href="#" class="a-ia" @click="generate('justify')"><i class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
                                                 </label>
-                                                <textarea name="justification" class="form-control"
+                                                <textarea name="justification" class="form-control" rows="5"
                                                     :class="{ 'form-control-alert': page.rules.valids.justification }"
                                                     id="justification" v-model="page.data.justification"></textarea>
                                             </div>
@@ -420,7 +413,7 @@ onMounted(() => {
                                                     Justificativa dos quantitativos demandados
                                                     <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
                                                 </label>
-                                                <textarea name="justification_quantity" class="form-control"
+                                                <textarea name="justification_quantity" class="form-control" rows="5"
                                                     :class="{ 'form-control-alert': page.rules.valids.justification_quantity }"
                                                     id="justification_quantity"
                                                     v-model="page.data.justification_quantity"></textarea>

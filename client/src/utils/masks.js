@@ -28,7 +28,6 @@ const maskphone = reactive({
 const maskmoney = {
     preProcess: val => {
         const preval = val.replace(/[R$ .]/g, '').replace(/[,]/g, '.')
-        console.log('preval', preval)
         return preval
     },
     postProcess: val => {
@@ -44,7 +43,6 @@ const maskmoney = {
       currency: 'BRL'
     }).format(val).replace(/R\$\s/g, '').slice(0, sub ? -sub : undefined)
 
-    console.log('postval', postval)
     return postval
   }
 }

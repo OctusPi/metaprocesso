@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comission;
-use App\Models\Demandant;
 use App\Models\Dfd;
-use App\Models\Ordinator;
 use App\Models\Unit;
 use App\Models\User;
+use App\Utils\Notify;
 use App\Utils\Utils;
 use App\Models\Organ;
+use GuzzleHttp\Client;
 use App\Middleware\Data;
+use App\Models\Comission;
+use App\Models\Demandant;
+use App\Models\Ordinator;
 use App\Security\Guardian;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class Dfds extends Controller
 {
@@ -24,7 +27,7 @@ class Dfds extends Controller
 
     public function list(Request $request)
     {
-        return $this->baseList(['organ', 'unit', 'name'], ['name'], ['organ', 'unit']);
+        return $this->baseList(['organ', 'unit', 'name'], ['date_ini'], ['organ', 'unit']);
     }
 
     public function selects(Request $request)
@@ -84,5 +87,34 @@ class Dfds extends Controller
             'acquisitions' => Dfd::list_acquisitions(),
             'bonds' => Dfd::list_bonds()
         ], 200);
+    }
+
+    public function generate(Request $request)
+    {
+        $api_key = getenv('OPENIA_KEY');
+        $client = new Client();
+        $url = 'https://api.openai.com/v1/completions';
+        $data = [
+            'model'  => 'gpt-3.5-turbo-instruct',
+            'prompt' => $request->payload,
+            'max_tokens' => 256
+        ];
+
+        try{
+
+            $resp = $client->post($url, [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$api_key,
+                    'Content-Type'  => 'application/json'
+                ],
+                'json' => $data
+            ]);
+
+            return Response()->json(json_decode($resp->getBody()), 200);
+
+        }catch(\Exception $e){
+            Log::alert('Falha ao receber dados da API: '.$e->getMessage());
+            return Response()->json(Notify::warning('Falha ao receber dados da API'), 400);
+        }
     }
 }

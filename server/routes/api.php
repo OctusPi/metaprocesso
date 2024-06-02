@@ -265,6 +265,7 @@ Route::controller(Dfds::class)->group(function () {
             Route::get('', 'index');
             Route::post('/list', 'list');
             Route::post('/save', 'save');
+            Route::post('/generate', 'generate');
             Route::put('/update', 'update');
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');

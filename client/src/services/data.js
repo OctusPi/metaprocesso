@@ -48,8 +48,11 @@ class Data{
         })
     }
 
-    selects = () => {
-        http.get(`${this.page.value.baseURL}/selects`, this.emit, (response) => {
+    selects = (key = null, search = null) => {
+
+        const urlselect = (key && search) ? `${this.page.value.baseURL}/selects/${key}/${search}` : `${this.page.value.baseURL}/selects`
+
+        http.get(urlselect, this.emit, (response) => {
             this.page.value.selects = response.data
         })
     }
