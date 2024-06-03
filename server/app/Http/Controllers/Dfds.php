@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CatalogItem;
 use App\Models\Dfd;
+use App\Models\Dotation;
+use App\Models\Program;
 use App\Models\Unit;
 use App\Models\User;
+use App\Models\Organ;
 use App\Utils\Notify;
 use App\Utils\Utils;
-use App\Models\Organ;
 use GuzzleHttp\Client;
 use App\Middleware\Data;
 use App\Models\Comission;
@@ -36,6 +39,8 @@ class Dfds extends Controller
         $ordinators = [];
         $demandants = [];
         $comissions = [];
+        $programs   = [];
+        $dotations  = [];
         
         if($request->key){
             $units = $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
@@ -73,27 +78,48 @@ class Dfds extends Controller
                     'mode'     => 'AND'
                 ]
                 ], ['name']));
+            
+            $programs = Utils::map_select(Data::list(Program::class, [
+                    [
+                        'column'   => $request->key,
+                        'operator' => '=',
+                        'value'    => $request->search,
+                        'mode'     => 'AND'
+                    ]
+                    ], ['name']));
+            
+            $dotations = Utils::map_select(Data::list(Dotation::class, [
+                        [
+                            'column'   => $request->key,
+                            'operator' => '=',
+                            'value'    => $request->search,
+                            'mode'     => 'AND'
+                        ]
+                        ], ['name']));
         }
        
 
         return Response()->json([
-            'organs' => Utils::map_select(Data::list(Organ::class, order:['name'])),
-            'units'  => $units,
-            'ordinators' => $ordinators,
-            'demandants' => $demandants,
-            'comissions' => $comissions,
-            'prioritys' => Dfd::list_priority(),
-            'hirings' => Dfd::list_hirings(),
+            'organs'       => Utils::map_select(Data::list(Organ::class, order:['name'])),
+            'units'        => $units,
+            'ordinators'   => $ordinators,
+            'demandants'   => $demandants,
+            'comissions'   => $comissions,
+            'prioritys'    => Dfd::list_priority(),
+            'hirings'      => Dfd::list_hirings(),
             'acquisitions' => Dfd::list_acquisitions(),
-            'bonds' => Dfd::list_bonds()
+            'bonds'        => Dfd::list_bonds(),
+            'programs'     => $programs,
+            'dotations'    => $dotations,
+            'categories'   => CatalogItem::list_categoria()
         ], 200);
     }
 
     public function generate(Request $request)
     {
         $api_key = getenv('OPENIA_KEY');
-        $client = new Client();
-        $url = 'https://api.openai.com/v1/completions';
+        $client  = new Client();
+        $url  = 'https://api.openai.com/v1/completions';
         $data = [
             'model'  => 'gpt-3.5-turbo-instruct',
             'prompt' => $request->payload,
@@ -116,5 +142,10 @@ class Dfds extends Controller
             Log::alert('Falha ao receber dados da API: '.$e->getMessage());
             return Response()->json(Notify::warning('Falha ao receber dados da API'), 400);
         }
+    }
+
+    public function items()
+    {
+        return (new CatalogItems())->list();
     }
 }

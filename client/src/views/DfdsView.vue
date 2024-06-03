@@ -11,7 +11,6 @@ import http from '@/services/http';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
-
 const page = ref({
     baseURL: '/dfds',
     title: { primary: '', secondary: '' },
@@ -34,6 +33,9 @@ const page = ref({
         hirings: [],
         acquisitions: [],
         bonds: [],
+        programs: [],
+        dotations: [],
+        categories:[]
     },
     rules: {
         fields: {
@@ -46,22 +48,26 @@ const page = ref({
         valids: {}
     }
 })
+const items = ref({
+    search_list: [],
+    selected_item: {}
+})
 
 const ui = new Ui(page, 'DFDs')
 const data = new Data(page, emit, ui)
 
-function generate(type){
-    
-    const dfd  = page.value.data
-    const slc  = page.value.selects
-    const base = {
-        organ : slc?.organs.find(o => o.id === dfd.organ),
-        unit  : slc?.units.find(o => o.id === dfd.unit),
-        type  : slc?.acquisitions.find(o => o.id === dfd.acquisition_type),
-    }
-    let   payload = ''
+function generate(type) {
 
-    switch(type){
+    const dfd = page.value.data
+    const slc = page.value.selects
+    const base = {
+        organ: slc?.organs.find(o => o.id === dfd.organ),
+        unit: slc?.units.find(o => o.id === dfd.unit),
+        type: slc?.acquisitions.find(o => o.id === dfd.acquisition_type),
+    }
+    let payload = ''
+
+    switch (type) {
         case 'object':
             payload = `Solicitação: gere DESCRIÇÃO DO OBJETO de contrataçao de empresa especializada para fornecimento de ${base.type?.title} para ${dfd?.description} para atender as necessidades da ${base.unit?.title} vinculado a ${base.organ?.title}. `
             break
@@ -75,9 +81,15 @@ function generate(type){
             break
     }
 
-    http.post('/dfds/generate', {payload}, emit, (resp) => {
+    http.post('/dfds/generate', { payload }, emit, (resp) => {
         console.log(resp)
         page.value.data.description = resp.data.choices[0].text.replaceAll('\n', ' ')
+    })
+}
+
+function search_items() {
+    http.post(`${page.value.baseURL}/items`, { name: items.value.search }, emit, (resp) => {
+        items.value.search_list = resp.data
     })
 }
 
@@ -93,6 +105,84 @@ onMounted(() => {
 </script>
 
 <template>
+    <div class="modal fade" id="modalItem" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content box p-4">
+                <div class="modal-header border border-0">
+                    <h5 class="modal-title text"><i class="bi bi-plus-circle me-2"></i> Adicionar Item ao DFD</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3 position-relative">
+                        <!-- Search Items -->
+                        <div class="col-sm-12">
+                            <label for="search-item" class="form-label">Localizar Item</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="search-item"
+                                    placeholder="Pesquise por parte do nome do item"
+                                    aria-label="Pesquise por parte do nome do item" aria-describedby="btn-search-item"
+                                    v-model="items.search" @keyup.enter="search_items">
+                                <button class="btn btn-group-input" type="button" id="btn-search-item"
+                                    @click="search_items">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                            <div id="search-item-HelpBlock" class="form-text txt-color-sec">
+                                Localize itens no catálogo padronizado de itens do Orgão
+                            </div>
+                        </div>
+
+                        <!-- List Search Items -->
+                        <div v-if="items.search && items.search_list.length"
+                            class="position-absolute my-2 top-100 start-0">
+                            <div class="form-control load-items-cat p-0 m-0">
+                                <ul class="search-list-items">
+                                    <li v-for="i in items.search_list" :key="i.id" class="d-flex align-items-center px-3 py-2">
+                                        <div class="me-3 item-type">{{ i.type == '1' ? 'M' : 'S' }}</div>
+                                        <div class="item-desc">
+                                            <h3 class="m-0 p-0 small">{{ `${i.code} - ${i.name}` }}</h3>
+                                            <p class="m-0 p-0 small">{{ `Unidade: ${i.und} - Volume: ${i.volume} - Categoria: ${page.selects.categories.find(o => o.id === i.category)?.title} ` }}</p>
+                                            <p class="m-0 p-0 small">{{ i.description }}</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3 g-3">
+                        <div class="col-sm-12 col-md-4">
+                            <label for="item-program" class="form-label">Programa</label>
+                            <select name="item-program" class="form-control" id="item-program">
+                                <option value=""></option>
+                                <option v-for="p in page.selects.programs" :key="p.id" :value="p.id">{{ p.title }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <label for="item-dotation" class="form-label">Dotação</label>
+                            <select name="item-dotation" class="form-control" id="item-dotation">
+                                <option value=""></option>
+                                <option v-for="d in page.selects.dotations" :key="d.id" :value="d.id">{{ d.title }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <label for="item-quantity" class="form-label">Quantidade</label>
+                            <input type="text" name="item-quantity" class="form-control" id="item-quantity"
+                                v-maska:[masks.masknumbs]>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i
+                            class="bi bi-x-circle me-2"></i> Cancelar</button>
+                    <button type="button" class="btn btn-outline-primary"><i class="bi bi-plus-circle me-2"></i>
+                        Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <main class="container-primary">
         <MainNav />
 
@@ -112,19 +202,20 @@ onMounted(() => {
                     </div>
                     <div class="action-buttons d-flex my-2">
                         <div class="dropdown">
-                            <button type="button" class="btn btn-action btn-action-primary" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="btn btn-action btn-action-primary" data-bs-toggle="dropdown"
+                                aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>
                                 <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
                             </button>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-item c-pointer" @click="ui.toggle('register')">
-                                    <i class="bi bi-plus-circle me-1" ></i> Novo em Branco
+                                    <i class="bi bi-plus-circle me-1"></i> Novo em Branco
                                 </li>
                                 <li class="dropdown-item c-pointer">
-                                    <i class="bi bi-journal-bookmark me-1" ></i> Novo a partir de Contrato
+                                    <i class="bi bi-journal-bookmark me-1"></i> Novo a partir de Contrato
                                 </li>
                                 <li class="dropdown-item c-pointer">
-                                    <i class="bi bi-journal-album me-1" ></i> Novo a partir de DFD
+                                    <i class="bi bi-journal-album me-1"></i> Novo a partir de DFD
                                 </li>
                             </ul>
                         </div>
@@ -173,12 +264,8 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList 
-                        @action:update="data.update" 
-                        @action:delete="data.remove" 
-                        :header="page.dataheader"
-                        :body="page.datalist" 
-                        :actions="['update', 'delete']" />
+                    <TableList @action:update="data.update" @action:delete="data.remove" :header="page.dataheader"
+                        :body="page.datalist" :actions="['update', 'delete']" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -248,7 +335,8 @@ onMounted(() => {
                                                 </select>
                                             </div>
                                             <div class="col-sm-12 col-md-8">
-                                                <label for="comission" class="form-label">Comissão/Equipe de Planejamento</label>
+                                                <label for="comission" class="form-label">Comissão/Equipe de
+                                                    Planejamento</label>
                                                 <select name="comission" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.comission }"
                                                     id="comission" v-model="page.data.comission">
@@ -258,7 +346,8 @@ onMounted(() => {
                                                     </option>
                                                 </select>
                                                 <div id="comissionHelpBlock" class="form-text txt-color-sec">
-                                                    Ao selecionar a comissão/equipe de planejamento seus integrantes serão vinculados ao documento
+                                                    Ao selecionar a comissão/equipe de planejamento seus integrantes
+                                                    serão vinculados ao documento
                                                 </div>
                                             </div>
                                         </div>
@@ -304,13 +393,15 @@ onMounted(() => {
                                         </div>
                                         <div class="row mb-3 g-3">
                                             <div class="col-sm-12 col-md-4">
-                                                <label for="acquisition_type" class="form-label">Tipo de Aquisição</label>
+                                                <label for="acquisition_type" class="form-label">Tipo de
+                                                    Aquisição</label>
                                                 <select name="acquisition_type" class="form-control"
-                                                    :class="{ 'form-control-alert': page.rules.valids.acquisition_type }" id="acquisition_type"
-                                                    v-model="page.data.acquisition_type">
+                                                    :class="{ 'form-control-alert': page.rules.valids.acquisition_type }"
+                                                    id="acquisition_type" v-model="page.data.acquisition_type">
                                                     <option value=""></option>
-                                                    <option v-for="s in page.selects.acquisitions" :value="s.id" :key="s.id">{{
-                                                        s.title }}
+                                                    <option v-for="s in page.selects.acquisitions" :value="s.id"
+                                                        :key="s.id">{{
+                                                            s.title }}
                                                     </option>
                                                 </select>
                                             </div>
@@ -318,38 +409,43 @@ onMounted(() => {
                                                 <label for="estimated_value" class="form-label">Valor Estimado</label>
                                                 <input type="text" name="estimated_value" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.estimated_value }"
-                                                    id="estimated_value" placeholder="R$0,00"
-                                                    v-maska:[masks.maskmoney] v-model="page.data.estimated_value">
+                                                    id="estimated_value" placeholder="R$0,00" v-maska:[masks.maskmoney]
+                                                    v-model="page.data.estimated_value">
                                             </div>
                                             <div class="col-sm-12 col-md-4">
-                                                <label for="estimated_date" class="form-label">Data Prevista Contratação</label>
+                                                <label for="estimated_date" class="form-label">Data Prevista
+                                                    Contratação</label>
                                                 <input type="text" name="estimated_date" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.estimated_date }"
                                                     id="estimated_date" placeholder="DD/MM/AAAA"
                                                     v-maska:[masks.maskdate] v-model="page.data.estimated_date">
                                             </div>
-                                            
+
                                         </div>
                                         <div class="row mb-3 g-3">
                                             <div class="col-sm-12">
-                                                <label for="description" class="form-label d-flex justify-content-between">
+                                                <label for="description"
+                                                    class="form-label d-flex justify-content-between">
                                                     Descrição sucinta do objeto
-                                                    <a href="#" class="a-ia" @click="generate('object')"><i class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
+                                                    <a href="#" class="a-ia" @click="generate('object')"><i
+                                                            class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
                                                 </label>
-                                                <textarea name="description" class="form-control" rows="5"
+                                                <textarea name="description" class="form-control" rows="4"
                                                     :class="{ 'form-control-alert': page.rules.valids.description }"
                                                     id="description" v-model="page.data.description"></textarea>
                                             </div>
                                         </div>
                                         <div class="row mb-3 g-3">
                                             <div class="col-sm-12 col-md-6">
-                                                <label for="suggested_hiring" class="form-label">Forma de Contratação Sugerida</label>
+                                                <label for="suggested_hiring" class="form-label">Forma de Contratação
+                                                    Sugerida</label>
                                                 <select name="suggested_hiring" class="form-control"
                                                     :class="{ 'form-control-alert': page.rules.valids.suggested_hiring }"
                                                     id="suggested_hiring" v-model="page.data.suggested_hiring">
                                                     <option value=""></option>
-                                                    <option v-for="s in page.selects.hirings" :value="s.id" :key="s.id">{{
-                                                        s.title }}
+                                                    <option v-for="s in page.selects.hirings" :value="s.id" :key="s.id">
+                                                        {{
+                                                            s.title }}
                                                     </option>
                                                 </select>
                                             </div>
@@ -364,7 +460,8 @@ onMounted(() => {
                                                     </option>
                                                 </select>
                                                 <div id="bondsHelpBlock" class="form-text txt-color-sec">
-                                                    Indicação de vinculação ou dependência com o objeto de outro documento de formalização de demanda
+                                                    Indicação de vinculação ou dependência com o objeto de outro
+                                                    documento de formalização de demanda
                                                 </div>
                                             </div>
                                         </div>
@@ -376,13 +473,21 @@ onMounted(() => {
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#collapseThree" aria-expanded="false"
                                         aria-controls="collapseThree">
-                                        <i class="bi bi-boxes me-2"></i> Lista de Itens
+                                        <i class="bi bi-boxes me-2"></i> Itens
                                     </button>
                                 </h2>
                                 <div id="collapseThree" class="accordion-collapse collapse"
                                     data-bs-parent="#accordionDfd">
                                     <div class="accordion-body">
-                                        ...
+                                        <div class="d-block text-end">
+                                            <button type="button" class="btn btn-sm btn-action btn-action-primary me-2"
+                                                data-bs-toggle="modal" data-bs-target="#modalItem">
+                                                <i class="bi bi-plus-circle"></i> Item
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-action btn-action-primary">
+                                                <i class="bi bi-file-earmark-text"></i> Importar
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -398,22 +503,26 @@ onMounted(() => {
                                     <div class="accordion-body">
                                         <div class="row mb-3 g-3">
                                             <div class="col-sm-12">
-                                                <label for="justification" class="form-label d-flex justify-content-between">
+                                                <label for="justification"
+                                                    class="form-label d-flex justify-content-between">
                                                     Justificativa da necessidade da contratação
-                                                    <a href="#" class="a-ia" @click="generate('justify')"><i class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
+                                                    <a href="#" class="a-ia" @click="generate('justify')"><i
+                                                            class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
                                                 </label>
-                                                <textarea name="justification" class="form-control" rows="5"
+                                                <textarea name="justification" class="form-control" rows="4"
                                                     :class="{ 'form-control-alert': page.rules.valids.justification }"
                                                     id="justification" v-model="page.data.justification"></textarea>
                                             </div>
                                         </div>
                                         <div class="row mb-3 g-3">
                                             <div class="col-sm-12">
-                                                <label for="justification_quantity" class="form-label d-flex justify-content-between">
+                                                <label for="justification_quantity"
+                                                    class="form-label d-flex justify-content-between">
                                                     Justificativa dos quantitativos demandados
-                                                    <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
+                                                    <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar
+                                                        Automáticamente</a>
                                                 </label>
-                                                <textarea name="justification_quantity" class="form-control" rows="5"
+                                                <textarea name="justification_quantity" class="form-control" rows="4"
                                                     :class="{ 'form-control-alert': page.rules.valids.justification_quantity }"
                                                     id="justification_quantity"
                                                     v-model="page.data.justification_quantity"></textarea>
@@ -436,3 +545,35 @@ onMounted(() => {
         </section>
     </main>
 </template>
+
+<style scoped>
+.search-list-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.search-list-items li {
+    cursor: pointer;
+    border-bottom: var(--border-box);
+}
+
+.search-list-items li h3{
+    font-weight: 700;
+    color: var(--color-base);
+}
+
+.search-list-items li:hover {
+    background-color: var(--color-contrast-hover);
+}
+
+.item-type {
+    width: 35px;
+    border-right: var(--border-box);
+}
+
+.item-desc p{
+    font-size: 0.7rem;
+    color: var(--color-text-sec);
+}
+</style>

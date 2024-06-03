@@ -44,8 +44,8 @@ function selectItem(item){
 
 function clear(){
     if(!component.value.search){
-        component.value.selected  = null
-        component.value.items  = null
+        component.value.selected = null
+        component.value.items = null
         component.value.list  = null
     }
 }
@@ -101,7 +101,6 @@ function clear(){
                 </ul>
             </div>
         </div>
-
     </div>
 </template>
 

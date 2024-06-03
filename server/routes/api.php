@@ -270,6 +270,7 @@ Route::controller(Dfds::class)->group(function () {
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
             Route::get('/selects/{key?}/{search?}', 'selects');
+            Route::post('/items', 'items');
         });
     });
 })->name('dfds');
@@ -277,4 +278,3 @@ Route::controller(Dfds::class)->group(function () {
 Route::fallback(function () {
     return Response()->json(Notify::warning('Destino solicitado não existe...'), 404);
 });
-

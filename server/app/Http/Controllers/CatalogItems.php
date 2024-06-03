@@ -31,7 +31,7 @@ class CatalogItems extends Controller
 
     public function list()
     {
-        return $this->baseList(['name', 'description', 'status', 'type', 'category', 'subcategory'], ['name']);
+        return $this->baseList(['name', 'description', 'status', 'type', 'category', 'subcategory'], ['name'], ['subcategory']);
     }
 
     public function catalog(Request $request)
