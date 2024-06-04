@@ -1,9 +1,9 @@
 import http from './http';
 import forms from './forms'
 import notifys from '@/utils/notifys';
-class Data{
+class Data {
 
-    constructor(page, emit, ui){
+    constructor(page, emit, ui) {
         this.page = page
         this.emit = emit
         this.ui = ui
@@ -26,7 +26,7 @@ class Data{
     }
 
     update = (id) => {
-        
+
         http.get(`${this.page.value.baseURL}/details/${id}`, this.emit, (response) => {
             this.page.value.data = response.data
             this.ui.toggle('update')
@@ -57,6 +57,21 @@ class Data{
         })
     }
 
+    download = (id, name = 'Documento') => {
+        http.download(`/ordinators/download/${id}`, this.emit, (response) => {
+            if (response.headers['content-type'] !== 'application/pdf') {
+                this.emit('callAlert', notifys.warning('Arquivo Indisponível'))
+                return
+            }
+            const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
+            const link = document.createElement('a')
+            link.href = url;
+            link.download = `${name}-${id}.pdf`
+            document.body.appendChild(link)
+            link.click()
+            window.URL.revokeObjectURL(url);
+        })
+    }
 }
 
 export default Data

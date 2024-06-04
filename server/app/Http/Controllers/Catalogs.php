@@ -28,17 +28,16 @@ class Catalogs extends Controller
     {
         $comissions = $request->key ? Utils::map_select(Data::list(Comission::class, [
             [
-                'column'   => $request->key,
+                'column' => $request->key,
                 'operator' => '=',
-                'value'    => $request->search,
-                'mode'     => 'AND'
+                'value' => $request->search,
+                'mode' => 'AND'
             ]
-            ], ['name'])) : Utils::map_select(Data::list(Comission::class));
+        ], ['name'])) : Utils::map_select(Data::list(Comission::class));
 
         return Response()->json([
-            'organs' => Utils::map_select(Data::list(Organ::class, order:['name'])),
-            'comissions'  => $comissions,
-            
+            'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
+            'comissions' => $comissions,
         ], 200);
     }
 }

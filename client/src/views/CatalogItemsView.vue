@@ -1,8 +1,6 @@
 <script setup>
 import { onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router';
-import forms from '@/services/forms';
-import notifys from '@/utils/notifys';
 import http from '@/services/http';
 import Ui from '@/utils/ui';
 import utils from '@/utils/utils';
@@ -12,23 +10,25 @@ import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import ListCatGov from '@/components/ListCatGov.vue';
+import Data from '@/services/data';
 
 const router = useRoute()
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
 const catalogID = router.params?.catalog
 const page = ref({
+    baseURL: '/catalogitems',
     title: {},
     uiview: {},
     catalog: {},
     data: {},
     datalist: props.datalist,
     dataheader: [
-        { key: 'code', title: 'COD.', sub:[{key:'origin', cast:'title'}]},
-        { key: 'name', title: 'ITEM', sub: [{ key: 'category', cast:'title' }]},
+        { key: 'code', title: 'COD.', sub: [{ key: 'origin', cast: 'title' }] },
+        { key: 'name', title: 'ITEM', sub: [{ key: 'category', cast: 'title' }] },
         { key: 'und', title: 'UND.', sub: [{ key: 'volume' }] },
         { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] },
-        { key:'status', cast:'title', title:'STATUS'}
+        { key: 'status', cast: 'title', title: 'STATUS' }
     ],
     search: {},
     selects: {
@@ -37,7 +37,7 @@ const page = ref({
         categories: [],
         subcategories: [],
         status: [],
-        origins:[]
+        origins: []
     },
     rules: {
         fields: {
@@ -45,7 +45,7 @@ const page = ref({
             name: 'required',
             type: 'required',
             und: 'required',
-            category:'required',
+            category: 'required',
             status: 'required',
             description: 'required'
         },
@@ -54,55 +54,7 @@ const page = ref({
 })
 
 const ui = new Ui(page, 'Itens do Catálogo')
-
-function save() {
-    const validation = forms.checkform(page.value.data, page.value.rules);
-    if (!validation.isvalid) {
-        emit('callAlert', notifys.warning(validation.message))
-        return
-    }
-
-    const data = { ...page.value.data }
-    const url = page.value.data?.id ? `/catalogitems/${catalogID}/update` : `/catalogitems/${catalogID}/save`
-    const exec = page.value.data?.id ? http.put : http.post
-
-    exec(url, data, emit, () => {
-        list();
-    })
-}
-
-function update(id) {
-    http.get(`/catalogitems/${catalogID}/details/${id}`, emit, (response) => {
-        selects('organ', response.data?.unit)
-        page.value.data = response.data
-        ui.toggle('update')
-    })
-}
-
-function remove(id) {
-    emit('callRemove', {
-        id: id,
-        url: `/catalogitems/${catalogID}`,
-        search: page.value.search
-    })
-}
-
-function list() {
-    http.post(`/catalogitems/${catalogID}/list`, page.value.search, emit, (response) => {
-        page.value.datalist = response.data ?? []
-        ui.toggle('list')
-    })
-}
-
-function selects(key = null, search = null) {
-
-    const urlselect = (key && search) ? `/catalogitems/${catalogID}/selects/${key}/${search}` : `/catalogitems/${catalogID}/selects`
-
-    http.get(urlselect, emit, (response) => {
-        page.value.selects = response.data
-        page.value.selects.unds = defines.unds
-    })
-}
+const data = new Data(page, emit, ui)
 
 function detailsCatalog() {
     http.get(`/catalogitems/${catalogID}/catalog`, emit, (response) => {
@@ -157,9 +109,9 @@ watch(() => page.value.uiview.register, (value) => {
 
 onBeforeMount(() => {
     detailsCatalog()
-    selects()
-    list()
-    
+    data.selects()
+    data.list()
+
 })
 
 </script>
@@ -205,14 +157,14 @@ onBeforeMount(() => {
                     <h2 class="m-0 p-0">Catálogo: {{ page.catalog.name }}</h2>
                     <p class="small m-0 p-0 txt-color-sec">{{ page.catalog.description }}</p>
                     <p class="small m-0 p-0 txt-color-sec">Orgão: {{ page.catalog?.organ?.name }}</p>
-                    <p class="small m-0 p-0 txt-color-sec">Comissão: {{ page.catalog?.comission?.name }}</p>  
+                    <p class="small m-0 p-0 txt-color-sec">Comissão: {{ page.catalog?.comission?.name }}</p>
                 </div>
 
                 <!--BOX LIST-->
                 <div v-if="!page.uiview.register" id="list-box" class="inside-box mb-4">
                     <!--SEARCH BAR-->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
-                        <form @submit.prevent="list" class="row g-3">
+                        <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-name" class="form-label">Item</label>
                                 <input type="text" name="name" class="form-control" id="s-name"
@@ -225,8 +177,7 @@ onBeforeMount(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-status" class="form-label">Status</label>
-                                <select name="status" class="form-control" id="s-status"
-                                    v-model="page.search.status">
+                                <select name="status" class="form-control" id="s-status" v-model="page.search.status">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.status" :key="s.id" :value="s.id">{{ s.title }}
                                     </option>
@@ -234,8 +185,7 @@ onBeforeMount(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-type" class="form-label">Tipo</label>
-                                <select name="type" class="form-control" id="s-type"
-                                    v-model="page.search.type">
+                                <select name="type" class="form-control" id="s-type" v-model="page.search.type">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.types" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
@@ -257,7 +207,8 @@ onBeforeMount(() => {
                                 <select name="subcategory" class="form-control" id="s-subcategory"
                                     v-model="page.search.subcategory">
                                     <option value=""></option>
-                                    <option v-for="o in page.selects.subcategories" :key="o.id" :value="o.id">{{ o.title }}
+                                    <option v-for="o in page.selects.subcategories" :key="o.id" :value="o.id">
+                                        {{ o.title }}
                                     </option>
                                 </select>
                             </div>
@@ -270,14 +221,12 @@ onBeforeMount(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList 
-                        @action:update="update" 
-                        @action:delete="remove"
-                        :header="page.dataheader" :body="page.datalist" :actions="['update', 'delete']"
-                        :casts="{ 
-                            'category': page.selects.categories, 
+                    <TableList @action:update="data.update" @action:delete="data.remove" :header="page.dataheader"
+                        :body="page.datalist" :actions="['update', 'delete']" :casts="{
+                            'category': page.selects.categories,
                             'status': page.selects.status,
-                            'origin': page.selects.origins }" />
+                            'origin': page.selects.origins
+                        }" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -286,7 +235,7 @@ onBeforeMount(() => {
                     <!-- IMPORT ITEM CATMAT/CATSER -->
                     <ListCatGov @resp-catgov="selectItem" />
 
-                    <form class="form-row mt-3" @submit.prevent="save(page.data.id)">
+                    <form class="form-row mt-3" @submit.prevent="data.save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
 
@@ -310,7 +259,8 @@ onBeforeMount(() => {
                                 <select name="type" class="form-control" id="type"
                                     :class="{ 'form-control-alert': page.rules.valids.type }" v-model="page.data.type">
                                     <option></option>
-                                    <option v-for="t in page.selects.types" :key="t.id" :value="t.id">{{ t.title }}</option>
+                                    <option v-for="t in page.selects.types" :key="t.id" :value="t.id">{{ t.title }}
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
@@ -354,7 +304,8 @@ onBeforeMount(() => {
                                     :class="{ 'form-control-alert': page.rules.valids.status }"
                                     v-model="page.data.status">
                                     <option></option>
-                                    <option v-for="s in page.selects.status" :key="s.id" :value="s.id">{{ s.title }}</option>
+                                    <option v-for="s in page.selects.status" :key="s.id" :value="s.id">{{ s.title }}
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -363,7 +314,7 @@ onBeforeMount(() => {
                             <div class="col-sm-12">
                                 <label for="description" class="form-label">Descrição</label>
                                 <input type="text" name="description" class="form-control" id="description"
-                                    placeholder="Características do Item" 
+                                    placeholder="Características do Item"
                                     :class="{ 'form-control-alert': page.rules.valids.description }"
                                     v-model="page.data.description">
                             </div>
@@ -383,13 +334,13 @@ onBeforeMount(() => {
 </template>
 
 <style scoped>
-.inside-box{
+.inside-box {
     height: calc(100% - 270px);
     overflow: scroll;
 }
 
 @media (max-width: 991px) {
-    .inside-box{
+    .inside-box {
         height: calc(100% - 315px);
     }
 }

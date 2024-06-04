@@ -5,21 +5,19 @@ import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
 import http from '@/services/http';
 import masks from '@/utils/masks';
-
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import ManagementNav from '@/components/ManagementNav.vue';
 import Ui from '@/utils/ui';
 import utils from '@/utils/utils';
+import Data from '@/services/data';
 
 const router = useRouter();
 const emit = defineEmits(['callAlert', 'callRemove'])
-const props = defineProps({
-    datalist: { type: Array, default: () => [] }
-})
-
+const props = defineProps({ datalist: { type: Array, default: () => [] } })
 const page = ref({
+    baseURL: '/comissions',
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false, prepare: false },
     data: {},
@@ -49,36 +47,12 @@ const page = ref({
     }
 })
 
-
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
 
 const ui = new Ui(page, 'Comissões', 'a')
-
-function save() {
-    const validation = forms.checkform(page.value.data, page.value.rules);
-    if (!validation.isvalid) {
-        emit('callAlert', notifys.warning(validation.message))
-        return
-    }
-
-    const data = { ...page.value.data }
-    const url = page.value.data?.id ? '/comissions/update' : '/comissions/save'
-    const exec = page.value.data?.id ? http.put : http.post
-
-    exec(url, data, emit, () => {
-        list()
-    })
-}
-
-function update(id) {
-    http.get(`/comissions/details/${id}`, emit, (response) => {
-        selects('organ', response.data?.unit)
-        page.value.data = response.data
-        ui.toggle('update')
-    })
-}
+const data = new Data(page, emit, ui)
 
 const extinct = ref({
     data: {},
@@ -110,27 +84,8 @@ function saveExtinction() {
         emit('callAlert', notifys.warning(validation.message))
         return
     }
-
-    console.log(extinct.value.data)
-
     http.post('/comissionsends/save', extinct.value.data, emit, () => {
-        list()
-    })
-}
-
-function list() {
-    http.post('/comissions/list', page.value.search, emit, (response) => {
-        page.value.datalist = response.data ?? []
-        ui.toggle('list')
-    })
-}
-
-function selects(key = null, search = null) {
-
-    const urlselect = (key && search) ? `/comissions/selects/${key}/${search}` : '/comissions/selects'
-
-    http.get(urlselect, emit, (response) => {
-        page.value.selects = response.data
+        data.list()
     })
 }
 
@@ -144,31 +99,13 @@ function handleExtinctFile(event) {
     if (file) extinct.value.data.document = file
 }
 
-function download(id) {
-    http.download(`/comissions/download/${id}`, emit, (response) => {
-        if (response.headers['content-type'] !== 'application/pdf') {
-            emit('callAlert', notifys.warning('Arquivo Indisponível'))
-            return
-        }
-
-        const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
-        const link = document.createElement('a')
-        link.href = url;
-        link.download = `Amparo-${id}.pdf`
-        document.body.appendChild(link)
-        link.click()
-        window.URL.revokeObjectURL(url);
-
-    })
-}
-
 function members(id) {
     router.replace({ name: 'comissionsmembers', params: { id: id } })
 }
 
 onMounted(() => {
-    selects()
-    list()
+    data.selects()
+    data.list()
 })
 
 </script>
@@ -210,7 +147,7 @@ onMounted(() => {
 
                     <!--BOX SEARCH-->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
-                        <form @submit.prevent="list" class="row g-3">
+                        <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control" id="s-name"
@@ -219,7 +156,7 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-organ" class="form-label">Orgão</label>
                                 <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ"
-                                    @change="selects('organ', page.search.organ)">
+                                    @change="data.selects('organ', page.search.organ)">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
@@ -242,8 +179,9 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList @action:update="update" @action:extinction="extinction" @action:download="download"
-                        @action:members="members" :header="page.dataheader" :body="page.datalist"
+                    <TableList @action:update="data.update" @action:extinction="extinction"
+                        @action:download="(id) => data.download(id, 'Amparo')" @action:members="members"
+                        :header="page.dataheader" :body="page.datalist"
                         :actions="['members', 'download', 'update', 'extinction']" :casts="{
                             'organ': page.selects.organs,
                             'unit': page.selects.units,
@@ -288,7 +226,7 @@ onMounted(() => {
 
                 <!--BOX REGISTER-->
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
-                    <form class="form-row" @submit.prevent="save(page.data.id)">
+                    <form class="form-row" @submit.prevent="data.save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12">
@@ -304,7 +242,7 @@ onMounted(() => {
                                 <label for="organ" class="form-label">Orgão</label>
                                 <select name="organ" class="form-control"
                                     :class="{ 'form-control-alert': page.rules.valids.organ }" id="organ"
-                                    v-model="page.data.organ" @change="selects('organ', page.data.organ)">
+                                    v-model="page.data.organ" @change="data.selects('organ', page.data.organ)">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.organs" :value="s.id" :key="s.id">{{ s.title }}
                                     </option>

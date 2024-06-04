@@ -1,32 +1,27 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import forms from '@/services/forms';
-import notifys from '@/utils/notifys';
-import http from '@/services/http';
 import masks from '@/utils/masks'
-
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import ManagementNav from '@/components/ManagementNav.vue';
 import Ui from '@/utils/ui';
+import Data from '@/services/data';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
-const props = defineProps({
-    datalist: { type: Array, default: () => [] }
-})
-
+const props = defineProps({ datalist: { type: Array, default: () => [] } })
 const page = ref({
+    baseURL: '/units',
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
+    search: {},
     data: {},
     datalist: props.datalist,
     dataheader: [
         { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cnpj' }] },
         { key: 'phone', title: 'CONTATO', sub: [{ key: 'email' }] },
-        { obj:'organ', key: 'name', title: 'VINCULO', sub: [{ key: 'address' }] }
+        { obj: 'organ', key: 'name', title: 'VINCULO', sub: [{ key: 'address' }] }
     ],
-    search: {},
     selects: {
         organs: [],
         status: []
@@ -45,60 +40,16 @@ const page = ref({
 })
 
 const ui = new Ui(page, 'Unidades', 'a')
+const data = new Data(page, emit, ui)
 
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
 
-function save() {
-    const validation = forms.checkform(page.value.data, page.value.rules);
-    if (!validation.isvalid) {
-        emit('callAlert', notifys.warning(validation.message))
-        return
-    }
-
-    const data = { ...page.value.data }
-    const url = page.value.data?.id ? '/units/update' : '/units/save'
-    const exec = page.value.data?.id ? http.put : http.post
-
-    exec(url, data, emit, () => {
-        list();
-    })
-}
-
-function update(id) {
-    http.get(`/units/details/${id}`, emit, (response) => {
-        page.value.data = response.data
-        ui.toggle('update')
-    })
-}
-
-function remove(id) {
-    emit('callRemove', {
-        id: id,
-        url: '/units',
-        search: page.value.search
-    })
-}
-
-function list() {
-    http.post('/units/list', page.value.search, emit, (response) => {
-        page.value.datalist = response.data ?? []
-        ui.toggle('list')
-    })
-}
-
-function selects() {
-    http.get('/units/selects', emit, (response) => {
-        page.value.selects = response.data
-    })
-}
-
 onMounted(() => {
-    selects()
-    list()
+    data.selects()
+    data.list()
 })
-
 </script>
 
 <template>
@@ -112,7 +63,7 @@ onMounted(() => {
             }" />
 
             <div class="box box-main p-0 rounded-4">
-                <!--HEDER PAGE-->
+                <!--HEADER PAGE-->
                 <div class="d-md-flex justify-content-between align-items-center w-100 px-4 px-md-5 pt-5 mb-4">
                     <div class="info-list">
                         <h2 class="txt-color p-0 m-0">{{ page.title.primary }}</h2>
@@ -135,10 +86,9 @@ onMounted(() => {
 
                 <!--BOX LIST-->
                 <div v-if="!page.uiview.register" id="list-box" class="inside-box mb-4">
-
                     <!-- SEARCH BAR -->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
-                        <form @submit.prevent="list" class="row g-3">
+                        <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control" id="s-name"
@@ -152,8 +102,7 @@ onMounted(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-organ" class="form-label">Orgão</label>
-                                <select name="organ" class="form-control" id="s-organ"
-                                    v-model="page.search.organ">
+                                <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
@@ -168,14 +117,14 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList @action:update="update" @action:delete="remove" :header="page.dataheader"
+                    <TableList @action:update="data.update" @action:delete="data.remove" :header="page.dataheader"
                         :body="page.datalist" :actions="['update', 'delete']"
                         :casts="{ 'status': page.selects.status }" />
                 </div>
 
                 <!--BOX REGISTER-->
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
-                    <form class="form-row" @submit.prevent="save(page.data.id)">
+                    <form class="form-row" @submit.prevent="data.save()">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12 col-md-4">
@@ -227,8 +176,8 @@ onMounted(() => {
                         <div class="d-flex flex-row-reverse mt-4">
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">Cancelar <i
                                     class="bi bi-x-circle"></i></button>
-                            <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
-                                    class="bi bi-check2-circle"></i></button>
+                            <button type="submit" class="btn btn-outline-primary mx-2">Salvar
+                                <i class="bi bi-check2-circle"></i></button>
                         </div>
                     </form>
                 </div>

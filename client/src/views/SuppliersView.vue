@@ -1,23 +1,18 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import forms from '@/services/forms';
-import notifys from '@/utils/notifys';
-import http from '@/services/http';
-
-import MainNav from '@/components/MainNav.vue';
-import MainHeader from '@/components/MainHeader.vue';
-import ListSuppliersGov from '@/components/ListSuppliersGov.vue';
-import TableList from '@/components/TableList.vue';
-import Ui from '@/utils/ui';
-import CatalogsNav from '@/components/CatalogsNav.vue';
-import masks from '@/utils/masks';
+import MainNav from '@/components/MainNav.vue'
+import MainHeader from '@/components/MainHeader.vue'
+import ListSuppliersGov from '@/components/ListSuppliersGov.vue'
+import TableList from '@/components/TableList.vue'
+import Ui from '@/utils/ui'
+import CatalogsNav from '@/components/CatalogsNav.vue'
+import masks from '@/utils/masks'
+import Data from '@/services/data'
 
 const emit = defineEmits(['callAlert', 'callRemove'])
-const props = defineProps({
-    datalist: { type: Array, default: () => [] }
-})
-
+const props = defineProps({ datalist: { type: Array, default: () => [] } })
 const page = ref({
+    baseURL: '/suppliers',
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
     data: {},
@@ -42,44 +37,7 @@ watch(() => props.datalist, (newdata) => {
 })
 
 const ui = new Ui(page, 'Fornecedores')
-
-function save() {
-    const validation = forms.checkform(page.value.data, page.value.rules);
-    if (!validation.isvalid) {
-        emit('callAlert', notifys.warning(validation.message))
-        return
-    }
-
-    const data = { ...page.value.data }
-    const url = page.value.data?.id ? '/suppliers/update' : '/suppliers/save'
-    const exec = page.value.data?.id ? http.put : http.post
-
-    exec(url, data, emit, () => {
-        list();
-    })
-}
-
-function update(id) {
-    http.get(`/suppliers/details/${id}`, emit, (response) => {
-        page.value.data = response.data
-        ui.toggle('update')
-    })
-}
-
-function remove(id) {
-    emit('callRemove', {
-        id: id,
-        url: '/suppliers',
-        search: page.value.search
-    })
-}
-
-function list() {
-    http.post('/suppliers/list', page.value.search, emit, (response) => {
-        page.value.datalist = response.data ?? []
-        ui.toggle('list')
-    })
-}
+const data = new Data(page, emit, ui)
 
 function populateWithGovData(govdata) {
     page.value.data.name = null
@@ -91,7 +49,7 @@ function populateWithGovData(govdata) {
 }
 
 onMounted(() => {
-    list()
+    data.list()
 })
 
 </script>
@@ -133,7 +91,7 @@ onMounted(() => {
 
                     <!--SEARCH BAR-->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
-                        <form @submit.prevent="list" class="row g-3">
+                        <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-name" class="form-label">Fornecedor</label>
                                 <input type="text" name="name" class="form-control" id="s-name"
@@ -159,14 +117,14 @@ onMounted(() => {
                     </div>
 
                     <!--DATA LIST-->
-                    <TableList @action:update="update" @action:delete="remove" :header="page.dataheader"
+                    <TableList @action:update="data.update" @action:delete="data.remove" :header="page.dataheader"
                         :body="page.datalist" :actions="['update', 'delete']" />
                 </div>
 
                 <!--BOX REGISTER-->
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
                     <ListSuppliersGov class="mb-3" @resp-select="populateWithGovData" />
-                    <form class="form-row" @submit.prevent="save(page.data.id)">
+                    <form class="form-row" @submit.prevent="data.save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12 col-md-8">

@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import masks from '@/utils/masks'
-
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
@@ -12,7 +11,7 @@ import Data from '@/services/data';
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
 const page = ref({
-    baseURL:'/organs',
+    baseURL: '/organs',
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
     search: {},
@@ -22,7 +21,7 @@ const page = ref({
         { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cnpj' }] },
         { key: 'phone', title: 'CONTATO', sub: [{ key: 'email' }] },
         { key: 'postalcity', title: 'LOCALIZAÇÃO', sub: [{ key: 'address' }] },
-        { key: 'status', cast:'title', title: 'STATUS' }
+        { key: 'status', cast: 'title', title: 'STATUS' }
     ],
     selects: {
         status: []
@@ -90,19 +89,20 @@ onMounted(() => {
 
                 <!--BOX LIST-->
                 <div v-if="!page.uiview.register" id="list-box" class="inside-box mb-4">
-                    
+
                     <!--SEARCH BAR-->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
                         <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-name" class="form-label">Nome</label>
-                                <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                    placeholder="Pesquise por partes do nome do orgão">
+                                <input type="text" name="name" class="form-control" id="s-name"
+                                    v-model="page.search.name" placeholder="Pesquise por partes do nome do orgão">
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-cnpj" class="form-label">CNPJ</label>
-                                <input type="cnpj" name="cnpj" class="form-control" id="s-cnpj" v-model="page.search.cnpj"
-                                    placeholder="000.000.00/0000-00" v-maska:[masks.maskcnpj]>
+                                <input type="cnpj" name="cnpj" class="form-control" id="s-cnpj"
+                                    v-model="page.search.cnpj" placeholder="000.000.00/0000-00"
+                                    v-maska:[masks.maskcnpj]>
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-postalcity" class="form-label">Cidade</label>
@@ -118,10 +118,7 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList 
-                        @action:update="data.update" 
-                        @action:delete="data.remove" 
-                        :header="page.dataheader"
+                    <TableList @action:update="data.update" @action:delete="data.remove" :header="page.dataheader"
                         :body="page.datalist" :actions="['update', 'delete']"
                         :casts="{ 'status': page.selects.status }" />
                 </div>

@@ -1,27 +1,25 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import forms from '@/services/forms';
-import notifys from '@/utils/notifys';
-import http from '@/services/http';
 import Ui from '@/utils/ui';
-
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import CatalogsNav from '@/components/CatalogsNav.vue';
 import { useRouter } from 'vue-router';
+import Data from '@/services/data';
 
 const router = useRouter()
-const emit   = defineEmits(['callAlert', 'callRemove'])
-const props  = defineProps({ datalist: { type: Array, default: () => [] } })
-const page   = ref({
+const emit = defineEmits(['callAlert', 'callRemove'])
+const props = defineProps({ datalist: { type: Array, default: () => [] } })
+const page = ref({
+    baseURL: '/catalogs',
     title: {},
     uiview: {},
     data: {},
     datalist: props.datalist,
     dataheader: [
         { key: 'name', title: 'CATÁLOGO' },
-        { obj:'comission', key: 'name', title: 'COMISSÃO', sub: [{ obj:'organ', key: 'name' }] },
+        { obj: 'comission', key: 'name', title: 'COMISSÃO', sub: [{ obj: 'organ', key: 'name' }] },
         { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
     ],
     search: {},
@@ -40,57 +38,10 @@ const page   = ref({
 })
 
 const ui = new Ui(page, 'Catálogos')
+const data = new Data(page, emit, ui)
 
-function save() {
-    const validation = forms.checkform(page.value.data, page.value.rules);
-    if (!validation.isvalid) {
-        emit('callAlert', notifys.warning(validation.message))
-        return
-    }
-
-    const data = { ...page.value.data }
-    const url = page.value.data?.id ? '/catalogs/update' : '/catalogs/save'
-    const exec = page.value.data?.id ? http.put : http.post
-
-    exec(url, data, emit, () => {
-        list();
-    })
-}
-
-function update(id) {
-    http.get(`/catalogs/details/${id}`, emit, (response) => {
-        selects('organ', response.data?.unit)
-        page.value.data = response.data
-        ui.toggle('update')
-    })
-}
-
-function remove(id) {
-    emit('callRemove', {
-        id: id,
-        url: '/catalogs',
-        search: page.value.search
-    })
-}
-
-function list() {
-    http.post('/catalogs/list', page.value.search, emit, (response) => {
-        page.value.datalist = response.data ?? []
-        ui.toggle('list')
-    })
-}
-
-function selects(key = null, search = null) {
-
-    const urlselect = (key && search) ? `/catalogs/selects/${key}/${search}` : '/catalogs/selects'
-
-    http.get(urlselect, emit, (response) => {
-        page.value.selects = response.data
-    })
-}
-
-function selectCatalog(id){
-    router.replace({ name: 'catalogitems', params: { catalog:id } })
+function selectCatalog(id) {
+    router.replace({ name: 'catalogitems', params: { catalog: id } })
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -98,8 +49,8 @@ watch(() => props.datalist, (newdata) => {
 })
 
 onMounted(() => {
-    selects()
-    list()
+    data.selects()
+    data.list()
 })
 
 </script>
@@ -145,7 +96,7 @@ onMounted(() => {
                 <div v-if="!page.uiview.register" id="list-box" class="inside-box mb-4">
                     <!--SEARCH BAR-->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
-                        <form @submit.prevent="list" class="row g-3">
+                        <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-name" class="form-label">Catálogo</label>
                                 <input type="text" name="name" class="form-control" id="s-name"
@@ -153,8 +104,8 @@ onMounted(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-organ" class="form-label">Orgão</label>
-                                <select name="organ" class="form-control" id="s-organ"
-                                    v-model="page.search.organ" @change="selects('organ', page.search.organ)">
+                                <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ"
+                                    @change="data.selects('organ', page.search.organ)">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{ o.title }}
                                     </option>
@@ -178,25 +129,21 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList 
-                    @action:update="update" 
-                    @action:delete="remove" 
-                    @action:items="selectCatalog"
-                    :header="page.dataheader"
-                    :body="page.datalist" :actions="['items', 'update', 'delete']" />
+                    <TableList @action:update="data.update" @action:delete="data.remove" @action:items="selectCatalog"
+                        :header="page.dataheader" :body="page.datalist" :actions="['items', 'update', 'delete']" />
                 </div>
 
                 <!--BOX REGISTER-->
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
-                    <form class="form-row" @submit.prevent="save(page.data.id)">
+                    <form class="form-row" @submit.prevent="data.save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
-                            
+
                             <div class="col-sm-12 col-md-4">
                                 <label for="organ" class="form-label">Orgão</label>
                                 <select name="organ" class="form-control"
                                     :class="{ 'form-control-alert': page.rules.valids.organ }" id="organ"
-                                    v-model="page.data.organ" @change="selects('organ', page.data.organ)">
+                                    v-model="page.data.organ" @change="data.selects('organ', page.data.organ)">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.organs" :value="s.id" :key="s.id">{{ s.title }}
                                     </option>
@@ -223,7 +170,8 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-8">
                                 <label for="description" class="form-label">Descrição</label>
                                 <input type="text" name="description" class="form-control" id="description"
-                                    placeholder="Breve resumo do descrito sobre o catálogo" v-model="page.data.description">
+                                    placeholder="Breve resumo do descrito sobre o catálogo"
+                                    v-model="page.data.description">
                             </div>
 
                         </div>

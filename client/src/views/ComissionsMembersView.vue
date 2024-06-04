@@ -9,14 +9,13 @@ import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import Ui from '@/utils/ui';
+import Data from '@/services/data';
 
 const router = useRouter();
 const emit = defineEmits(['callAlert', 'callRemove'])
-const props = defineProps({
-    datalist: { type: Array, default: () => [] }
-})
-
+const props = defineProps({ datalist: { type: Array, default: () => [] } })
 const page = ref({
+    baseURL: '/comissionsmembers',
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
     data: {},
@@ -53,79 +52,13 @@ watch(() => props.datalist, (newdata) => {
 })
 
 const ui = new Ui(page, 'Membros das Comissões')
-
-function save() {
-    page.value.data.organ = comission.value.organ.id
-    page.value.data.unit = comission.value.unit.id
-    page.value.data.comission = comission.value.id
-
-    const validation = forms.checkform(page.value.data, page.value.rules);
-    if (!validation.isvalid) {
-        emit('callAlert', notifys.warning(validation.message))
-        return
-    }
-
-    const data = { ...page.value.data }
-    const url = page.value.data?.id ? '/comissionsmembers/update' : '/comissionsmembers/save'
-    const exec = page.value.data?.id ? http.put : http.post
-
-    exec(url, data, emit, () => {
-        list();
-    })
-}
-
-function update(id) {
-    http.get(`/comissionsmembers/details/${id}`, emit, (response) => {
-        page.value.data = response.data
-        ui.toggle('update')
-    })
-}
-
-function remove(id) {
-    emit('callRemove', {
-        id: id,
-        url: '/comissionsmembers',
-        search: page.value.search
-    })
-}
-
-function list() {
-    http.post(`/comissionsmembers/list/${route.params.id}`, page.value.search, emit, (response) => {
-        page.value.datalist = response.data ?? []
-        ui.toggle('list')
-    })
-}
-
-function selects() {
-    http.get(`/comissionsmembers/${route.params.id}/selects`, emit, (response) => {
-        page.value.selects = response.data
-        list()
-    })
-}
+const data = new Data(page, emit, ui)
 
 function handleFile(event) {
     const file = event.target.files[0]
     if (file) {
         page.value.data.document = file
     }
-}
-
-function download(id) {
-    http.download(`/comissionsmembers/download/${id}`, emit, (response) => {
-        if (response.headers['content-type'] !== 'application/pdf') {
-            emit('callAlert', notifys.warning('Arquivo Indisponível'))
-            return
-        }
-
-        const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }))
-        const link = document.createElement('a')
-        link.href = url;
-        link.download = `Amparo-${id}.pdf`
-        document.body.appendChild(link)
-        link.click()
-        window.URL.revokeObjectURL(url);
-
-    })
 }
 
 function backToComission() {
@@ -142,8 +75,8 @@ function fetchComission() {
 
 onMounted(() => {
     fetchComission()
-    selects()
-    list()
+    data.selects()
+    data.list()
 })
 
 </script>
@@ -186,43 +119,48 @@ onMounted(() => {
 
                 <!--BOX LIST-->
                 <div v-if="!page.uiview.register" id="list-box" class="inside-box mb-4">
-                    
+
                     <!-- COMISSION BOX -->
-                <div v-if="!page.uiview.register && !page.uiview.search" class="justify-content-between align-items-center px-5 mb-4">
-                    <div class="row mb-3 g-3 w-100">
-                        <div class="col-sm-12 col-md-4">
-                            <strong class="d-flex gap-2"><i class="bi bi-people txt-color-base"></i>Comissão</strong>
-                            <p class="m-0">{{ comission.name }}</p>
+                    <div v-if="!page.uiview.register && !page.uiview.search"
+                        class="justify-content-between align-items-center px-5 mb-4">
+                        <div class="row mb-3 g-3 w-100">
+                            <div class="col-sm-12 col-md-4">
+                                <strong class="d-flex gap-2"><i
+                                        class="bi bi-people txt-color-base"></i>Comissão</strong>
+                                <p class="m-0">{{ comission.name }}</p>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <strong class="d-flex gap-2"><i
+                                        class="bi bi-building-gear txt-color-base"></i>Órgão</strong>
+                                <p class="m-0">{{ comission.organ?.name }}</p>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <strong class="d-flex gap-2"><i
+                                        class="bi bi-house-gear txt-color-base"></i>Unidade</strong>
+                                <p class="m-0">{{ comission.unit?.name }}</p>
+                            </div>
                         </div>
-                        <div class="col-sm-12 col-md-4">
-                            <strong class="d-flex gap-2"><i
-                                    class="bi bi-building-gear txt-color-base"></i>Órgão</strong>
-                            <p class="m-0">{{ comission.organ?.name }}</p>
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <strong class="d-flex gap-2"><i class="bi bi-house-gear txt-color-base"></i>Unidade</strong>
-                            <p class="m-0">{{ comission.unit?.name }}</p>
+                        <div class="row mb-3 g-3 w-100">
+                            <div class="col-sm-12 col-md-4">
+                                <strong class="d-flex gap-2"><i class="bi bi-people txt-color-base"></i>Status</strong>
+                                <p class="m-0">{{ comission.status }}</p>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <strong class="d-flex gap-2"><i
+                                        class="bi bi-house-gear txt-color-base"></i>Tipo</strong>
+                                <p class="m-0">{{ comission.type }}</p>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <strong class="d-flex gap-2"><i
+                                        class="bi bi-calendar2 txt-color-base"></i>Pleito</strong>
+                                <p class="m-0">{{ `${comission.start_term} - ${comission.end_term || 'Presente'}` }}</p>
+                            </div>
                         </div>
                     </div>
-                    <div class="row mb-3 g-3 w-100">
-                        <div class="col-sm-12 col-md-4">
-                            <strong class="d-flex gap-2"><i class="bi bi-people txt-color-base"></i>Status</strong>
-                            <p class="m-0">{{ comission.status }}</p>
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <strong class="d-flex gap-2"><i class="bi bi-house-gear txt-color-base"></i>Tipo</strong>
-                            <p class="m-0">{{ comission.type }}</p>
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <strong class="d-flex gap-2"><i class="bi bi-calendar2 txt-color-base"></i>Pleito</strong>
-                            <p class="m-0">{{ `${comission.start_term} - ${comission.end_term || 'Presente'}` }}</p>
-                        </div>
-                    </div>
-                </div>
 
                     <!--BOX SEARCH-->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
-                        <form @submit.prevent="list" class="row g-3">
+                        <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control" id="s-name"
@@ -255,9 +193,9 @@ onMounted(() => {
                             </div>
                         </form>
                     </div>
-                    <TableList @action:update="update" @action:delete="remove" @action:download="download"
-                        :header="page.dataheader" :body="page.datalist" :actions="['download', 'update', 'delete']"
-                        :casts="{
+                    <TableList @action:update="data.update" @action:delete="data.remove"
+                        @action:download="(id) => data.download(id, 'Amparo')" :header="page.dataheader"
+                        :body="page.datalist" :actions="['download', 'update', 'delete']" :casts="{
                             'status': page.selects.status,
                             'responsibility': page.selects.responsibilities,
                         }" />
@@ -265,7 +203,7 @@ onMounted(() => {
 
                 <!--BOX REGISTER-->
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
-                    <form class="form-row" @submit.prevent="save(page.data.id)">
+                    <form class="form-row" @submit.prevent="data.save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12">
