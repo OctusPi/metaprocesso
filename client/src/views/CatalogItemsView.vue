@@ -17,7 +17,7 @@ const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
 const catalogID = router.params?.catalog
 const page = ref({
-    baseURL: '/catalogitems',
+    baseURL: `/catalogitems/${catalogID}`,
     title: {},
     uiview: {},
     catalog: {},
