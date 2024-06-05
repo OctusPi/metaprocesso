@@ -12,6 +12,7 @@ const props = defineProps({
 const emit = defineEmits([
     'action:update',
     'action:delete',
+    'action:fastdelete',
     'action:download',
     'action:members',
     'action:extinction',

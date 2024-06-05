@@ -33,12 +33,19 @@ class Data {
         })
     }
 
-    remove = (id, onRemove = () => {}) => {
+    remove = (id) => {
         this.emit('callRemove', {
             id: id,
             url: this.page.value.baseURL,
             search: this.page.value.search,
-            cb: onRemove
+        })
+    }
+
+    fastremove = (id) => {
+        http.destroy(`${this.page.value.baseURL}/fastdestroy`, { id }, this.emit, (resp) => {
+            if (http.success(resp)) {
+                this.list()
+            }
         })
     }
 

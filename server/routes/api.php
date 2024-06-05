@@ -249,7 +249,7 @@ Route::controller(CatalogSubCategoryItems::class)->group(function () {
             Route::post('/list', 'list');
             Route::post('/save', 'save');
             Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
+            Route::post('/fastdestroy', 'fastdestroy');
             Route::get('/details/{id}', 'details');
         });
     });

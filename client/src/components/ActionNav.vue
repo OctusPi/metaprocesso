@@ -20,6 +20,11 @@ const actions = {
         icon: 'bi-trash',
         title: 'Excluir'
     },
+    'fastdelete': {
+        action: (id) => { emit('action', { e: 'action:fastdelete', i: id }) },
+        icon: 'bi-trash',
+        title: 'Excluir'
+    },
     'download': {
         action: (id) => { emit('action', { e: 'action:download', i: id }) },
         icon: 'bi-arrow-down',

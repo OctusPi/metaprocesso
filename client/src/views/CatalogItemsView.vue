@@ -129,6 +129,12 @@ const modalData = new Data(modal, emit, modalUi)
 const modalElement = ref(null)
 const modalId = 'subgroup-modal'
 
+function removeModal(id) {
+    // http.post(`/catalogsubcategorie/destroy/${id}`, () => {
+    //     modalUi.toggle('list')
+    // })
+}
+
 watch(() => modal.value.uiview.register, (value) => {
     if (value === true) {
         modal.value.data.organ = page.value.catalog.organ?.id || 1
@@ -362,7 +368,7 @@ onBeforeMount(() => {
         <!--MODAL SUBCATEGORIES-->
         <div class="modal fade" :id="modalId" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-dialog modal-dialog-centered mx-auto">
                 <div class="modal-content box">
                     <div class="modal-header border border-0">
                         <h1 class="modal-title">
@@ -396,16 +402,15 @@ onBeforeMount(() => {
                             </form>
                         </div>
                         <div class="modal-listage">
-                            <TableList @action:update="modalData.update"
-                                @action:delete="(id) => modalData.remove(id, () => modalElement.click())"
-                                :header="modal.dataheader" :body="modal.datalist" :actions="['update', 'delete']" />
+                            <TableList @action:update="modalData.update" @action:fastdelete="modalData.fastremove"
+                                :header="modal.dataheader" :body="modal.datalist" :actions="['update', 'fastdelete']" />
                         </div>
                     </div>
                     <div v-if="!modal.uiview.register" class="modal-footer border-0">
                         <button @click="modalUi.toggle('register')" type="button"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-plus-circle"></i>
-                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
+                            <span class="title-btn-action ms-2 d-md-block d-lg-inline">Adicionar</span>
                         </button>
                     </div>
                 </div>
@@ -432,7 +437,7 @@ onBeforeMount(() => {
 }
 
 .modal-listage {
-    max-height: 400px;
+    height: 400px;
     overflow: scroll;
 }
 </style>
