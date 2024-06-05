@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Middleware\Data;
 use App\Models\CatalogSubCategoryItem;
 use App\Models\User;
 use App\Models\Organ;
 use App\Security\Guardian;
 use App\Utils\Notify;
-use App\Utils\Utils;
 use Illuminate\Http\Request;
 
 class CatalogSubCategoryItems extends Controller
@@ -19,16 +17,20 @@ class CatalogSubCategoryItems extends Controller
         Guardian::validateAccess($this->module_id);
     }
 
+    public function save(Request $request)
+    {
+        $organ = Organ::where('id', $request->organ)->first();
+        if ($organ) {
+            $req = array_merge($request->all(), ['organ' => $organ->id]);
+            return $this->baseSave(CatalogSubCategoryItem::class, $req);
+        }
+
+        return response()->json(Notify::warning("Órgão não localizado!"), 404);
+    }
+
     public function list(Request $request)
     {
         return $this->baseList(['name', 'organ'], ['name'], ['organ']);
-    }
-
-    public function selects(Request $request)
-    {
-        return Response()->json([
-            'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
-        ], 200);
     }
 
     public function fastdestroy(Request $request)

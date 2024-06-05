@@ -9,7 +9,6 @@ use App\Middleware\Data;
 use App\Security\Guardian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -21,15 +20,17 @@ class Controller extends BaseController
 
     protected int $module_id;
     protected ?User $user_loged;
-    protected ?String $model;
+    protected ?string $model;
 
-    public function __construct(?String $model = null, int $module_id = User::MOD_INI){
-        $this->module_id  = $module_id;
+    public function __construct(?string $model = null, int $module_id = User::MOD_INI)
+    {
+        $this->module_id = $module_id;
         $this->user_loged = Guardian::getUser();
         $this->model = $model;
     }
 
-    public function index(){
+    public function index()
+    {
         return response()->json('success', 200);
     }
 
@@ -38,11 +39,11 @@ class Controller extends BaseController
         return Validator::make($data, $model::validateFields(), $model::validateMsg());
     }
 
-    public function validateErros(string $model, ?array $data = [], ?int $id = null):?string
+    public function validateErros(string $model, ?array $data = [], ?int $id = null): ?string
     {
-        if(method_exists($model, 'validateFields') && method_exists($model,'validateMsg')){
+        if (method_exists($model, 'validateFields') && method_exists($model, 'validateMsg')) {
             $validator = Validator::make($data, $model::validateFields($id), $model::validateMsg());
-            if($validator->fails()){
+            if ($validator->fails()) {
                 return $validator->errors()->first();
             }
         }
@@ -102,13 +103,16 @@ class Controller extends BaseController
         } catch (\Exception $e) {
             return Response()->json(Notify::error('Ação não permitida, registro referenciado em outros contextos!'), 500);
         }
-        
+
     }
 
-    public function baseList(array $search, ?array $order =null, ?array $with = null)
+    public function baseList(array $search, ?array $order = null, ?array $with = null)
     {
         try {
-            $search = Utils::map_search($search, Request()->all());
+            $search = Utils::map_search($search, array_merge(
+                Request()->all(),
+                Utils::get_parameters(Request()),
+            ));
             $query = Data::list($this->model, $search, $order, $with);
             return Response()->json($query ?? [], 200);
         } catch (\Throwable $th) {

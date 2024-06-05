@@ -246,11 +246,11 @@ Route::controller(CatalogItems::class)->group(function () {
 Route::controller(CatalogSubCategoryItems::class)->group(function () {
     Route::prefix('/catalogsubcategories')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/fastdestroy', 'fastdestroy');
-            Route::get('/details/{id}', 'details');
+            Route::post('/{organ}/list', 'list');
+            Route::post('/{organ}/save', 'save');
+            Route::put('/{organ}/update', 'update');
+            Route::post('/{organ}/fastdestroy', 'fastdestroy');
+            Route::get('/{organ}/details/{id}', 'details');
         });
     });
 })->name('catalogsubcategories');

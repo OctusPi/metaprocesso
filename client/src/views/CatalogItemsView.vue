@@ -33,9 +33,9 @@ const page = ref({
     search: {},
     selects: {
         unds: [],
-        types: [],
         categories: [],
-        subcategories: [],
+        groups: [],
+        types: [],
         status: [],
         origins: []
     },
@@ -104,42 +104,39 @@ watch(() => page.value.uiview.register, (value) => {
 })
 
 const modal = ref({
-    baseURL: '/catalogsubcategories',
+    baseURL: `/catalogsubcategories/${page.value.catalog?.organ?.id}`,
     uiview: {},
     title: {},
     datalist: [],
     data: {},
+    search: {},
     dataheader: [
         { key: 'name', title: 'GRUPO' },
     ],
     rules: {
-        fields: {
-            name: 'required',
-            organ: 'required',
-        },
+        fields: { name: 'required' },
         valids: {}
     },
-    search: {
-        organ: 1
-    }
 })
 
 const modalUi = new Ui(modal, 'Grupos dos Itens')
 const modalData = new Data(modal, emit, modalUi)
-const modalElement = ref(null)
 const modalId = 'subgroup-modal'
 
-function removeModal(id) {
-    // http.post(`/catalogsubcategorie/destroy/${id}`, () => {
-    //     modalUi.toggle('list')
-    // })
+function modalSave(id) {
+    modalData.save(id)
+    data.selects()
 }
 
-watch(() => modal.value.uiview.register, (value) => {
-    if (value === true) {
-        modal.value.data.organ = page.value.catalog.organ?.id || 1
-    }
-})
+function modalUpdate(id) {
+    modalData.update(id)
+    data.selects()
+}
+
+function modalRemove(id) {
+    modalData.fastremove(id)
+    data.selects()
+}
 
 onBeforeMount(() => {
     detailsCatalog()
@@ -178,8 +175,8 @@ onBeforeMount(() => {
                             <i class="bi bi-search"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Localizar</span>
                         </button>
-                        <button ref="modalElement" @click="modalData.list" data-bs-toggle="modal"
-                            :data-bs-target="`#${modalId}`" class="btn btn-action btn-action-primary ms-2">
+                        <button @click="modalData.list" data-bs-toggle="modal" :data-bs-target="`#${modalId}`"
+                            class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-bookmarks"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Grupos</span>
                         </button>
@@ -241,7 +238,7 @@ onBeforeMount(() => {
                                 <select name="subcategory" class="form-control" id="s-subcategory"
                                     v-model="page.search.subcategory">
                                     <option value=""></option>
-                                    <option v-for="o in page.selects.subcategories" :key="o.id" :value="o.id">
+                                    <option v-for="o in page.selects.groups" :key="o.id" :value="o.id">
                                         {{ o.title }}
                                     </option>
                                 </select>
@@ -328,8 +325,11 @@ onBeforeMount(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="subcategory" class="form-label">Agrupamento</label>
                                 <select name="subcategory" class="form-control" id="subcategory"
+                                    :class="{ 'form-control-alert': page.rules.valids.subcategory }"
                                     v-model="page.data.subcategory">
                                     <option></option>
+                                    <option v-for="c in page.selects.groups" :key="c.id" :value="c.id">{{ c.title }}
+                                    </option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
@@ -385,7 +385,7 @@ onBeforeMount(() => {
                             <p class="small txt-color-sec p-0 m-0">{{ modal.title.secondary }}</p>
                         </div>
                         <div v-if="modal.uiview.register">
-                            <form @submit.prevent="modalData.save(modal.data.id)" class="row g-3 px-5 py-2">
+                            <form @submit.prevent="modalSave(modal.data.id)" class="row g-3 px-5 py-2">
                                 <div class="col-sm-12 col-md-12 m-0">
                                     <label for="name" class="form-label">Grupo</label>
                                     <input type="text" name="name" class="form-control"
@@ -402,7 +402,7 @@ onBeforeMount(() => {
                             </form>
                         </div>
                         <div class="modal-listage">
-                            <TableList @action:update="modalData.update" @action:fastdelete="modalData.fastremove"
+                            <TableList @action:update="modalUpdate" @action:fastdelete="modalRemove"
                                 :header="modal.dataheader" :body="modal.datalist" :actions="['update', 'fastdelete']" />
                         </div>
                     </div>

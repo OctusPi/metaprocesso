@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Middleware\Data;
+use App\Models\CatalogSubCategoryItem;
 use App\Models\User;
 use App\Utils\Notify;
 use App\Models\Catalog;
 use App\Security\Guardian;
 use App\Models\CatalogItem;
+use App\Utils\Utils;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class CatalogItems extends Controller
 {
@@ -21,7 +23,7 @@ class CatalogItems extends Controller
     public function save(Request $request)
     {
         $catalog = Catalog::where('id', $request->catalog)->first();
-        if($catalog){
+        if ($catalog) {
             $req = array_merge($request->all(), ['catalog' => $catalog->id, 'organ' => $catalog->organ]);
             return $this->baseSave(CatalogItem::class, $req);
         }
@@ -29,9 +31,10 @@ class CatalogItems extends Controller
         return response()->json(Notify::warning("Catálogo não localizado!"), 404);
     }
 
-    public function list()
+    public function list(Request $request)
     {
-        return $this->baseList(['name', 'description', 'status', 'type', 'category', 'subcategory'], ['name'], ['subcategory']);
+        $search = ['name', 'description', 'status', 'type', 'category', 'subcategory', 'catalog'];
+        return $this->baseList($search, ['name'], ['subcategory']);
     }
 
     public function catalog(Request $request)
@@ -39,14 +42,25 @@ class CatalogItems extends Controller
         return $this->baseDetails(Catalog::class, $request->catalog, ['organ', 'comission']);
     }
 
-    public function selects()
+    public function selects(Request $request)
     {
+        $catalog = Catalog::where('id', $request->catalog)->first();
+
+        $groups = Utils::map_select(Data::list(CatalogSubCategoryItem::class, [
+            [
+                'column' => 'organ',
+                'operator' => '=',
+                'value' => $catalog->organ,
+                'mode' => 'AND'
+            ]
+        ]));
+
         return Response()->json([
             'types' => CatalogItem::list_tipo(),
             'categories' => CatalogItem::list_categoria(),
-            'groups' => [],
             'status' => CatalogItem::list_status(),
-            'origins' => CatalogItem::list_origem()
+            'origins' => CatalogItem::list_origem(),
+            'groups' => $groups,
         ], 200);
     }
 }
