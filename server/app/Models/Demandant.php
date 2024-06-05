@@ -29,24 +29,26 @@ class Demandant extends Model
         'status'
     ];
 
-    public function dfd():BelongsTo
-    {
-        return $this->belongsTo(Dfd::class);
-    }
+    
 
     public function organ(): HasOne
     {
-        return $this->hasOne(Organ::class, 'id');
+        return $this->hasOne(Organ::class, 'id', 'organ');
     }
 
     public function unit(): HasOne
     {
-        return $this->hasOne(Unit::class, 'id');
+        return $this->hasOne(Unit::class, 'id', 'unit');
     }
 
     public function sector(): HasOne
     {
-        return $this->hasOne(Sector::class, 'id');
+        return $this->hasOne(Sector::class, 'id', 'sector');
+    }
+
+    public function dfd():BelongsTo
+    {
+        return $this->belongsTo(Dfd::class);
     }
 
     public function startTerm(): Attribute

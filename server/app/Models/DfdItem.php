@@ -22,21 +22,21 @@ class DfdItem extends Model
 
     public function dfd():HasOne
     {
-        return $this->hasOne(Dfd::class, 'id');
+        return $this->hasOne(Dfd::class, 'id', 'dfd');
     }
 
     public function item():HasOne
     {
-        return $this->hasOne(CatalogItem::class, 'id');
+        return $this->hasOne(CatalogItem::class, 'id', 'item');
     }
 
     public function program():HasOne
     {
-        return $this->hasOne(Program::class, 'id');
+        return $this->hasOne(Program::class, 'id', 'program');
     }
 
     public function dotation():HasOne
     {
-        return $this->hasOne(Dotation::class, 'id');
+        return $this->hasOne(Dotation::class, 'id', 'dotation');
     }
 }

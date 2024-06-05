@@ -32,12 +32,12 @@ class Ordinator extends Model
 
     public function organ(): HasOne
     {
-        return $this->hasOne(Organ::class, 'id');
+        return $this->hasOne(Organ::class, 'id', 'organ');
     }
 
     public function unit(): HasOne
     {
-        return $this->hasOne(Unit::class, 'id');
+        return $this->hasOne(Unit::class, 'id', 'unit');
     }
 
     public function dfd():BelongsTo

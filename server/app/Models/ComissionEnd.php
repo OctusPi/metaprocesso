@@ -50,16 +50,16 @@ class ComissionEnd extends Model
 
     public function organ(): HasOne
     {
-        return $this->hasOne(Organ::class, 'id');
+        return $this->hasOne(Organ::class, 'id', 'organ');
     }
 
     public function unit(): HasOne
     {
-        return $this->hasOne(Unit::class, 'id');
+        return $this->hasOne(Unit::class, 'id', 'unit');
     }
 
     public function comission(): HasOne
     {
-        return $this->hasOne(Comission::class, 'id');
+        return $this->hasOne(Comission::class, 'id', 'comission');
     }
 }

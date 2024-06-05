@@ -22,19 +22,19 @@ class Dotation extends Model
         'status',
     ];
 
-    public function dfditem():BelongsTo
-    {
-        return $this->belongsTo(DfdItem::class);
-    }
-
     public function organ(): HasOne
     {
-        return $this->hasOne(Organ::class, 'id');
+        return $this->hasOne(Organ::class, 'id', 'organ');
     }
 
     public function unit(): HasOne
     {
-        return $this->hasOne(Unit::class, 'id');
+        return $this->hasOne(Unit::class, 'id', 'unit');
+    }
+
+    public function dfditem():BelongsTo
+    {
+        return $this->belongsTo(DfdItem::class);
     }
 
     public static function validateFields(?int $id = null):array

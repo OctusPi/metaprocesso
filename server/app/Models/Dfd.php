@@ -35,34 +35,34 @@ class Dfd extends Model
         'bonds',
     ];
 
-    public function dfditem():BelongsTo
-    {
-        return $this->belongsTo(DfdItem::class);
-    }
-
     public function organ(): HasOne
     {
-        return $this->hasOne(Organ::class, 'id');
+        return $this->hasOne(Organ::class, 'id', 'organ');
     }
 
     public function unit(): HasOne
     {
-        return $this->hasOne(Unit::class, 'id');
+        return $this->hasOne(Unit::class, 'id', 'unit');
     }
 
     public function demandant(): HasOne
     {
-        return $this->hasOne(Demandant::class, 'id');
+        return $this->hasOne(Demandant::class, 'id', 'demandant');
     }
 
     public function ordinator(): HasOne
     {
-        return $this->hasOne(Ordinator::class, 'id');
+        return $this->hasOne(Ordinator::class, 'id', 'ordinator');
     }
 
     public function comission(): HasOne
     {
         return $this->hasOne(Comission::class, 'id');
+    }
+
+    public function dfditem():BelongsTo
+    {
+        return $this->belongsTo(DfdItem::class);
     }
 
     public function dateIni(): Attribute

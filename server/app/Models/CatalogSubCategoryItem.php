@@ -19,7 +19,7 @@ class CatalogSubCategoryItem extends Model
 
     public function organ(): HasOne
     {
-        return $this->hasOne(Organ::class, 'id');
+        return $this->hasOne(Organ::class, 'id', 'organ');
     }
 
     public function catalogitem():BelongsTo

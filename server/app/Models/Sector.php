@@ -20,19 +20,19 @@ class Sector extends Model
         'description'
     ];
 
-    public function demandant():BelongsTo
-    {
-        return $this->belongsTo(Demandant::class);
-    }
-
     public function organ(): HasOne
     {
-        return $this->hasOne(Organ::class, 'id');
+        return $this->hasOne(Organ::class, 'id', 'organ');
     }
 
     public function unit(): HasOne
     {
-        return $this->hasOne(Unit::class, 'id');
+        return $this->hasOne(Unit::class, 'id', 'unit');
+    }
+
+    public function demandant():BelongsTo
+    {
+        return $this->belongsTo(Demandant::class);
     }
 
     public static function validateFields(?int $id = null):array

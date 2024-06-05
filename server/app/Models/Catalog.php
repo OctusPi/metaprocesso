@@ -21,12 +21,12 @@ class Catalog extends Model
 
     public function organ(): HasOne
     {
-        return $this->hasOne(Organ::class, 'id');
+        return $this->hasOne(Organ::class, 'id', 'organ');
     }
 
     public function comission(): HasOne
     {
-        return $this->hasOne(Comission::class, 'id');
+        return $this->hasOne(Comission::class, 'id', 'comission');
     }
 
     public function catalogitem():BelongsTo

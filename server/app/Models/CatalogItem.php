@@ -29,17 +29,17 @@ class CatalogItem extends Model
 
     public function organ(): HasOne
     {
-        return $this->hasOne(Organ::class, 'id');
+        return $this->hasOne(Organ::class, 'id', 'organ');
     }
 
     public function catalog(): HasOne
     {
-        return $this->hasOne(Catalog::class, 'id');
+        return $this->hasOne(Catalog::class, 'id', 'catalog');
     }
 
     public function subcategory(): HasOne
     {
-        return $this->hasOne(CatalogSubCategoryItem::class, 'id');
+        return $this->hasOne(CatalogSubCategoryItem::class, 'id', 'subcategory');
     }
 
     public function dfditem():BelongsTo
