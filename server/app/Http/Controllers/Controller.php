@@ -109,10 +109,7 @@ class Controller extends BaseController
     public function baseList(array $search, ?array $order = null, ?array $with = null)
     {
         try {
-            $search = Utils::map_search($search, array_merge(
-                Request()->all(),
-                Utils::get_parameters(Request()),
-            ));
+            $search = Utils::map_search($search, array_merge(Request()->route()->parameters(), Request()->all()));
             $query = Data::list($this->model, $search, $order, $with);
             return Response()->json($query ?? [], 200);
         } catch (\Throwable $th) {

@@ -49,9 +49,4 @@ class Utils
         }
         return [];
     }
-
-    public static function get_parameters(Request $request): array
-    {
-        return (new RouteParameterBinder($request->route()))->parameters($request) ?? [];
-    }
 }
