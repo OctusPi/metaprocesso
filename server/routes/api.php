@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\CatalogItems;
 use App\Http\Controllers\Catalogs;
+use App\Http\Controllers\CatalogSubCategoryItems;
 use App\Http\Controllers\Comissions;
 use App\Http\Controllers\ComissionsEnds;
 use App\Http\Controllers\ComissionsMembers;
@@ -23,7 +24,6 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::controller(Auth::class)->group(function () {
-
     Route::prefix('/auth')->group(function () {
         Route::post('', 'auth');
         Route::post('/verify', 'verify');
@@ -35,7 +35,6 @@ Route::controller(Auth::class)->group(function () {
 })->name('auth');
 
 Route::controller(Dashboard::class)->group(function () {
-
     Route::prefix('/dashboard')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -45,7 +44,6 @@ Route::controller(Dashboard::class)->group(function () {
 })->name('dashboard');
 
 Route::controller(Organs::class)->group(function () {
-
     Route::prefix('/organs')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -60,7 +58,6 @@ Route::controller(Organs::class)->group(function () {
 })->name('organs');
 
 Route::controller(Units::class)->group(function () {
-
     Route::prefix('/units')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -75,7 +72,6 @@ Route::controller(Units::class)->group(function () {
 })->name('units');
 
 Route::controller(Sectors::class)->group(function () {
-
     Route::prefix('/sectors')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -90,7 +86,6 @@ Route::controller(Sectors::class)->group(function () {
 })->name('sectors');
 
 Route::controller(Ordinators::class)->group(function () {
-
     Route::prefix('/ordinators')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -106,7 +101,6 @@ Route::controller(Ordinators::class)->group(function () {
 })->name('ordinators');
 
 Route::controller(Demandants::class)->group(function () {
-
     Route::prefix('/demandants')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -122,7 +116,6 @@ Route::controller(Demandants::class)->group(function () {
 })->name('demandants');
 
 Route::controller(Comissions::class)->group(function () {
-
     Route::prefix('/comissions')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -138,7 +131,6 @@ Route::controller(Comissions::class)->group(function () {
 })->name('comissions');
 
 Route::controller(ComissionsMembers::class)->group(function () {
-
     Route::prefix('/comissionsmembers')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('/{comission}', 'index');
@@ -154,7 +146,6 @@ Route::controller(ComissionsMembers::class)->group(function () {
 })->name('comissionsmembers');
 
 Route::controller(ComissionsEnds::class)->group(function () {
-
     Route::prefix('/comissionsends')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -169,7 +160,6 @@ Route::controller(ComissionsEnds::class)->group(function () {
 })->name('comissionsends');
 
 Route::controller(Programs::class)->group(function () {
-
     Route::prefix('/programs')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -184,7 +174,6 @@ Route::controller(Programs::class)->group(function () {
 })->name('programs');
 
 Route::controller(Dotations::class)->group(function () {
-
     Route::prefix('/dotations')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -199,7 +188,6 @@ Route::controller(Dotations::class)->group(function () {
 })->name('dotations');
 
 Route::controller(Management::class)->group(function () {
-
     Route::prefix('/users')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -214,7 +202,6 @@ Route::controller(Management::class)->group(function () {
 })->name('users');
 
 Route::controller(Catalogs::class)->group(function () {
-
     Route::prefix('/catalogs')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -229,7 +216,6 @@ Route::controller(Catalogs::class)->group(function () {
 })->name('catalogs');
 
 Route::controller(Suppliers::class)->group(function () {
-
     Route::prefix('/suppliers')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
@@ -243,7 +229,6 @@ Route::controller(Suppliers::class)->group(function () {
 })->name('suppliers');
 
 Route::controller(CatalogItems::class)->group(function () {
-
     Route::prefix('/catalogitems')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('/{catalog}', 'index');
@@ -258,8 +243,19 @@ Route::controller(CatalogItems::class)->group(function () {
     });
 })->name('catalogitems');
 
+Route::controller(CatalogSubCategoryItems::class)->group(function () {
+    Route::prefix('/catalogsubcategories')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+        });
+    });
+})->name('catalogsubcategories');
+
 Route::controller(Dfds::class)->group(function () {
-    
     Route::prefix('/dfds')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');

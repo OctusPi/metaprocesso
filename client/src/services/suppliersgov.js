@@ -10,6 +10,7 @@ export default class SuppliersGov {
         utils.load()
         const obj = {}
         try {
+            console.log(`${this.endpoind}&nome=${nome}`)
             const { data } = await axios.get(`${this.endpoind}&nome=${nome}`)
             obj.data = Object.values(data._embedded.fornecedores)
         } catch (err) {

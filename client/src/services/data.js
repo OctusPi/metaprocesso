@@ -33,11 +33,12 @@ class Data {
         })
     }
 
-    remove = (id) => {
+    remove = (id, onRemove = () => {}) => {
         this.emit('callRemove', {
             id: id,
             url: this.page.value.baseURL,
-            search: this.page.value.search
+            search: this.page.value.search,
+            cb: onRemove
         })
     }
 

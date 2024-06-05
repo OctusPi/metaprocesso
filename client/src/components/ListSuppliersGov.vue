@@ -5,51 +5,6 @@ import { ref } from 'vue'
 
 const emit = defineEmits(['resp-select'])
 
-// const mock = {
-//     _embedded: {
-//         fornecedores: {
-//             0: {
-//                 id: 1,
-//                 cnpj: "000000000000",
-//                 cpf: null,
-//                 nome: "IRMAOS RODOPOULOS",
-//                 ativo: true,
-//                 recadastrado: null,
-//                 id_municipio: 1234,
-//                 uf: "DF",
-//                 id_natureza_juridica: 2,
-//                 id_porte_empresa: 2,
-//                 id_ramo_negocio: 123,
-//                 id_unidade_cadastradora: null,
-//                 id_cnae: 4112,
-//                 habilitado_licitar: true,
-//                 _links: {
-//                     municipio: "Municipio 1: Brasilia"
-//                 }
-//             },
-//             1: {
-//                 id: 1,
-//                 cnpj: "000000000000",
-//                 cpf: null,
-//                 nome: "IRMAOS RODOPOULOS",
-//                 ativo: true,
-//                 recadastrado: null,
-//                 id_municipio: 1234,
-//                 uf: "DF",
-//                 id_natureza_juridica: 2,
-//                 id_porte_empresa: 2,
-//                 id_ramo_negocio: 123,
-//                 id_unidade_cadastradora: null,
-//                 id_cnae: 4112,
-//                 habilitado_licitar: true,
-//                 _links: {
-//                     municipio: "Municipio 1: Brasilia"
-//                 }
-//             },
-//         }
-//     }
-// }
-
 const suppliersgov = new SuppliersGov()
 
 const suppliers = ref(null)
@@ -57,7 +12,7 @@ const supplier = ref(null)
 const search = ref(null)
 
 async function searchSuppliers() {
-    const { data } = await suppliersgov.list(search)
+    const { data } = await suppliersgov.list(search.value)
     suppliers.value = data
 }
 
@@ -69,7 +24,7 @@ function clear() {
 function makeAddress(item) {
     return {
         ...item,
-        address: item._links.municipio?.split(':')[1] + ', ' + item.uf,
+        address: item._links.municipio?.title?.split(':')[1] + ', ' + item.uf,
     }
 }
 

@@ -30,6 +30,7 @@ import { ref } from 'vue';
             if(http.success(resp)){
                     http.post(`${props.params.url}/list`, props.params.search, emit, (resp) => {
                     emit('callUpdate', resp.data)
+                    props.params.cb && props.params.cb() 
                 })
             }
         })

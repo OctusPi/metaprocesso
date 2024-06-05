@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, ref, watch } from 'vue'
+import { onBeforeMount, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router';
 import http from '@/services/http';
 import Ui from '@/utils/ui';
@@ -17,7 +17,7 @@ const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
 const catalogID = router.params?.catalog
 const page = ref({
-    baseURL: '/catalogitems',
+    baseURL: `/catalogitems/${catalogID}`,
     title: {},
     uiview: {},
     catalog: {},
@@ -63,16 +63,12 @@ function detailsCatalog() {
 }
 
 function selectItem(data) {
-
     page.value.data.origin = 1
-
     if (data.category.tipo === 'M') {
-
         let description = ''
         data.item.buscaItemCaracteristica.forEach(element => {
             description += `${element.nomeCaracteristica}: ${element.nomeValorCaracteristica}; `
         });
-
         page.value.data.type = 1
         page.value.data.category = 1
         page.value.selects.unds = data.units
@@ -107,11 +103,42 @@ watch(() => page.value.uiview.register, (value) => {
     }
 })
 
+const modal = ref({
+    baseURL: '/catalogsubcategories',
+    uiview: {},
+    title: {},
+    datalist: [],
+    data: {},
+    dataheader: [
+        { key: 'name', title: 'GRUPO' },
+    ],
+    rules: {
+        fields: {
+            name: 'required',
+            organ: 'required',
+        },
+        valids: {}
+    },
+    search: {
+        organ: 1
+    }
+})
+
+const modalUi = new Ui(modal, 'Grupos dos Itens')
+const modalData = new Data(modal, emit, modalUi)
+const modalElement = ref(null)
+const modalId = 'subgroup-modal'
+
+watch(() => modal.value.uiview.register, (value) => {
+    if (value === true) {
+        modal.value.data.organ = page.value.catalog.organ?.id || 1
+    }
+})
+
 onBeforeMount(() => {
     detailsCatalog()
     data.selects()
     data.list()
-
 })
 
 </script>
@@ -145,10 +172,11 @@ onBeforeMount(() => {
                             <i class="bi bi-search"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Localizar</span>
                         </button>
-                        <RouterLink to="/subcategories" class="btn btn-action btn-action-primary ms-2">
+                        <button ref="modalElement" @click="modalData.list" data-bs-toggle="modal"
+                            :data-bs-target="`#${modalId}`" class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-bookmarks"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Grupos</span>
-                        </RouterLink>
+                        </button>
                     </div>
                 </div>
 
@@ -330,6 +358,59 @@ onBeforeMount(() => {
                 </div>
             </div>
         </section>
+
+        <!--MODAL SUBCATEGORIES-->
+        <div class="modal fade" :id="modalId" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content box">
+                    <div class="modal-header border border-0">
+                        <h1 class="modal-title">
+                            <i class="bi bi-bookmarks me-2"></i>
+                            Grupos
+                        </h1>
+                        <button type="button" class="txt-color ms-auto" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <div class="text-center mb-3">
+                            <h2 class="txt-color p-0 m-0">{{ modal.title.primary }}</h2>
+                            <p class="small txt-color-sec p-0 m-0">{{ modal.title.secondary }}</p>
+                        </div>
+                        <div v-if="modal.uiview.register">
+                            <form @submit.prevent="modalData.save(modal.data.id)" class="row g-3 px-5 py-2">
+                                <div class="col-sm-12 col-md-12 m-0">
+                                    <label for="name" class="form-label">Grupo</label>
+                                    <input type="text" name="name" class="form-control"
+                                        :class="{ 'form-control-alert': modal.rules.valids.name }"
+                                        v-model="modal.data.name">
+                                </div>
+                                <div class="d-flex flex-row-reverse mt-4">
+                                    <button type="submit" class="btn btn-outline-primary">Salvar <i
+                                            class="bi bi-check2-circle"></i></button>
+                                    <button type="button" @click="modalUi.toggle('list')"
+                                        class="btn btn-outline-warning mx-2">Cancelar
+                                        <i class="bi bi-check2-circle"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-listage">
+                            <TableList @action:update="modalData.update"
+                                @action:delete="(id) => modalData.remove(id, () => modalElement.click())"
+                                :header="modal.dataheader" :body="modal.datalist" :actions="['update', 'delete']" />
+                        </div>
+                    </div>
+                    <div v-if="!modal.uiview.register" class="modal-footer border-0">
+                        <button @click="modalUi.toggle('register')" type="button"
+                            class="btn btn-action btn-action-primary ms-2">
+                            <i class="bi bi-plus-circle"></i>
+                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 </template>
 
@@ -343,5 +424,15 @@ onBeforeMount(() => {
     .inside-box {
         height: calc(100% - 315px);
     }
+}
+
+.modal-dialog {
+    max-width: 900px;
+    width: 100%;
+}
+
+.modal-listage {
+    max-height: 400px;
+    overflow: scroll;
 }
 </style>
