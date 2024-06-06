@@ -24,8 +24,8 @@
   --color-nav-itens:rgba(52, 61, 86, 0.984);
   --color-wall-load:rgba(255, 255, 255, 0.661);
 
-  --color-shadow: #cac9c9;
-  --color-shadow-2: #f1f1f1;
+  --color-shadow: #e4e4e4;
+  --color-shadow-2: #a8a8a8;
   --color-gray: #939191;
   --color-ligthgray: #E7EAF0;
   --color-darkgray: #5d5d5d;
@@ -56,8 +56,8 @@
   --color-wall-load:rgba(35, 35, 35, 0.458);
   --color-code : rgba(38, 74, 116, 0.795);
 
-  --color-shadow: rgba(149, 220, 255, 0.35);
-  --color-shadow-2: rgba(149, 220, 255, 0.15);
+  --color-shadow: #141c29;
+  --color-shadow-2: rgb(121, 122, 122);
   --color-imput: #000000;
   --color-input-label: #64d4ec;
   --color-input-focus: #2f2f2f;

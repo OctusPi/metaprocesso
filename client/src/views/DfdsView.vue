@@ -195,13 +195,14 @@ onMounted(() => {
                     <form class="form-row" @submit.prevent="data.save()">
                         <input type="hidden" name="id" v-model="page.data.id">
 
-                        <ul class="nav nav-fill mb-3" id="dfdTab" role="tablist">
+                        <ul class="nav nav-fill mb-4" id="dfdTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link nav-step" id="origin-tab" data-bs-toggle="tab"
+                                <button class="nav-link nav-step active" id="origin-tab" data-bs-toggle="tab"
                                     data-bs-target="#origin-tab-pane" type="button" role="tab"
                                     aria-controls="origin-tab-pane" aria-selected="true">
+                                    <div class="nav-line-step"></div>
                                     <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-bounding-box d-block"></i>
+                                        <i class="bi bi-bounding-box"></i>
                                         <span>Origem</span>
                                     </div>
                                 </button>
@@ -210,8 +211,9 @@ onMounted(() => {
                                 <button class="nav-link nav-step" id="info-tab" data-bs-toggle="tab"
                                     data-bs-target="#info-tab-pane" type="button" role="tab"
                                     aria-controls="info-tab-pane" aria-selected="false">
+                                    <div class="nav-line-step"></div>
                                     <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-chat-square-dots d-block"></i>
+                                        <i class="bi bi-chat-square-dots"></i>
                                         <span>Informações</span>
                                     </div>
                                 </button>
@@ -220,8 +222,9 @@ onMounted(() => {
                                 <button class="nav-link nav-step" id="items-tab" data-bs-toggle="tab"
                                     data-bs-target="#items-tab-pane" type="button" role="tab"
                                     aria-controls="items-tab-pane" aria-selected="false">
+                                    <div class="nav-line-step"></div>
                                     <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-boxes d-block"></i>
+                                        <i class="bi bi-boxes"></i>
                                         <span>Itens</span>
                                     </div>
                                 </button>
@@ -230,8 +233,9 @@ onMounted(() => {
                                 <button class="nav-link nav-step" id="justi-tab" data-bs-toggle="tab"
                                     data-bs-target="#justi-tab-pane" type="button" role="tab"
                                     aria-controls="justi-tab-pane" aria-selected="false">
+                                    <div class="nav-line-step"></div>
                                     <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-file-earmark-text d-block"></i>
+                                        <i class="bi bi-file-earmark-text"></i>
                                         <span>Justificativas</span>
                                     </div>
                                 </button>
@@ -550,21 +554,79 @@ onMounted(() => {
     color: var(--color-text-sec);
 }
 
+.nav-step{
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative;
+    height: 90px;
+}
+
+.nav-line-step{
+    height: 3px;
+    width: 100%;
+    background-color: var(--color-shadow);
+    position: absolute;
+    top: 50%;
+    z-index: 0;
+}
+
 .nav-step-txt{
-    background-color: var(--color-base);
-    color: white;
+    background-color: var(--color-shadow);
+    color: var(--color-shadow-2);
     border-radius: 50%;
-    width: 80px;
-    height: 80px;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: calc(50% - 45px);
 }
 
 .nav-step-txt i{
-    font-size: 2rem;
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-step-txt span{
-    font-size: 0.8rem;
-    font-weight: 700;
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.nav-item .active .nav-step-txt{
+    background-color: var(--color-base);
+    color: white;
+    transition: 400ms;
+}
+
+.nav-item .active .nav-line-step{
+    background: rgb(202,201,201);
+    background: linear-gradient(90deg, var(--color-shadow) 0%, var(--color-base) 50%, var(--color-shadow) 100%);
+    transition: 400ms;
+}
+
+@media (max-width: 755px) {
+    
+    .nav-step{
+        height: 60px;
+    }
+
+    .nav-step-txt{
+        width: 60px;
+        height: 60px;
+        left: calc(50% - 30px);
+    }
+
+    .nav-step-txt i{
+        font-size: 1.2rem;
+    }
+
+    .nav-step-txt span{
+        display: none;
+    }
 }
 
 </style>
