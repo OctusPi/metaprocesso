@@ -77,7 +77,8 @@ const modalData = new Data(modal, emit, modalUi)
 
 function detailsCatalog() {
     http.get(`/catalogitems/${catalogID}/catalog`, emit, (response) => {
-        page.value.catalog = response.data
+        page.value.catalog  = response.data
+        modal.value.baseURL = `/catalogsubcategories/${page.value.catalog?.organ?.id}`
     })
 }
 
@@ -141,8 +142,6 @@ onBeforeMount(() => {
     detailsCatalog()
     data.selects()
     data.list()
-    modal.value.baseURL = `/catalogsubcategories/${page.value.catalog?.organ?.id}`
-    modal.value.search.organ = page.value.catalog?.organ?.id
 })
 
 </script>
