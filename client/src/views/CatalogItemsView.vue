@@ -1,7 +1,8 @@
 <script setup>
-import { onBeforeMount, onMounted, ref, watch } from 'vue'
+import { onBeforeMount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router';
 import http from '@/services/http';
+import Data from '@/services/data';
 import Ui from '@/utils/ui';
 import utils from '@/utils/utils';
 import defines from '@/utils/defines';
@@ -10,13 +11,12 @@ import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import ListCatGov from '@/components/ListCatGov.vue';
-import Data from '@/services/data';
 
-const router = useRoute()
-const emit = defineEmits(['callAlert', 'callRemove'])
-const props = defineProps({ datalist: { type: Array, default: () => [] } })
+const router    = useRoute()
+const emit      = defineEmits(['callAlert', 'callRemove'])
+const props     = defineProps({ datalist: { type: Array, default: () => [] } })
 const catalogID = router.params?.catalog
-const page = ref({
+const page  = ref({
     baseURL: `/catalogitems/${catalogID}`,
     title: {},
     uiview: {},
@@ -52,9 +52,28 @@ const page = ref({
         valids: {}
     }
 })
+const modal = ref({
+    baseURL: `/catalogsubcategories/${page.value.catalog?.organ?.id}`,
+    uiview: {},
+    title: {},
+    datalist: [],
+    data: {
+        organ: page.value.catalog.id
+    },
+    search: {},
+    dataheader: [
+        { key: 'name', title: 'GRUPO' },
+    ],
+    rules: {
+        fields: { name: 'required' },
+        valids: {}
+    },
+})
 
-const ui = new Ui(page, 'Itens do Catálogo')
-const data = new Data(page, emit, ui)
+const ui        = new Ui(page, 'Itens do Catálogo')
+const data      = new Data(page, emit, ui)
+const modalUi   = new Ui(modal, 'Grupos dos Itens')
+const modalData = new Data(modal, emit, modalUi)
 
 function detailsCatalog() {
     http.get(`/catalogitems/${catalogID}/catalog`, emit, (response) => {
@@ -91,38 +110,6 @@ function selectItem(data) {
     }
 }
 
-watch(() => props.datalist, (newdata) => {
-    page.value.datalist = newdata
-})
-
-watch(() => page.value.uiview.register, (value) => {
-    if (value === true && !page.value.data.code) {
-        page.value.data.origin = 2
-        page.value.data.code = utils.randCode()
-        page.value.selects.unds = defines.unds
-    }
-})
-
-const modal = ref({
-    baseURL: `/catalogsubcategories/${page.value.catalog?.organ?.id}`,
-    uiview: {},
-    title: {},
-    datalist: [],
-    data: {},
-    search: {},
-    dataheader: [
-        { key: 'name', title: 'GRUPO' },
-    ],
-    rules: {
-        fields: { name: 'required' },
-        valids: {}
-    },
-})
-
-const modalUi = new Ui(modal, 'Grupos dos Itens')
-const modalData = new Data(modal, emit, modalUi)
-const modalId = 'subgroup-modal'
-
 function modalSave(id) {
     modalData.save(id)
     data.selects()
@@ -138,10 +125,24 @@ function modalRemove(id) {
     data.selects()
 }
 
+watch(() => props.datalist, (newdata) => {
+    page.value.datalist = newdata
+})
+
+watch(() => page.value.uiview.register, (value) => {
+    if (value === true && !page.value.data.code) {
+        page.value.data.origin = 2
+        page.value.data.code = utils.randCode()
+        page.value.selects.unds = defines.unds
+    }
+})
+
 onBeforeMount(() => {
     detailsCatalog()
     data.selects()
     data.list()
+    modal.value.baseURL = `/catalogsubcategories/${page.value.catalog?.organ?.id}`
+    modal.value.search.organ = page.value.catalog?.organ?.id
 })
 
 </script>
@@ -149,6 +150,7 @@ onBeforeMount(() => {
 <template>
     <main class="container-primary">
         <MainNav />
+        
         <section class="container-main">
             <MainHeader :header="{
                 icon: 'bi-book-half',
@@ -175,7 +177,7 @@ onBeforeMount(() => {
                             <i class="bi bi-search"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Localizar</span>
                         </button>
-                        <button @click="modalData.list" data-bs-toggle="modal" :data-bs-target="`#${modalId}`"
+                        <button @click="modalData.list" data-bs-toggle="modal" data-bs-target="#subgroup-modal"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-bookmarks"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Grupos</span>
@@ -366,10 +368,10 @@ onBeforeMount(() => {
         </section>
 
         <!--MODAL SUBCATEGORIES-->
-        <div class="modal fade" :id="modalId" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        <div class="modal fade" id="subgroup-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered mx-auto">
-                <div class="modal-content box">
+            <div class="modal-dialog modal-lg modal-dialog-centered mx-auto">
+                <div class="modal-content p-4 box">
                     <div class="modal-header border border-0">
                         <h1 class="modal-title">
                             <i class="bi bi-bookmarks me-2"></i>
@@ -429,11 +431,6 @@ onBeforeMount(() => {
     .inside-box {
         height: calc(100% - 315px);
     }
-}
-
-.modal-dialog {
-    max-width: 900px;
-    width: 100%;
 }
 
 .modal-listage {
