@@ -144,8 +144,8 @@ class Dfds extends Controller
         }
     }
 
-    public function items()
+    public function items(Request $request)
     {
-        return (new CatalogItems())->list();
+        return (new CatalogItems())->list($request);
     }
 }

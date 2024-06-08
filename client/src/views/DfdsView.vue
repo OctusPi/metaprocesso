@@ -49,8 +49,9 @@ const page = ref({
     }
 })
 const items = ref({
+    search: null,
     search_list: [],
-    selected_item: {}
+    selected_item: null
 })
 
 const ui = new Ui(page, 'DFDs')
@@ -91,6 +92,12 @@ function search_items() {
     http.post(`${page.value.baseURL}/items`, { name: items.value.search }, emit, (resp) => {
         items.value.search_list = resp.data
     })
+}
+
+function select_item(item){
+    items.value.selected_item = item
+    items.value.search = null
+    items.value.search_list = null
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -195,13 +202,14 @@ onMounted(() => {
                     <form class="form-row" @submit.prevent="data.save()">
                         <input type="hidden" name="id" v-model="page.data.id">
 
-                        <ul class="nav nav-fill mb-3" id="dfdTab" role="tablist">
+                        <ul class="nav nav-fill mb-4" id="dfdTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link nav-step" id="origin-tab" data-bs-toggle="tab"
+                                <button class="nav-link nav-step active" id="origin-tab" data-bs-toggle="tab"
                                     data-bs-target="#origin-tab-pane" type="button" role="tab"
                                     aria-controls="origin-tab-pane" aria-selected="true">
+                                    <div class="nav-line-step"></div>
                                     <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-bounding-box d-block"></i>
+                                        <i class="bi bi-bounding-box"></i>
                                         <span>Origem</span>
                                     </div>
                                 </button>
@@ -210,8 +218,9 @@ onMounted(() => {
                                 <button class="nav-link nav-step" id="info-tab" data-bs-toggle="tab"
                                     data-bs-target="#info-tab-pane" type="button" role="tab"
                                     aria-controls="info-tab-pane" aria-selected="false">
+                                    <div class="nav-line-step"></div>
                                     <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-chat-square-dots d-block"></i>
+                                        <i class="bi bi-chat-square-dots"></i>
                                         <span>Informações</span>
                                     </div>
                                 </button>
@@ -220,8 +229,9 @@ onMounted(() => {
                                 <button class="nav-link nav-step" id="items-tab" data-bs-toggle="tab"
                                     data-bs-target="#items-tab-pane" type="button" role="tab"
                                     aria-controls="items-tab-pane" aria-selected="false">
+                                    <div class="nav-line-step"></div>
                                     <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-boxes d-block"></i>
+                                        <i class="bi bi-boxes"></i>
                                         <span>Itens</span>
                                     </div>
                                 </button>
@@ -230,8 +240,9 @@ onMounted(() => {
                                 <button class="nav-link nav-step" id="justi-tab" data-bs-toggle="tab"
                                     data-bs-target="#justi-tab-pane" type="button" role="tab"
                                     aria-controls="justi-tab-pane" aria-selected="false">
+                                    <div class="nav-line-step"></div>
                                     <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-file-earmark-text d-block"></i>
+                                        <i class="bi bi-file-earmark-text"></i>
                                         <span>Justificativas</span>
                                     </div>
                                 </button>
@@ -412,13 +423,12 @@ onMounted(() => {
                                 tabindex="0">
                                 <div class="row mb-3 position-relative">
                                     <div class="col-sm-12">
-                                        <label for="search-item" class="form-label">Localizar Item</label>
+                                        <label for="search-item" class="form-label">Localizar Item no Catálogo Padronizado</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="search-item"
                                                 placeholder="Pesquise por parte do nome do item"
                                                 aria-label="Pesquise por parte do nome do item"
-                                                aria-describedby="btn-search-item" v-model="items.search"
-                                                @keyup.enter="search_items">
+                                                aria-describedby="btn-search-item" v-model="items.search">
                                             <button class="btn btn-group-input" type="button" id="btn-search-item"
                                                 @click="search_items">
                                                 <i class="bi bi-search"></i>
@@ -434,7 +444,7 @@ onMounted(() => {
                                         class="position-absolute my-2 top-100 start-0">
                                         <div class="form-control load-items-cat p-0 m-0">
                                             <ul class="search-list-items">
-                                                <li v-for="i in items.search_list" :key="i.id"
+                                                <li v-for="i in items.search_list" :key="i.id" @click="select_item(i)"
                                                     class="d-flex align-items-center px-3 py-2">
                                                     <div class="me-3 item-type">{{ i.type == '1' ? 'M' : 'S' }}</div>
                                                     <div class="item-desc">
@@ -449,29 +459,31 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="item-program" class="form-label">Programa</label>
-                                        <select name="item-program" class="form-control" id="item-program">
-                                            <option value=""></option>
-                                            <option v-for="p in page.selects.programs" :key="p.id" :value="p.id">{{
-                                                p.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="item-dotation" class="form-label">Dotação</label>
-                                        <select name="item-dotation" class="form-control" id="item-dotation">
-                                            <option value=""></option>
-                                            <option v-for="d in page.selects.dotations" :key="d.id" :value="d.id">{{
-                                                d.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="item-quantity" class="form-label">Quantidade</label>
-                                        <input type="text" name="item-quantity" class="form-control" id="item-quantity"
-                                            v-maska:[masks.masknumbs]>
+                                <div v-if="items.selected_item">
+                                    <div class="row mb-3 g-3">
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="item-program" class="form-label">Programa</label>
+                                            <select name="item-program" class="form-control" id="item-program">
+                                                <option value=""></option>
+                                                <option v-for="p in page.selects.programs" :key="p.id" :value="p.id">{{
+                                                    p.title }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="item-dotation" class="form-label">Dotação</label>
+                                            <select name="item-dotation" class="form-control" id="item-dotation">
+                                                <option value=""></option>
+                                                <option v-for="d in page.selects.dotations" :key="d.id" :value="d.id">{{
+                                                    d.title }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="item-quantity" class="form-label">Quantidade</label>
+                                            <input type="text" name="item-quantity" class="form-control" id="item-quantity"
+                                                v-maska:[masks.masknumbs]>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -520,6 +532,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
+
 .search-list-items {
     list-style: none;
     margin: 0;
@@ -550,21 +563,78 @@ onMounted(() => {
     color: var(--color-text-sec);
 }
 
-.nav-step-txt{
+.nav-step {
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative;
+    height: 90px;
+}
+
+.nav-line-step {
+    height: 3px;
+    width: 100%;
+    background-color: var(--color-shadow);
+    position: absolute;
+    top: 50%;
+    z-index: 0;
+}
+
+.nav-step-txt {
+    background-color: var(--color-shadow);
+    color: var(--color-shadow-2);
+    border-radius: 50%;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: calc(50% - 45px);
+}
+
+.nav-step-txt i {
+    font-size: 1.6rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-step-txt span {
+    font-size: 0.6rem;
+    font-weight: 600;
+}
+
+.nav-item .active .nav-step-txt {
     background-color: var(--color-base);
     color: white;
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
+    transition: 400ms;
 }
 
-.nav-step-txt i{
-    font-size: 2rem;
+.nav-item .active .nav-line-step {
+    background: rgb(202, 201, 201);
+    background: linear-gradient(90deg, var(--color-shadow) 0%, var(--color-base) 50%, var(--color-shadow) 100%);
+    transition: 400ms;
 }
 
-.nav-step-txt span{
-    font-size: 0.8rem;
-    font-weight: 700;
-}
+@media (max-width: 755px) {
 
+    .nav-step {
+        height: 60px;
+    }
+
+    .nav-step-txt {
+        width: 60px;
+        height: 60px;
+        left: calc(50% - 30px);
+    }
+
+    .nav-step-txt i {
+        font-size: 1.2rem;
+    }
+
+    .nav-step-txt span {
+        display: none;
+    }
+}
 </style>
