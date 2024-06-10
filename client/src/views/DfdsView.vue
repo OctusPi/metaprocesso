@@ -11,6 +11,7 @@ import http from '@/services/http';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
+
 const page = ref({
     baseURL: '/dfds',
     title: { primary: '', secondary: '' },
@@ -48,11 +49,19 @@ const page = ref({
         valids: {}
     }
 })
+const tabs = ref([
+    {id:'origin', icon: 'bi-bounding-box', title: 'Origem', status:true},
+    {id:'infos', icon: 'bi-chat-square-dots', title: 'Infos', status:false},
+    {id:'items', icon: 'bi-boxes', title: 'Itens', status:false},
+    {id:'details', icon: 'bi-justify-left', title: 'Detalhes', status:false},
+    {id:'revisor', icon: 'bi-journal-check', title: 'Revisar', status:false}
+])
 const items = ref({
     search: null,
     search_list: [],
     selected_item: null
 })
+
 
 const ui = new Ui(page, 'DFDs')
 const data = new Data(page, emit, ui)
@@ -98,6 +107,33 @@ function select_item(item){
     items.value.selected_item = item
     items.value.search = null
     items.value.search_list = null
+}
+
+function activate_tab(tab){
+    return tabs.value.find(obj => obj.id === tab)?.status
+}
+
+function navigate_tab(flux, target = null){
+    let index = 0
+
+    for (let i = 0; i < tabs.value.length; i++) {
+        const tab = tabs.value[i];
+        if(tab.status){
+            index = i
+            break;
+        }
+    }
+
+    tabs.value.forEach((t, i) => {
+        if(target !== null){
+            t.status = target === t.id
+        }else{
+            let active_index = flux === 'prev' 
+            ? index > 0 ? index - 1 : index
+            : index < (tabs.value.length - 1) ? index + 1 : index
+            t.status = active_index === i
+        }
+    });
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -202,56 +238,25 @@ onMounted(() => {
                     <form class="form-row" @submit.prevent="data.save()">
                         <input type="hidden" name="id" v-model="page.data.id">
 
-                        <ul class="nav nav-fill mb-4" id="dfdTab" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link nav-step active" id="origin-tab" data-bs-toggle="tab"
-                                    data-bs-target="#origin-tab-pane" type="button" role="tab"
-                                    aria-controls="origin-tab-pane" aria-selected="true">
+                        <ul class="nav nav-fill mb-5" id="dfdTab" role="tablist">
+                            <li v-for="tab in tabs" :key="tab.id" class="nav-item" role="presentation">
+                                <button class="nav-link nav-step" data-bs-toggle="tab" type="button" role="tab"
+                                @click="navigate_tab(null, tab.id)"
+                                :class="{'active':tab.status}" 
+                                :id="`${tab.id}-tab`" 
+                                :aria-controls="`${tab.div}-tab-pane`" 
+                                :aria-selected="tab.status ? 'true' : 'false'">
                                     <div class="nav-line-step"></div>
                                     <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-bounding-box"></i>
-                                        <span>Origem</span>
-                                    </div>
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link nav-step" id="info-tab" data-bs-toggle="tab"
-                                    data-bs-target="#info-tab-pane" type="button" role="tab"
-                                    aria-controls="info-tab-pane" aria-selected="false">
-                                    <div class="nav-line-step"></div>
-                                    <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-chat-square-dots"></i>
-                                        <span>Informações</span>
-                                    </div>
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link nav-step" id="items-tab" data-bs-toggle="tab"
-                                    data-bs-target="#items-tab-pane" type="button" role="tab"
-                                    aria-controls="items-tab-pane" aria-selected="false">
-                                    <div class="nav-line-step"></div>
-                                    <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-boxes"></i>
-                                        <span>Itens</span>
-                                    </div>
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link nav-step" id="justi-tab" data-bs-toggle="tab"
-                                    data-bs-target="#justi-tab-pane" type="button" role="tab"
-                                    aria-controls="justi-tab-pane" aria-selected="false">
-                                    <div class="nav-line-step"></div>
-                                    <div class="nav-step-txt mx-auto">
-                                        <i class="bi bi-file-earmark-text"></i>
-                                        <span>Justificativas</span>
+                                        <i class="bi" :class="tab.icon"></i>
+                                        <span>{{ tab.title }}</span>
                                     </div>
                                 </button>
                             </li>
                         </ul>
 
                         <div class="tab-content" id="dfdTabContent">
-                            <div class="tab-pane fade show active" id="origin-tab-pane" role="tabpanel"
-                                aria-labelledby="origin-tab" tabindex="0">
+                            <div class="tab-pane fade" :class="{'show active':activate_tab('origin')}" id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="organ" class="form-label">Orgão</label>
@@ -287,7 +292,6 @@ onMounted(() => {
                                         </select>
                                     </div>
                                 </div>
-
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="demandant" class="form-label">Demandante</label>
@@ -318,8 +322,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="info-tab-pane" role="tabpanel" aria-labelledby="info-tab"
-                                tabindex="0">
+                            <div class="tab-pane fade" :class="{'show active':activate_tab('infos')}" id="infos-tab-pane" role="tabpanel" aria-labelledby="infos-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="date_ini" class="form-label">Data Envio Demanda</label>
@@ -381,7 +384,7 @@ onMounted(() => {
                                         <label for="description" class="form-label d-flex justify-content-between">
                                             Descrição sucinta do objeto
                                             <a href="#" class="a-ia" @click="generate('object')"><i
-                                                    class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
                                         <textarea name="description" class="form-control" rows="4"
                                             :class="{ 'form-control-alert': page.rules.valids.description }"
@@ -419,8 +422,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab"
-                                tabindex="0">
+                            <div class="tab-pane fade" :class="{'show active':activate_tab('items')}" id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
                                 <div class="row mb-3 position-relative">
                                     <div class="col-sm-12">
                                         <label for="search-item" class="form-label">Localizar Item no Catálogo Padronizado</label>
@@ -428,7 +430,7 @@ onMounted(() => {
                                             <input type="text" class="form-control" id="search-item"
                                                 placeholder="Pesquise por parte do nome do item"
                                                 aria-label="Pesquise por parte do nome do item"
-                                                aria-describedby="btn-search-item" v-model="items.search">
+                                                aria-describedby="btn-search-item" v-model="items.search" @keydown.enter.prevent="search_items">
                                             <button class="btn btn-group-input" type="button" id="btn-search-item"
                                                 @click="search_items">
                                                 <i class="bi bi-search"></i>
@@ -487,14 +489,13 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" id="justi-tab-pane" role="tabpanel" aria-labelledby="justi-tab"
-                                tabindex="0">
+                            <div class="tab-pane fade" :class="{'show active':activate_tab('details')}" id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12">
                                         <label for="justification" class="form-label d-flex justify-content-between">
                                             Justificativa da necessidade da contratação
                                             <a href="#" class="a-ia" @click="generate('justify')"><i
-                                                    class="bi bi-cpu me-1"></i> Gerar Automáticamente</a>
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
                                         <textarea name="justification" class="form-control" rows="4"
                                             :class="{ 'form-control-alert': page.rules.valids.justification }"
@@ -506,8 +507,7 @@ onMounted(() => {
                                         <label for="justification_quantity"
                                             class="form-label d-flex justify-content-between">
                                             Justificativa dos quantitativos demandados
-                                            <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar
-                                                Automáticamente</a>
+                                            <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
                                         <textarea name="justification_quantity" class="form-control" rows="4"
                                             :class="{ 'form-control-alert': page.rules.valids.justification_quantity }"
@@ -516,14 +516,27 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
+                            <div class="tab-pane fade" :class="{'show active':activate_tab('revisor')}" id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
+                               Revisor 
+                            </div>
                         </div>
-
+                        
                         <div class="d-flex flex-row-reverse mt-4">
-                            <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">Cancelar <i
-                                    class="bi bi-x-circle"></i></button>
-                            <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
-                                    class="bi bi-check2-circle"></i></button>
+                            
+                            <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">
+                                Cancelar <i class="bi bi-x-circle"></i>
+                            </button>
+                            <button type="submit" class="btn btn-outline-primary me-2">
+                                Salvar <i class="bi bi-check2-circle"></i>
+                            </button>
+                            <button @click="navigate_tab('next')" type="button" class="btn btn-outline-secondary me-2">
+                                <i class="bi bi-arrow-right-circle"></i>
+                            </button>
+                            <button @click="navigate_tab('prev')" type="button" class="btn btn-outline-secondary me-2">
+                                <i class="bi bi-arrow-left-circle"></i>
+                            </button>
                         </div>
+                        
                     </form>
                 </div>
             </div>
@@ -567,7 +580,7 @@ onMounted(() => {
     margin: 0 !important;
     padding: 0 !important;
     position: relative;
-    height: 90px;
+    height: 80px;
 }
 
 .nav-line-step {
@@ -583,25 +596,25 @@ onMounted(() => {
     background-color: var(--color-shadow);
     color: var(--color-shadow-2);
     border-radius: 50%;
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: absolute;
     top: 0;
-    left: calc(50% - 45px);
+    left: calc(50% - 40px);
 }
 
 .nav-step-txt i {
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     margin: 0;
     padding: 0;
 }
 
 .nav-step-txt span {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     font-weight: 600;
 }
 
