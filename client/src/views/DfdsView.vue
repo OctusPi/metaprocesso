@@ -50,18 +50,22 @@ const page = ref({
     }
 })
 const tabs = ref([
-    {id:'origin', icon: 'bi-bounding-box', title: 'Origem', status:true},
-    {id:'infos', icon: 'bi-chat-square-dots', title: 'Infos', status:false},
-    {id:'items', icon: 'bi-boxes', title: 'Itens', status:false},
-    {id:'details', icon: 'bi-justify-left', title: 'Detalhes', status:false},
-    {id:'revisor', icon: 'bi-journal-check', title: 'Revisar', status:false}
+    { id: 'origin', icon: 'bi-bounding-box', title: 'Origem', status: true },
+    { id: 'infos', icon: 'bi-chat-square-dots', title: 'Infos', status: false },
+    { id: 'items', icon: 'bi-boxes', title: 'Itens', status: false },
+    { id: 'details', icon: 'bi-justify-left', title: 'Detalhes', status: false },
+    { id: 'revisor', icon: 'bi-journal-check', title: 'Revisar', status: false }
 ])
 const items = ref({
     search: null,
     search_list: [],
-    selected_item: null
+    selected_item: {
+        item: null,
+        program: null,
+        dotation: null,
+        quantity: 0
+    }
 })
-
 
 const ui = new Ui(page, 'DFDs')
 const data = new Data(page, emit, ui)
@@ -100,37 +104,48 @@ function generate(type) {
 function search_items() {
     http.post(`${page.value.baseURL}/items`, { name: items.value.search }, emit, (resp) => {
         items.value.search_list = resp.data
+        items.value.selected_item.item = null
     })
 }
 
-function select_item(item){
-    items.value.selected_item = item
+function select_item(item) {
+    items.value.selected_item.item = item
     items.value.search = null
-    items.value.search_list = null
+    items.value.search_list = []
 }
 
-function activate_tab(tab){
+function add_item(){
+    if(!page.value.data.items){
+        page.value.data.items = []
+    }
+    
+    page.value.data.items.push({...items.value.selected_item})
+    items.value.selected_item.item = null
+    console.log(page.value.data)
+}
+
+function activate_tab(tab) {
     return tabs.value.find(obj => obj.id === tab)?.status
 }
 
-function navigate_tab(flux, target = null){
+function navigate_tab(flux, target = null) {
     let index = 0
 
     for (let i = 0; i < tabs.value.length; i++) {
         const tab = tabs.value[i];
-        if(tab.status){
+        if (tab.status) {
             index = i
             break;
         }
     }
 
     tabs.value.forEach((t, i) => {
-        if(target !== null){
+        if (target !== null) {
             t.status = target === t.id
-        }else{
-            let active_index = flux === 'prev' 
-            ? index > 0 ? index - 1 : index
-            : index < (tabs.value.length - 1) ? index + 1 : index
+        } else {
+            let active_index = flux === 'prev'
+                ? index > 0 ? index - 1 : index
+                : index < (tabs.value.length - 1) ? index + 1 : index
             t.status = active_index === i
         }
     });
@@ -241,11 +256,9 @@ onMounted(() => {
                         <ul class="nav nav-fill mb-5" id="dfdTab" role="tablist">
                             <li v-for="tab in tabs" :key="tab.id" class="nav-item" role="presentation">
                                 <button class="nav-link nav-step" data-bs-toggle="tab" type="button" role="tab"
-                                @click="navigate_tab(null, tab.id)"
-                                :class="{'active':tab.status}" 
-                                :id="`${tab.id}-tab`" 
-                                :aria-controls="`${tab.div}-tab-pane`" 
-                                :aria-selected="tab.status ? 'true' : 'false'">
+                                    @click="navigate_tab(null, tab.id)" :class="{ 'active': tab.status }"
+                                    :id="`${tab.id}-tab`" :aria-controls="`${tab.div}-tab-pane`"
+                                    :aria-selected="tab.status ? 'true' : 'false'">
                                     <div class="nav-line-step"></div>
                                     <div class="nav-step-txt mx-auto">
                                         <i class="bi" :class="tab.icon"></i>
@@ -256,7 +269,8 @@ onMounted(() => {
                         </ul>
 
                         <div class="tab-content" id="dfdTabContent">
-                            <div class="tab-pane fade" :class="{'show active':activate_tab('origin')}" id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
+                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('origin') }"
+                                id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="organ" class="form-label">Orgão</label>
@@ -322,7 +336,8 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{'show active':activate_tab('infos')}" id="infos-tab-pane" role="tabpanel" aria-labelledby="infos-tab" tabindex="0">
+                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('infos') }"
+                                id="infos-tab-pane" role="tabpanel" aria-labelledby="infos-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="date_ini" class="form-label">Data Envio Demanda</label>
@@ -422,15 +437,18 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{'show active':activate_tab('items')}" id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
+                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('items') }"
+                                id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
                                 <div class="row mb-3 position-relative">
                                     <div class="col-sm-12">
-                                        <label for="search-item" class="form-label">Localizar Item no Catálogo Padronizado</label>
+                                        <label for="search-item" class="form-label">Localizar Item no Catálogo
+                                            Padronizado</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="search-item"
                                                 placeholder="Pesquise por parte do nome do item"
                                                 aria-label="Pesquise por parte do nome do item"
-                                                aria-describedby="btn-search-item" v-model="items.search" @keydown.enter.prevent="search_items">
+                                                aria-describedby="btn-search-item" v-model="items.search"
+                                                @keydown.enter.prevent="search_items">
                                             <button class="btn btn-group-input" type="button" id="btn-search-item"
                                                 @click="search_items">
                                                 <i class="bi bi-search"></i>
@@ -461,11 +479,21 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-                                <div v-if="items.selected_item">
+                                <div v-if="items.selected_item.item">
+                                    <div class="form-control d-flex align-items-center px-3 py-2 mb-3">
+                                        <div class="me-3 item-type">{{ items.selected_item.item.type == '1' ? 'M' : 'S' }}</div>
+                                        <div class="item-desc">
+                                            <h3 class="m-0 p-0 small">{{ `${items.selected_item.item.code} - ${items.selected_item.item.name}` }}</h3>
+                                            <p class="m-0 p-0 small">{{ `Unidade: ${items.selected_item.item.und} - Volume:
+                                                ${items.selected_item.item.volume} - Categoria: ${page.selects.categories.find(o =>
+                                                o.id === items.selected_item.item.category)?.title} ` }}</p>
+                                            <p class="m-0 p-0 small">{{ items.selected_item.item.description }}</p>
+                                        </div>
+                                    </div>
                                     <div class="row mb-3 g-3">
                                         <div class="col-sm-12 col-md-4">
                                             <label for="item-program" class="form-label">Programa</label>
-                                            <select name="item-program" class="form-control" id="item-program">
+                                            <select name="item-program" class="form-control" id="item-program" v-model="items.selected_item.program">
                                                 <option value=""></option>
                                                 <option v-for="p in page.selects.programs" :key="p.id" :value="p.id">{{
                                                     p.title }}
@@ -474,7 +502,7 @@ onMounted(() => {
                                         </div>
                                         <div class="col-sm-12 col-md-4">
                                             <label for="item-dotation" class="form-label">Dotação</label>
-                                            <select name="item-dotation" class="form-control" id="item-dotation">
+                                            <select name="item-dotation" class="form-control" id="item-dotation" v-model="items.selected_item.dotation">
                                                 <option value=""></option>
                                                 <option v-for="d in page.selects.dotations" :key="d.id" :value="d.id">{{
                                                     d.title }}
@@ -483,13 +511,19 @@ onMounted(() => {
                                         </div>
                                         <div class="col-sm-12 col-md-4">
                                             <label for="item-quantity" class="form-label">Quantidade</label>
-                                            <input type="text" name="item-quantity" class="form-control" id="item-quantity"
-                                                v-maska:[masks.masknumbs]>
+                                            <div class="input-group">
+                                                <input type="text" name="item-quantity" class="form-control"
+                                                    id="item-quantity" v-maska:[masks.masknumbs] v-model="items.selected_item.quantity">
+                                                <button @click="add_item" class="btn btn-group-input" type="button" id="btn-search-item">
+                                                    <i class="bi bi-plus-circle"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{'show active':activate_tab('details')}" id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
+                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('details') }"
+                                id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12">
                                         <label for="justification" class="form-label d-flex justify-content-between">
@@ -516,13 +550,13 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{'show active':activate_tab('revisor')}" id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
-                               Revisor 
+                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('revisor') }"
+                                id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
+                                Revisor
                             </div>
                         </div>
-                        
+
                         <div class="d-flex flex-row-reverse mt-4">
-                            
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">
                                 Cancelar <i class="bi bi-x-circle"></i>
                             </button>
@@ -536,7 +570,6 @@ onMounted(() => {
                                 <i class="bi bi-arrow-left-circle"></i>
                             </button>
                         </div>
-                        
                     </form>
                 </div>
             </div>
@@ -545,7 +578,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
 .search-list-items {
     list-style: none;
     margin: 0;
@@ -569,6 +601,10 @@ onMounted(() => {
 .item-type {
     width: 35px;
     border-right: var(--border-box);
+}
+
+.item-desc h3{
+    color: var(--color-base);
 }
 
 .item-desc p {
