@@ -59,6 +59,14 @@ const tabs = ref([
 const items = ref({
     search: null,
     search_list: [],
+    headers_list:[
+        {obj:'item', key:'code', title:'COD', sub:[{obj:'item', key:'type'}]},
+        {obj:'item', key:'name', title:'ITEM'},
+        {obj:'item', key:'description', title:'DESCRIÇÃO'},
+        {obj:'item', key:'und', title:'UNIT.', sub:[{obj:'item', key:'volume'}]},
+        {key:'program', title:'VINC.', sub:[{key:'dotation'}]},
+        {key: 'quantity', title: 'QUANT.'}
+    ],
     selected_item: {
         item: null,
         program: null,
@@ -69,37 +77,6 @@ const items = ref({
 
 const ui = new Ui(page, 'DFDs')
 const data = new Data(page, emit, ui)
-
-function generate(type) {
-
-    const dfd = page.value.data
-    const slc = page.value.selects
-    const base = {
-        organ: slc?.organs.find(o => o.id === dfd.organ),
-        unit: slc?.units.find(o => o.id === dfd.unit),
-        type: slc?.acquisitions.find(o => o.id === dfd.acquisition_type),
-    }
-    let payload = ''
-
-    switch (type) {
-        case 'object':
-            payload = `Solicitação: gere DESCRIÇÃO DO OBJETO de contrataçao de empresa especializada para fornecimento de ${base.type?.title} para ${dfd?.description} para atender as necessidades da ${base.unit?.title} vinculado a ${base.organ?.title}. `
-            break
-        case 'jsutify':
-            payload = {}
-            break
-        case 'quantify':
-            payload = {}
-            break
-        default:
-            break
-    }
-
-    http.post('/dfds/generate', { payload }, emit, (resp) => {
-        console.log(resp)
-        page.value.data.description = resp.data.choices[0].text.replaceAll('\n', ' ')
-    })
-}
 
 function search_items() {
     http.post(`${page.value.baseURL}/items`, { name: items.value.search }, emit, (resp) => {
@@ -149,6 +126,37 @@ function navigate_tab(flux, target = null) {
             t.status = active_index === i
         }
     });
+}
+
+function generate(type) {
+
+const dfd = page.value.data
+const slc = page.value.selects
+const base = {
+    organ: slc?.organs.find(o => o.id === dfd.organ),
+    unit: slc?.units.find(o => o.id === dfd.unit),
+    type: slc?.acquisitions.find(o => o.id === dfd.acquisition_type),
+}
+let payload = ''
+
+switch (type) {
+    case 'object':
+        payload = `Solicitação: gere DESCRIÇÃO DO OBJETO de contrataçao de empresa especializada para fornecimento de ${base.type?.title} para ${dfd?.description} para atender as necessidades da ${base.unit?.title} vinculado a ${base.organ?.title}. `
+        break
+    case 'jsutify':
+        payload = {}
+        break
+    case 'quantify':
+        payload = {}
+        break
+    default:
+        break
+}
+
+http.post('/dfds/generate', { payload }, emit, (resp) => {
+    console.log(resp)
+    page.value.data.description = resp.data.choices[0].text.replaceAll('\n', ' ')
+})
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -439,6 +447,8 @@ onMounted(() => {
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': activate_tab('items') }"
                                 id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
+                                
+                                <!-- search items -->
                                 <div class="row mb-3 position-relative">
                                     <div class="col-sm-12">
                                         <label for="search-item" class="form-label">Localizar Item no Catálogo
@@ -479,6 +489,8 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- add item -->
                                 <div v-if="items.selected_item.item">
                                     <div class="form-control d-flex align-items-center px-3 py-2 mb-3">
                                         <div class="me-3 item-type">{{ items.selected_item.item.type == '1' ? 'M' : 'S' }}</div>
@@ -521,6 +533,15 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- list items -->
+                                <div v-if="page.data?.items">
+                                    <TableList 
+                                    :header="items.headers_list" 
+                                    :body="page.data?.items"
+                                    :actions="['update', 'fastdelete']" />
+                                </div>
+
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': activate_tab('details') }"
                                 id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
