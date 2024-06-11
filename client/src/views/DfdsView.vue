@@ -9,6 +9,7 @@ import TableList from '@/components/TableList.vue';
 import Data from '@/services/data';
 import http from '@/services/http';
 import notifys from '@/utils/notifys';
+import gpt from '@/services/gpt';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -150,7 +151,7 @@ function navigate_tab(flux, target = null) {
     });
 }
 
-function generate(type) {
+async function generate(type) {
 
     const dfd = page.value.data
     const slc = page.value.selects
@@ -158,27 +159,28 @@ function generate(type) {
         organ: slc?.organs.find(o => o.id === dfd.organ),
         unit: slc?.units.find(o => o.id === dfd.unit),
         type: slc?.acquisitions.find(o => o.id === dfd.acquisition_type),
+        items: JSON.stringify(page.value.data.items),
+        description: page.value.data.description,
+        justification: page.value.data.justification
     }
-    let payload = ''
+
+    const payload = gpt.make_payload(type, base)
+    const data = await gpt.generate(`${page.value.baseURL}/generate`, payload, emit)
+    console.log('aquiiii'+data)
 
     switch (type) {
-        case 'object':
-            payload = `Solicitação: gere DESCRIÇÃO DO OBJETO de contrataçao de empresa especializada para fornecimento de ${base.type?.title} para ${dfd?.description} para atender as necessidades da ${base.unit?.title} vinculado a ${base.organ?.title}. `
-            break
-        case 'jsutify':
-            payload = {}
-            break
-        case 'quantify':
-            payload = {}
-            break
+        case 'dfd_description':
+            page.value.data.description = data
+            break;
+        case 'dfd_justification':
+            page.value.data.justification = data
+            break;
+        case 'dfd_quantitys':
+            page.value.data.justification_quantity = data
+            break;
         default:
-            break
+            break;
     }
-
-    http.post('/dfds/generate', { payload }, emit, (resp) => {
-        console.log(resp)
-        page.value.data.description = resp.data.choices[0].text.replaceAll('\n', ' ')
-    })
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -428,7 +430,7 @@ onMounted(() => {
                                     <div class="col-sm-12">
                                         <label for="description" class="form-label d-flex justify-content-between">
                                             Descrição sucinta do objeto
-                                            <a href="#" class="a-ia" @click="generate('object')"><i
+                                            <a href="#" class="a-ia" @click="generate('dfd_description')"><i
                                                     class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
                                         <textarea name="description" class="form-control" rows="4"
@@ -445,8 +447,7 @@ onMounted(() => {
                                             id="suggested_hiring" v-model="page.data.suggested_hiring">
                                             <option value=""></option>
                                             <option v-for="s in page.selects.hirings" :value="s.id" :key="s.id">
-                                                {{
-                                                    s.title }}
+                                                {{ s.title }}
                                             </option>
                                         </select>
                                     </div>
@@ -588,7 +589,7 @@ onMounted(() => {
                                     <div class="col-sm-12">
                                         <label for="justification" class="form-label d-flex justify-content-between">
                                             Justificativa da necessidade da contratação
-                                            <a href="#" class="a-ia" @click="generate('justify')"><i
+                                            <a href="#" class="a-ia" @click="generate('dfd_justification')"><i
                                                     class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
                                         <textarea name="justification" class="form-control" rows="4"
@@ -601,7 +602,7 @@ onMounted(() => {
                                         <label for="justification_quantity"
                                             class="form-label d-flex justify-content-between">
                                             Justificativa dos quantitativos demandados
-                                            <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                            <a href="#" class="a-ia" @click="generate('dfd_quantitys')"><i class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
                                         <textarea name="justification_quantity" class="form-control" rows="4"
                                             :class="{ 'form-control-alert': page.rules.valids.justification_quantity }"
