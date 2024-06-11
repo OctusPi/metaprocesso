@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->timestamps();
             $table->json('dfds');
+            $table->integer('status');
             $table->string('number', 20);
             $table->text('general_info');
             $table->text('object_description');

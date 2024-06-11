@@ -11,6 +11,7 @@ use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Demandants;
 use App\Http\Controllers\Dfds;
 use App\Http\Controllers\Dotations;
+use App\Http\Controllers\Etps;
 use App\Http\Controllers\Management;
 use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\Organs;
@@ -270,6 +271,21 @@ Route::controller(Dfds::class)->group(function () {
         });
     });
 })->name('dfds');
+
+Route::controller(Etps::class)->group(function () {
+    Route::prefix('/etps')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::post('/generate', 'generate');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects', 'selects');
+        });
+    });
+})->name('etps');
 
 Route::fallback(function () {
     return Response()->json(Notify::warning('Destino solicitado não existe...'), 404);
