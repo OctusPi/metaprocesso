@@ -38,4 +38,12 @@ class Etp extends Model
     protected $casts = [
         'dfds' => Json::class,
     ];
+
+    public static function list_status(): array
+    {
+        return [
+            ['id'=>0,'title'=> 'Rascunho'],
+            ['id'=>1,'title'=> 'Concluído'],
+        ];
+    }
 }

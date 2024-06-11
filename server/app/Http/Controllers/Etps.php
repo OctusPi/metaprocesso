@@ -81,6 +81,7 @@ class Etps extends Controller
     {
         return Response()->json([
             'dfds' => Utils::map_select(Data::list(Dfd::class, order: ['code'])),
+            'status' => Etp::list_status(),
         ], 200);
     }
 }

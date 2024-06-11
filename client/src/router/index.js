@@ -121,6 +121,12 @@ const router = createRouter({
 			component: () => import('../views/DfdsView.vue')
 		},
 		{
+			path: '/etps',
+			name: 'etps',
+			meta: { auth: true },
+			component: () => import('../views/EtpsView.vue')
+		},
+		{
 			path: '/forbidden',
 			name: 'forbidden',
 			component: () => import('../views/ForbiddenView.vue')

@@ -1,7 +1,6 @@
 import './assets/css/main.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min'
 
-
 import { createApp } from 'vue'
 import { vMaska } from "maska"
 
