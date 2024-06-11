@@ -123,7 +123,7 @@ class Dfds extends Controller
         $data = [
             'model'  => 'gpt-3.5-turbo-instruct',
             'prompt' => $request->payload,
-            'max_tokens' => 256
+            'max_tokens' => 512
         ];
 
         try{

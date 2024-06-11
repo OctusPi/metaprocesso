@@ -6,7 +6,9 @@ const props = defineProps({
     header: { type: Array },
     body: { type: Array, default: () => [] },
     actions: { type: Array },
-    casts: { type: Object }
+    casts: { type: Object },
+    smaller: {type: Boolean, default:() => false},
+    count:{type: Boolean, default: () => true}
 })
 
 const emit = defineEmits([
@@ -52,11 +54,11 @@ watch(() => props.body, (newValue) => {
 </script>
 
 <template>
-    <p v-if="body.length" class="small txt-color-sec ps-5">
+    <p v-if="body.length && props.count" class="small txt-color-sec ps-5">
         <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
     </p>
     <div v-if="body.length" class="table-responsive-sm">
-        <table class="table table-borderless table-striped table-hover">
+        <table class="table-borderless table-striped table-hover" :class="props.smaller ? 'table tablesm' : 'table'">
             <thead v-if="props.header">
                 <tr>
                     <th scope="col" v-for="h in props.header" :key="h.key" @click="orderBy(h.key)">
@@ -89,6 +91,10 @@ watch(() => props.body, (newValue) => {
 </template>
 
 <style>
+th{
+    white-space:nowrap;
+}
+
 .table tr th:first-child {
     padding-left: 50px;
 }
@@ -121,5 +127,26 @@ watch(() => props.body, (newValue) => {
 
 .table th:hover i {
     color: var(--color-base);
+}
+
+.tablesm tr td{
+    font-size: 0.85rem !important;
+}
+
+.tablesm tr th:first-child {
+    padding-left: 5px !important;
+}
+
+.tablesm tr td:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    padding-left: 5px !important;
+}
+
+.tablesm tr td:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding-right: 5px !important;
+    text-align: end;
 }
 </style>

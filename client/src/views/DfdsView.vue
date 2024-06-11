@@ -8,6 +8,8 @@ import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import Data from '@/services/data';
 import http from '@/services/http';
+import notifys from '@/utils/notifys';
+import gpt from '@/services/gpt';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -16,7 +18,7 @@ const page = ref({
     baseURL: '/dfds',
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
-    data: {},
+    data: {items: []},
     datalist: props.datalist,
     dataheader: [
         { key: 'name', title: 'IDENTIFICAÇÃO' },
@@ -59,13 +61,13 @@ const tabs = ref([
 const items = ref({
     search: null,
     search_list: [],
-    headers_list:[
-        {obj:'item', key:'code', title:'COD', sub:[{obj:'item', key:'type'}]},
-        {obj:'item', key:'name', title:'ITEM'},
-        {obj:'item', key:'description', title:'DESCRIÇÃO'},
-        {obj:'item', key:'und', title:'UNIT.', sub:[{obj:'item', key:'volume'}]},
-        {key:'program', title:'VINC.', sub:[{key:'dotation'}]},
-        {key: 'quantity', title: 'QUANT.'}
+    headers_list: [
+        { obj: 'item', key: 'code', title: 'COD', sub: [{ obj: 'item', cast:'title', key: 'type' }] },
+        { obj: 'item', key: 'name', title: 'ITEM' },
+        { obj: 'item', key: 'description', title: 'DESCRIÇÃO' },
+        { obj: 'item', key: 'und', title: 'UDN', sub: [{ obj: 'item', key: 'volume' }] },
+        { key: 'program', cast:'title', title: 'VINC.', sub: [{ key: 'dotation', cast:'title' }] },
+        { key: 'quantity', title: 'QUANT.' }
     ],
     selected_item: {
         item: null,
@@ -91,14 +93,35 @@ function select_item(item) {
     items.value.search_list = []
 }
 
-function add_item(){
-    if(!page.value.data.items){
+function add_item() {
+
+    if(!items.value.selected_item.quantity || items.value.selected_item.quantity == 0){
+        emit('callAlert', notifys.warning('A quantidade não pode ser zero!'))
+        return
+    }
+
+    if (!page.value.data.items) {
         page.value.data.items = []
     }
+
+    items.value.selected_item.id = `${items.value.selected_item.item?.id}:${items.value.selected_item.program ?? '0'}:${items.value.selected_item.dotation ?? '0'}`
+    let item = page.value.data.items.find(obj => obj.id === items.value.selected_item.id)
     
-    page.value.data.items.push({...items.value.selected_item})
-    items.value.selected_item.item = null
-    console.log(page.value.data)
+    if(item){
+        item = {...items.value.selected_item }
+    }else{
+        page.value.data.items.push({...items.value.selected_item })
+    }
+
+    items.value.selected_item = {}
+}
+
+function update_item(id) {
+    items.value.selected_item = page.value.data.items.find(obj => obj.id === id)
+}
+
+function delete_item(id) {
+    page.value.data.items = page.value.data.items.filter(obj => obj.id !== id)
 }
 
 function activate_tab(tab) {
@@ -128,35 +151,36 @@ function navigate_tab(flux, target = null) {
     });
 }
 
-function generate(type) {
+async function generate(type) {
 
-const dfd = page.value.data
-const slc = page.value.selects
-const base = {
-    organ: slc?.organs.find(o => o.id === dfd.organ),
-    unit: slc?.units.find(o => o.id === dfd.unit),
-    type: slc?.acquisitions.find(o => o.id === dfd.acquisition_type),
-}
-let payload = ''
+    const dfd = page.value.data
+    const slc = page.value.selects
+    const base = {
+        organ: slc?.organs.find(o => o.id === dfd.organ),
+        unit: slc?.units.find(o => o.id === dfd.unit),
+        type: slc?.acquisitions.find(o => o.id === dfd.acquisition_type),
+        items: JSON.stringify(page.value.data.items),
+        description: page.value.data.description,
+        justification: page.value.data.justification
+    }
 
-switch (type) {
-    case 'object':
-        payload = `Solicitação: gere DESCRIÇÃO DO OBJETO de contrataçao de empresa especializada para fornecimento de ${base.type?.title} para ${dfd?.description} para atender as necessidades da ${base.unit?.title} vinculado a ${base.organ?.title}. `
-        break
-    case 'jsutify':
-        payload = {}
-        break
-    case 'quantify':
-        payload = {}
-        break
-    default:
-        break
-}
+    const payload = gpt.make_payload(type, base)
+    const data = await gpt.generate(`${page.value.baseURL}/generate`, payload, emit)
+    console.log('aquiiii'+data)
 
-http.post('/dfds/generate', { payload }, emit, (resp) => {
-    console.log(resp)
-    page.value.data.description = resp.data.choices[0].text.replaceAll('\n', ' ')
-})
+    switch (type) {
+        case 'dfd_description':
+            page.value.data.description = data
+            break;
+        case 'dfd_justification':
+            page.value.data.justification = data
+            break;
+        case 'dfd_quantitys':
+            page.value.data.justification_quantity = data
+            break;
+        default:
+            break;
+    }
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -265,7 +289,7 @@ onMounted(() => {
                             <li v-for="tab in tabs" :key="tab.id" class="nav-item" role="presentation">
                                 <button class="nav-link nav-step" data-bs-toggle="tab" type="button" role="tab"
                                     @click="navigate_tab(null, tab.id)" :class="{ 'active': tab.status }"
-                                    :id="`${tab.id}-tab`" :aria-controls="`${tab.div}-tab-pane`"
+                                    :id="`${tab.id}-tab`" :aria-controls="`${tab.id}-tab-pane`"
                                     :aria-selected="tab.status ? 'true' : 'false'">
                                     <div class="nav-line-step"></div>
                                     <div class="nav-step-txt mx-auto">
@@ -406,7 +430,7 @@ onMounted(() => {
                                     <div class="col-sm-12">
                                         <label for="description" class="form-label d-flex justify-content-between">
                                             Descrição sucinta do objeto
-                                            <a href="#" class="a-ia" @click="generate('object')"><i
+                                            <a href="#" class="a-ia" @click="generate('dfd_description')"><i
                                                     class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
                                         <textarea name="description" class="form-control" rows="4"
@@ -423,8 +447,7 @@ onMounted(() => {
                                             id="suggested_hiring" v-model="page.data.suggested_hiring">
                                             <option value=""></option>
                                             <option v-for="s in page.selects.hirings" :value="s.id" :key="s.id">
-                                                {{
-                                                    s.title }}
+                                                {{ s.title }}
                                             </option>
                                         </select>
                                     </div>
@@ -447,7 +470,7 @@ onMounted(() => {
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': activate_tab('items') }"
                                 id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
-                                
+
                                 <!-- search items -->
                                 <div class="row mb-3 position-relative">
                                     <div class="col-sm-12">
@@ -493,11 +516,15 @@ onMounted(() => {
                                 <!-- add item -->
                                 <div v-if="items.selected_item.item">
                                     <div class="form-control d-flex align-items-center px-3 py-2 mb-3">
-                                        <div class="me-3 item-type">{{ items.selected_item.item.type == '1' ? 'M' : 'S' }}</div>
+                                        <div class="me-3 item-type">{{ items.selected_item.item.type == '1' ? 'M' : 'S'
+                                            }}</div>
                                         <div class="item-desc">
-                                            <h3 class="m-0 p-0 small">{{ `${items.selected_item.item.code} - ${items.selected_item.item.name}` }}</h3>
-                                            <p class="m-0 p-0 small">{{ `Unidade: ${items.selected_item.item.und} - Volume:
-                                                ${items.selected_item.item.volume} - Categoria: ${page.selects.categories.find(o =>
+                                            <h3 class="m-0 p-0 small">{{ `${items.selected_item.item.code} -
+                                                ${items.selected_item.item.name}` }}</h3>
+                                            <p class="m-0 p-0 small">{{ `Unidade: ${items.selected_item.item.und} -
+                                                Volume:
+                                                ${items.selected_item.item.volume} - Categoria:
+                                                ${page.selects.categories.find(o =>
                                                 o.id === items.selected_item.item.category)?.title} ` }}</p>
                                             <p class="m-0 p-0 small">{{ items.selected_item.item.description }}</p>
                                         </div>
@@ -505,7 +532,8 @@ onMounted(() => {
                                     <div class="row mb-3 g-3">
                                         <div class="col-sm-12 col-md-4">
                                             <label for="item-program" class="form-label">Programa</label>
-                                            <select name="item-program" class="form-control" id="item-program" v-model="items.selected_item.program">
+                                            <select name="item-program" class="form-control" id="item-program"
+                                                v-model="items.selected_item.program">
                                                 <option value=""></option>
                                                 <option v-for="p in page.selects.programs" :key="p.id" :value="p.id">{{
                                                     p.title }}
@@ -514,7 +542,8 @@ onMounted(() => {
                                         </div>
                                         <div class="col-sm-12 col-md-4">
                                             <label for="item-dotation" class="form-label">Dotação</label>
-                                            <select name="item-dotation" class="form-control" id="item-dotation" v-model="items.selected_item.dotation">
+                                            <select name="item-dotation" class="form-control" id="item-dotation"
+                                                v-model="items.selected_item.dotation">
                                                 <option value=""></option>
                                                 <option v-for="d in page.selects.dotations" :key="d.id" :value="d.id">{{
                                                     d.title }}
@@ -525,8 +554,10 @@ onMounted(() => {
                                             <label for="item-quantity" class="form-label">Quantidade</label>
                                             <div class="input-group">
                                                 <input type="text" name="item-quantity" class="form-control"
-                                                    id="item-quantity" v-maska:[masks.masknumbs] v-model="items.selected_item.quantity">
-                                                <button @click="add_item" class="btn btn-group-input" type="button" id="btn-search-item">
+                                                    id="item-quantity" v-maska:[masks.masknumbs]
+                                                    v-model="items.selected_item.quantity">
+                                                <button @click="add_item" class="btn btn-group-input" type="button"
+                                                    id="btn-search-item">
                                                     <i class="bi bi-plus-circle"></i>
                                                 </button>
                                             </div>
@@ -537,9 +568,18 @@ onMounted(() => {
                                 <!-- list items -->
                                 <div v-if="page.data?.items">
                                     <TableList 
-                                    :header="items.headers_list" 
-                                    :body="page.data?.items"
-                                    :actions="['update', 'fastdelete']" />
+                                        :smaller="true"
+                                        :count="false"
+                                        :header="items.headers_list" 
+                                        :body="page.data?.items"
+                                        :actions="['update', 'fastdelete']"
+                                        :casts="{
+                                            'type':[{id:1, title:'Material'}, {id:2, title:'Serviço'}],
+                                            'program':page.selects.programs,
+                                            'dotation':page.selects.dotations
+                                        }"
+                                        @action:update="update_item"
+                                        @action:fastdelete="delete_item" />
                                 </div>
 
                             </div>
@@ -549,7 +589,7 @@ onMounted(() => {
                                     <div class="col-sm-12">
                                         <label for="justification" class="form-label d-flex justify-content-between">
                                             Justificativa da necessidade da contratação
-                                            <a href="#" class="a-ia" @click="generate('justify')"><i
+                                            <a href="#" class="a-ia" @click="generate('dfd_justification')"><i
                                                     class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
                                         <textarea name="justification" class="form-control" rows="4"
@@ -562,7 +602,7 @@ onMounted(() => {
                                         <label for="justification_quantity"
                                             class="form-label d-flex justify-content-between">
                                             Justificativa dos quantitativos demandados
-                                            <a href="#" class="a-ia"><i class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                            <a href="#" class="a-ia" @click="generate('dfd_quantitys')"><i class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
                                         <textarea name="justification_quantity" class="form-control" rows="4"
                                             :class="{ 'form-control-alert': page.rules.valids.justification_quantity }"
@@ -624,7 +664,7 @@ onMounted(() => {
     border-right: var(--border-box);
 }
 
-.item-desc h3{
+.item-desc h3 {
     color: var(--color-base);
 }
 
