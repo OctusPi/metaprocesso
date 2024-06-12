@@ -6,6 +6,7 @@ import masks from '@/utils/masks';
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
+import InputRichText from '@/components/InputRichText.vue';
 import Data from '@/services/data';
 import http from '@/services/http';
 
@@ -40,7 +41,8 @@ const page = ref({
     }
 })
 const tabs = ref([
-    { id: 'revisor', icon: 'bi-journal-check', title: 'Revisar', status: false }
+    { id: 'init', icon: 'bi-journal-check', title: 'Revisar', status: false },
+    { id: 'revisor', icon: 'bi-journal-check', title: 'Revisar', status: false },
 ])
 
 const ui = new Ui(page, 'ETPs')
@@ -157,24 +159,11 @@ onMounted(() => {
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
                     </div>
                     <div class="action-buttons d-flex my-2">
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-action btn-action-primary" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical"></i>
-                                <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-item c-pointer" @click="ui.toggle('register')">
-                                    <i class="bi bi-plus-circle me-1"></i> Novo em Branco
-                                </li>
-                                <li class="dropdown-item c-pointer">
-                                    <i class="bi bi-journal-bookmark me-1"></i> Novo a partir de Contrato
-                                </li>
-                                <li class="dropdown-item c-pointer">
-                                    <i class="bi bi-journal-album me-1"></i> Novo a partir de DFD
-                                </li>
-                            </ul>
-                        </div>
+                        <button @click="ui.toggle('register')" type="button"
+                            class="btn btn-action btn-action-primary ms-2">
+                            <i class="bi bi-plus-circle"></i>
+                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
+                        </button>
                         <button @click="ui.toggle('search')" type="button"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-search"></i>
@@ -222,6 +211,10 @@ onMounted(() => {
                         </ul>
 
                         <div class="tab-content" id="dfdTabContent">
+                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('init') }"
+                                id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
+                                <InputRichText field="test" />
+                            </div>
                             <div class="tab-pane fade" :class="{ 'show active': activate_tab('revisor') }"
                                 id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
                                 Revisor
