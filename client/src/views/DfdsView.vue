@@ -18,7 +18,7 @@ const page = ref({
     baseURL: '/dfds',
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
-    data: {items: []},
+    data: { items: [] },
     datalist: props.datalist,
     dataheader: [
         { key: 'name', title: 'IDENTIFICAÇÃO' },
@@ -62,11 +62,11 @@ const items = ref({
     search: null,
     search_list: [],
     headers_list: [
-        { obj: 'item', key: 'code', title: 'COD', sub: [{ obj: 'item', cast:'title', key: 'type' }] },
+        { obj: 'item', key: 'code', title: 'COD', sub: [{ obj: 'item', cast: 'title', key: 'type' }] },
         { obj: 'item', key: 'name', title: 'ITEM' },
         { obj: 'item', key: 'description', title: 'DESCRIÇÃO' },
         { obj: 'item', key: 'und', title: 'UDN', sub: [{ obj: 'item', key: 'volume' }] },
-        { key: 'program', cast:'title', title: 'VINC.', sub: [{ key: 'dotation', cast:'title' }] },
+        { key: 'program', cast: 'title', title: 'VINC.', sub: [{ key: 'dotation', cast: 'title' }] },
         { key: 'quantity', title: 'QUANT.' }
     ],
     selected_item: {
@@ -95,7 +95,7 @@ function select_item(item) {
 
 function add_item() {
 
-    if(!items.value.selected_item.quantity || items.value.selected_item.quantity == 0){
+    if (!items.value.selected_item.quantity || items.value.selected_item.quantity == 0) {
         emit('callAlert', notifys.warning('A quantidade não pode ser zero!'))
         return
     }
@@ -106,11 +106,11 @@ function add_item() {
 
     items.value.selected_item.id = `${items.value.selected_item.item?.id}:${items.value.selected_item.program ?? '0'}:${items.value.selected_item.dotation ?? '0'}`
     let item = page.value.data.items.find(obj => obj.id === items.value.selected_item.id)
-    
-    if(item){
-        item = {...items.value.selected_item }
-    }else{
-        page.value.data.items.push({...items.value.selected_item })
+
+    if (item) {
+        item = { ...items.value.selected_item }
+    } else {
+        page.value.data.items.push({ ...items.value.selected_item })
     }
 
     items.value.selected_item = {}
@@ -164,23 +164,23 @@ async function generate(type) {
         justification: page.value.data.justification
     }
 
-    const payload = gpt.make_payload(type, base)
-    const data = await gpt.generate(`${page.value.baseURL}/generate`, payload, emit)
-    console.log('aquiiii'+data)
-
+    let callresp = null
     switch (type) {
         case 'dfd_description':
-            page.value.data.description = data
+            callresp = (resp) => { page.value.data.description = resp.data?.choices[0]?.text }
             break;
         case 'dfd_justification':
-            page.value.data.justification = data
+            callresp = (resp) => { page.value.data.justification = resp.data?.choices[0]?.text }
             break;
         case 'dfd_quantitys':
-            page.value.data.justification_quantity = data
+            callresp = (resp) => { page.value.data.justification_quantity = resp.data?.choices[0]?.text }
             break;
         default:
             break;
     }
+
+    const payload = gpt.make_payload(type, base)
+    gpt.generate(`${page.value.baseURL}/generate`, payload, emit, callresp)
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -567,19 +567,12 @@ onMounted(() => {
 
                                 <!-- list items -->
                                 <div v-if="page.data?.items">
-                                    <TableList 
-                                        :smaller="true"
-                                        :count="false"
-                                        :header="items.headers_list" 
-                                        :body="page.data?.items"
-                                        :actions="['update', 'fastdelete']"
-                                        :casts="{
-                                            'type':[{id:1, title:'Material'}, {id:2, title:'Serviço'}],
-                                            'program':page.selects.programs,
-                                            'dotation':page.selects.dotations
-                                        }"
-                                        @action:update="update_item"
-                                        @action:fastdelete="delete_item" />
+                                    <TableList :smaller="true" :count="false" :header="items.headers_list"
+                                        :body="page.data?.items" :actions="['update', 'fastdelete']" :casts="{
+                                            'type': [{ id: 1, title: 'Material' }, { id: 2, title: 'Serviço' }],
+                                            'program': page.selects.programs,
+                                            'dotation': page.selects.dotations
+                                        }" @action:update="update_item" @action:fastdelete="delete_item" />
                                 </div>
 
                             </div>
@@ -602,7 +595,8 @@ onMounted(() => {
                                         <label for="justification_quantity"
                                             class="form-label d-flex justify-content-between">
                                             Justificativa dos quantitativos demandados
-                                            <a href="#" class="a-ia" @click="generate('dfd_quantitys')"><i class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                            <a href="#" class="a-ia" @click="generate('dfd_quantitys')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
                                         <textarea name="justification_quantity" class="form-control" rows="4"
                                             :class="{ 'form-control-alert': page.rules.valids.justification_quantity }"
