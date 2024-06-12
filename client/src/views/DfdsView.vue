@@ -607,7 +607,79 @@ onMounted(() => {
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': activate_tab('revisor') }"
                                 id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
-                                Revisor
+                                <!-- origin -->
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title d-flex mb-4">
+                                        <div class="bar-revisor-title me-2"></div>
+                                        <div class="txt-revisor-title">
+                                            <h3>Origem da Demanda</h3>
+                                            <p>Dados referentes a origem e responsabilidade pela Demanda</p>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor-content">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h4>Orgão</h4>
+                                                <p>Nome do Orgao</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>Unidade</h4>
+                                                <p>Nome da Unidade</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>Ordenador de Despesas</h4>
+                                                <p>Nome do Ordenador</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h4>Demadantes</h4>
+                                                <p>Nome do demadnate</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>Comissão / Equipe de Planejamento</h4>
+                                                <p>Nome da Comissão e data de Atividade</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>Integrantes da Comissão</h4>
+                                                <p>Nome - Cargo</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Infos -->
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title d-flex mb-4">
+                                        <div class="bar-revisor-title me-2"></div>
+                                        <div class="txt-revisor-title">
+                                            <h3>Informações Gerais</h3>
+                                            <p>Dados de prioridade, previsão de contratação e detalhamento de Objeto</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Items -->
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title d-flex mb-4">
+                                        <div class="bar-revisor-title me-2"></div>
+                                        <div class="txt-revisor-title">
+                                            <h3>Lista de Itens</h3>
+                                            <p>Lista de materiais ou serviços vinculados a Demanda</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- details -->
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title d-flex mb-4">
+                                        <div class="bar-revisor-title me-2"></div>
+                                        <div class="txt-revisor-title">
+                                            <h3>Detalhamento da Necessidade</h3>
+                                            <p>Justificativas para necessidade e quantitativo de itens demandados</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -719,6 +791,47 @@ onMounted(() => {
     background: rgb(202, 201, 201);
     background: linear-gradient(90deg, var(--color-shadow) 0%, var(--color-base) 50%, var(--color-shadow) 100%);
     transition: 400ms;
+}
+
+.box-revisor {
+    border-bottom: var(--border-box);
+}
+
+.bar-revisor-title {
+    width: 5px;
+    background-color: var(--color-base);
+    border-radius: 2px;
+}
+
+.box-revisor-title h3 {
+    color: var(--color-base);
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+}
+
+.box-revisor-title p {
+    color: var(--color-text-secondary);
+    font-size: small;
+    margin: 0;
+    padding: 0;
+}
+
+.box-revisor-content{
+    padding: 0 10px 0 10px;
+}
+
+.box-revisor-content h4{
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.box-revisor-content p{
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
 }
 
 @media (max-width: 755px) {
