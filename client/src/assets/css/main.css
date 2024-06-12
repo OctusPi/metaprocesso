@@ -71,6 +71,10 @@
   right: 18px;
 }
 
+.txt-very-small{
+  font-size: 0.6rem !important;
+}
+
 .txt-color{
   color: var(--color-text);
 }

@@ -657,6 +657,53 @@ onMounted(() => {
                                             <p>Dados de prioridade, previsão de contratação e detalhamento de Objeto</p>
                                         </div>
                                     </div>
+                                    <div class="box-revisor-content">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <h4>Data Envio</h4>
+                                                <p>DD/MM/AAAA</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Previsão Contratação</h4>
+                                                <p>DD de MMMMMMMM</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Ano PCA</h4>
+                                                <p>AAAA</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Nivel de Prioridade</h4>
+                                                <p>Alta</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <h4>Valor Estimado</h4>
+                                                <p>$9.900.999,00</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Tipo de Aquisição</h4>
+                                                <p>*********</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Forma Sugerida</h4>
+                                                <p>*************</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Vinculo ou Dependência</h4>
+                                                <p class="txt-very-small p-0 m-0">Indicação de vinculação ou dependência com o
+                                                    objeto de outro documento de formalização de demanda </p>
+                                                <p>********</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Descrição sucinta do Objeto </h4>
+                                                <p>*********************</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- Items -->
@@ -668,6 +715,17 @@ onMounted(() => {
                                             <p>Lista de materiais ou serviços vinculados a Demanda</p>
                                         </div>
                                     </div>
+                                    <div class="box-revisor-content">
+                                        <!-- list items -->
+                                        <div v-if="page.data?.items">
+                                            <TableList :smaller="true" :count="false" :header="items.headers_list"
+                                                :body="page.data?.items" :casts="{
+                                                    'type': [{ id: 1, title: 'Material' }, { id: 2, title: 'Serviço' }],
+                                                    'program': page.selects.programs,
+                                                    'dotation': page.selects.dotations
+                                                }" @action:update="update_item" @action:fastdelete="delete_item" />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <!-- details -->
@@ -677,6 +735,20 @@ onMounted(() => {
                                         <div class="txt-revisor-title">
                                             <h3>Detalhamento da Necessidade</h3>
                                             <p>Justificativas para necessidade e quantitativo de itens demandados</p>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor-content">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Justificativa da necessidade da contratação </h4>
+                                                <p>*********************</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Justificativa dos quantitativos demandados</h4>
+                                                <p>*********************</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -817,11 +889,11 @@ onMounted(() => {
     padding: 0;
 }
 
-.box-revisor-content{
+.box-revisor-content {
     padding: 0 10px 0 10px;
 }
 
-.box-revisor-content h4{
+.box-revisor-content h4 {
     margin: 0;
     padding: 0;
     font-weight: 600;
@@ -829,7 +901,7 @@ onMounted(() => {
     color: var(--color-text);
 }
 
-.box-revisor-content p{
+.box-revisor-content p {
     color: var(--color-text-secondary);
     font-size: 0.9rem;
 }
