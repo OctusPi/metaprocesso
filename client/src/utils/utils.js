@@ -20,8 +20,14 @@ function randCode(len = 12) {
     return final
 }
 
+function getTxt(objs, key_subject, key_search = 'id', key_txt = 'title'){
+    const  f = objs.find(o => o[key_search] === key_subject)
+    return f ? f[key_txt] : '*****'
+}
+
 export default {
     load,
     dateNow,
-    randCode
+    randCode,
+    getTxt
 }
