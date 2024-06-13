@@ -342,7 +342,7 @@ onMounted(() => {
                                     type="button"
                                     role="tab"
                                     @click="navtab.navigate_tab(null, tab.id)"
-                                    :class="{ active: tab.status }"
+                                    :class="{ 'active': tab.status }"
                                     :id="`${tab.id}-tab`"
                                     :aria-controls="`${tab.id}-tab-pane`"
                                     :aria-selected="tab.status ? 'true' : 'false'"
@@ -352,7 +352,7 @@ onMounted(() => {
                                         <i class="bi" :class="tab.icon"></i>
                                     </div>
                                 </button>
-                                <span class="nav-label">{{ tab.title }}</span>
+                                <span class="nav-label" :class="{ 'active-label': tab.status }">{{ tab.title }}</span>
                             </li>
                         </ul>
 
@@ -1272,7 +1272,7 @@ onMounted(() => {
     margin: 0 !important;
     padding: 0 !important;
     position: relative;
-    height: 70px;
+    height: 60px;
 }
 
 .nav-line-step {
@@ -1288,15 +1288,15 @@ onMounted(() => {
     background-color: var(--color-shadow);
     color: var(--color-shadow-2);
     border-radius: 50%;
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     position: absolute;
     top: 0;
-    left: calc(50% - 35px);
+    left: calc(50% - 30px);
 }
 
 .nav-step-txt i {
@@ -1308,6 +1308,7 @@ onMounted(() => {
 .nav-label {
     font-size: 0.7rem;
     font-weight: 600;
+    color: var(--color-shadow-2);
 }
 
 .nav-item .active .nav-step-txt {
@@ -1325,6 +1326,10 @@ onMounted(() => {
         var(--color-shadow) 100%
     );
     transition: 400ms;
+}
+
+.active-label{
+    color: var(--color-base);
 }
 
 .box-revisor {
@@ -1370,13 +1375,13 @@ onMounted(() => {
 
 @media (max-width: 755px) {
     .nav-step {
-        height: 60px;
+        height: 50px;
     }
 
     .nav-step-txt {
-        width: 60px;
-        height: 60px;
-        left: calc(50% - 30px);
+        width: 50px;
+        height: 50px;
+        left: calc(50% - 25px);
     }
 
     .nav-step-txt i {
