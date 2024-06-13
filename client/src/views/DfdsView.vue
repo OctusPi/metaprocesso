@@ -18,7 +18,7 @@ const page = ref({
     baseURL: '/dfds',
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
-    data: {items: []},
+    data: { items: [] },
     datalist: props.datalist,
     dataheader: [
         { key: 'name', title: 'IDENTIFICAÇÃO' },
@@ -62,11 +62,11 @@ const items = ref({
     search: null,
     search_list: [],
     headers_list: [
-        { obj: 'item', key: 'code', title: 'COD', sub: [{ obj: 'item', cast:'title', key: 'type' }] },
+        { obj: 'item', key: 'code', title: 'COD', sub: [{ obj: 'item', cast: 'title', key: 'type' }] },
         { obj: 'item', key: 'name', title: 'ITEM' },
         { obj: 'item', key: 'description', title: 'DESCRIÇÃO' },
         { obj: 'item', key: 'und', title: 'UDN', sub: [{ obj: 'item', key: 'volume' }] },
-        { key: 'program', cast:'title', title: 'VINC.', sub: [{ key: 'dotation', cast:'title' }] },
+        { key: 'program', cast: 'title', title: 'VINC.', sub: [{ key: 'dotation', cast: 'title' }] },
         { key: 'quantity', title: 'QUANT.' }
     ],
     selected_item: {
@@ -95,7 +95,7 @@ function select_item(item) {
 
 function add_item() {
 
-    if(!items.value.selected_item.quantity || items.value.selected_item.quantity == 0){
+    if (!items.value.selected_item.quantity || items.value.selected_item.quantity == 0) {
         emit('callAlert', notifys.warning('A quantidade não pode ser zero!'))
         return
     }
@@ -106,11 +106,11 @@ function add_item() {
 
     items.value.selected_item.id = `${items.value.selected_item.item?.id}:${items.value.selected_item.program ?? '0'}:${items.value.selected_item.dotation ?? '0'}`
     let item = page.value.data.items.find(obj => obj.id === items.value.selected_item.id)
-    
-    if(item){
-        item = {...items.value.selected_item }
-    }else{
-        page.value.data.items.push({...items.value.selected_item })
+
+    if (item) {
+        item = { ...items.value.selected_item }
+    } else {
+        page.value.data.items.push({ ...items.value.selected_item })
     }
 
     items.value.selected_item = {}
@@ -164,23 +164,23 @@ async function generate(type) {
         justification: page.value.data.justification
     }
 
-    const payload = gpt.make_payload(type, base)
-    const data = await gpt.generate(`${page.value.baseURL}/generate`, payload, emit)
-    console.log('aquiiii'+data)
-
+    let callresp = null
     switch (type) {
         case 'dfd_description':
-            page.value.data.description = data
+            callresp = (resp) => { page.value.data.description = resp.data?.choices[0]?.text }
             break;
         case 'dfd_justification':
-            page.value.data.justification = data
+            callresp = (resp) => { page.value.data.justification = resp.data?.choices[0]?.text }
             break;
         case 'dfd_quantitys':
-            page.value.data.justification_quantity = data
+            callresp = (resp) => { page.value.data.justification_quantity = resp.data?.choices[0]?.text }
             break;
         default:
             break;
     }
+
+    const payload = gpt.make_payload(type, base)
+    gpt.generate(`${page.value.baseURL}/generate`, payload, emit, callresp)
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -567,19 +567,12 @@ onMounted(() => {
 
                                 <!-- list items -->
                                 <div v-if="page.data?.items">
-                                    <TableList 
-                                        :smaller="true"
-                                        :count="false"
-                                        :header="items.headers_list" 
-                                        :body="page.data?.items"
-                                        :actions="['update', 'fastdelete']"
-                                        :casts="{
-                                            'type':[{id:1, title:'Material'}, {id:2, title:'Serviço'}],
-                                            'program':page.selects.programs,
-                                            'dotation':page.selects.dotations
-                                        }"
-                                        @action:update="update_item"
-                                        @action:fastdelete="delete_item" />
+                                    <TableList :smaller="true" :count="false" :header="items.headers_list"
+                                        :body="page.data?.items" :actions="['update', 'fastdelete']" :casts="{
+                                            'type': [{ id: 1, title: 'Material' }, { id: 2, title: 'Serviço' }],
+                                            'program': page.selects.programs,
+                                            'dotation': page.selects.dotations
+                                        }" @action:update="update_item" @action:fastdelete="delete_item" />
                                 </div>
 
                             </div>
@@ -602,7 +595,8 @@ onMounted(() => {
                                         <label for="justification_quantity"
                                             class="form-label d-flex justify-content-between">
                                             Justificativa dos quantitativos demandados
-                                            <a href="#" class="a-ia" @click="generate('dfd_quantitys')"><i class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                            <a href="#" class="a-ia" @click="generate('dfd_quantitys')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
                                         <textarea name="justification_quantity" class="form-control" rows="4"
                                             :class="{ 'form-control-alert': page.rules.valids.justification_quantity }"
@@ -613,7 +607,151 @@ onMounted(() => {
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': activate_tab('revisor') }"
                                 id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
-                                Revisor
+                                <!-- origin -->
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title d-flex mb-4">
+                                        <div class="bar-revisor-title me-2"></div>
+                                        <div class="txt-revisor-title">
+                                            <h3>Origem da Demanda</h3>
+                                            <p>Dados referentes a origem e responsabilidade pela Demanda</p>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor-content">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h4>Orgão</h4>
+                                                <p>Nome do Orgao</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>Unidade</h4>
+                                                <p>Nome da Unidade</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>Ordenador de Despesas</h4>
+                                                <p>Nome do Ordenador</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h4>Demadantes</h4>
+                                                <p>Nome do demadnate</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>Comissão / Equipe de Planejamento</h4>
+                                                <p>Nome da Comissão e data de Atividade</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>Integrantes da Comissão</h4>
+                                                <p>Nome - Cargo</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Infos -->
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title d-flex mb-4">
+                                        <div class="bar-revisor-title me-2"></div>
+                                        <div class="txt-revisor-title">
+                                            <h3>Informações Gerais</h3>
+                                            <p>Dados de prioridade, previsão de contratação e detalhamento de Objeto</p>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor-content">
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <h4>Data Envio</h4>
+                                                <p>DD/MM/AAAA</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Previsão Contratação</h4>
+                                                <p>DD de MMMMMMMM</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Ano PCA</h4>
+                                                <p>AAAA</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Nivel de Prioridade</h4>
+                                                <p>Alta</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <h4>Valor Estimado</h4>
+                                                <p>$9.900.999,00</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Tipo de Aquisição</h4>
+                                                <p>*********</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Forma Sugerida</h4>
+                                                <p>*************</p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Vinculo ou Dependência</h4>
+                                                <p class="txt-very-small p-0 m-0">Indicação de vinculação ou dependência com o
+                                                    objeto de outro documento de formalização de demanda </p>
+                                                <p>********</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Descrição sucinta do Objeto </h4>
+                                                <p>*********************</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Items -->
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title d-flex mb-4">
+                                        <div class="bar-revisor-title me-2"></div>
+                                        <div class="txt-revisor-title">
+                                            <h3>Lista de Itens</h3>
+                                            <p>Lista de materiais ou serviços vinculados a Demanda</p>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor-content">
+                                        <!-- list items -->
+                                        <div v-if="page.data?.items">
+                                            <TableList :smaller="true" :count="false" :header="items.headers_list"
+                                                :body="page.data?.items" :casts="{
+                                                    'type': [{ id: 1, title: 'Material' }, { id: 2, title: 'Serviço' }],
+                                                    'program': page.selects.programs,
+                                                    'dotation': page.selects.dotations
+                                                }" @action:update="update_item" @action:fastdelete="delete_item" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- details -->
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title d-flex mb-4">
+                                        <div class="bar-revisor-title me-2"></div>
+                                        <div class="txt-revisor-title">
+                                            <h3>Detalhamento da Necessidade</h3>
+                                            <p>Justificativas para necessidade e quantitativo de itens demandados</p>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor-content">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Justificativa da necessidade da contratação </h4>
+                                                <p>*********************</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <h4>Justificativa dos quantitativos demandados</h4>
+                                                <p>*********************</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -725,6 +863,47 @@ onMounted(() => {
     background: rgb(202, 201, 201);
     background: linear-gradient(90deg, var(--color-shadow) 0%, var(--color-base) 50%, var(--color-shadow) 100%);
     transition: 400ms;
+}
+
+.box-revisor {
+    border-bottom: var(--border-box);
+}
+
+.bar-revisor-title {
+    width: 5px;
+    background-color: var(--color-base);
+    border-radius: 2px;
+}
+
+.box-revisor-title h3 {
+    color: var(--color-base);
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+}
+
+.box-revisor-title p {
+    color: var(--color-text-secondary);
+    font-size: small;
+    margin: 0;
+    padding: 0;
+}
+
+.box-revisor-content {
+    padding: 0 10px 0 10px;
+}
+
+.box-revisor-content h4 {
+    margin: 0;
+    padding: 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+.box-revisor-content p {
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
 }
 
 @media (max-width: 755px) {
