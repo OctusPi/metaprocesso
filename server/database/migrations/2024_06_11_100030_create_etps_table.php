@@ -14,9 +14,12 @@ return new class extends Migration {
             $table->id();
             $table->timestamps();
             $table->json('dfds');
+            $table->string('protocol', 20);
+            $table->date('emission');
+            $table->foreignId('organ')->constrained('organs');
+            $table->foreignId('comission')->constrained('comission');
             $table->integer('status');
             $table->string('number', 20);
-            $table->text('general_info');
             $table->text('object_description');
             $table->string('object_classification');
             $table->text('necessity');
