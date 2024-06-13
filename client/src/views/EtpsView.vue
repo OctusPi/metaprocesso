@@ -45,11 +45,13 @@ const page = ref({
 const ui = new Ui(page, 'ETPs')
 const data = new Data(page, emit, ui)
 const tabs = ref([
-    { id: 'dfds', icon: 'bi-journal-album', title: 'DFDs', status: true },
-    { id: 'infos_gerais', icon: 'bi-journal-album', title: 'Geral', status: false },
-    { id: 'necessity', icon: 'bi-file-earmark-text', title: 'Necessidade', status: false },
-    { id: 'solution', icon: 'bi-file-earmark-text', title: 'Solução', status: false },
-    { id: 'revisor', icon: 'bi-journal-check', title: 'Revisar', status: false },
+    { id: 'info', icon: 'bi-info-circle', title: 'Infos', status: true },
+    { id: 'dfds', icon: 'bi-journal-album', title: 'DFDs', status: false },
+    { id: 'necessidade', icon: 'bi-question-circle', title: 'Necessidade', status: false },
+    { id: 'solucao', icon: 'bi-card-checklist', title: 'Solução', status: false },
+    { id: 'planejamento', icon: 'bi-journal-check', title: 'Planejamento', status: false },
+    { id: 'viabilidade', icon: 'bi-check-all', title: 'Viabilidade', status: false },
+    { id: 'anexos', icon: 'bi-file-pdf', title: 'Anexos', status: false },
 ])
 const tabSwitch = new Tabs(tabs)
 
@@ -139,43 +141,123 @@ onMounted(() => {
                         </ul>
 
                         <div class="tab-content" id="dfdTabContent">
-                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('info') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-12">
-                                        <label for="dfds" class="form-label">Selecione as DFDs</label>
-                                        <InputMultSelect v-model="page.data.dfds" :options="page.selects.dfds"
-                                            identify="dfds" />
+                                <div class="row mb3 g-3">
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="name" class="form-label">Protocolo</label>
+                                        <input type="text" name="name" class="form-control"
+                                            :class="{ 'form-control-alert': page.rules.valids.name }" id="name"
+                                            placeholder="XXXXXXXXX" v-model="page.data.name">
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="emission" class="form-label">Emissão</label>
+                                        <input type="text" name="emission" class="form-control"
+                                            :class="{ 'form-control-alert': page.rules.valids.emission }" id="emission"
+                                            placeholder="dd/mm/aaaa" v-maska:[masks.maskdate]
+                                            v-model="page.data.emission">
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="status" class="form-label">Status</label>
+                                        <select name="status" class="form-control"
+                                            :class="{ 'form-control-alert': page.rules.valids.status }" id="status"
+                                            v-model="page.data.status">
+                                            <option value=""></option>
+                                            <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{
+                                                s.title }}
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('infos_gerais') }"
-                                id="infos_gerais-tab-pane" role="tabpanel" aria-labelledby="infos_gerais-tab" tabindex="0">
+                                <div class="row mb-3 g-3">
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="organ" class="form-label">Órgão</label>
+                                        <select name="organ" class="form-control" id="organ">
+                                            <option value=""></option>
+                                            <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">
+                                                {{ o.title }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-8">
+                                        <label for="comission" class="form-label">Comissão</label>
+                                        <select name="comission" class="form-control" id="comission">
+                                            <option value=""></option>
+                                            <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
+                                                {{ o.title }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
                                         <label for="object_description" class="form-label">Descrição do Objeto</label>
                                         <InputRichText />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="object_classification" class="form-label">Classificação do Objeto</label>
+                                        <label for="object_classification" class="form-label">Classificação do
+                                            Objeto</label>
                                         <InputRichText />
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('necessity') }"
+
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
+                                id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
+                                <div class="row mb-3 g-3">
+                                    <div class="col-sm-12 col-md-8">
+                                        <label for="object" class="form-label">Objeto</label>
+                                        <input type="text" name="object" class="form-control" id="object"
+                                            v-model="page.search.object" placeholder="Pesquise por partes do objecto">
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="s-organ" class="form-label">Orgão</label>
+                                        <select name="organ" class="form-control" id="s-organ"
+                                            @change="data.selects('organ', page.search.organ)">
+                                            <option value=""></option>
+                                            <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{
+                                                o.title }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-8">
+                                        <label for="s-unit" class="form-label">Unidade</label>
+                                        <select name="unit" class="form-control" id="s-unit">
+                                            <option value=""></option>
+                                            <option v-for="o in page.selects.units" :key="o.id" :value="o.id">{{ o.title
+                                                }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="emission" class="form-label">Data</label>
+                                        <input type="text" name="emission" class="form-control" id="emission"
+                                            placeholder="dd/mm/aaaa" v-maska:[masks.maskdate]>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="dfds" class="form-label">Selecione as DFDs</label>
+                                        <InputMultSelect :options="page.selects.dfds" identify="dfds" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('necessidade') }"
                                 id="necessity-tab-pane" role="tabpanel" aria-labelledby="necessity-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="object_description" class="form-label">Descrição da Necessidade</label>
+                                        <label for="object_description" class="form-label">Descrição da
+                                            Necessidade</label>
                                         <InputRichText />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="contract_requirements" class="form-label">Descrição dos Requisitos da Contratação</label>
+                                        <label for="contract_requirements" class="form-label">Descrição dos Requisitos
+                                            da Contratação</label>
                                         <InputRichText />
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('solution') }"
+
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('solucao') }"
                                 id="solution-tab-pane" role="tabpanel" aria-labelledby="solution-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
@@ -183,31 +265,90 @@ onMounted(() => {
                                         <InputRichText />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="solution_full_description" class="form-label">Descrição da Solução como um Todo</label>
+                                        <label for="solution_full_description" class="form-label">Descrição da Solução
+                                            como um Todo</label>
                                         <InputRichText />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="solution_full_description" class="form-label">Estimativa das Quantidades Contratadas</label>
+                                        <label for="solution_full_description" class="form-label">Estimativa das
+                                            Quantidades Contratadas</label>
                                         <InputRichText />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="contract_expected_price" class="form-label">Estimativa do Preço da Contratação</label>
+                                        <label for="contract_expected_price" class="form-label">Estimativa do Preço da
+                                            Contratação</label>
                                         <InputRichText />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="contract_expected_price" class="form-label">Justificativa para o Parcelamento ou Não</label>
+                                        <label for="contract_expected_price" class="form-label">Justificativa para o
+                                            Parcelamento ou Não</label>
                                         <InputRichText />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="correlated_contracts" class="form-label">Contratações Correlatas e/ou Interdependentes</label>
+                                        <label for="correlated_contracts" class="form-label">Contratações Correlatas
+                                            e/ou Interdependentes</label>
                                         <InputRichText />
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('revisor') }"
-                                id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
-                                Revisor
+
+                            <div class="tab-pane fade"
+                                :class="{ 'show active': tabSwitch.activate_tab('planejamento') }"
+                                id="solution-tab-pane" role="tabpanel" aria-labelledby="solution-tab" tabindex="0">
+                                <div class="row mb-3 g-3">
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="expected_results" class="form-label">Resultados Pretendidos</label>
+                                        <InputRichText />
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="contract_previous_actions" class="form-label">Providências a Serem
+                                            Tomadas</label>
+                                        <InputRichText />
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="ambiental_impacts" class="form-label">Possíveis Impactos
+                                            Ambientais</label>
+                                        <InputRichText />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('viabilidade') }"
+                                id="solution-tab-pane" role="tabpanel" aria-labelledby="solution-tab" tabindex="0">
+                                <div class="row mb-3 g-3">
+                                    <div class="col-sm-12 col-md-12">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="viability" value="1">
+                                            <label class="form-check-label" for="viability">Esta equipe de planejamento
+                                                declara viável esta contratação com base neste ETP, consoante o inciso
+                                                XIII. art 7o da IN 40 de maio de 2022 da SEGES/ME.</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="viability" value="0">
+                                            <label class="form-check-label" for="viability">Esta equipe de planejamento
+                                                declara inviável esta contratação com base neste ETP, consoante o inciso
+                                                XIII. art 7o da IN 40 de maio de 2022 da SEGES/ME.</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('anexos') }"
+                                id="solution-tab-pane" role="tabpanel" aria-labelledby="solution-tab" tabindex="0">
+                                <div class="row mb-3 g-3">
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="contract_calculus_memories_file" class="form-label">Anexar Memórias
+                                            de Cálculo</label>
+                                        <input @change="handleFile" type="file" name="contract_calculus_memories_file"
+                                            class="form-control">
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="contract_expected_price_file" class="form-label">Anexar Expectativa
+                                            de Preço</label>
+                                        <input @change="handleFile" type="file" name="contract_expected_price_file"
+                                            class="form-control">
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -218,10 +359,12 @@ onMounted(() => {
                             <button type="submit" class="btn btn-outline-primary me-2">
                                 Salvar <i class="bi bi-check2-circle"></i>
                             </button>
-                            <button @click="tabSwitch.navigate_tab('next')" type="button" class="btn btn-outline-secondary me-2">
+                            <button @click="tabSwitch.navigate_tab('next')" type="button"
+                                class="btn btn-outline-secondary me-2">
                                 <i class="bi bi-arrow-right-circle"></i>
                             </button>
-                            <button @click="tabSwitch.navigate_tab('prev')" type="button" class="btn btn-outline-secondary me-2">
+                            <button @click="tabSwitch.navigate_tab('prev')" type="button"
+                                class="btn btn-outline-secondary me-2">
                                 <i class="bi bi-arrow-left-circle"></i>
                             </button>
                         </div>
