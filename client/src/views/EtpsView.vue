@@ -2,13 +2,13 @@
 import { onMounted, ref, watch } from 'vue'
 import Ui from '@/utils/ui';
 import masks from '@/utils/masks';
+import Data from '@/services/data';
+import Tabs from '@/utils/tabs';
 
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import InputRichText from '@/components/inputs/InputRichText.vue';
-import Data from '@/services/data';
-import { Tabs } from '@/utils/tabs';
 import InputMultSelect from '@/components/inputs/InputMultSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
@@ -44,7 +44,6 @@ const page = ref({
 
 const ui = new Ui(page, 'ETPs')
 const data = new Data(page, emit, ui)
-
 const tabs = ref([
     { id: 'dfds', icon: 'bi-journal-album', title: 'DFDs', status: true },
     { id: 'infos_gerais', icon: 'bi-journal-album', title: 'Geral', status: false },

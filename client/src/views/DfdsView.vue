@@ -2,14 +2,15 @@
 import { onMounted, ref, watch } from 'vue'
 import Ui from '@/utils/ui';
 import masks from '@/utils/masks';
+import notifys from '@/utils/notifys';
+import Tabs from '@/utils/tabs';
+import Data from '@/services/data';
+import http from '@/services/http';
+import gpt from '@/services/gpt';
 
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
-import Data from '@/services/data';
-import http from '@/services/http';
-import notifys from '@/utils/notifys';
-import gpt from '@/services/gpt';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -77,8 +78,9 @@ const items = ref({
     }
 })
 
-const ui = new Ui(page, 'DFDs')
-const data = new Data(page, emit, ui)
+const ui     = new Ui(page, 'DFDs')
+const data   = new Data(page, emit, ui)
+const navtab = new Tabs(tabs)
 
 function search_items() {
     http.post(`${page.value.baseURL}/items`, { name: items.value.search }, emit, (resp) => {
@@ -124,34 +126,7 @@ function delete_item(id) {
     page.value.data.items = page.value.data.items.filter(obj => obj.id !== id)
 }
 
-function activate_tab(tab) {
-    return tabs.value.find(obj => obj.id === tab)?.status
-}
-
-function navigate_tab(flux, target = null) {
-    let index = 0
-
-    for (let i = 0; i < tabs.value.length; i++) {
-        const tab = tabs.value[i];
-        if (tab.status) {
-            index = i
-            break;
-        }
-    }
-
-    tabs.value.forEach((t, i) => {
-        if (target !== null) {
-            t.status = target === t.id
-        } else {
-            let active_index = flux === 'prev'
-                ? index > 0 ? index - 1 : index
-                : index < (tabs.value.length - 1) ? index + 1 : index
-            t.status = active_index === i
-        }
-    });
-}
-
-async function generate(type) {
+function generate(type) {
 
     const dfd = page.value.data
     const slc = page.value.selects
@@ -159,9 +134,9 @@ async function generate(type) {
         organ: slc?.organs.find(o => o.id === dfd.organ),
         unit: slc?.units.find(o => o.id === dfd.unit),
         type: slc?.acquisitions.find(o => o.id === dfd.acquisition_type),
-        items: JSON.stringify(page.value.data.items),
-        description: page.value.data.description,
-        justification: page.value.data.justification
+        items: JSON.stringify(dfd.items),
+        description: dfd.description,
+        justification: dfd.justification
     }
 
     let callresp = null
@@ -288,7 +263,7 @@ onMounted(() => {
                         <ul class="nav nav-fill mb-5" id="dfdTab" role="tablist">
                             <li v-for="tab in tabs" :key="tab.id" class="nav-item" role="presentation">
                                 <button class="nav-link nav-step" data-bs-toggle="tab" type="button" role="tab"
-                                    @click="navigate_tab(null, tab.id)" :class="{ 'active': tab.status }"
+                                    @click="navtab.navigate_tab(null, tab.id)" :class="{ 'active': tab.status }"
                                     :id="`${tab.id}-tab`" :aria-controls="`${tab.id}-tab-pane`"
                                     :aria-selected="tab.status ? 'true' : 'false'">
                                     <div class="nav-line-step"></div>
@@ -301,7 +276,7 @@ onMounted(() => {
                         </ul>
 
                         <div class="tab-content" id="dfdTabContent">
-                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('origin') }"
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('origin') }"
                                 id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
@@ -368,7 +343,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('infos') }"
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('infos') }"
                                 id="infos-tab-pane" role="tabpanel" aria-labelledby="infos-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
@@ -468,7 +443,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('items') }"
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('items') }"
                                 id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
 
                                 <!-- search items -->
@@ -576,7 +551,7 @@ onMounted(() => {
                                 </div>
 
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('details') }"
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('details') }"
                                 id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12">
@@ -605,7 +580,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('revisor') }"
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('revisor') }"
                                 id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
                                 <!-- origin -->
                                 <div class="box-revisor mb-4">
@@ -762,10 +737,10 @@ onMounted(() => {
                             <button type="submit" class="btn btn-outline-primary me-2">
                                 Salvar <i class="bi bi-check2-circle"></i>
                             </button>
-                            <button @click="navigate_tab('next')" type="button" class="btn btn-outline-secondary me-2">
+                            <button @click="navtab.navigate_tab('next')" type="button" class="btn btn-outline-secondary me-2">
                                 <i class="bi bi-arrow-right-circle"></i>
                             </button>
-                            <button @click="navigate_tab('prev')" type="button" class="btn btn-outline-secondary me-2">
+                            <button @click="navtab.navigate_tab('prev')" type="button" class="btn btn-outline-secondary me-2">
                                 <i class="bi bi-arrow-left-circle"></i>
                             </button>
                         </div>

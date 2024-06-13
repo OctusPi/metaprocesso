@@ -1,4 +1,4 @@
-export class Tabs {
+class Tabs {
     constructor(tabs) {
         this.tabs = tabs
     }
@@ -28,3 +28,5 @@ export class Tabs {
         });
     }
 }
+
+export default Tabs
