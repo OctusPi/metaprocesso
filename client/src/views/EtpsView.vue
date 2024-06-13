@@ -6,9 +6,10 @@ import masks from '@/utils/masks';
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
-import InputRichText from '@/components/InputRichText.vue';
+import InputRichText from '@/components/inputs/InputRichText.vue';
 import Data from '@/services/data';
-import http from '@/services/http';
+import { Tabs } from '@/utils/tabs';
+import InputMultSelect from '@/components/inputs/InputMultSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -40,93 +41,21 @@ const page = ref({
         valids: {}
     }
 })
-const tabs = ref([
-    { id: 'init', icon: 'bi-journal-check', title: 'Revisar', status: false },
-    { id: 'revisor', icon: 'bi-journal-check', title: 'Revisar', status: false },
-])
 
 const ui = new Ui(page, 'ETPs')
 const data = new Data(page, emit, ui)
 
-function search_items() {
-    http.post(`${page.value.baseURL}/items`, { name: items.value.search }, emit, (resp) => {
-        items.value.search_list = resp.data
-        items.value.selected_item.item = null
-    })
-}
-
-function select_item(item) {
-    items.value.selected_item.item = item
-    items.value.search = null
-    items.value.search_list = []
-}
-
-function add_item(){
-    if(!page.value.data.items){
-        page.value.data.items = []
-    }
-    
-    page.value.data.items.push({...items.value.selected_item})
-    items.value.selected_item.item = null
-    console.log(page.value.data)
-}
-
-function activate_tab(tab) {
-    return tabs.value.find(obj => obj.id === tab)?.status
-}
-
-function navigate_tab(flux, target = null) {
-    let index = 0
-
-    for (let i = 0; i < tabs.value.length; i++) {
-        const tab = tabs.value[i];
-        if (tab.status) {
-            index = i
-            break;
-        }
-    }
-
-    tabs.value.forEach((t, i) => {
-        if (target !== null) {
-            t.status = target === t.id
-        } else {
-            let active_index = flux === 'prev'
-                ? index > 0 ? index - 1 : index
-                : index < (tabs.value.length - 1) ? index + 1 : index
-            t.status = active_index === i
-        }
-    });
-}
+const tabs = ref([
+    { id: 'dfds', icon: 'bi-journal-album', title: 'DFDs', status: true },
+    { id: 'infos_gerais', icon: 'bi-journal-album', title: 'Geral', status: false },
+    { id: 'necessity', icon: 'bi-file-earmark-text', title: 'Necessidade', status: false },
+    { id: 'solution', icon: 'bi-file-earmark-text', title: 'Solução', status: false },
+    { id: 'revisor', icon: 'bi-journal-check', title: 'Revisar', status: false },
+])
+const tabSwitch = new Tabs(tabs)
 
 function generate(type) {
 
-const dfd = page.value.data
-const slc = page.value.selects
-const base = {
-    organ: slc?.organs.find(o => o.id === dfd.organ),
-    unit: slc?.units.find(o => o.id === dfd.unit),
-    type: slc?.acquisitions.find(o => o.id === dfd.acquisition_type),
-}
-let payload = ''
-
-switch (type) {
-    case 'object':
-        payload = `Solicitação: gere DESCRIÇÃO DO OBJETO de contrataçao de empresa especializada para fornecimento de ${base.type?.title} para ${dfd?.description} para atender as necessidades da ${base.unit?.title} vinculado a ${base.organ?.title}. `
-        break
-    case 'jsutify':
-        payload = {}
-        break
-    case 'quantify':
-        payload = {}
-        break
-    default:
-        break
-}
-
-http.post('/dfds/generate', { payload }, emit, (resp) => {
-    console.log(resp)
-    page.value.data.description = resp.data.choices[0].text.replaceAll('\n', ' ')
-})
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -198,7 +127,7 @@ onMounted(() => {
                         <ul class="nav nav-fill mb-5" id="dfdTab" role="tablist">
                             <li v-for="tab in tabs" :key="tab.id" class="nav-item" role="presentation">
                                 <button class="nav-link nav-step" data-bs-toggle="tab" type="button" role="tab"
-                                    @click="navigate_tab(null, tab.id)" :class="{ 'active': tab.status }"
+                                    @click="tabSwitch.navigate_tab(null, tab.id)" :class="{ 'active': tab.status }"
                                     :id="`${tab.id}-tab`" :aria-controls="`${tab.div}-tab-pane`"
                                     :aria-selected="tab.status ? 'true' : 'false'">
                                     <div class="nav-line-step"></div>
@@ -211,11 +140,73 @@ onMounted(() => {
                         </ul>
 
                         <div class="tab-content" id="dfdTabContent">
-                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('init') }"
-                                id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
-                                <InputRichText field="test" />
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
+                                id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
+                                <div class="row mb-3 g-3">
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="dfds" class="form-label">Selecione as DFDs</label>
+                                        <InputMultSelect v-model="page.data.dfds" :options="page.selects.dfds"
+                                            identify="dfds" />
+                                    </div>
+                                </div>
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': activate_tab('revisor') }"
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('infos_gerais') }"
+                                id="infos_gerais-tab-pane" role="tabpanel" aria-labelledby="infos_gerais-tab" tabindex="0">
+                                <div class="row mb-3 g-3">
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="object_description" class="form-label">Descrição do Objeto</label>
+                                        <InputRichText />
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="object_classification" class="form-label">Classificação do Objeto</label>
+                                        <InputRichText />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('necessity') }"
+                                id="necessity-tab-pane" role="tabpanel" aria-labelledby="necessity-tab" tabindex="0">
+                                <div class="row mb-3 g-3">
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="object_description" class="form-label">Descrição da Necessidade</label>
+                                        <InputRichText />
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="contract_requirements" class="form-label">Descrição dos Requisitos da Contratação</label>
+                                        <InputRichText />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('solution') }"
+                                id="solution-tab-pane" role="tabpanel" aria-labelledby="solution-tab" tabindex="0">
+                                <div class="row mb-3 g-3">
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="market_survey" class="form-label">Levantamento de Mercado</label>
+                                        <InputRichText />
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="solution_full_description" class="form-label">Descrição da Solução como um Todo</label>
+                                        <InputRichText />
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="solution_full_description" class="form-label">Estimativa das Quantidades Contratadas</label>
+                                        <InputRichText />
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="contract_expected_price" class="form-label">Estimativa do Preço da Contratação</label>
+                                        <InputRichText />
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="contract_expected_price" class="form-label">Justificativa para o Parcelamento ou Não</label>
+                                        <InputRichText />
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="correlated_contracts" class="form-label">Contratações Correlatas e/ou Interdependentes</label>
+                                        <InputRichText />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('revisor') }"
                                 id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
                                 Revisor
                             </div>
@@ -228,10 +219,10 @@ onMounted(() => {
                             <button type="submit" class="btn btn-outline-primary me-2">
                                 Salvar <i class="bi bi-check2-circle"></i>
                             </button>
-                            <button @click="navigate_tab('next')" type="button" class="btn btn-outline-secondary me-2">
+                            <button @click="tabSwitch.navigate_tab('next')" type="button" class="btn btn-outline-secondary me-2">
                                 <i class="bi bi-arrow-right-circle"></i>
                             </button>
-                            <button @click="navigate_tab('prev')" type="button" class="btn btn-outline-secondary me-2">
+                            <button @click="tabSwitch.navigate_tab('prev')" type="button" class="btn btn-outline-secondary me-2">
                                 <i class="bi bi-arrow-left-circle"></i>
                             </button>
                         </div>
@@ -268,7 +259,7 @@ onMounted(() => {
     border-right: var(--border-box);
 }
 
-.item-desc h3{
+.item-desc h3 {
     color: var(--color-base);
 }
 
