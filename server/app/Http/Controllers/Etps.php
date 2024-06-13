@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comission;
 use App\Models\Dfd;
+use App\Models\Organ;
+use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
 use App\Utils\Notify;
@@ -79,9 +82,30 @@ class Etps extends Controller
 
     public function selects(Request $request)
     {
+        $comission = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Comission::class, [
+            [
+                'column' => $request->key,
+                'operator' => '=',
+                'value' => $request->search,
+                'mode' => 'AND'
+            ]
+        ], ['name'])) : Utils::map_select(Data::list(Comission::class));
+
+        $units = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
+            [
+                'column' => $request->key,
+                'operator' => '=',
+                'value' => $request->search,
+                'mode' => 'AND'
+            ]
+        ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+        
         return Response()->json([
             'dfds' => Utils::map_select(Data::list(Dfd::class, order: ['code'])),
+            'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
             'status' => Etp::list_status(),
+            'comissions' => $comission,
+            'units' => $units,
         ], 200);
     }
 }
