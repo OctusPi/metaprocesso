@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('demandant')->constrained('demandants');
             $table->foreignId('ordinator')->constrained('ordinators');
             $table->foreignId('comission')->constrained('comissions');
+            $table->json('comission_members')->nullable();
             $table->string('code', 50);
             $table->date('date_ini');
             $table->string('year_pca', 5);
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->date('estimated_date');
             $table->integer('priority');
             $table->boolean('bonds'); //vinculos outros dfds
+            $table->integer('status');
 
         });
     }

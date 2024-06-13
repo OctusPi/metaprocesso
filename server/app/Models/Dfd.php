@@ -21,6 +21,7 @@ class Dfd extends Model
         'demandant',
         'ordinator',
         'comission',
+        'comission_members',
         'code',
         'date_ini',
         'year_pca',
@@ -33,6 +34,7 @@ class Dfd extends Model
         'estimated_date',
         'priority',
         'bonds',
+        'status'
     ];
 
     public function organ(): HasOne
@@ -78,6 +80,14 @@ class Dfd extends Model
         return Attribute::make(
             get: fn (string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
             set: fn (string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
+    }
+
+    public function comissionMembers():Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => json_decode($value),
+            set: fn(array $value) => json_encode($value)
         );
     }
 
@@ -156,6 +166,17 @@ class Dfd extends Model
         return [
             ['id' => 1, 'title' => 'Sim Possui Dependencia'],
             ['id' => 2, 'title' => 'Não Possui']
+        ];
+    }
+
+    public function list_status():array
+    {
+        return [
+            ['id' => 1, 'title' => 'Rascunho'],
+            ['id' => 2, 'title' => 'Enviado'],
+            ['id' => 3, 'title' => 'Pendente'],
+            ['id' => 4, 'title' => 'Bloqueado'],
+            ['id' => 5, 'title' => 'Processado']
         ];
     }
 }
