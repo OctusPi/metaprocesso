@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('dfds', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('protocol')->unique();
+            $table->string('ip')->nullable();
             $table->foreignId('organ')->constrained('organs');
             $table->foreignId('unit')->constrained('units');
             $table->foreignId('demandant')->constrained('demandants');
