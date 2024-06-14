@@ -13,6 +13,7 @@ import gpt from '@/services/gpt'
 import MainNav from '@/components/MainNav.vue'
 import MainHeader from '@/components/MainHeader.vue'
 import TableList from '@/components/TableList.vue'
+import TabNav from '@/components/TabNav.vue'
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -329,32 +330,7 @@ onMounted(() => {
                     <form class="form-row" @submit.prevent="data.save()">
                         <input type="hidden" name="id" v-model="page.data.id" />
 
-                        <ul class="nav nav-fill mb-5" id="dfdTab" role="tablist">
-                            <li
-                                v-for="tab in tabs"
-                                :key="tab.id"
-                                class="nav-item"
-                                role="presentation"
-                            >
-                                <button
-                                    class="nav-link nav-step"
-                                    data-bs-toggle="tab"
-                                    type="button"
-                                    role="tab"
-                                    @click="navtab.navigate_tab(null, tab.id)"
-                                    :class="{ 'active': tab.status }"
-                                    :id="`${tab.id}-tab`"
-                                    :aria-controls="`${tab.id}-tab-pane`"
-                                    :aria-selected="tab.status ? 'true' : 'false'"
-                                >
-                                    <div class="nav-line-step"></div>
-                                    <div class="nav-step-txt mx-auto">
-                                        <i class="bi" :class="tab.icon"></i>
-                                    </div>
-                                </button>
-                                <span class="nav-label" :class="{ 'active-label': tab.status }">{{ tab.title }}</span>
-                            </li>
-                        </ul>
+                        <TabNav identify="dfdsTab" :tab-instance="navtab" />
 
                         <div class="tab-content" id="dfdTabContent">
                             <div

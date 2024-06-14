@@ -6,10 +6,12 @@ import Data from '@/services/data';
 import Tabs from '@/utils/tabs';
 
 import MainNav from '@/components/MainNav.vue';
+import TabNav from '@/components/TabNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import InputRichText from '@/components/inputs/InputRichText.vue';
 import InputMultSelect from '@/components/inputs/InputMultSelect.vue';
+import utils from '@/utils/utils';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -42,8 +44,6 @@ const page = ref({
     }
 })
 
-const ui = new Ui(page, 'ETPs')
-const data = new Data(page, emit, ui)
 const tabs = ref([
     { id: 'info', icon: 'bi-info-circle', title: 'Infos', status: true },
     { id: 'dfds', icon: 'bi-journal-album', title: 'DFDs', status: false },
@@ -53,7 +53,30 @@ const tabs = ref([
     { id: 'viabilidade', icon: 'bi-check-all', title: 'Viabilidade', status: false },
     { id: 'anexos', icon: 'bi-file-pdf', title: 'Anexos', status: false },
 ])
+
+const ui = new Ui(page, 'ETPs')
+const data = new Data(page, emit, ui)
 const tabSwitch = new Tabs(tabs)
+
+function autoProtocol(organId) {
+    const d = new Date(new Date);
+
+    const date = (
+        d.getDay().toString().padStart(2, '0')
+        + d.getMonth().toString().padStart(2, '0')
+        + d.getFullYear().toString().padStart(4, '0')
+    )
+
+    const mili = (
+        d.getMilliseconds().toString().padStart(4, '0')
+    )
+
+    return `${String(organId).padStart(3, '0')}-${date}-${mili}`
+}
+
+function setProtocol() {
+    page.value.data.protocol = autoProtocol(page.value.data.organ)
+}
 
 function generate(type) {
 
@@ -124,31 +147,21 @@ onMounted(() => {
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
                     <form class="form-row" @submit.prevent="data.save()">
                         <input type="hidden" name="id" v-model="page.data.id">
-
-                        <ul class="nav nav-fill mb-5" id="dfdTab" role="tablist">
-                            <li v-for="tab in tabs" :key="tab.id" class="nav-item" role="presentation">
-                                <button class="nav-link nav-step" data-bs-toggle="tab" type="button" role="tab"
-                                    @click="tabSwitch.navigate_tab(null, tab.id)" :class="{ 'active': tab.status }"
-                                    :id="`${tab.id}-tab`" :aria-controls="`${tab.div}-tab-pane`"
-                                    :aria-selected="tab.status ? 'true' : 'false'">
-                                    <div class="nav-line-step"></div>
-                                    <div class="nav-step-txt mx-auto">
-                                        <i class="bi" :class="tab.icon"></i>
-                                        <span>{{ tab.title }}</span>
-                                    </div>
-                                </button>
-                            </li>
-                        </ul>
-
+                        <TabNav :tab-instance="tabSwitch" identify="etps-nav" />
                         <div class="tab-content" id="dfdTabContent">
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('info') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
-                                <div class="row mb3 g-3">
+                                <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="name" class="form-label">Protocolo</label>
-                                        <input type="text" name="name" class="form-control"
-                                            :class="{ 'form-control-alert': page.rules.valids.name }" id="name"
-                                            placeholder="XXXXXXXXX" v-model="page.data.name">
+                                        <label for="protocol"
+                                            data-tooltip="O protocolo é gerado automaticamente ao selecionar o Órgão"
+                                            class="form-label custom-tooltip">
+                                            Protocolo <i class="bi bi-info-circle text-primary"></i>
+                                        </label>
+                                        <input disabled autocomplete="off" type="text" name="protocol"
+                                            class="form-control"
+                                            :class="{ 'form-control-alert': page.rules.valids.protocol }" id="protocol"
+                                            placeholder="000-00000000-0000" v-model="page.data.protocol">
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <label for="emission" class="form-label">Emissão</label>
@@ -172,7 +185,8 @@ onMounted(() => {
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="organ" class="form-label">Órgão</label>
-                                        <select name="organ" class="form-control" id="organ">
+                                        <select name="organ" class="form-control" id="organ" v-model="page.data.organ"
+                                            @change="setProtocol">
                                             <option value=""></option>
                                             <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">
                                                 {{ o.title }}
@@ -376,112 +390,21 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.search-list-items {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.search-list-items li {
-    cursor: pointer;
-    border-bottom: var(--border-box);
-}
-
-.search-list-items li h3 {
-    font-weight: 700;
-    color: var(--color-base);
-}
-
-.search-list-items li:hover {
-    background-color: var(--color-contrast-hover);
-}
-
-.item-type {
-    width: 35px;
-    border-right: var(--border-box);
-}
-
-.item-desc h3 {
-    color: var(--color-base);
-}
-
-.item-desc p {
-    font-size: 0.7rem;
-    color: var(--color-text-sec);
-}
-
-.nav-step {
-    margin: 0 !important;
-    padding: 0 !important;
-    position: relative;
-    height: 80px;
-}
-
-.nav-line-step {
-    height: 3px;
+.custom-tooltip {
     width: 100%;
-    background-color: var(--color-shadow);
-    position: absolute;
-    top: 50%;
-    z-index: 0;
+    position: relative;
+    transition: 200ms
 }
 
-.nav-step-txt {
+.custom-tooltip:hover::before {
+    top: -28px;
+    right: 0;
+    content: attr(data-tooltip);
+    position: absolute;
     background-color: var(--color-shadow);
-    color: var(--color-shadow-2);
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
+    padding: 4px 12px;
+    border-radius: 4px;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    top: 0;
-    left: calc(50% - 40px);
-}
-
-.nav-step-txt i {
-    font-size: 1.3rem;
-    margin: 0;
-    padding: 0;
-}
-
-.nav-step-txt span {
-    font-size: 0.7rem;
-    font-weight: 600;
-}
-
-.nav-item .active .nav-step-txt {
-    background-color: var(--color-base);
-    color: white;
-    transition: 400ms;
-}
-
-.nav-item .active .nav-line-step {
-    background: rgb(202, 201, 201);
-    background: linear-gradient(90deg, var(--color-shadow) 0%, var(--color-base) 50%, var(--color-shadow) 100%);
-    transition: 400ms;
-}
-
-@media (max-width: 755px) {
-
-    .nav-step {
-        height: 60px;
-    }
-
-    .nav-step-txt {
-        width: 60px;
-        height: 60px;
-        left: calc(50% - 30px);
-    }
-
-    .nav-step-txt i {
-        font-size: 1.2rem;
-    }
-
-    .nav-step-txt span {
-        display: none;
-    }
+    width: fit-content;
 }
 </style>

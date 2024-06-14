@@ -88,6 +88,6 @@ onMounted(() => {
 }
 
 .ocp-richtext-editor {
-    height: 200px;
+    height: 120px;
 }
 </style>

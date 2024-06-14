@@ -13,13 +13,13 @@ return new class extends Migration {
         Schema::create('etps', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('protocol')->unique();
+            $table->string('ip')->nullable();
             $table->json('dfds');
-            $table->string('protocol', 20);
             $table->date('emission');
             $table->foreignId('organ')->constrained('organs');
             $table->foreignId('comission')->constrained('comission');
             $table->integer('status');
-            $table->string('number', 20);
             $table->text('object_description');
             $table->string('object_classification');
             $table->text('necessity');
@@ -27,9 +27,7 @@ return new class extends Migration {
             $table->text('contract_requirements');
             $table->text('market_survey');
             $table->text('contract_calculus_memories');
-            $table->string('contract_calculus_memories_file')->nullable();
             $table->string('contract_expected_price');
-            $table->string('contract_expected_price_file')->nullable();
             $table->text('solution_full_description');
             $table->text('solution_parcel_justification');
             $table->text('correlated_contracts');

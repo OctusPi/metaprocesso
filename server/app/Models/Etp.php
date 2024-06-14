@@ -13,8 +13,8 @@ class Etp extends Model
 
     protected $fillable = [
         'dfds',
-        'number',
-        'general_info',
+        'protocol',
+        'ip',
         'object_description',
         'object_classification',
         'necessity',
@@ -22,9 +22,7 @@ class Etp extends Model
         'contract_requirements',
         'market_survey',
         'contract_calculus_memories',
-        'contract_calculus_memories_file',
         'contract_expected_price',
-        'contract_expected_price_file',
         'solution_full_description',
         'solution_parcel_justification',
         'correlated_contracts',
@@ -42,8 +40,11 @@ class Etp extends Model
     public static function list_status(): array
     {
         return [
-            ['id'=>0,'title'=> 'Rascunho'],
-            ['id'=>1,'title'=> 'Concluído'],
+            ['id' => 0, 'title' => 'Rascunho'],
+            ['id' => 1, 'title' => 'Em Preenchimento'],
+            ['id' => 2, 'title' => 'Pendente'],
+            ['id' => 3, 'title' => 'Finalizado'],
+            ['id' => 4, 'title' => 'Bloqueado'],
         ];
     }
 }
