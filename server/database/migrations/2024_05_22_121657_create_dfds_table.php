@@ -33,7 +33,7 @@ return new class extends Migration
             $table->integer('priority');
             $table->boolean('bonds'); //vinculos outros dfds
             $table->integer('status');
-
+            $table->foreignId('author')->constrained('users');
         });
     }
 

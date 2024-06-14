@@ -34,7 +34,12 @@ class Dfd extends Model
         'estimated_date',
         'priority',
         'bonds',
-        'status'
+        'status',
+        'author'
+    ];
+
+    protected $casts = [
+        'comission_members' => Json::class
     ];
 
     public function organ(): HasOne
@@ -59,7 +64,12 @@ class Dfd extends Model
 
     public function comission(): HasOne
     {
-        return $this->hasOne(Comission::class, 'id');
+        return $this->hasOne(Comission::class, 'id', 'comission');
+    }
+
+    public function author(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'author');
     }
 
     public function dfditem():BelongsTo
@@ -80,14 +90,6 @@ class Dfd extends Model
         return Attribute::make(
             get: fn (string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
             set: fn (string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
-        );
-    }
-
-    public function comissionMembers():Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => json_decode($value),
-            set: fn(array $value) => json_encode($value)
         );
     }
 

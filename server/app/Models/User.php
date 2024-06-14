@@ -7,6 +7,7 @@ use App\Utils\Dates;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class User extends Model
@@ -39,7 +40,7 @@ class User extends Model
     public const MOD_COMISSIONS = 17;
     public const MOD_PROGRAMS = 18;
     public const MOD_DOTATIONS = 19;
-
+    
     protected $table = 'users';
 
     protected $fillable = [
@@ -65,6 +66,11 @@ class User extends Model
         'sectors' => Json::class,
         'modules' => Json::class,
     ];
+
+    public function dfd():BelongsTo
+    {
+        return $this->belongsTo(Dfd::class);
+    }
 
     public function nowlogin(): Attribute
     {
