@@ -16,6 +16,8 @@ class Dfd extends Model
     protected $table = 'dfds';
 
     protected $fillable = [
+        'protocol',
+        'ip',
         'organ',
         'unit',
         'demandant',
