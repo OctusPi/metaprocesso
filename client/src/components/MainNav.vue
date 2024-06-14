@@ -1,7 +1,9 @@
 <script setup>
     import { onBeforeMount, ref } from 'vue';
+    import { useRoute } from 'vue-router';
     import auth from '@/stores/auth';
 
+    const router = useRoute()
     const menu = ref([])
     const menuitens = {
         'management': {href: '/management', icon:'bi-house-gear', title:'Gestão', description:'Dados Administrativos e Estruturais'},
@@ -45,7 +47,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li v-for="(i, j) in menuitens" :key="j" class="nav-item"> 
-                        <RouterLink v-if="menu.find(m => m.module == j)" class="nav-link nav-link-item" :to="i.href">
+                        <RouterLink v-if="menu.find(m => m.module == j)" :to="i.href" 
+                            class="nav-link nav-link-item" :class="{'active-nav' : router.name === i.href.replace('/', '')}">
                             <i class="bi nav-link-icon" :class="i.icon"></i>
                             <div class="nav-link-body">
                                 <span class="nav-link-title">{{ i.title }}</span>
@@ -122,6 +125,10 @@
 
     .nav-link-description{
         display: none;
+    }
+
+    .active-nav{
+        color: var(--color-base)
     }
 
     @media (max-width: 991px) {
