@@ -1,6 +1,7 @@
 @import 'b%/bootstrap.min.css';
 @import 'bi%/bootstrap-icons.css';
 @import './base.css';
+@import 'datepicke.scss';
 
 @keyframes rotate {
   from {
@@ -35,7 +36,7 @@
 
 .form-control{
   border: 2px solid var(--color-input-border);
-  background-color: var(--color-imput);
+  background-color: var(--color-input);
   padding: 10px 14px;
   color: var(--color-text);
   font-weight: 500;

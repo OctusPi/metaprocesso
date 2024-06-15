@@ -50,7 +50,8 @@ const page = ref({
             unit: 'required',
             ordinator: 'required',
             demandant: 'required',
-            comission: 'required'
+            comission: 'required',
+            date_ini:'required'
         },
         valids: {}
     }
@@ -475,18 +476,18 @@ onMounted(() => {
                                         <label for="date_ini" class="form-label"
                                             >Data Envio Demanda</label
                                         >
-                                        <input
-                                            type="text"
-                                            name="date_ini"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert': page.rules.valids.date_ini
-                                            }"
-                                            id="date_ini"
-                                            placeholder="DD/MM/AAAA"
+                                        <VueDatePicker
+                                            auto-apply
                                             v-model="page.data.date_ini"
-                                            v-maska:[masks.maskdate]
+                                            :input-class-name="page.rules.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                            :enable-time-picker="false"
+                                            format="dd/MM/yyyy"
+                                            locale="pt-br"
+                                            calendar-class-name="dp-custom-calendar"
+                                            calendar-cell-class-name="dp-custom-cell"
+                                            menu-class-name="dp-custom-menu"
                                         />
+                                        
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <label for="year_pca" class="form-label">Ano do PCA</label>
@@ -572,18 +573,16 @@ onMounted(() => {
                                         <label for="estimated_date" class="form-label"
                                             >Data Prevista Contratação</label
                                         >
-                                        <input
-                                            type="text"
-                                            name="estimated_date"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert':
-                                                    page.rules.valids.estimated_date
-                                            }"
-                                            id="estimated_date"
-                                            placeholder="DD/MM/AAAA"
-                                            v-maska:[masks.maskdate]
+                                        <VueDatePicker
+                                            auto-apply
                                             v-model="page.data.estimated_date"
+                                            :input-class-name="page.rules.valids.estimated_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                            :enable-time-picker="false"
+                                            format="dd/MM/yyyy"
+                                            locale="pt-br"
+                                            calendar-class-name="dp-custom-calendar"
+                                            calendar-cell-class-name="dp-custom-cell"
+                                            menu-class-name="dp-custom-menu"
                                         />
                                     </div>
                                 </div>
@@ -1037,13 +1036,13 @@ onMounted(() => {
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <h4>Data Envio</h4>
-                                                <p>{{ page.data.date_ini ?? '*****' }}</p>
+                                                <p>{{ dates.toPtBr(page.data.date_ini) }}</p>
                                             </div>
                                             <div class="col-md-3">
                                                 <h4>Previsão Contratação</h4>
                                                 <p>
                                                     {{
-                                                        dates.getMonthYear(page.data.estimated_date)
+                                                        dates.getMonthYear(dates.toPtBr(page.data.estimated_date))
                                                     }}
                                                 </p>
                                             </div>
@@ -1097,7 +1096,14 @@ onMounted(() => {
                                                     objeto de outro documento de formalização de
                                                     demanda
                                                 </p>
-                                                <p>{{ utils.getTxt(page.selects.bonds, page.data.bonds) }}</p>
+                                                <p>
+                                                    {{
+                                                        utils.getTxt(
+                                                            page.selects.bonds,
+                                                            page.data.bonds
+                                                        )
+                                                    }}
+                                                </p>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -1165,7 +1171,11 @@ onMounted(() => {
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <h4>Justificativa dos quantitativos demandados</h4>
-                                                <p>{{ page.data.justification_quantity ?? '*****' }}</p>
+                                                <p>
+                                                    {{
+                                                        page.data.justification_quantity ?? '*****'
+                                                    }}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -1304,7 +1314,7 @@ onMounted(() => {
     transition: 400ms;
 }
 
-.active-label{
+.active-label {
     color: var(--color-base);
 }
 

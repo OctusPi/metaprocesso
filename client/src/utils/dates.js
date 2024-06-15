@@ -78,9 +78,14 @@ function getYear(datetime) {
 }
 
 function toPtBr(datetime) {
-    const data = new Date(datetime);
-    const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-    return data.toLocaleDateString('pt-BR', options);
+    if(datetime != null){
+        const data = new Date(datetime);
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        return data.toLocaleDateString('pt-BR', options);
+    }
+
+    return null
+    
 }
 
 export default {

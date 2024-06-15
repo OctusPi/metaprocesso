@@ -14,7 +14,7 @@
   --color-text-secondary: #7c7a7a;
 
   --color-code : rgb(223, 238, 255);
-  --color-imput: #ffffff;
+  --color-input: #ffffff;
   --color-input-label: #19c5ec;
   --color-input-focus: #EBEDF3;
   --color-input-border:#e2e2e3;
@@ -58,7 +58,7 @@
 
   --color-shadow: #141c29;
   --color-shadow-2: rgb(121, 122, 122);
-  --color-imput: #000000;
+  --color-input: #000000;
   --color-input-label: #64d4ec;
   --color-input-focus: #2f2f2f;
   --color-input-border:#e2e2e3;
@@ -135,4 +135,3 @@ button, input[type="submit"], input[type="reset"] {
   --bs-tooltip-bg: var(--bd-violet-bg);
   --bs-tooltip-color: var(--bs-white);
 }
-
