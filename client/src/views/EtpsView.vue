@@ -12,6 +12,7 @@ import TableList from '@/components/TableList.vue';
 import InputRichText from '@/components/inputs/InputRichText.vue';
 import InputMultSelect from '@/components/inputs/InputMultSelect.vue';
 import utils from '@/utils/utils';
+import DfdsSelect from '@/components/DfdsSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -156,7 +157,8 @@ onMounted(() => {
                                         <label for="protocol"
                                             data-tooltip="O protocolo é gerado automaticamente ao selecionar o Órgão"
                                             class="form-label custom-tooltip">
-                                            Protocolo <i class="bi bi-info-circle text-primary"></i>
+                                            <i class="bi bi-info-circle text-primary"></i>
+                                            Protocolo
                                         </label>
                                         <input disabled autocomplete="off" type="text" name="protocol"
                                             class="form-control"
@@ -218,41 +220,16 @@ onMounted(() => {
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-8">
-                                        <label for="object" class="form-label">Objeto</label>
-                                        <input type="text" name="object" class="form-control" id="object"
-                                            v-model="page.search.object" placeholder="Pesquise por partes do objecto">
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="s-organ" class="form-label">Orgão</label>
-                                        <select name="organ" class="form-control" id="s-organ"
-                                            @change="data.selects('organ', page.search.organ)">
-                                            <option value=""></option>
-                                            <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">{{
-                                                o.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-8">
-                                        <label for="s-unit" class="form-label">Unidade</label>
-                                        <select name="unit" class="form-control" id="s-unit">
-                                            <option value=""></option>
-                                            <option v-for="o in page.selects.units" :key="o.id" :value="o.id">{{ o.title
-                                                }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="emission" class="form-label">Data</label>
-                                        <input type="text" name="emission" class="form-control" id="emission"
-                                            placeholder="dd/mm/aaaa" v-maska:[masks.maskdate]>
-                                    </div>
-                                    <div class="col-sm-12 col-md-12">
-                                        <label for="dfds" class="form-label">Selecione as DFDs</label>
-                                        <InputMultSelect :options="page.selects.dfds" identify="dfds" />
-                                    </div>
+                                <div class="mb-4">
+                                    <h2 class="txt-color text-center m-0">
+                                        <i class="bi bi-search me-1"></i>
+                                        Selecione as DFDs
+                                    </h2>
+                                    <p class="txt-color-sec small text-center m-0">
+                                        Preencha os campos abaixo para escolher as DFDs
+                                    </p>
                                 </div>
+                                <DfdsSelect />
                             </div>
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('necessidade') }"
@@ -398,7 +375,7 @@ onMounted(() => {
 
 .custom-tooltip:hover::before {
     top: -28px;
-    right: 0;
+    left: 0;
     content: attr(data-tooltip);
     position: absolute;
     background-color: var(--color-shadow);
