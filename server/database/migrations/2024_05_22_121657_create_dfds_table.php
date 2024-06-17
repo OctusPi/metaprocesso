@@ -34,6 +34,7 @@ return new class extends Migration
             $table->date('estimated_date');
             $table->integer('priority');
             $table->boolean('bonds'); //vinculos outros dfds
+            $table->boolean('price_taking');
             $table->integer('status');
             $table->foreignId('author')->constrained('users');
         });

@@ -36,6 +36,7 @@ class Dfd extends Model
         'estimated_date',
         'priority',
         'bonds',
+        'price-taking',
         'status',
         'author'
     ];
@@ -114,38 +115,34 @@ class Dfd extends Model
             ],
             [
                 'id' => 2, 
-                'title' => 'Tomada de Preços',
-                'description' => 'Modalidade utilizada para contratações de valor intermediário. É permitida a participação de interessados devidamente cadastrados ou que atenderem a todas as condições exigidas para cadastramento até o terceiro dia anterior à data do recebimento das propostas.'
-            ],
-            [
-                'id' => 3, 
-                'title' => 'Convite',
-                'description' => 'Modalidade utilizada para contratações de menor valor. A administração pública convida, no mínimo, três fornecedores do ramo pertinente ao objeto da contratação. Outros interessados, cadastrados ou não, que manifestem seu interesse até 24 horas antes da apresentação das propostas também podem participar.'
-            ],
-            [
-                'id' => 4, 
                 'title' => 'Concurso',
                 'description' => 'Modalidade destinada à escolha de trabalho técnico, científico ou artístico, mediante a instituição de prêmios ou remuneração aos vencedores, conforme critérios constantes do edital publicado na imprensa oficial com antecedência mínima de 45 dias.'
             ],
             [
-                'id' => 5, 
+                'id' => 3, 
                 'title' => 'Leilão',
                 'description' => 'Modalidade destinada à venda de bens móveis inservíveis para a administração ou de produtos legalmente apreendidos ou penhorados, bem como para a alienação de bens imóveis oriundos de procedimentos judiciais ou de dação em pagamento.'
             ],
             [
-                'id' => 6, 
+                'id' => 4, 
                 'title' => 'Pregão - Eletrônico/Presencial',
                 'description' => 'Modalidade destinada à aquisição de bens e serviços comuns, qualquer que seja o valor estimado da contratação. O pregão pode ser realizado na forma eletrônica ou presencial.'
             ],
             [
-                'id' => 7, 
+                'id' => 5, 
                 'title' => 'Diálogo Competitivo',
                 'description' => 'Modalidade destinada à contratação de obras, serviços e compras, em que a administração pública realiza diálogos com licitantes previamente selecionados mediante critérios objetivos, com o objetivo de desenvolver uma ou mais alternativas capazes de atender às suas necessidades.'
             ],
             [
-                'id' => 8, 
+                'id' => 6, 
                 'title' => 'Dispensa de Licitação',
                 'description' => 'A dispensa de licitação para a contratação direta de serviços pode ocorrer em situações específicas determinadas pela Lei nº 14.133/2021'
+            ]
+            ,
+            [
+                'id' => 7, 
+                'title' => 'Inexigibilidade',
+                'description' => 'A inexigibilidade é regulamentada pela Lei 8.666/93 e se dá quando não é viável ou necessário um processo licitatório.'
             ]
         ];
     }
