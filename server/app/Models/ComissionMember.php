@@ -46,9 +46,6 @@ class ComissionMember extends Model
     public static function validateFields(?int $id = null): array
     {
         return [
-            'organ' => 'required',
-            'unit' => 'required',
-            'comission' => 'required',
             'name' => 'required',
             'responsibility' => 'required',
             'start_term' => 'required',

@@ -230,10 +230,10 @@ onMounted(() => {
                                 </li>
                                 <li class="dropdown-item c-pointer">
                                     <i class="bi bi-journal-bookmark me-1"></i> Novo a partir de
-                                    Contrato
+                                    Contrato liquidado
                                 </li>
                                 <li class="dropdown-item c-pointer">
-                                    <i class="bi bi-journal-album me-1"></i> Novo a partir de DFD
+                                    <i class="bi bi-journal-album me-1"></i> Novo a partir de DFD anterior
                                 </li>
                             </ul>
                         </div>
@@ -490,6 +490,22 @@ onMounted(() => {
                                         
                                     </div>
                                     <div class="col-sm-12 col-md-4">
+                                        <label for="estimated_date" class="form-label"
+                                            >Data Prevista Contratação</label
+                                        >
+                                        <VueDatePicker
+                                            auto-apply
+                                            v-model="page.data.estimated_date"
+                                            :input-class-name="page.rules.valids.estimated_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                            :enable-time-picker="false"
+                                            format="dd/MM/yyyy"
+                                            locale="pt-br"
+                                            calendar-class-name="dp-custom-calendar"
+                                            calendar-cell-class-name="dp-custom-cell"
+                                            menu-class-name="dp-custom-menu"
+                                        />
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
                                         <label for="year_pca" class="form-label">Ano do PCA</label>
                                         <input
                                             type="text"
@@ -504,27 +520,7 @@ onMounted(() => {
                                             v-model="page.data.year_pca"
                                         />
                                     </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="priority" class="form-label">Prioridade</label>
-                                        <select
-                                            name="priority"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert': page.rules.valids.priority
-                                            }"
-                                            id="priority"
-                                            v-model="page.data.priority"
-                                        >
-                                            <option value=""></option>
-                                            <option
-                                                v-for="s in page.selects.prioritys"
-                                                :value="s.id"
-                                                :key="s.id"
-                                            >
-                                                {{ s.title }}
-                                            </option>
-                                        </select>
-                                    </div>
+                                    
                                 </div>
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
@@ -570,20 +566,25 @@ onMounted(() => {
                                         />
                                     </div>
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="estimated_date" class="form-label"
-                                            >Data Prevista Contratação</label
+                                        <label for="priority" class="form-label">Prioridade</label>
+                                        <select
+                                            name="priority"
+                                            class="form-control"
+                                            :class="{
+                                                'form-control-alert': page.rules.valids.priority
+                                            }"
+                                            id="priority"
+                                            v-model="page.data.priority"
                                         >
-                                        <VueDatePicker
-                                            auto-apply
-                                            v-model="page.data.estimated_date"
-                                            :input-class-name="page.rules.valids.estimated_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                            :enable-time-picker="false"
-                                            format="dd/MM/yyyy"
-                                            locale="pt-br"
-                                            calendar-class-name="dp-custom-calendar"
-                                            calendar-cell-class-name="dp-custom-cell"
-                                            menu-class-name="dp-custom-menu"
-                                        />
+                                            <option value=""></option>
+                                            <option
+                                                v-for="s in page.selects.prioritys"
+                                                :value="s.id"
+                                                :key="s.id"
+                                            >
+                                                {{ s.title }}
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="row mb-3 g-3">

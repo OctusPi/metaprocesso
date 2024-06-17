@@ -27,8 +27,8 @@ const actions = {
     },
     'download': {
         action: (id) => { emit('action', { e: 'action:download', i: id }) },
-        icon: 'bi-arrow-down',
-        title: 'Arquivo'
+        icon: 'bi-file-earmark-text',
+        title: 'Docs'
     },
     'members': {
         action: (id) => { emit('action', { e: 'action:members', i: id }) },

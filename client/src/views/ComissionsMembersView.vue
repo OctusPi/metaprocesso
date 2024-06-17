@@ -1,8 +1,6 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
-import forms from '@/services/forms';
-import notifys from '@/utils/notifys';
 import http from '@/services/http';
 import masks from '@/utils/masks';
 import MainNav from '@/components/MainNav.vue';
@@ -11,11 +9,14 @@ import TableList from '@/components/TableList.vue';
 import Ui from '@/utils/ui';
 import Data from '@/services/data';
 
-const router = useRouter();
-const emit = defineEmits(['callAlert', 'callRemove'])
+const router = useRouter()
+const route  = useRoute()
+const comissionID = route.params?.id
+const comission = ref({})
+const emit  = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
-const page = ref({
-    baseURL: '/comissionsmembers',
+const page  = ref({
+    baseURL: `/comissionsmembers/${comissionID}`,
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
     data: {},
@@ -34,9 +35,6 @@ const page = ref({
     rules: {
         fields: {
             name: 'required',
-            organ: 'required',
-            unit: 'required',
-            comission: 'required',
             responsibility: 'required',
             start_term: 'required',
             status: 'required',
@@ -45,13 +43,7 @@ const page = ref({
     }
 })
 
-const comission = ref({})
-
-watch(() => props.datalist, (newdata) => {
-    page.value.datalist = newdata
-})
-
-const ui = new Ui(page, 'Membros das Comissões')
+const ui   = new Ui(page, 'Membros das Comissões')
 const data = new Data(page, emit, ui)
 
 function handleFile(event) {
@@ -62,16 +54,19 @@ function handleFile(event) {
 }
 
 function backToComission() {
+    
     router.replace({ name: 'comissions' })
 }
-
-const route = useRoute()
 
 function fetchComission() {
     http.get(`/comissions/details/${route.params.id}?display=1`, emit, (response) => {
         comission.value = response.data
     })
 }
+
+watch(() => props.datalist, (newdata) => {
+    page.value.datalist = newdata
+})
 
 onMounted(() => {
     fetchComission()
@@ -101,7 +96,7 @@ onMounted(() => {
                     </div>
                     <div class="action-buttons d-flex my-2">
                         <button @click="backToComission" type="button" class="btn btn-action btn-action-primary ms-2">
-                            <i class="bi bi-people"></i>
+                            <i class="bi bi-arrow-left-circle"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Voltar</span>
                         </button>
                         <button @click="ui.toggle('register')" type="button"

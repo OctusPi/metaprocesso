@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comission;
 use App\Models\ComissionMember;
 use App\Models\User;
 use App\Utils\Notify;
 use App\Utils\Uploads;
 use App\Security\Guardian;
+use App\Middleware\Data;
 use Illuminate\Http\Request;
 
 class ComissionsMembers extends Controller
@@ -19,11 +21,22 @@ class ComissionsMembers extends Controller
 
     public function save(Request $request)
     {
-        //upload file
-        $upload = new Uploads($request, ['document' => ['nullable' => true]]);
-        $values = $upload->mergeUploads($request->all());
+        $comission = Data::find(Comission::class, ['id' => $request->comission]);
 
-        return $this->baseSave(ComissionMember::class, $values);
+        if($comission){
+
+            //upload file
+            $upload = new Uploads($request, ['document' => ['nullable' => true]]);
+            $values = $upload->mergeUploads($request->all());
+            $values['comission'] = $comission->id;
+            $values['organ'] = $comission->organ;
+            $values['unit'] = $comission->unit;
+
+            return $this->baseSave(ComissionMember::class, $values);
+        }
+
+        return Response()->json(Notify::warning('Comissão inexistente'), 404);
+        
     }
 
     public function update(Request $request)

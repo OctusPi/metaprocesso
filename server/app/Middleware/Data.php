@@ -9,7 +9,7 @@ use App\Security\Guardian;
 
 class Data
 {
-    public static function list(string $model, array $params = [], ?array $order = null, ?array $with = null)
+    public static function list(string $model, array $params = [], ?array $order = null, ?array $with = null, bool $all = true)
     {
         $user = Guardian::getUser();
 
@@ -59,11 +59,15 @@ class Data
                     $query->with($with);
                 }
 
-                return $query->get();
+                return $all ? $query->get() : $query->first();
             }
         }
 
-        return [];
+        return $all ? [] : null;
+    }
+
+    public static function find(string $model, array $params = [], ?array $order = null, ?array $with = null){
+        return self::list($model, $params, $order, $with, false);
     }
 
     private static function conditionsOrgan(User $user): array
@@ -121,10 +125,23 @@ class Data
     {
         $conditions = [];
 
-        foreach ($params as $param) {
-            if (!isset($param['mode']) || $param['mode'] === 'AND') {
-                $conditions[] = ['column' => $param['column'], 'operator' => $param['operator'], 'value' => $param['value']];
+        foreach ($params as $key => $param) {
+            if(is_array($param)){
+                if (!isset($param['mode']) || $param['mode'] === 'AND') {
+                    $conditions[] = [
+                        'column' => $param['column'] ?? $param[0], 
+                        'operator' => $param['operator'] ?? '=', 
+                        'value' => $param['value'] ?? $param[1]
+                    ];
+                }
+            }else{
+                $conditions[] = [
+                    'column' => $key, 
+                    'operator' => '=', 
+                    'value' => $param
+                ];
             }
+            
         }
 
         return $conditions;
@@ -134,10 +151,22 @@ class Data
     {
         $conditions = [];
 
-        foreach ($params as $param) {
+        foreach ($params as $key => $param) {
 
-            if ($param['mode'] === 'OR') {
-                $conditions[] = ['column' => $param['column'], 'operator' => $param['operator'], 'value' => $param['value']];
+            if(is_array($param)){
+                if ($param['mode'] === 'OR') {
+                    $conditions[] = [
+                        'column' => $param['column'] ?? $params[0], 
+                        'operator' => $param['operator'] ?? '=', 
+                        'value' => $param['value'] ?? $param[1]
+                    ];
+                }
+            }else{
+                $conditions[] = [
+                    'column' => $key, 
+                    'operator' => '=', 
+                    'value' => $param
+                ];
             }
         }
 

@@ -135,12 +135,12 @@ Route::controller(ComissionsMembers::class)->group(function () {
     Route::prefix('/comissionsmembers')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('/{comission}', 'index');
-            Route::post('/list/{comission}', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/download/{id}', 'download');
+            Route::post('/{comission}/list', 'list');
+            Route::post('/{comission}/save', 'save');
+            Route::put('/{comission}/update', 'update');
+            Route::post('/{comission}/destroy', 'delete');
+            Route::get('/{comission}/details/{id}', 'details');
+            Route::get('/{comission}/download/{id}', 'download');
             Route::get('/{comission}/selects', 'selects');
         });
     });
