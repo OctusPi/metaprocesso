@@ -21,8 +21,13 @@ function randCode(len = 12) {
 }
 
 function getTxt(objs, key_subject, key_search = 'id', key_txt = 'title'){
-    const  f = objs.find(o => o[key_search] === key_subject)
-    return f ? f[key_txt] : '*****'
+    if(objs){
+        const  f = objs.find(o => o[key_search] == key_subject)
+        return f ? f[key_txt] : '*****'
+    }
+
+    return '*****'
+    
 }
 
 export default {

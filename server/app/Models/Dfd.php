@@ -36,7 +36,7 @@ class Dfd extends Model
         'estimated_date',
         'priority',
         'bonds',
-        'price-taking',
+        'price_taking',
         'status',
         'author'
     ];
@@ -159,14 +159,6 @@ class Dfd extends Model
             ['id' => 7, 'title' => 'Locação de Imóveis'],
             ['id' => 8, 'title' => 'Alienação/Concessão/Permissão'],
             ['id' => 9, 'title' => 'Obras e Serviços de Engenharia'],
-        ];
-    }
-
-    public static function list_bonds():array
-    {
-        return [
-            ['id' => 1, 'title' => 'Sim Possui Dependencia'],
-            ['id' => 2, 'title' => 'Não Possui']
         ];
     }
 

@@ -42,7 +42,8 @@ const page = ref({
         bonds: [],
         programs: [],
         dotations: [],
-        categories: []
+        categories: [],
+        responsibilitys: []
     },
     rules: {
         fields: {
@@ -174,6 +175,12 @@ function generate(type) {
 
     const payload = gpt.make_payload(type, base)
     gpt.generate(`${page.value.baseURL}/generate`, payload, emit, callresp)
+}
+
+function rescue_members(){
+    http.get(`${page.value.baseURL}/selects/comission/${page.value.data.comission}`, emit, (resp) => {
+        page.value.data.comission_members = resp.data
+    })
 }
 
 watch(
@@ -442,6 +449,7 @@ onMounted(() => {
                                                 'form-control-alert': page.rules.valids.comission
                                             }"
                                             id="comission"
+                                            @change="rescue_members"
                                             v-model="page.data.comission"
                                         >
                                             <option value=""></option>
@@ -614,7 +622,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-6">
+                                    <div class="col-sm-12 col-md-4">
                                         <label for="suggested_hiring" class="form-label"
                                             >Forma de Contratação Sugerida</label
                                         >
@@ -638,31 +646,18 @@ onMounted(() => {
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="col-sm-12 col-md-6">
-                                        <label for="bonds" class="form-label"
-                                            >Vinculo ou Dependência</label
-                                        >
-                                        <select
-                                            name="bonds"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert': page.rules.valids.bonds
-                                            }"
-                                            id="bonds"
-                                            v-model="page.data.bonds"
-                                        >
-                                            <option value=""></option>
-                                            <option
-                                                v-for="s in page.selects.bonds"
-                                                :value="s.id"
-                                                :key="s.id"
-                                            >
-                                                {{ s.title }}
-                                            </option>
-                                        </select>
-                                        <div id="bondsHelpBlock" class="form-text txt-color-sec">
-                                            Indicação de vinculação ou dependência com o objeto de
-                                            outro documento de formalização de demanda
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="bonds" class="form-label">Vinculo ou Dependência</label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="bonds" v-model="page.data.bonds">
+                                            <label class="form-check-label" for="bonds">Indicação de vinculação ou dependência com o objeto de outro documento de formalização de demanda.</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label class="form-label" for="price_taking">Registro de Preço</label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch" id="price_taking" v-model="page.data.price_taking">
+                                            <label class="form-check-label" for="price_taking">Indique se a demanda se trata de registro de preços.</label>
                                         </div>
                                     </div>
                                 </div>
@@ -1013,9 +1008,11 @@ onMounted(() => {
                                                     }}
                                                 </p>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-4">
                                                 <h4>Integrantes da Comissão</h4>
-                                                <p>Nome - Cargo</p>
+                                                <span class="p-0 m-0 small" v-for="m in page.data.comission_members" :key="m.id">
+                                                    {{ `${utils.getTxt(page.selects.responsibilitys, m.responsibility)} : ${m.name}; ` }}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -1047,12 +1044,12 @@ onMounted(() => {
                                                     }}
                                                 </p>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <h4>Ano PCA</h4>
                                                 <p>{{ page.data.year_pca ?? '*****' }}</p>
                                             </div>
-                                            <div class="col-md-3">
-                                                <h4>Nivel de Prioridade</h4>
+                                            <div class="col-md-2">
+                                                <h4>Prioridade</h4>
                                                 <p>
                                                     {{
                                                         utils.getTxt(
@@ -1062,12 +1059,13 @@ onMounted(() => {
                                                     }}
                                                 </p>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <h4>Valor Estimado</h4>
                                                 <p>R${{ page.data.estimated_value ?? '*****' }}</p>
                                             </div>
+                                        </div>
+                                        <div class="row">
+                                            
                                             <div class="col-md-3">
                                                 <h4>Tipo de Aquisição</h4>
                                                 <p>
@@ -1093,16 +1091,24 @@ onMounted(() => {
                                             <div class="col-md-3">
                                                 <h4>Vinculo ou Dependência</h4>
                                                 <p class="txt-very-small p-0 m-0">
-                                                    Indicação de vinculação ou dependência com o
+                                                    Dependência com o
                                                     objeto de outro documento de formalização de
                                                     demanda
                                                 </p>
                                                 <p>
                                                     {{
-                                                        utils.getTxt(
-                                                            page.selects.bonds,
-                                                            page.data.bonds
-                                                        )
+                                                        page.data.bonds ? 'Sim Possui' : 'Não Possui'
+                                                    }}
+                                                </p>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <h4>Registro de Preço</h4>
+                                                <p class="txt-very-small p-0 m-0">
+                                                    Indique se a demanda se trata de registro de preços.
+                                                </p>
+                                                <p>
+                                                    {{
+                                                        page.data.price_taking ? 'Sim' : 'Não'
                                                     }}
                                                 </p>
                                             </div>

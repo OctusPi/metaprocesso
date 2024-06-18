@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CatalogItem;
+use App\Models\ComissionMember;
 use App\Models\Dfd;
 use App\Models\Dotation;
 use App\Models\Program;
@@ -35,51 +36,26 @@ class Dfds extends Controller
 
     public function selects(Request $request)
     {
-        $units      = [];
-        $ordinators = [];
-        $demandants = [];
-        $comissions = [];
-        $programs   = [];
-        $dotations  = [];
-        
-        if($request->key){
-            $units = $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
-                [
-                    'column'   => $request->key,
-                    'operator' => '=',
-                    'value'    => $request->search,
-                    'mode'     => 'AND'
-                ]
-                ], ['name'])) : Utils::map_select(Data::list(Unit::class));
-
-            $ordinators = Utils::map_select(Data::list(Ordinator::class, [
-                [
-                    'column'   => $request->key,
-                    'operator' => '=',
-                    'value'    => $request->search,
-                    'mode'     => 'AND'
-                ]
-                ], ['name']));
+        //feed selects form
+        if($request->key != 'comission'){
+            $units      = [];
+            $ordinators = [];
+            $demandants = [];
+            $comissions = [];
+            $programs   = [];
+            $dotations  = [];
             
-            $demandants = Utils::map_select(Data::list(Demandant::class, [
-                [
-                    'column'   => $request->key,
-                    'operator' => '=',
-                    'value'    => $request->search,
-                    'mode'     => 'AND'
-                ]
-                ], ['name']));
+            if($request->key){
+                $units = $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
+                    [
+                        'column'   => $request->key,
+                        'operator' => '=',
+                        'value'    => $request->search,
+                        'mode'     => 'AND'
+                    ]
+                    ], ['name'])) : Utils::map_select(Data::list(Unit::class));
 
-            $comissions = Utils::map_select(Data::list(Comission::class, [
-                [
-                    'column'   => $request->key,
-                    'operator' => '=',
-                    'value'    => $request->search,
-                    'mode'     => 'AND'
-                ]
-                ], ['name']));
-            
-            $programs = Utils::map_select(Data::list(Program::class, [
+                $ordinators = Utils::map_select(Data::list(Ordinator::class, [
                     [
                         'column'   => $request->key,
                         'operator' => '=',
@@ -87,8 +63,26 @@ class Dfds extends Controller
                         'mode'     => 'AND'
                     ]
                     ], ['name']));
-            
-            $dotations = Utils::map_select(Data::list(Dotation::class, [
+                
+                $demandants = Utils::map_select(Data::list(Demandant::class, [
+                    [
+                        'column'   => $request->key,
+                        'operator' => '=',
+                        'value'    => $request->search,
+                        'mode'     => 'AND'
+                    ]
+                    ], ['name']));
+
+                $comissions = Utils::map_select(Data::list(Comission::class, [
+                    [
+                        'column'   => $request->key,
+                        'operator' => '=',
+                        'value'    => $request->search,
+                        'mode'     => 'AND'
+                    ]
+                    ], ['name']));
+                
+                $programs = Utils::map_select(Data::list(Program::class, [
                         [
                             'column'   => $request->key,
                             'operator' => '=',
@@ -96,23 +90,37 @@ class Dfds extends Controller
                             'mode'     => 'AND'
                         ]
                         ], ['name']));
-        }
-       
+                
+                $dotations = Utils::map_select(Data::list(Dotation::class, [
+                            [
+                                'column'   => $request->key,
+                                'operator' => '=',
+                                'value'    => $request->search,
+                                'mode'     => 'AND'
+                            ]
+                            ], ['name']));
+            }
 
-        return Response()->json([
-            'organs'       => Utils::map_select(Data::list(Organ::class, order:['name'])),
-            'units'        => $units,
-            'ordinators'   => $ordinators,
-            'demandants'   => $demandants,
-            'comissions'   => $comissions,
-            'prioritys'    => Dfd::list_priority(),
-            'hirings'      => Dfd::list_hirings(),
-            'acquisitions' => Dfd::list_acquisitions(),
-            'bonds'        => Dfd::list_bonds(),
-            'programs'     => $programs,
-            'dotations'    => $dotations,
-            'categories'   => CatalogItem::list_categoria()
-        ], 200);
+            return Response()->json([
+                'organs'       => Utils::map_select(Data::list(Organ::class, order:['name'])),
+                'units'        => $units,
+                'ordinators'   => $ordinators,
+                'demandants'   => $demandants,
+                'comissions'   => $comissions,
+                'prioritys'    => Dfd::list_priority(),
+                'hirings'      => Dfd::list_hirings(),
+                'acquisitions' => Dfd::list_acquisitions(),
+                'programs'     => $programs,
+                'dotations'    => $dotations,
+                'categories'   => CatalogItem::list_categoria(),
+                'responsibilitys' => ComissionMember::list_responsabilities()
+            ], 200);
+        }
+
+        //rescue comission_members
+        $comissions_members = Data::list(ComissionMember::class, ['comission' => $request->search], ['responsibility']);
+        return Response()->json($comissions_members);
+        
     }
 
     public function generate(Request $request)

@@ -34,6 +34,15 @@
   font-weight: 700;
 }
 
+.form-check-label{
+  font-size: 0.8rem !important;
+  color: var(--color-text-secondary) !important;
+}
+
+.form-switch{
+  padding-left: 42px !important;
+}
+
 .form-control{
   border: 2px solid var(--color-input-border);
   background-color: var(--color-input);
