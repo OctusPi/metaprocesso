@@ -30,9 +30,9 @@ class User extends Model
     public const MOD_RISKINESS = 7;
     public const MOD_PROCCESS = 8;
     public const MOD_TRANSMISSION = 9;
-    public const MOD_REPORTS= 10;
-    public const MOD_USERS= 11;
-    public const MOD_ORGANS= 12;
+    public const MOD_REPORTS = 10;
+    public const MOD_USERS = 11;
+    public const MOD_ORGANS = 12;
     public const MOD_UNITS = 13;
     public const MOD_SECTORS = 14;
     public const MOD_ORDINATORS = 15;
@@ -40,7 +40,7 @@ class User extends Model
     public const MOD_COMISSIONS = 17;
     public const MOD_PROGRAMS = 18;
     public const MOD_DOTATIONS = 19;
-    
+
     protected $table = 'users';
 
     protected $fillable = [
@@ -61,15 +61,20 @@ class User extends Model
     ];
 
     protected $casts = [
-        'organs'  => Json::class,
-        'units'   => Json::class,
+        'organs' => Json::class,
+        'units' => Json::class,
         'sectors' => Json::class,
         'modules' => Json::class,
     ];
 
-    public function dfd():BelongsTo
+    public function dfd(): BelongsTo
     {
         return $this->belongsTo(Dfd::class);
+    }
+
+    public function etp(): BelongsTo
+    {
+        return $this->belongsTo(Etp::class);
     }
 
     public function nowlogin(): Attribute
@@ -88,32 +93,32 @@ class User extends Model
         );
     }
 
-    public static function validateFields(?int $id = null):array
+    public static function validateFields(?int $id = null): array
     {
         return [
-            'name'   => 'required',
-            'email'  => ['required', 'email', Rule::unique('users')->ignore($id)],
+            'name' => 'required',
+            'email' => ['required', 'email', Rule::unique('users')->ignore($id)],
             'profile' => 'required',
             'status' => 'required'
         ];
     }
 
-    public static function validateMsg():array
+    public static function validateMsg(): array
     {
         return [
             'required' => 'Campo obrigatório não informado!',
-            'email'    => 'Informe um email válido!',
-            'unique'   => 'Usuário já registrado no sistema!'
+            'email' => 'Informe um email válido!',
+            'unique' => 'Usuário já registrado no sistema!'
         ];
     }
 
     public static function list_profiles(): array
     {
         return [
-            self::PRF_ADMIN   => 'Administrador', 
-            self::PRF_GESTOR  => 'Gestor', 
-            self::PRF_TECNICO => 'Técnico', 
-            self::PRF_AGENTE  => 'Agente', 
+            self::PRF_ADMIN => 'Administrador',
+            self::PRF_GESTOR => 'Gestor',
+            self::PRF_TECNICO => 'Técnico',
+            self::PRF_AGENTE => 'Agente',
             self::PRF_AUTIDOR => 'Auditor'
         ];
     }
@@ -132,7 +137,7 @@ class User extends Model
             ['id' => self::MOD_COMISSIONS, 'module' => 'comissions', 'title' => 'Gestão de Comissões'],
             ['id' => self::MOD_PROGRAMS, 'module' => 'programs', 'title' => 'Gestão de Programas'],
             ['id' => self::MOD_DOTATIONS, 'module' => 'dotations', 'title' => 'Gestão de Dotações'],
-            ['id' => self::MOD_CATALOGS, 'module' => 'catalogs', 'title' => 'Catálogos'], 
+            ['id' => self::MOD_CATALOGS, 'module' => 'catalogs', 'title' => 'Catálogos'],
             ['id' => self::MOD_DFDS, 'module' => 'dfds', 'title' => 'DFDs'],
             ['id' => self::MOD_ETPS, 'module' => 'etps', 'title' => 'ETPs'],
             ['id' => self::MOD_PRICERECORDS, 'module' => 'pricerecords', 'title' => 'Registro de Preços'],

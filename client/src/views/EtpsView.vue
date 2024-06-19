@@ -58,6 +58,10 @@ const data = new Data(page, emit, ui)
 const tabSwitch = new Tabs(tabs)
 
 function autoProtocol(organId) {
+    if (!organId) {
+        return null
+    }
+
     const d = new Date(new Date);
 
     const date = (
@@ -155,7 +159,8 @@ onMounted(() => {
                                         <label for="protocol"
                                             data-tooltip="O protocolo é gerado automaticamente ao selecionar o Órgão"
                                             class="form-label custom-tooltip">
-                                            <i class="bi bi-info-circle txt-color-base"></i>
+                                            <i v-if="page.data.protocol" class="bi bi-check-circle text-success"></i>
+                                            <i v-if="!page.data.protocol" class="bi bi-info-circle text-warning"></i>
                                             Protocolo
                                         </label>
                                         <input disabled autocomplete="off" type="text" name="protocol"
@@ -361,7 +366,6 @@ onMounted(() => {
 .custom-tooltip {
     width: 100%;
     position: relative;
-    transition: 200ms
 }
 
 .custom-tooltip:hover::before {
@@ -375,4 +379,5 @@ onMounted(() => {
     display: flex;
     width: fit-content;
 }
+
 </style>

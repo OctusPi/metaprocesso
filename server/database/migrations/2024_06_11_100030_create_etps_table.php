@@ -13,12 +13,13 @@ return new class extends Migration {
         Schema::create('etps', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('protocol')->unique();
-            $table->string('ip')->nullable();
-            $table->json('dfds');
-            $table->date('emission');
+            $table->json('dfds')->default([]);
             $table->foreignId('organ')->constrained('organs');
             $table->foreignId('comission')->constrained('comission');
+            $table->foreignId('user')->constrained('users');
+            $table->string('protocol')->unique();
+            $table->string('ip')->nullable();
+            $table->date('emission');
             $table->integer('status');
             $table->text('object_description');
             $table->string('object_classification');
