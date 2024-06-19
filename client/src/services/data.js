@@ -80,6 +80,20 @@ class Data {
             window.URL.revokeObjectURL(url);
         })
     }
+
+    listForSearch = () => {
+        let isFilled = false
+        for (let item in Object.values(this.page.value.search)) {
+            if (item != null) {
+                this.list()
+                isFilled = true
+                break
+            }
+        }
+        if (!isFilled) {
+            this.emit('callAlert', notifys.warning('Preencha ao menos um campo para continuar'))
+        }
+    }
 }
 
 export default Data
