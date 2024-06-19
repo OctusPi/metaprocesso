@@ -38,13 +38,15 @@ onBeforeMount(() => {
 
                 <div class="inside-box">
                     <nav class="row p-0 m-0 mt-5">
-                        <div class="col-lg-3 col-sm-4 mb-4 text-center" v-for="(m, i) in menuitens" :key="i">
-                            <RouterLink v-if="menu.find(m => m.module == i)" :to="m.href" class="man-link">
-                                <i class="bi me-1 mx-auto" :class="m.icon"></i>
-                                <p class="l-title">{{ m.title }}</p>
-                                <p class="l-desc">{{ m.description }}</p>
-                            </RouterLink>
-                        </div>
+                        <template v-for="(m, i) in menuitens" :key="i">
+                            <div class="col-lg-3 col-sm-4 mb-4 text-center" v-if="menu.find(m => m.module == i)">
+                                <RouterLink :to="m.href" class="man-link">
+                                    <i class="bi me-1 mx-auto" :class="m.icon"></i>
+                                    <p class="l-title">{{ m.title }}</p>
+                                    <p class="l-desc">{{ m.description }}</p>
+                                </RouterLink>
+                            </div>
+                        </template>
                     </nav>
                 </div>
             </div>
