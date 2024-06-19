@@ -34,7 +34,7 @@ class Dfds extends Controller
         
         $ip   = $request->ip();
         $code = Utils::randCode(6, str_pad($request->unit, 3, '0', STR_PAD_LEFT), date('dmY'));
-        $data = array_merge($request->all(), ['ip' => $ip, 'protocol' => $code, 'status' => 1]);
+        $data = array_merge($request->all(), ['ip' => $ip, 'protocol' => $code, 'status' => 1, 'author' => $this->user_loged->id]);
         $dfd  = $this->baseSaveInstance($data);
 
         if(!is_null($dfd['instance'])){
