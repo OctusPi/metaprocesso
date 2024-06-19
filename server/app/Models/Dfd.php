@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Validation\Rule;
+use App\Casts\Json;
 
 class Dfd extends Model
 {
@@ -24,7 +26,6 @@ class Dfd extends Model
         'ordinator',
         'comission',
         'comission_members',
-        'code',
         'date_ini',
         'year_pca',
         'acquisition_type',
@@ -94,6 +95,38 @@ class Dfd extends Model
             get: fn (string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
             set: fn (string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
         );
+    }
+
+    public static function validateFields(?int $id = null):array
+    {
+        return [
+            'ip'        => 'required',
+            'protocol'  => ['required', Rule::unique('dfds')->ignore($id)],
+            'organ'     => 'required',
+            'unit'      => 'required',
+            'demandant' => 'required',
+            'ordinator' => 'required',
+            'comission' => 'required',
+            'priority'  => 'required',
+            'date_ini'  => 'required',
+            'year_pca'  => 'required',
+            'comission_members' => 'required',
+            'acquisition_type'  => 'required',
+            'suggested_hiring'  => 'required',
+            'description'       => 'required',
+            'justification'     => 'required',
+            'estimated_value'   => 'required',
+            'estimated_date'    => 'required'
+        ];
+    }
+
+    public static function validateMsg():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'email'    => 'Informe um email válido!',
+            'unique'   => 'Orgão já registrado no sistema!'
+        ];
     }
 
     public static function list_priority():array

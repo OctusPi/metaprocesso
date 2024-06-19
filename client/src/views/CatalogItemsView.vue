@@ -16,6 +16,7 @@ const router    = useRoute()
 const emit      = defineEmits(['callAlert', 'callRemove'])
 const props     = defineProps({ datalist: { type: Array, default: () => [] } })
 const catalogID = router.params?.catalog
+
 const page  = ref({
     baseURL: `/catalogitems/${catalogID}`,
     title: {},
@@ -32,7 +33,6 @@ const page  = ref({
     ],
     search: {},
     selects: {
-        unds: [],
         categories: [],
         groups: [],
         types: [],
@@ -52,6 +52,7 @@ const page  = ref({
         valids: {}
     }
 })
+
 const modal = ref({
     baseURL: `/catalogsubcategories/${page.value.catalog?.organ?.id}`,
     uiview: {},
@@ -134,7 +135,6 @@ watch(() => page.value.uiview.register, (value) => {
     if (value === true && !page.value.data.code) {
         page.value.data.origin = 2
         page.value.data.code = utils.randCode()
-        page.value.selects.unds = defines.unds
     }
 })
 
@@ -300,7 +300,7 @@ onBeforeMount(() => {
                                 <select name="und" class="form-control" id="und"
                                     :class="{ 'form-control-alert': page.rules.valids.und }" v-model="page.data.und">
                                     <option></option>
-                                    <option v-for="u in page.selects.unds" :key="u.siglaUnidadeFornecimento"
+                                    <option v-for="u in defines.unds" :key="u.siglaUnidadeFornecimento"
                                         :value="u.siglaUnidadeFornecimento">{{ `${u.siglaUnidadeFornecimento} -
                                         ${u.nomeUnidadeFornecimento}` }}</option>
                                 </select>

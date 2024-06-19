@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Organ;
 use App\Utils\Notify;
 use App\Utils\Utils;
+use App\Utils\Dates;
 use GuzzleHttp\Client;
 use App\Middleware\Data;
 use App\Models\Comission;
@@ -20,6 +21,7 @@ use App\Models\Ordinator;
 use App\Security\Guardian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Response;
 
 class Dfds extends Controller
 {
@@ -27,6 +29,26 @@ class Dfds extends Controller
     {
         parent::__construct(Dfd::class, User::MOD_DFDS);
         Guardian::validateAccess($this->module_id);
+    }
+
+    public function save(Request $request){
+        $unit = Unit::find($request->unit);
+        $code = Utils::randCode(6, str_pad($unit, 3, '0', STR_PAD_LEFT), Dates::nowPTBR());
+        $ip   = $request->ip();
+        $data = array_merge($request->all(), ['ip' => $ip, 'protocol' => $code, 'status' => 1]);
+        $dfd  = $this->baseSaveInstance($data);
+
+        if(!is_null($dfd['instance'])){
+
+            return Response()->json(Notify::success('foi id:'.$dfd['instance']->id));
+
+        }
+
+        Log::info(json_encode($request->items));
+        Log::info(json_encode($request->comission_members));
+
+        return Response()->json(Notify::warning('Falha ao registrar DFD '.$dfd['error']), 400);
+        
     }
 
     public function list(Request $request)

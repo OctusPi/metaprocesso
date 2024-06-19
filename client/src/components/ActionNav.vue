@@ -4,7 +4,7 @@ import { ref } from 'vue'
 
 const emit = defineEmits(['action'])
 const props = defineProps({
-    id: Number,
+    id: [String, Number],
     calls: { type: Array, default: () => [] }
 })
 

@@ -3,9 +3,6 @@ import { onMounted, ref, watch } from 'vue'
 
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
-import forms from '@/services/forms';
-import notifys from '@/utils/notifys';
-import http from '@/services/http';
 import ManagementNav from '@/components/ManagementNav.vue';
 import TableList from '@/components/TableList.vue';
 import InputMultSelect from '@/components/inputs/InputMultSelect.vue';

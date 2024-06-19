@@ -52,7 +52,15 @@ const page = ref({
             ordinator: 'required',
             demandant: 'required',
             comission: 'required',
-            date_ini:'required'
+            date_ini:'required',
+            estimated_date: 'required',
+            year_pca: 'required',
+            acquisition_type: 'required',
+            estimated_value: 'required',
+            priority: 'required',
+            description: 'required',
+            suggested_hiring: 'required',
+            justification: 'required'
         },
         valids: {}
     }
@@ -490,6 +498,7 @@ onMounted(() => {
                                             :input-class-name="page.rules.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                             :enable-time-picker="false"
                                             format="dd/MM/yyyy"
+                                            model-type="dd/MM/yyyy"
                                             locale="pt-br"
                                             calendar-class-name="dp-custom-calendar"
                                             calendar-cell-class-name="dp-custom-cell"
@@ -507,6 +516,7 @@ onMounted(() => {
                                             :input-class-name="page.rules.valids.estimated_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                             :enable-time-picker="false"
                                             format="dd/MM/yyyy"
+                                            model-type="dd/MM/yyyy"
                                             locale="pt-br"
                                             calendar-class-name="dp-custom-calendar"
                                             calendar-cell-class-name="dp-custom-cell"
@@ -528,7 +538,6 @@ onMounted(() => {
                                             v-model="page.data.year_pca"
                                         />
                                     </div>
-                                    
                                 </div>
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
@@ -919,10 +928,6 @@ onMounted(() => {
                                             name="justification_quantity"
                                             class="form-control"
                                             rows="4"
-                                            :class="{
-                                                'form-control-alert':
-                                                    page.rules.valids.justification_quantity
-                                            }"
                                             id="justification_quantity"
                                             v-model="page.data.justification_quantity"
                                         ></textarea>
@@ -1034,13 +1039,13 @@ onMounted(() => {
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <h4>Data Envio</h4>
-                                                <p>{{ dates.toPtBr(page.data.date_ini) }}</p>
+                                                <p>{{ page.data.date_ini }}</p>
                                             </div>
                                             <div class="col-md-3">
                                                 <h4>Previsão Contratação</h4>
                                                 <p>
                                                     {{
-                                                        dates.getMonthYear(dates.toPtBr(page.data.estimated_date))
+                                                        dates.getMonthYear(page.data.estimated_date)
                                                     }}
                                                 </p>
                                             </div>

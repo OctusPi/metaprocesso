@@ -41,6 +41,8 @@
 
 .form-switch{
   padding-left: 42px !important;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .form-control{

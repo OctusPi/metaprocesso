@@ -22,7 +22,6 @@ return new class extends Migration
             $table->foreignId('ordinator')->constrained('ordinators');
             $table->foreignId('comission')->constrained('comissions');
             $table->json('comission_members')->nullable();
-            $table->string('code', 50);
             $table->date('date_ini');
             $table->string('year_pca', 5);
             $table->integer('acquisition_type'); // tipo de aquisições possiveis vide lei
@@ -30,7 +29,7 @@ return new class extends Migration
             $table->string('description');
             $table->string('justification');
             $table->text('justification_quantity')->nullable();
-            $table->double('estimated_value');
+            $table->string('estimated_value');
             $table->date('estimated_date');
             $table->integer('priority');
             $table->boolean('bonds'); //vinculos outros dfds

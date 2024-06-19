@@ -2,9 +2,6 @@
 
 namespace App\Utils;
 
-use Illuminate\Http\Request;
-use Illuminate\Routing\RouteParameterBinder;
-
 
 class Utils
 {
@@ -48,5 +45,15 @@ class Utils
             });
         }
         return [];
+    }
+
+    public static function randCode(int $size = 4,  string $prefix = '', string $sufix = ''){
+        $char = 'ABCDFGHIJLMNKOPQRSTUYWXZ0123456789';
+        $code = '';
+        for($i=0; $i<$size; $i++){
+            $code .= $char[random_int(0, strlen($char)-1)];
+        }
+
+        return $prefix.'-'.$code.'-'.$sufix;
     }
 }

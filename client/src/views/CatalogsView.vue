@@ -19,7 +19,6 @@ const page = ref({
     datalist: props.datalist,
     dataheader: [
         { key: 'name', title: 'CATÁLOGO' },
-        // { obj: 'comission', key: 'name', title: 'COMISSÃO', sub: [{ obj: 'organ', key: 'name' }] },
         { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
     ],
     search: {},

@@ -70,6 +70,31 @@ class Controller extends BaseController
         }
 
     }
+
+    public function baseSaveInstance(array $requests)
+    {
+        $exec = [
+            'instance' => null,
+            'error' => null
+        ];
+
+        $validateErros = $this->validateErros($this->model, $requests);
+        if ($validateErros) {
+            $exec['error'] = Notify::warning($validateErros);
+        }
+
+        try {
+            $instance = new $this->model($requests);
+            if ($instance->save()) {
+                $exec['instance'] = $instance ;
+            }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+        }
+
+        return $exec;
+    }
+
     public function baseUpdate(string $model, ?int $id, array $requests)
     {
         $validateErros = $this->validateErros($model, $requests, $id);
