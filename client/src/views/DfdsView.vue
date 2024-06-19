@@ -101,8 +101,8 @@ const items = ref({
     }
 })
 
-const ui = new Ui(page, 'DFDs')
-const data = new Data(page, emit, ui)
+const ui     = new Ui(page, 'DFDs')
+const data   = new Data(page, emit, ui)
 const navtab = new Tabs(tabs)
 
 function search_items() {

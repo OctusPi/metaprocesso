@@ -1,8 +1,18 @@
+function casting(value){
+    switch (typeof value) {
+        case 'object':
+            return value !== null ? JSON.stringify(value) : ''
+        case 'boolean':
+            return value ? 1 : 0 
+        default:
+            return value !== 'null' ? value : ''
+    }
+}
+
 function builddata(data){
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
-        value = value == 'null' || value == null ? '' : value
-        formData.append(key, value)
+        formData.append(key, casting(value))
     });
     return formData
 }

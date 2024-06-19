@@ -21,7 +21,6 @@ use App\Models\Ordinator;
 use App\Security\Guardian;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Response;
 
 class Dfds extends Controller
 {
@@ -32,9 +31,9 @@ class Dfds extends Controller
     }
 
     public function save(Request $request){
-        $unit = Unit::find($request->unit);
-        $code = Utils::randCode(6, str_pad($unit, 3, '0', STR_PAD_LEFT), Dates::nowPTBR());
+        
         $ip   = $request->ip();
+        $code = Utils::randCode(6, str_pad($request->unit, 3, '0', STR_PAD_LEFT), date('dmY'));
         $data = array_merge($request->all(), ['ip' => $ip, 'protocol' => $code, 'status' => 1]);
         $dfd  = $this->baseSaveInstance($data);
 
@@ -44,8 +43,8 @@ class Dfds extends Controller
 
         }
 
-        Log::info(json_encode($request->items));
-        Log::info(json_encode($request->comission_members));
+        Log::info(json_encode($this->user_loged));
+        Log::info($code);
 
         return Response()->json(Notify::warning('Falha ao registrar DFD '.$dfd['error']), 400);
         
