@@ -62,6 +62,11 @@ class Comission extends Model
         return $this->belongsTo(ComissionMember::class);
     }
 
+    public function etp(): BelongsTo
+    {
+        return $this->belongsTo(Etp::class);
+    }
+
     public function startTerm(): Attribute
     {
         return Attribute::make(

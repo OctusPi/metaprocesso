@@ -10,8 +10,6 @@ import TabNav from '@/components/TabNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import InputRichText from '@/components/inputs/InputRichText.vue';
-import InputMultSelect from '@/components/inputs/InputMultSelect.vue';
-import utils from '@/utils/utils';
 import DfdsSelect from '@/components/DfdsSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
@@ -60,6 +58,10 @@ const data = new Data(page, emit, ui)
 const tabSwitch = new Tabs(tabs)
 
 function autoProtocol(organId) {
+    if (!organId) {
+        return null
+    }
+
     const d = new Date(new Date);
 
     const date = (
@@ -157,7 +159,8 @@ onMounted(() => {
                                         <label for="protocol"
                                             data-tooltip="O protocolo é gerado automaticamente ao selecionar o Órgão"
                                             class="form-label custom-tooltip">
-                                            <i class="bi bi-info-circle text-primary"></i>
+                                            <i v-if="page.data.protocol" class="bi bi-check-circle text-success"></i>
+                                            <i v-if="!page.data.protocol" class="bi bi-info-circle text-warning"></i>
                                             Protocolo
                                         </label>
                                         <input disabled autocomplete="off" type="text" name="protocol"
@@ -220,16 +223,7 @@ onMounted(() => {
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
-                                <div class="mb-4">
-                                    <h2 class="txt-color text-center m-0">
-                                        <i class="bi bi-search me-1"></i>
-                                        Selecione as DFDs
-                                    </h2>
-                                    <p class="txt-color-sec small text-center m-0">
-                                        Preencha os campos abaixo para escolher as DFDs
-                                    </p>
-                                </div>
-                                <DfdsSelect />
+                                <DfdsSelect @callAlert="(msg) => emit('callAlert', msg)" />
                             </div>
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('necessidade') }"
@@ -307,19 +301,21 @@ onMounted(() => {
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('viabilidade') }"
                                 id="solution-tab-pane" role="tabpanel" aria-labelledby="solution-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-12">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="viability" value="1">
-                                            <label class="form-check-label" for="viability">Esta equipe de planejamento
-                                                declara viável esta contratação com base neste ETP, consoante o inciso
-                                                XIII. art 7o da IN 40 de maio de 2022 da SEGES/ME.</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="viability" value="0">
-                                            <label class="form-check-label" for="viability">Esta equipe de planejamento
-                                                declara inviável esta contratação com base neste ETP, consoante o inciso
-                                                XIII. art 7o da IN 40 de maio de 2022 da SEGES/ME.</label>
-                                        </div>
+                                    <div class="col-12 col-md-6">
+                                        <input class="btn-check" id="viability-1" type="radio" name="viability"
+                                            value="1">
+                                        <label class="btn btn-outline-base" for="viability-1">Esta equipe de
+                                            planejamento
+                                            declara viável esta contratação com base neste ETP, consoante o inciso
+                                            XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</label>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <input class="btn-check" id="viability-2" type="radio" name="viability"
+                                            value="0">
+                                        <label class="btn btn-outline-secondary" for="viability-2">Esta equipe de
+                                            planejamento
+                                            declara inviável esta contratação com base neste ETP, consoante o inciso
+                                            XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</label>
                                     </div>
                                 </div>
                             </div>
@@ -370,7 +366,6 @@ onMounted(() => {
 .custom-tooltip {
     width: 100%;
     position: relative;
-    transition: 200ms
 }
 
 .custom-tooltip:hover::before {
@@ -384,4 +379,5 @@ onMounted(() => {
     display: flex;
     width: fit-content;
 }
+
 </style>

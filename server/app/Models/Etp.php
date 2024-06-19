@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Validation\Rule;
 
 class Etp extends Model
 {
@@ -15,6 +17,9 @@ class Etp extends Model
         'dfds',
         'protocol',
         'ip',
+        'organ',
+        'comission',
+        'user',
         'object_description',
         'object_classification',
         'necessity',
@@ -36,6 +41,57 @@ class Etp extends Model
     protected $casts = [
         'dfds' => Json::class,
     ];
+
+    public function organ(): HasOne
+    {
+        return $this->hasOne(Organ::class, 'id', 'organ');
+    }
+
+    public function comission(): HasOne
+    {
+        return $this->hasOne(Comission::class, 'id', 'comission');
+    }
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user');
+    }
+
+    public static function validateFields(?int $id = null): array
+    {
+        return [
+            'dfds' => 'required',
+            'protocol' => ['required', Rule::unique('etps')->ignore($id)],
+            'ip' => 'required',
+            'organ' => 'required',
+            'comission' => 'required',
+            'user' => 'required',
+            'object_description' => 'required',
+            'object_classification' => 'required',
+            'necessity' => 'required',
+            'contract_forecast' => 'required',
+            'contract_requirements' => 'required',
+            'market_survey' => 'required',
+            'contract_calculus_memories' => 'required',
+            'contract_expected_price' => 'required',
+            'solution_full_description' => 'required',
+            'solution_parcel_justification' => 'required',
+            'correlated_contracts' => 'required',
+            'contract_alignment' => 'required',
+            'expected_results' => 'required',
+            'contract_previous_actions' => 'required',
+            'ambiental_impacts' => 'required',
+            'viability_declaration' => 'required',
+        ];
+    }
+
+    public static function validateMsg(): array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'unique' => 'ETP já registrado no sistema!'
+        ];
+    }
 
     public static function list_status(): array
     {

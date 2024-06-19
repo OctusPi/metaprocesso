@@ -25,17 +25,17 @@ class Organ extends Model
         'status'
     ];
 
-    public function dfd():BelongsTo
+    public function dfd(): BelongsTo
     {
         return $this->belongsTo(Dfd::class);
     }
 
-    public function demandant():BelongsTo
+    public function demandant(): BelongsTo
     {
         return $this->belongsTo(Demandant::class);
     }
 
-    public function comission():BelongsTo
+    public function comission(): BelongsTo
     {
         return $this->belongsTo(Comission::class);
     }
@@ -50,61 +50,66 @@ class Organ extends Model
         return $this->belongsTo(ComissionMember::class);
     }
 
-    public function catalog():BelongsTo
+    public function catalog(): BelongsTo
     {
         return $this->belongsTo(Catalog::class);
     }
 
-    public function catalogitem():BelongsTo
+    public function catalogitem(): BelongsTo
     {
         return $this->belongsTo(CatalogItem::class);
     }
 
-    public function catalogsubcategoryitem():BelongsTo
+    public function catalogsubcategoryitem(): BelongsTo
     {
         return $this->belongsTo(CatalogSubCategoryItem::class);
     }
 
-    public function ordinator():BelongsTo
+    public function ordinator(): BelongsTo
     {
         return $this->belongsTo(Ordinator::class);
     }
 
-    public function program():BelongsTo
+    public function program(): BelongsTo
     {
         return $this->belongsTo(Program::class);
     }
 
-    public function dotation():BelongsTo
+    public function dotation(): BelongsTo
     {
         return $this->belongsTo(Dotation::class);
     }
 
-    public function sector():BelongsTo
+    public function sector(): BelongsTo
     {
         return $this->belongsTo(Sector::class);
     }
 
-    public static function validateFields(?int $id = null):array
+    public function etp(): BelongsTo
+    {
+        return $this->belongsTo(Etp::class);
+    }
+
+    public static function validateFields(?int $id = null): array
     {
         return [
-            'name'       => 'required',
-            'cnpj'       => ['required', Rule::unique('organs')->ignore($id)],
-            'phone'      => 'required',
-            'email'      => 'required|email',
-            'address'    => 'required',
+            'name' => 'required',
+            'cnpj' => ['required', Rule::unique('organs')->ignore($id)],
+            'phone' => 'required',
+            'email' => 'required|email',
+            'address' => 'required',
             'postalcity' => 'required',
             'postalcode' => 'required',
-            'status'     => 'required'
+            'status' => 'required'
         ];
     }
 
-    public static function validateMsg():array
+    public static function validateMsg(): array
     {
         return [
             'required' => 'Campo obrigatório não informado!',
-            'email'    => 'Informe um email válido!',
-            'unique'   => 'Orgão já registrado no sistema!'
+            'email' => 'Informe um email válido!',
+            'unique' => 'Orgão já registrado no sistema!'
         ];
     }
 
