@@ -87,7 +87,7 @@ class Data
         $units = array_keys($user->units ?? []);
 
         foreach ($organs as $organ) {
-            $conditions[] = ['column' => 'organ_id', 'operator' => '=', 'value' => $organ];
+            $conditions[] = ['column' => 'organ', 'operator' => '=', 'value' => $organ];
         }
 
         foreach ($units as $unit) {
@@ -106,15 +106,15 @@ class Data
     {
         $conditions = [];
 
-        $organs = array_keys($user->organs ?? []);
-        $units = array_keys($user->units ?? []);
+        $organs = array_column($user->organs ?? [], 'id');
+        $units = array_column($user->units ?? [], 'id');
 
         foreach ($organs as $organ) {
-            $conditions[] = ['column' => 'organ_id', 'operator' => '=', 'value' => $organ];
+            $conditions[] = ['column' => 'organ', 'operator' => '=', 'value' => $organ];
         }
 
         foreach ($units as $unit) {
-            $conditions[] = ['column' => 'unit_id', 'operator' => '=', 'value' => $unit];
+            $conditions[] = ['column' => 'unit', 'operator' => '=', 'value' => $unit];
         }
 
         return $conditions;

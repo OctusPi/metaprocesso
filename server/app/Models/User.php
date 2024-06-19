@@ -149,4 +149,21 @@ class User extends Model
             ['id' => self::MOD_REPORTS, 'module' => 'reports', 'title' => 'Relatórios']
         ];
     }
+
+    public static function build_modules(?array $data = null): array
+    {
+        $modules = [];
+
+        if(!is_null($data)){
+            foreach(self::list_modules() as $mod){
+                foreach ($data as $dat) {
+                    if($mod['id'] == $dat){
+                        $modules[] = $mod;
+                    }
+                }
+            }
+        }
+
+        return $modules;
+    }
 }
