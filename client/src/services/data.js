@@ -9,7 +9,7 @@ class Data {
         this.ui = ui
     }
 
-    save = () => {
+    save = (over = null) => {
         const validation = forms.checkform(this.page.value.data, this.page.value.rules);
         if (!validation.isvalid) {
             this.emit('callAlert', notifys.warning(validation.message))
@@ -17,6 +17,14 @@ class Data {
         }
 
         const data = { ...this.page.value.data }
+
+        //overwriting data values
+        if(over){
+            for(let k in over){
+                data[k] = over[k]
+            }
+        }
+
         const url = this.page.value.data?.id ? `${this.page.value.baseURL}/update` : `${this.page.value.baseURL}/save`
         const exec = this.page.value.data?.id ? http.put : http.post
 

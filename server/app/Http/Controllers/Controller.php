@@ -92,7 +92,7 @@ class Controller extends BaseController
             Log::error($e->getMessage());
         }
 
-        return $exec;
+        return (object)$exec;
     }
 
     public function baseUpdate(string $model, ?int $id, array $requests)

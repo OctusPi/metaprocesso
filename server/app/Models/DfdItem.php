@@ -10,7 +10,7 @@ class DfdItem extends Model
 {
     use HasFactory;
 
-    protected $table = 'dfditems';
+    protected $table = 'dfds_items';
 
     protected $fillable = [
         'dfd',

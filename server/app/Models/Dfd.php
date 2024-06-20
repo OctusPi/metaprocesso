@@ -195,7 +195,7 @@ class Dfd extends Model
         ];
     }
 
-    public function list_status():array
+    public static function list_status():array
     {
         return [
             ['id' => 1, 'title' => 'Rascunho'],
