@@ -44,15 +44,15 @@ class Etps extends Controller
     {
         $comission = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Comission::class, [
             [
-                'column' => $request->key,
+                'column'   => $request->key,
                 'operator' => '=',
-                'value' => $request->search,
-                'mode' => 'AND'
+                'value'    => $request->search,
+                'mode'     => 'AND'
             ]
         ], ['name'])) : Utils::map_select(Data::list(Comission::class));
 
         return Response()->json([
-            'dfds' => Utils::map_select(Data::list(Dfd::class, order: ['code'])),
+            'dfds' => Utils::map_select(Data::list(Dfd::class, order: ['protocol'])),
             'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
             'status' => Etp::list_status(),
             'comissions' => $comission,

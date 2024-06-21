@@ -5,7 +5,7 @@ import { onMounted } from 'vue';
 const props = defineProps({ 
 	options: { type: Array, required: true },
 	identify: {type: String, required: true},
-	idkey:{type: [Object, String] }
+	idkey:{type: [Object, String], default: () => null }
 });
 const model = defineModel({default: []})
 
