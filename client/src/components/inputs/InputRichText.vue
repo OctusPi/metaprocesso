@@ -3,6 +3,12 @@ import { ref, onMounted } from 'vue'
 import Quill from 'quill'
 import 'quill/dist/quill.core.css'
 
+const model = defineModel()
+
+const props = defineProps({
+    identifier: { type: String }
+})
+
 const richTextEl = ref(null)
 const richTextToolbarEl = ref(null)
 
@@ -18,12 +24,15 @@ onMounted(() => {
     quill.value.on('editor-change', () => {
         focus.value = quill.value.hasFocus()
     })
+    quill.value.on('text-change', () => {
+        model.value = quill.value.getSemanticHTML()
+    })
 })
 
 </script>
 
 <template>
-    <div class="ocp-richtext" :class="{ 'is-focus': focus }">
+    <div :id="props.identifier" class="ocp-richtext" :class="{ 'is-focus': focus }">
         <div class="ocp-richtext-toolbar" ref="richTextToolbarEl" :class="{ 'is-focus': focus }">
             <button class="ql-bold"><i class="bi bi-type-bold"></i></button>
             <button class="ql-italic"><i class="bi bi-type-italic"></i></button>
@@ -47,6 +56,10 @@ onMounted(() => {
     padding: 8px;
 }
 
+.ocp-richtext.form-control-alert {
+    border: 2px solid var(--color-danger);
+}
+
 .ocp-richtext.is-focus {
     border: 2px solid var(--color-base);
     background-color: var(--color-input-focus);
@@ -66,8 +79,12 @@ onMounted(() => {
     transition: inherit;
 }
 
+.ocp-richtext.form-control-alert .ocp-richtext-toolbar {
+    border: 2px solid var(--color-danger);
+}
+
 .ocp-richtext-toolbar.is-focus {
-    border: 2px solid var(--color-base);
+    border: 2px solid var(--color-base) !important;
 }
 
 .ocp-richtext-toolbar *.ql-active {

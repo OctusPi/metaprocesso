@@ -36,7 +36,7 @@ return new class extends Migration {
             $table->text('expected_results');
             $table->text('contract_previous_actions');
             $table->text('ambiental_impacts');
-            $table->text('viability_declaration');
+            $table->integer('viability_declaration');
         });
     }
 

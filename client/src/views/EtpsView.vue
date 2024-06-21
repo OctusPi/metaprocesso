@@ -34,11 +34,28 @@ const page = ref({
     },
     rules: {
         fields: {
+            dfds: 'required',
             organ: 'required',
-            unit: 'required',
-            ordinator: 'required',
-            demandant: 'required',
             comission: 'required',
+            protocol: 'required',
+            emission: 'required',
+            status: 'required',
+            object_description: 'required',
+            object_classification: 'required',
+            necessity: 'required',
+            contract_forecast: 'required',
+            contract_requirements: 'required',
+            market_survey: 'required',
+            contract_calculus_memories: 'required',
+            contract_expected_price: 'required',
+            solution_full_description: 'required',
+            solution_parcel_justification: 'required',
+            correlated_contracts: 'required',
+            contract_alignment: 'required',
+            expected_results: 'required',
+            contract_previous_actions: 'required',
+            ambiental_impacts: 'required',
+            viability_declaration: 'required',
         },
         valids: {}
     }
@@ -227,8 +244,9 @@ onMounted(() => {
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="organ" class="form-label">Órgão</label>
-                                        <select name="organ" class="form-control" id="organ" v-model="page.data.organ"
-                                            @change="setProtocol">
+                                        <select name="organ" class="form-control"
+                                            :class="{ 'form-control-alert': page.rules.valids.organ }" id="organ"
+                                            v-model="page.data.organ" @change="setProtocol">
                                             <option value=""></option>
                                             <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">
                                                 {{ o.title }}
@@ -237,7 +255,9 @@ onMounted(() => {
                                     </div>
                                     <div class="col-sm-12 col-md-8">
                                         <label for="comission" class="form-label">Comissão</label>
-                                        <select name="comission" class="form-control" id="comission">
+                                        <select name="comission" class="form-control"
+                                            :class="{ 'form-control-alert': page.rules.valids.comission }"
+                                            id="comission" v-model="page.data.comission">
                                             <option value=""></option>
                                             <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
                                                 {{ o.title }}
@@ -248,33 +268,43 @@ onMounted(() => {
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
                                         <label for="object_description" class="form-label">Descrição do Objeto</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.object_description }"
+                                            identifier="object_description" v-model="page.data.object_description" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="object_classification" class="form-label">Classificação do
                                             Objeto</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.object_classification }"
+                                            identifier="object_classification"
+                                            v-model="page.data.object_classification" />
                                     </div>
                                 </div>
                             </div>
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
-                                <DfdsSelect @callAlert="(msg) => emit('callAlert', msg)" />
+                                <DfdsSelect identifier="necessity" v-model="page.data.dfds"
+                                    @callAlert="(msg) => emit('callAlert', msg)" />
                             </div>
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('necessidade') }"
                                 id="necessity-tab-pane" role="tabpanel" aria-labelledby="necessity-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="object_description" class="form-label">Descrição da
+                                        <label for="necessity" class="form-label">Descrição da
                                             Necessidade</label>
-                                        <InputRichText />
+                                        <InputRichText :class="{ 'form-control-alert': page.rules.valids.necessity }"
+                                            identifier="necessity" v-model="page.data.necessity" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="contract_requirements" class="form-label">Descrição dos Requisitos
                                             da Contratação</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.contract_requirements }"
+                                            identifier="contract_requirements"
+                                            v-model="page.data.contract_requirements" />
                                     </div>
                                 </div>
                             </div>
@@ -284,32 +314,50 @@ onMounted(() => {
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
                                         <label for="market_survey" class="form-label">Levantamento de Mercado</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.market_survey }"
+                                            identifier="market_survey" v-model="page.data.market_survey" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="solution_full_description" class="form-label">Descrição da Solução
                                             como um Todo</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.solution_full_description }"
+                                            identifier="solution_full_description"
+                                            v-model="page.data.solution_full_description" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="solution_full_description" class="form-label">Estimativa das
+                                        <label for="contract_calculus_memories" class="form-label">Estimativa das
                                             Quantidades Contratadas</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.contract_calculus_memories }"
+                                            identifier="contract_calculus_memories"
+                                            v-model="page.data.contract_calculus_memories" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="contract_expected_price" class="form-label">Estimativa do Preço da
                                             Contratação</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.contract_expected_price }"
+                                            identifier="contract_expected_price"
+                                            v-model="page.data.contract_expected_price" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="contract_expected_price" class="form-label">Justificativa para o
+                                        <label for="solution_parcel_justification" class="form-label">Justificativa para
+                                            o
                                             Parcelamento ou Não</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.solution_parcel_justification }"
+                                            identifier="solution_parcel_justification"
+                                            v-model="page.data.solution_parcel_justification" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="correlated_contracts" class="form-label">Contratações Correlatas
                                             e/ou Interdependentes</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.correlated_contracts }"
+                                            identifier="correlated_contracts"
+                                            v-model="page.data.correlated_contracts" />
                                     </div>
                                 </div>
                             </div>
@@ -320,17 +368,24 @@ onMounted(() => {
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
                                         <label for="expected_results" class="form-label">Resultados Pretendidos</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.expected_results }"
+                                            identifier="expected_results" v-model="page.data.expected_results" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="contract_previous_actions" class="form-label">Providências a Serem
                                             Tomadas</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.contract_previous_actions }"
+                                            identifier="contract_previous_actions"
+                                            v-model="page.data.contract_previous_actions" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="ambiental_impacts" class="form-label">Possíveis Impactos
                                             Ambientais</label>
-                                        <InputRichText />
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.ambiental_impacts }"
+                                            identifier="ambiental_impacts" v-model="page.data.ambiental_impacts" />
                                     </div>
                                 </div>
                             </div>
@@ -338,9 +393,19 @@ onMounted(() => {
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('viabilidade') }"
                                 id="solution-tab-pane" role="tabpanel" aria-labelledby="solution-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
+                                    <div>
+                                        <h2 class="txt-color text-center m-0">
+                                            <i class="bi bi-check-all me-1"></i>
+                                            Declaração de Viabilidade
+                                        </h2>
+                                        <p class="txt-color-sec small text-center m-0"
+                                            :class="{ 'text-danger': page.rules.valids.viability_declaration }">
+                                            Selecione uma das opções abaixo
+                                        </p>
+                                    </div>
                                     <div class="col-12 col-md-6">
                                         <input class="btn-check" id="viability-1" type="radio" name="viability"
-                                            value="1">
+                                            value="1" v-model="page.data.viability_declaration">
                                         <label class="btn btn-outline-base" for="viability-1">Esta equipe de
                                             planejamento
                                             declara viável esta contratação com base neste ETP, consoante o inciso
@@ -348,7 +413,7 @@ onMounted(() => {
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <input class="btn-check" id="viability-2" type="radio" name="viability"
-                                            value="0">
+                                            value="0" v-model="page.data.viability_declaration">
                                         <label class="btn btn-outline-secondary" for="viability-2">Esta equipe de
                                             planejamento
                                             declara inviável esta contratação com base neste ETP, consoante o inciso
@@ -368,9 +433,8 @@ onMounted(() => {
                                         É necessário haver o protocolo para continuar
                                     </p>
                                 </div>
-                                <AttachmentsList @callRemove="(m) => emit('callRemove', m)"
-                                    @callAlert="(m) => emit('callAlert', m)" v-if="page.data.protocol" :origin="5"
-                                    :protocol="page.data.protocol" :types="attachmentTypes" />
+                                <AttachmentsList v-if="page.data.protocol" @callAlert="(m) => emit('callAlert', m)"
+                                    :origin="5" :protocol="page.data.protocol" :types="attachmentTypes" />
                             </div>
                         </div>
 
