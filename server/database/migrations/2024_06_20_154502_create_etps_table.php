@@ -13,9 +13,9 @@ return new class extends Migration {
         Schema::create('etps', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->json('dfds')->default([]);
+            $table->json('dfds');
             $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('comission')->constrained('comission');
+            $table->foreignId('comission')->constrained('comissions');
             $table->foreignId('user')->constrained('users');
             $table->string('protocol')->unique();
             $table->string('ip')->nullable();

@@ -7,6 +7,7 @@ import Tabs from '@/utils/tabs';
 
 import MainNav from '@/components/MainNav.vue';
 import TabNav from '@/components/TabNav.vue';
+import AttachmentsList from '@/components/AttachmentsList.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import InputRichText from '@/components/inputs/InputRichText.vue';
@@ -62,7 +63,7 @@ function autoProtocol(organId) {
         return null
     }
 
-    const d = new Date(new Date);
+    const d = new Date();
 
     const date = (
         d.getDay().toString().padStart(2, '0')
@@ -81,9 +82,10 @@ function setProtocol() {
     page.value.data.protocol = autoProtocol(page.value.data.organ)
 }
 
-function generate(type) {
-
-}
+const attachmentTypes = [
+    { id: 0, title: 'Memória de Cálculo' },
+    { id: 1, title: 'Levantamento de Mercado' },
+]
 
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
@@ -134,6 +136,41 @@ onMounted(() => {
                     <!--SEARCH BAR-->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
                         <form @submit.prevent="data.list" class="row g-3">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-protocol" class="form-label">Protocolo</label>
+                                <input type="text" name="protocol" class="form-control" id="s-protocol"
+                                    v-model="page.search.protocol" placeholder="Pesquise por partes do protocolo" />
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-organ" class="form-label">Orgão</label>
+                                <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ"
+                                    @change="data.selects('organ', page.search.organ)">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-comission" class="form-label">Comissão</label>
+                                <select name="comission" class="form-control" id="s-comission"
+                                    v-model="page.search.comission">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-emission" class="form-label">Emissão</label>
+                                <input type="text" name="emission" class="form-control" id="s-emission"
+                                    v-model="page.search.emission" placeholder="dd/mm/aaaa" v-maska:[masks.maskdate] />
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <label for="s-necessity" class="form-label">Necessidade</label>
+                                <input type="text" name="necessity" class="form-control" id="s-necessity"
+                                    v-model="page.search.necessity" placeholder="Pesquise por partes da necessidade" />
+                            </div>
                             <div class="d-flex flex-row-reverse mt-4">
                                 <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
                                         class="bi bi-check2-circle"></i></button>
@@ -322,20 +359,18 @@ onMounted(() => {
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('anexos') }"
                                 id="solution-tab-pane" role="tabpanel" aria-labelledby="solution-tab" tabindex="0">
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-12">
-                                        <label for="contract_calculus_memories_file" class="form-label">Anexar Memórias
-                                            de Cálculo</label>
-                                        <input @change="handleFile" type="file" name="contract_calculus_memories_file"
-                                            class="form-control">
-                                    </div>
-                                    <div class="col-sm-12 col-md-12">
-                                        <label for="contract_expected_price_file" class="form-label">Anexar Expectativa
-                                            de Preço</label>
-                                        <input @change="handleFile" type="file" name="contract_expected_price_file"
-                                            class="form-control">
-                                    </div>
+                                <div v-if="!page.data.protocol">
+                                    <h2 class="txt-color text-center m-0">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        Erro ao iniciar anexos
+                                    </h2>
+                                    <p class="txt-color-sec small text-center m-0">
+                                        É necessário haver o protocolo para continuar
+                                    </p>
                                 </div>
+                                <AttachmentsList @callRemove="(m) => emit('callRemove', m)"
+                                    @callAlert="(m) => emit('callAlert', m)" v-if="page.data.protocol" :origin="5"
+                                    :protocol="page.data.protocol" :types="attachmentTypes" />
                             </div>
                         </div>
 
@@ -379,5 +414,4 @@ onMounted(() => {
     display: flex;
     width: fit-content;
 }
-
 </style>

@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Utils\Dates;
 
 class Attachment extends Model
 {
     use HasFactory;
 
+    protected $table = 'attachments';
     protected $fillable = [
         'origin',
         'protocol',
@@ -30,8 +33,13 @@ class Attachment extends Model
     {
         return [
             'required' => 'Campo obrigatório não informado!',
-            'unique' => 'ETP já registrado no sistema!'
         ];
     }
 
+    public function updatedAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::TZ, Dates::PTBR),
+        );
+    }
 }

@@ -171,5 +171,18 @@ class Controller extends BaseController
     {
         return $this->baseDetails($this->model, $request->id);
     }
+
+    public function fastdestroy(Request $request)
+    {
+        try {
+            $instance = $this->model::where('id', $request->id)->first();
+            if ($instance->delete()) {
+                return Response()->json(Notify::success('Registro excluído com sucesso!'), 200);
+            }
+            return Response()->json(Notify::warning('Dados para exclusão nao localizado!'), 404);
+        } catch (\Exception $e) {
+            return Response()->json(Notify::error('Ação não permitida, registro referenciado em outros contextos!'), 500);
+        }
+    }
 }
 

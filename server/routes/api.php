@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Attachments;
 use App\Http\Controllers\Auth;
 use App\Http\Controllers\CatalogItems;
 use App\Http\Controllers\Catalogs;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Suppliers;
 use App\Http\Controllers\Units;
 use App\Http\Controllers\Sectors;
 use App\Http\Middleware\CheckPermission;
+use App\Models\Attachment;
 use App\Utils\Notify;
 use Illuminate\Support\Facades\Route;
 
@@ -286,6 +288,19 @@ Route::controller(Etps::class)->group(function () {
         });
     });
 })->name('etps');
+
+Route::controller(Attachments::class)->group(function () {
+    Route::prefix('/attachments')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/{origin}/{protocol}/list', 'list');
+            Route::post('/{origin}/{protocol}/save', 'save');
+            Route::put('/{origin}/{protocol}/update', 'update');
+            Route::post('/{origin}/{protocol}/fastdestroy', 'fastdestroy');
+            Route::get('/{origin}/{protocol}/details/{id}', 'details');
+        });
+    });
+})->name('attachments');
 
 Route::fallback(function () {
     return Response()->json(Notify::warning('Destino solicitado não existe...'), 404);

@@ -30,6 +30,7 @@ class Guardian
         if (!is_null($user)) {
             $module_name  = str_replace(['comissionsmembers','comissionsends'], 'comissions', $module_name);
             $module_name  = str_replace(['catalogitems', 'suppliers', 'catalogsubcategories'], 'catalogs', $module_name);
+            $module_name  = str_replace(['attachments'], 'management', $module_name);
             $auth_modules = array_column($user->modules, 'module');
             return in_array(str_replace('api/', '', $module_name), $auth_modules);
         }

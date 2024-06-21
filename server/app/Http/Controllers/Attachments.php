@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Attachment;
+use App\Models\User;
+use App\Security\Guardian;
+use App\Utils\Uploads;
+use Illuminate\Http\Request;
+
+class Attachments extends Controller
+{
+    public function __construct()
+    {
+        parent::__construct(Attachment::class, User::MOD_MANAGEMENT);
+        Guardian::validateAccess($this->module_id);
+    }
+
+    public function list()
+    {
+        return $this->baseList(['origin', 'protocol'], ['updated_at']);
+    }
+
+    public function save(Request $request)
+    {
+        $upload = new Uploads($request, ['file' => ['nullable' => false]]);
+        $values = $upload->mergeUploads($request->all());
+
+        return $this->baseSave(Attachment::class, $values);
+    }
+
+    public function update(Request $request)
+    {
+        $comission = Attachment::findOrFail($request->id);
+        
+        $values = $request->all();
+
+        if ($request->hasFile('file')) {
+            $upload = new Uploads($request, ['file' => ['nullable' => false]]);
+            $upload->remove($comission->file);
+            $values = $upload->mergeUploads($values);
+        }
+
+        return $this->baseUpdate(Attachment::class, $request->id, $values);
+    }
+}
