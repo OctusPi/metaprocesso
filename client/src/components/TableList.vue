@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import ActionNav from './ActionNav.vue'
+import TableListStatus from './TableListStatus.vue'
 
 const props = defineProps({
     header: { type: Array },
@@ -70,7 +71,8 @@ watch(() => props.body, (newValue) => {
             <tbody v-if="body">
                 <tr v-for="b in body" :key="b.id">
                     <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle">
-                        {{ getdata(b, h?.obj, h.key, h?.cast) }}
+                       <TableListStatus v-if="h.key === 'status'" :data="getdata(b, h?.obj, h.key, h?.cast)"  />
+                       <template v-else>{{ getdata(b, h?.obj, h.key, h?.cast) }}</template>
                         <p v-if="h.sub" class="small txt-color-sec p-0 m-0">
                             <span v-for="s in h.sub" :key="s.key" class="inline-block small">
                                 {{ `${s.title ?? ''} ${getdata(b, s?.obj, s.key, s?.cast)}` }}

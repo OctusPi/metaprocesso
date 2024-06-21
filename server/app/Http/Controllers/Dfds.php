@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CatalogItem;
 use App\Models\ComissionMember;
 use App\Models\Dfd;
+use App\Models\DfdItem;
 use App\Models\Dotation;
 use App\Models\Program;
 use App\Models\Unit;
@@ -33,25 +34,46 @@ class Dfds extends Controller
         
         $ip   = $request->ip();
         $code = Utils::randCode(6, str_pad($request->unit, 3, '0', STR_PAD_LEFT), date('dmY'));
-        $data = array_merge($request->all(), ['ip' => $ip, 'protocol' => $code, 'status' => 1, 'author' => $this->user_loged->id]);
-        $dfd  = $this->baseSaveInstance($data);
+        $data = array_merge($request->all(), ['ip' => $ip, 'protocol' => $code, 'author' => $this->user_loged->id]);
+        $save = $this->baseSaveInstance($data);
 
-        if(!is_null($dfd['instance'])){
+        if(!is_null($save->instance)){
 
-            return Response()->json(Notify::success('foi id:'.$dfd['instance']->id));
+            $dfd   = $save->instance;
+            $items = json_decode($request->items, true);
+            if(is_array($items)){
+                foreach ($items as $item) {
+                    $dfdItem = new DfdItem([
+                        'dfd'      => $dfd->id,
+                        'item'     => $item['item']['id'],
+                        'quantity' => $item['quantity'],
+                        'program'  => strlen($item['program'] ?? '')? $item['program'] : null,
+                        'dotation' => strlen($item['dotation'] ?? '')? $item['dotation'] : null
+                    ]);
+                    $dfdItem->save();
+                }
+            }
 
+            return Response()->json(Notify::success('DFD Registrado com Sucesso...'));
         }
 
-        Log::info(json_encode($this->user_loged));
-        Log::info($code);
-
-        return Response()->json(Notify::warning('Falha ao registrar DFD '.$dfd['error']), 400);
-        
+        return Response()->json(Notify::warning('Falha ao registrar DFD '.$save->error), 400);
     }
 
     public function list(Request $request)
     {
-        return $this->baseList(['organ', 'unit', 'name'], ['date_ini'], ['organ', 'unit']);
+        return $this->baseList(['organ', 'unit', 'name'], ['date_ini'], ['organ', 'unit', 'demandant', 'ordinator']);
+    }
+
+    public function details(Request $request)
+    {
+        $dfd = Dfd::where('id', $request->id)->first()->toArray();
+        $dfd['items'] = DfdItem::where('dfd', $request->id)->with('item')->get();
+        if(!$dfd){
+            return Response()->json(Notify::warning('DFD não localizado...'), 404);
+        }
+
+        return Response()->json($dfd, 200);
     }
 
     public function selects(Request $request)
@@ -133,7 +155,8 @@ class Dfds extends Controller
                 'programs'     => $programs,
                 'dotations'    => $dotations,
                 'categories'   => CatalogItem::list_categoria(),
-                'responsibilitys' => ComissionMember::list_responsabilities()
+                'responsibilitys' => ComissionMember::list_responsabilities(),
+                'status' => Dfd::list_status()
             ], 200);
         }
 

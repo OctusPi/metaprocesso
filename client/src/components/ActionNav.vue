@@ -30,6 +30,21 @@ const actions = {
         icon: 'bi-file-earmark-text',
         title: 'Docs'
     },
+    'export_pdf': {
+        action: (id) => { emit('action', { e: 'action:pdf', i: id }) },
+        icon: 'bi-filetype-pdf',
+        title: 'Gerar PDF'
+    },
+    'export_doc': {
+        action: (id) => { emit('action', { e: 'action:doc', i: id }) },
+        icon: 'bi-file-earmark-text',
+        title: 'Gerar Doc'
+    },
+    'export_xls': {
+        action: (id) => { emit('action', { e: 'action:xls', i: id }) },
+        icon: 'bi-file-earmark-text',
+        title: 'Gerar Excel'
+    },
     'members': {
         action: (id) => { emit('action', { e: 'action:members', i: id }) },
         icon: 'bi-people',

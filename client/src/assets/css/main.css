@@ -1,7 +1,7 @@
 @import 'b%/bootstrap.min.css';
 @import 'bi%/bootstrap-icons.css';
-@import './base.css';
 @import 'datepicke.scss';
+@import './base.css';
 
 @keyframes rotate {
   from {

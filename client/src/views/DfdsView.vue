@@ -25,9 +25,12 @@ const page = ref({
     data: { items: [] },
     datalist: props.datalist,
     dataheader: [
-        { key: 'name', title: 'IDENTIFICAÇÃO' },
-        { obj: 'unit', key: 'name', title: 'VINCULO', sub: [{ obj: 'organ', key: 'name' }] },
-        { key: 'description', title: 'DESCRIÇÃO' }
+        { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub:[{key:'protocol'}] },
+        { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
+        { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
+        { obj: 'unit', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
+        { title: 'DESCRIÇÃO', sub:[{key: 'description'}] },
+        { key: 'status', cast:'title', title:'SITUAÇÃO' }
     ],
     search: {},
     selects: {
@@ -43,7 +46,8 @@ const page = ref({
         programs: [],
         dotations: [],
         categories: [],
-        responsibilitys: []
+        responsibilitys: [],
+        status: []
     },
     rules: {
         fields: {
@@ -331,9 +335,10 @@ onMounted(() => {
                     <TableList
                         @action:update="data.update"
                         @action:delete="data.remove"
+                        :casts="{'status':page.selects.status}"
                         :header="page.dataheader"
                         :body="page.datalist"
-                        :actions="['update', 'delete']"
+                        :actions="['export_pdf', 'update', 'delete']"
                     />
                 </div>
 
@@ -343,7 +348,7 @@ onMounted(() => {
                     id="register-box"
                     class="inside-box px-4 px-md-5 mb-4"
                 >
-                    <form class="form-row" @submit.prevent="data.save()">
+                    <form class="form-row">
                         <input type="hidden" name="id" v-model="page.data.id" />
 
                         <TabNav identify="dfdsTab" :tab-instance="navtab" />
@@ -1203,10 +1208,10 @@ onMounted(() => {
                             >
                                 Cancelar <i class="bi bi-x-circle"></i>
                             </button>
-                            <button type="submit" class="btn btn-outline-primary me-2">
+                            <button @click="data.save({status:2})" type="button" class="btn btn-outline-primary me-2">
                                 Salvar <i class="bi bi-check2-circle"></i>
                             </button>
-                            <button type="submit" class="btn btn-outline-secondary me-2">
+                            <button @click="data.save({status:1})" type="button" class="btn btn-outline-secondary me-2">
                                 Rascunho <i class="bi bi-receipt-cutoff"></i>
                             </button>
                             <button
