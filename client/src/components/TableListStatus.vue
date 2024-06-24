@@ -1,36 +1,27 @@
 <script setup>
-
 const props = defineProps({
-    data:{type:String , required: true}
+    data: { type: String, required: true }
 })
 
+function get_badge() {
+    const badges = {
+        'text-bg-secondary': 'Rascunho|Inativo|Baixa',
+        'text-bg-primary': 'Enviado',
+        'text-bg-warning': 'Pendente|Média',
+        'text-bg-danger': 'Bloqueado|Alta',
+        'text-bg-success': 'Processado|Ativo'
+    }
+    for(let i in badges){
+        const a = (badges[i]).split('|')
+        if(a.includes(props.data)){
+            return i
+        }
+    }
 
-let badges = 'text-bg-secondary'
-
-switch (props.data) {
-    case 'Rascunho':
-    case 'Inativo':
-        badges = 'text-bg-secondary'
-        break
-    case 'Enviado':
-        badges = 'text-bg-primary'
-        break
-    case 'Pendente':
-        badges = 'text-bg-warning'
-        break
-    case 'Bloqueado':
-        badges = 'text-bg-danger'
-        break
-    case 'Processado':
-    case 'Ativo':
-        badges = 'text-bg-success'
-        break
-    default:
-        break
+    return 'text-bg-secondary'
 }
-
 </script>
 
 <template>
-    <span class="badge rounded-pill" :class="badges">{{ props.data }}</span>
+    <span class="badge rounded-pill" :class="get_badge()">{{ props.data }}</span>
 </template>
