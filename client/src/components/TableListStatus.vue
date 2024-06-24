@@ -4,16 +4,33 @@ const props = defineProps({
     data:{type:String , required: true}
 })
 
-const badges = {
-    'Rascunho'  : 'text-bg-secondary',
-    'Enviado'   : 'text-bg-primary',
-    'Pendente'  : 'text-bg-warning',
-    'Bloqueado' : 'text-bg-danger',
-    'Processado': 'text-bg-success'
+
+let badges = 'text-bg-secondary'
+
+switch (props.data) {
+    case 'Rascunho':
+    case 'Inativo':
+        badges = 'text-bg-secondary'
+        break
+    case 'Enviado':
+        badges = 'text-bg-primary'
+        break
+    case 'Pendente':
+        badges = 'text-bg-warning'
+        break
+    case 'Bloqueado':
+        badges = 'text-bg-danger'
+        break
+    case 'Processado':
+    case 'Ativo':
+        badges = 'text-bg-success'
+        break
+    default:
+        break
 }
 
 </script>
 
 <template>
-    <span class="badge rounded-pill" :class="badges[props.data] ?? 'text-bg-secondary'">{{ props.data }}</span>
+    <span class="badge rounded-pill" :class="badges">{{ props.data }}</span>
 </template>

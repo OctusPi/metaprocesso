@@ -30,9 +30,18 @@ function getTxt(objs, key_subject, key_search = 'id', key_txt = 'title'){
     
 }
 
+function truncate(str, len = 100) {
+    if (str.length <= len) {
+        return str
+    }
+
+    return str.slice(0, len - 3) + "..."
+}
+
 export default {
     load,
     dateNow,
     randCode,
-    getTxt
+    getTxt,
+    truncate
 }

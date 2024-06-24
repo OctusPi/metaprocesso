@@ -285,8 +285,8 @@ onMounted(() => {
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
-                                <DfdsSelect identifier="necessity" v-model="page.data.dfds"
-                                    @callAlert="(msg) => emit('callAlert', msg)" />
+                                <DfdsSelect :valid="page.rules.valids.dfds" identifier="necessity"
+                                    v-model="page.data.dfds" @callAlert="(msg) => emit('callAlert', msg)" />
                             </div>
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('necessidade') }"

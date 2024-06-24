@@ -1,16 +1,44 @@
 <script setup>
+import utils from '@/utils/utils';
 import { onMounted } from 'vue';
 
 // Props
-const props = defineProps({ 
+const props = defineProps({
 	options: { type: Array, required: true },
-	identify: {type: String, required: true},
-	idkey:{type: [Object, String] }
+	identify: { type: String, required: true },
+	idkey: { type: [Object, String], default: () => null },
+	castkey: { type: [Array], default: () => null },
 });
-const model = defineModel({default: []})
+
+const model = defineModel({ default: [] })
+
+function mountCasts(option) {
+	if (typeof props.castkey == 'string') {
+		return [{
+			title: option[props.castkey],
+			color: null
+		}]
+	}
+
+	return props.castkey.map((item) => {
+		let match = option[item.cast]
+
+		if (item.replace) {
+			const replacement = [...item.replace.dataset ?? []]
+				.find((obj) => obj[item.replace.from ?? 'id'] = match)
+			if (replacement) {
+				match = replacement[item.replace.to]
+			}
+		}
+		return {
+			color: item.color,
+			title: utils.truncate(match, 90)
+		}
+	})
+}
 
 onMounted(() => {
-	if(!model.value){
+	if (!model.value) {
 		model.value = []
 	}
 })
@@ -19,23 +47,40 @@ onMounted(() => {
 
 <template>
 	<div class="form-control select-multipe">
-		<div class="form-check mb-1" v-for="option in props.options" :key="option.id+props.identify">
-			<input class="form-check-input" type="checkbox" :name="option.id+props.identify"
-			v-model="model"
-			:value="!props.idkey ? option : option[props.idkey]" 
-			:id="option.id+props.identify">
-			<label class="form-check-label small" :for="option.id+props.identify">
-				{{ option.title }}
+		<div class="form-check mb-1" v-for="option in props.options" :key="option.id + props.identify">
+			<input class="form-check-input" type="checkbox" :name="option.id + props.identify" v-model="model"
+				:value="!props.idkey ? option : option[props.idkey]" :id="option.id + props.identify">
+			<label class="check-label form-check-label small d-flex gap-1" :for="option.id + props.identify">
+				<span class="cast px-1" v-if="!props.castkey">
+					{{ option.title }}
+				</span>
+				<template v-if="props.castkey" v-for="item in mountCasts(option)">
+					<span class="cast px-1">
+						{{ item.title }}
+					</span>
+				</template>
 			</label>
 		</div>
 	</div>
 </template>
 
 <style>
-
 .select-multipe {
 	height: 200px;
 	overflow: auto;
 	padding: 16px;
+}
+
+.cast {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px solid #ccc;
+	font-size: 1.15em;
+	border-radius: 4px;
+}
+
+.check-label {
+	min-width: 768px;
 }
 </style>
