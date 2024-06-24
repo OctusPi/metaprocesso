@@ -32,8 +32,8 @@ return new class extends Migration
             $table->string('estimated_value');
             $table->date('estimated_date');
             $table->integer('priority');
-            $table->boolean('bonds'); //vinculos outros dfds
-            $table->boolean('price_taking');
+            $table->boolean('bonds')->default(false); 
+            $table->boolean('price_taking')->default(false);
             $table->integer('status');
             $table->foreignId('author')->constrained('users');
         });

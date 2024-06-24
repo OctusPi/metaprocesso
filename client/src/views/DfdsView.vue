@@ -13,6 +13,7 @@ import gpt from '@/services/gpt'
 import MainNav from '@/components/MainNav.vue'
 import MainHeader from '@/components/MainHeader.vue'
 import TableList from '@/components/TableList.vue'
+import TableListStatus from '@/components/TableListStatus.vue'
 import TabNav from '@/components/TabNav.vue'
 
 const emit = defineEmits(['callAlert', 'callRemove'])
@@ -29,7 +30,7 @@ const page = ref({
         { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
         { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
         { obj: 'unit', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
-        { title: 'DESCRIÇÃO', sub:[{key: 'description'}] },
+        { title: 'OBJETO', sub:[{key: 'description'}] },
         { key: 'status', cast:'title', title:'SITUAÇÃO' }
     ],
     search: {},
@@ -195,6 +196,14 @@ function rescue_members(){
     })
 }
 
+function update_dfd(id){
+    http.get(`${page.value.baseURL}/details/${id}`, emit, (response) => {
+        page.value.data = response.data
+        data.selects('unit', page.value.data.unit)
+        ui.toggle('update')
+    })
+}
+
 watch(
     () => props.datalist,
     (newdata) => {
@@ -206,6 +215,7 @@ onMounted(() => {
     data.selects()
     data.list()
 })
+
 </script>
 
 <template>
@@ -333,7 +343,7 @@ onMounted(() => {
 
                     <!-- DATA LIST -->
                     <TableList
-                        @action:update="data.update"
+                        @action:update="update_dfd"
                         @action:delete="data.remove"
                         :casts="{'status':page.selects.status}"
                         :header="page.dataheader"
@@ -845,13 +855,13 @@ onMounted(() => {
                                                     id="item-quantity"
                                                     v-maska:[masks.masknumbs]
                                                     v-model="items.selected_item.quantity"
+                                                    @keydown.enter.prevent="add_item"
                                                 />
                                                 <button
                                                     @click="add_item"
                                                     class="btn btn-group-input"
                                                     type="button"
-                                                    id="btn-search-item"
-                                                >
+                                                    id="btn-search-item">
                                                     <i class="bi bi-plus-circle"></i>
                                                 </button>
                                             </div>
@@ -1061,12 +1071,10 @@ onMounted(() => {
                                             <div class="col-md-2">
                                                 <h4>Prioridade</h4>
                                                 <p>
-                                                    {{
-                                                        utils.getTxt(
+                                                    <TableListStatus :data="utils.getTxt(
                                                             page.selects.prioritys,
                                                             page.data.priority
-                                                        )
-                                                    }}
+                                                        )" />
                                                 </p>
                                             </div>
                                             <div class="col-md-2">
@@ -1209,7 +1217,7 @@ onMounted(() => {
                                 Cancelar <i class="bi bi-x-circle"></i>
                             </button>
                             <button @click="data.save({status:2})" type="button" class="btn btn-outline-primary me-2">
-                                Salvar <i class="bi bi-check2-circle"></i>
+                                Enviar <i class="bi bi-check2-circle"></i>
                             </button>
                             <button @click="data.save({status:1})" type="button" class="btn btn-outline-secondary me-2">
                                 Rascunho <i class="bi bi-receipt-cutoff"></i>

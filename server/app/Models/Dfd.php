@@ -97,6 +97,22 @@ class Dfd extends Model
         );
     }
 
+    public function bonds():Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => boolval($value),
+            set: fn($value) => boolval($value)
+        );
+    }
+
+    public function priceTaking():Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => boolval($value),
+            set: fn($value) => boolval($value)
+        );
+    }
+
     public static function validateFields(?int $id = null):array
     {
         return [
