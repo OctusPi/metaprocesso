@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, createApp } from 'vue'
 import utils from '@/utils/utils'
 import dates from '@/utils/dates'
 import Ui from '@/utils/ui'
@@ -9,12 +9,14 @@ import Tabs from '@/utils/tabs'
 import Data from '@/services/data'
 import http from '@/services/http'
 import gpt from '@/services/gpt'
+import exp from '@/services/export'
 
 import MainNav from '@/components/MainNav.vue'
 import MainHeader from '@/components/MainHeader.vue'
 import TableList from '@/components/TableList.vue'
 import TableListStatus from '@/components/TableListStatus.vue'
 import TabNav from '@/components/TabNav.vue'
+import DfdReport from '@/views/reports/DfdReport.vue'
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -202,6 +204,13 @@ function update_dfd(id) {
         data.selects('unit', page.value.data.unit)
         ui.toggle('update')
     })
+}
+
+function export_preview(){
+    const containerReport = document.createElement('div')
+    const instanceReport = createApp(DfdReport, {dfd:page.value.data})
+    instanceReport.mount(containerReport)
+    exp.exportPDF(containerReport, 'DFD-Preview')
 }
 
 watch(
@@ -661,8 +670,13 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('revisor') }"
+                            <div class="tab-pane fade position-relative" :class="{ 'show active': navtab.activate_tab('revisor') }"
                                 id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
+                                
+                                <button @click="export_preview" type="button" class="btn-abs position-absolute text-center">
+                                    <i class="bi bi-printer fs-5"></i>
+                                </button>
+
                                 <!-- origin -->
                                 <div class="box-revisor mb-4">
                                     <div class="box-revisor-title d-flex mb-4">
@@ -1071,6 +1085,11 @@ onMounted(() => {
 .box-revisor-content p {
     color: var(--color-text-secondary);
     font-size: 0.9rem;
+}
+
+.btn-abs{
+    top: -20px;
+    right: 0;
 }
 
 @media (max-width: 755px) {
