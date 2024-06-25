@@ -14,6 +14,7 @@ const richTextToolbarEl = ref(null)
 
 const quill = ref(null)
 const focus = ref(false)
+const initialValue = ref(model.value)
 
 onMounted(() => {
     quill.value = new Quill(richTextEl.value, {
@@ -41,7 +42,7 @@ onMounted(() => {
             <button class="ql-list" value="bullet"><i class="bi bi-list-ul"></i></button>
             <button class="ql-list" value="ordered"><i class="bi bi-list-ol"></i></button>
         </div>
-        <div class="ocp-richtext-editor" ref="richTextEl"></div>
+        <div class="ocp-richtext-editor" ref="richTextEl" v-html="initialValue"></div>
     </div>
 </template>
 

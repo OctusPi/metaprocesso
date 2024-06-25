@@ -19,8 +19,8 @@ class Data {
         const data = { ...this.page.value.data }
 
         //overwriting data values
-        if(over){
-            for(let k in over){
+        if (over) {
+            for (let k in over) {
                 data[k] = over[k]
             }
         }
@@ -89,10 +89,10 @@ class Data {
         })
     }
 
-    listForSearch = () => {
+    listForSearch = (...preseted) => {
         let isFilled = false
-        for (let item in Object.values(this.page.value.search)) {
-            if (item != null) {
+        for (let [key, value] of Object.entries(this.page.value.search)) {
+            if (value && !preseted.includes(key)) {
                 this.list()
                 isFilled = true
                 break
@@ -100,6 +100,7 @@ class Data {
         }
         if (!isFilled) {
             this.emit('callAlert', notifys.warning('Preencha ao menos um campo para continuar'))
+            this.page.value.datalist = []
         }
     }
 }

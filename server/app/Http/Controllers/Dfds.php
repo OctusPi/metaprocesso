@@ -119,7 +119,7 @@ class Dfds extends Controller
 
     public function list(Request $request)
     {
-        return $this->baseList(['organ', 'unit', 'name'], ['date_ini'], ['organ', 'unit', 'demandant', 'ordinator']);
+        return $this->baseList(['organ', 'unit', 'protocol', 'date_ini'], ['date_ini'], ['organ', 'unit', 'demandant', 'ordinator']);
     }
 
     public function details(Request $request)

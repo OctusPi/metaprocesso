@@ -13,26 +13,24 @@ const props = defineProps({
 const model = defineModel({ default: [] })
 
 function mountCasts(option) {
-	if (typeof props.castkey == 'string') {
-		return [{
-			title: option[props.castkey],
-			color: null
-		}]
-	}
-
 	return props.castkey.map((item) => {
 		let match = option[item.cast]
 
+		if (item.property) {
+			match = String(match[item.property])
+		}
+
 		if (item.replace) {
-			const replacement = [...item.replace.dataset ?? []]
-				.find((obj) => obj[item.replace.from ?? 'id'] = match)
+			const replacement = item.replace.dataset
+				.find((obj) => obj[item.replace.from ?? 'id'] == match)
 			if (replacement) {
-				match = replacement[item.replace.to]
+				match = String(replacement[item.replace.to])
 			}
 		}
+
 		return {
-			color: item.color,
-			title: utils.truncate(match, 90)
+			id: option.id,
+			title: utils.truncate(match, 120)
 		}
 	})
 }
@@ -54,8 +52,8 @@ onMounted(() => {
 				<span class="cast px-1" v-if="!props.castkey">
 					{{ option.title }}
 				</span>
-				<template v-if="props.castkey" v-for="item in mountCasts(option)">
-					<span class="cast px-1">
+				<template v-if="props.castkey">
+					<span v-for="item in mountCasts(option)" :key="item.id" class="cast px-1">
 						{{ item.title }}
 					</span>
 				</template>

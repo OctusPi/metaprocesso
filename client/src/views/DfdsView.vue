@@ -26,12 +26,12 @@ const page = ref({
     data: { items: [] },
     datalist: props.datalist,
     dataheader: [
-        { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub:[{key:'protocol'}] },
+        { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
         { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
         { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
         { obj: 'unit', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
-        { title: 'OBJETO', sub:[{key: 'description'}] },
-        { key: 'status', cast:'title', title:'SITUAÇÃO' }
+        { title: 'OBJETO', sub: [{ key: 'description' }] },
+        { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
     ],
     search: {},
     selects: {
@@ -57,7 +57,7 @@ const page = ref({
             ordinator: 'required',
             demandant: 'required',
             comission: 'required',
-            date_ini:'required',
+            date_ini: 'required',
             estimated_date: 'required',
             year_pca: 'required',
             acquisition_type: 'required',
@@ -106,8 +106,8 @@ const items = ref({
     }
 })
 
-const ui     = new Ui(page, 'DFDs')
-const data   = new Data(page, emit, ui)
+const ui = new Ui(page, 'DFDs')
+const data = new Data(page, emit, ui)
 const navtab = new Tabs(tabs)
 
 function search_items() {
@@ -190,13 +190,13 @@ function generate(type) {
     gpt.generate(`${page.value.baseURL}/generate`, payload, emit, callresp)
 }
 
-function rescue_members(){
+function rescue_members() {
     http.get(`${page.value.baseURL}/selects/comission/${page.value.data.comission}`, emit, (resp) => {
         page.value.data.comission_members = resp.data
     })
 }
 
-function update_dfd(id){
+function update_dfd(id) {
     http.get(`${page.value.baseURL}/details/${id}`, emit, (response) => {
         page.value.data = response.data
         data.selects('unit', page.value.data.unit)
@@ -223,35 +223,25 @@ onMounted(() => {
         <MainNav />
 
         <section class="container-main">
-            <MainHeader
-                :header="{
-                    icon: 'bi-journal-album',
-                    title: 'Formalização de Demandas',
-                    description: 'Registro de demandas solicitadas pelas as Unidades'
-                }"
-            />
+            <MainHeader :header="{
+                icon: 'bi-journal-album',
+                title: 'Formalização de Demandas',
+                description: 'Registro de demandas solicitadas pelas as Unidades'
+            }" />
 
             <div class="box box-main p-0 rounded-4">
                 <!--HEDER PAGE-->
-                <div
-                    class="d-md-flex justify-content-between align-items-center w-100 px-4 px-md-5 pt-5 mb-4"
-                >
+                <div class="d-md-flex justify-content-between align-items-center w-100 px-4 px-md-5 pt-5 mb-4">
                     <div class="info-list">
                         <h2 class="txt-color p-0 m-0">{{ page.title.primary }}</h2>
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
                     </div>
                     <div class="action-buttons d-flex my-2">
                         <div class="dropdown">
-                            <button
-                                type="button"
-                                class="btn btn-action btn-action-primary"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false"
-                            >
+                            <button type="button" class="btn btn-action btn-action-primary" data-bs-toggle="dropdown"
+                                aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>
-                                <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline"
-                                    >Adicionar</span
-                                >
+                                <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
                             </button>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-item c-pointer" @click="ui.toggle('register')">
@@ -266,15 +256,10 @@ onMounted(() => {
                                 </li>
                             </ul>
                         </div>
-                        <button
-                            @click="ui.toggle('search')"
-                            type="button"
-                            class="btn btn-action btn-action-primary ms-2"
-                        >
+                        <button @click="ui.toggle('search')" type="button"
+                            class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-search"></i>
-                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline"
-                                >Pesquisar</span
-                            >
+                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Pesquisar</span>
                         </button>
                     </div>
                 </div>
@@ -286,48 +271,24 @@ onMounted(() => {
                         <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-name" class="form-label">Nome</label>
-                                <input
-                                    type="text"
-                                    name="name"
-                                    class="form-control"
-                                    id="s-name"
-                                    v-model="page.search.name"
-                                    placeholder="Pesquise por partes do nome do setor"
-                                />
+                                <input type="text" name="name" class="form-control" id="s-name"
+                                    v-model="page.search.name" placeholder="Pesquise por partes do nome do setor" />
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-organ" class="form-label">Orgão</label>
-                                <select
-                                    name="organ"
-                                    class="form-control"
-                                    id="s-organ"
-                                    v-model="page.search.organ"
-                                    @change="data.selects('organ', page.search.organ)"
-                                >
+                                <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ"
+                                    @change="data.selects('organ', page.search.organ)">
                                     <option value=""></option>
-                                    <option
-                                        v-for="o in page.selects.organs"
-                                        :key="o.id"
-                                        :value="o.id"
-                                    >
+                                    <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">
                                         {{ o.title }}
                                     </option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-unit" class="form-label">Unidade</label>
-                                <select
-                                    name="unit"
-                                    class="form-control"
-                                    id="s-unit"
-                                    v-model="page.search.unit"
-                                >
+                                <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit">
                                     <option value=""></option>
-                                    <option
-                                        v-for="o in page.selects.units"
-                                        :key="o.id"
-                                        :value="o.id"
-                                    >
+                                    <option v-for="o in page.selects.units" :key="o.id" :value="o.id">
                                         {{ o.title }}
                                     </option>
                                 </select>
@@ -342,98 +303,53 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList
-                        @action:update="update_dfd"
-                        @action:delete="data.remove"
-                        :casts="{'status':page.selects.status}"
-                        :header="page.dataheader"
-                        :body="page.datalist"
-                        :actions="['export_pdf', 'update', 'delete']"
-                    />
+                    <TableList @action:update="update_dfd" @action:delete="data.remove"
+                        :casts="{ 'status': page.selects.status }" :header="page.dataheader" :body="page.datalist"
+                        :actions="['export_pdf', 'update', 'delete']" />
                 </div>
 
                 <!--BOX REGISTER-->
-                <div
-                    v-if="page.uiview.register"
-                    id="register-box"
-                    class="inside-box px-4 px-md-5 mb-4"
-                >
+                <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
                     <form class="form-row">
                         <input type="hidden" name="id" v-model="page.data.id" />
 
                         <TabNav identify="dfdsTab" :tab-instance="navtab" />
 
                         <div class="tab-content" id="dfdTabContent">
-                            <div
-                                class="tab-pane fade"
-                                :class="{ 'show active': navtab.activate_tab('origin') }"
-                                id="origin-tab-pane"
-                                role="tabpanel"
-                                aria-labelledby="origin-tab"
-                                tabindex="0"
-                            >
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('origin') }"
+                                id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="organ" class="form-label">Orgão</label>
-                                        <select
-                                            name="organ"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert': page.rules.valids.organ
-                                            }"
-                                            id="organ"
-                                            v-model="page.data.organ"
-                                            @change="data.selects('organ', page.data.organ)"
-                                        >
+                                        <select name="organ" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.organ
+                                        }" id="organ" v-model="page.data.organ"
+                                            @change="data.selects('organ', page.data.organ)">
                                             <option value=""></option>
-                                            <option
-                                                v-for="s in page.selects.organs"
-                                                :value="s.id"
-                                                :key="s.id"
-                                            >
+                                            <option v-for="s in page.selects.organs" :value="s.id" :key="s.id">
                                                 {{ s.title }}
                                             </option>
                                         </select>
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <label for="unit" class="form-label">Unidade</label>
-                                        <select
-                                            name="unit"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert': page.rules.valids.unit
-                                            }"
-                                            id="unit"
-                                            @change="data.selects('unit', page.data.unit)"
-                                            v-model="page.data.unit"
-                                        >
+                                        <select name="unit" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.unit
+                                        }" id="unit" @change="data.selects('unit', page.data.unit)"
+                                            v-model="page.data.unit">
                                             <option value=""></option>
-                                            <option
-                                                v-for="s in page.selects.units"
-                                                :value="s.id"
-                                                :key="s.id"
-                                            >
+                                            <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
                                                 {{ s.title }}
                                             </option>
                                         </select>
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <label for="ordinator" class="form-label">Ordenador</label>
-                                        <select
-                                            name="ordinator"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert': page.rules.valids.ordinator
-                                            }"
-                                            id="ordinator"
-                                            v-model="page.data.ordinator"
-                                        >
+                                        <select name="ordinator" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.ordinator
+                                        }" id="ordinator" v-model="page.data.ordinator">
                                             <option value=""></option>
-                                            <option
-                                                v-for="s in page.selects.ordinators"
-                                                :value="s.id"
-                                                :key="s.id"
-                                            >
+                                            <option v-for="s in page.selects.ordinators" :value="s.id" :key="s.id">
                                                 {{ s.title }}
                                             </option>
                                         </select>
@@ -442,178 +358,91 @@ onMounted(() => {
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="demandant" class="form-label">Demandante</label>
-                                        <select
-                                            name="demandant"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert': page.rules.valids.demandant
-                                            }"
-                                            id="demandant"
-                                            v-model="page.data.demandant"
-                                        >
+                                        <select name="demandant" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.demandant
+                                        }" id="demandant" v-model="page.data.demandant">
                                             <option value=""></option>
-                                            <option
-                                                v-for="s in page.selects.demandants"
-                                                :value="s.id"
-                                                :key="s.id"
-                                            >
+                                            <option v-for="s in page.selects.demandants" :value="s.id" :key="s.id">
                                                 {{ s.title }}
                                             </option>
                                         </select>
                                     </div>
                                     <div class="col-sm-12 col-md-8">
-                                        <label for="comission" class="form-label"
-                                            >Comissão/Equipe de Planejamento</label
-                                        >
-                                        <select
-                                            name="comission"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert': page.rules.valids.comission
-                                            }"
-                                            id="comission"
-                                            @change="rescue_members"
-                                            v-model="page.data.comission"
-                                        >
+                                        <label for="comission" class="form-label">Comissão/Equipe de
+                                            Planejamento</label>
+                                        <select name="comission" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.comission
+                                        }" id="comission" @change="rescue_members" v-model="page.data.comission">
                                             <option value=""></option>
-                                            <option
-                                                v-for="s in page.selects.comissions"
-                                                :value="s.id"
-                                                :key="s.id"
-                                            >
+                                            <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
                                                 {{ s.title }}
                                             </option>
                                         </select>
-                                        <div
-                                            id="comissionHelpBlock"
-                                            class="form-text txt-color-sec"
-                                        >
+                                        <div id="comissionHelpBlock" class="form-text txt-color-sec">
                                             Ao selecionar a comissão/equipe de planejamento seus
                                             integrantes serão vinculados ao documento
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div
-                                class="tab-pane fade"
-                                :class="{ 'show active': navtab.activate_tab('infos') }"
-                                id="infos-tab-pane"
-                                role="tabpanel"
-                                aria-labelledby="infos-tab"
-                                tabindex="0"
-                            >
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('infos') }"
+                                id="infos-tab-pane" role="tabpanel" aria-labelledby="infos-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="date_ini" class="form-label"
-                                            >Data Envio Demanda</label
-                                        >
-                                        <VueDatePicker
-                                            auto-apply
-                                            v-model="page.data.date_ini"
+                                        <label for="date_ini" class="form-label">Data Envio Demanda</label>
+                                        <VueDatePicker auto-apply v-model="page.data.date_ini"
                                             :input-class-name="page.rules.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                            :enable-time-picker="false"
-                                            format="dd/MM/yyyy"
-                                            model-type="dd/MM/yyyy"
-                                            locale="pt-br"
-                                            calendar-class-name="dp-custom-calendar"
+                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                            locale="pt-br" calendar-class-name="dp-custom-calendar"
                                             calendar-cell-class-name="dp-custom-cell"
-                                            menu-class-name="dp-custom-menu"
-                                        />
-                                        
+                                            menu-class-name="dp-custom-menu" />
+
                                     </div>
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="estimated_date" class="form-label"
-                                            >Data Prevista Contratação</label
-                                        >
-                                        <VueDatePicker
-                                            auto-apply
-                                            v-model="page.data.estimated_date"
+                                        <label for="estimated_date" class="form-label">Data Prevista Contratação</label>
+                                        <VueDatePicker auto-apply v-model="page.data.estimated_date"
                                             :input-class-name="page.rules.valids.estimated_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                            :enable-time-picker="false"
-                                            format="dd/MM/yyyy"
-                                            model-type="dd/MM/yyyy"
-                                            locale="pt-br"
-                                            calendar-class-name="dp-custom-calendar"
+                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                            locale="pt-br" calendar-class-name="dp-custom-calendar"
                                             calendar-cell-class-name="dp-custom-cell"
-                                            menu-class-name="dp-custom-menu"
-                                        />
+                                            menu-class-name="dp-custom-menu" />
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <label for="year_pca" class="form-label">Ano do PCA</label>
-                                        <input
-                                            type="text"
-                                            name="year_pca"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert': page.rules.valids.year_pca
-                                            }"
-                                            id="year_pca"
-                                            placeholder="AAAA"
-                                            v-maska:[masks.masknumbs]
-                                            v-model="page.data.year_pca"
-                                        />
+                                        <input type="text" name="year_pca" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.year_pca
+                                        }" id="year_pca" placeholder="AAAA" v-maska:[masks.masknumbs]
+                                            v-model="page.data.year_pca" />
                                     </div>
                                 </div>
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="acquisition_type" class="form-label"
-                                            >Tipo de Aquisição</label
-                                        >
-                                        <select
-                                            name="acquisition_type"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert':
-                                                    page.rules.valids.acquisition_type
-                                            }"
-                                            id="acquisition_type"
-                                            v-model="page.data.acquisition_type"
-                                        >
+                                        <label for="acquisition_type" class="form-label">Tipo de Aquisição</label>
+                                        <select name="acquisition_type" class="form-control" :class="{
+                                            'form-control-alert':
+                                                page.rules.valids.acquisition_type
+                                        }" id="acquisition_type" v-model="page.data.acquisition_type">
                                             <option value=""></option>
-                                            <option
-                                                v-for="s in page.selects.acquisitions"
-                                                :value="s.id"
-                                                :key="s.id"
-                                            >
+                                            <option v-for="s in page.selects.acquisitions" :value="s.id" :key="s.id">
                                                 {{ s.title }}
                                             </option>
                                         </select>
                                     </div>
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="estimated_value" class="form-label"
-                                            >Valor Estimado</label
-                                        >
-                                        <input
-                                            type="text"
-                                            name="estimated_value"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert':
-                                                    page.rules.valids.estimated_value
-                                            }"
-                                            id="estimated_value"
-                                            placeholder="R$0,00"
-                                            v-maska:[masks.maskmoney]
-                                            v-model="page.data.estimated_value"
-                                        />
+                                        <label for="estimated_value" class="form-label">Valor Estimado</label>
+                                        <input type="text" name="estimated_value" class="form-control" :class="{
+                                            'form-control-alert':
+                                                page.rules.valids.estimated_value
+                                        }" id="estimated_value" placeholder="R$0,00" v-maska:[masks.maskmoney]
+                                            v-model="page.data.estimated_value" />
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <label for="priority" class="form-label">Prioridade</label>
-                                        <select
-                                            name="priority"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert': page.rules.valids.priority
-                                            }"
-                                            id="priority"
-                                            v-model="page.data.priority"
-                                        >
+                                        <select name="priority" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.priority
+                                        }" id="priority" v-model="page.data.priority">
                                             <option value=""></option>
-                                            <option
-                                                v-for="s in page.selects.prioritys"
-                                                :value="s.id"
-                                                :key="s.id"
-                                            >
+                                            <option v-for="s in page.selects.prioritys" :value="s.id" :key="s.id">
                                                 {{ s.title }}
                                             </option>
                                         </select>
@@ -621,51 +450,26 @@ onMounted(() => {
                                 </div>
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12">
-                                        <label
-                                            for="description"
-                                            class="form-label d-flex justify-content-between"
-                                        >
+                                        <label for="description" class="form-label d-flex justify-content-between">
                                             Descrição sucinta do objeto
-                                            <a
-                                                href="#"
-                                                class="a-ia"
-                                                @click="generate('dfd_description')"
-                                                ><i class="bi bi-cpu me-1"></i> Gerar com I.A</a
-                                            >
+                                            <a href="#" class="a-ia" @click="generate('dfd_description')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
-                                        <textarea
-                                            name="description"
-                                            class="form-control"
-                                            rows="4"
-                                            :class="{
-                                                'form-control-alert': page.rules.valids.description
-                                            }"
-                                            id="description"
-                                            v-model="page.data.description"
-                                        ></textarea>
+                                        <textarea name="description" class="form-control" rows="4" :class="{
+                                            'form-control-alert': page.rules.valids.description
+                                        }" id="description" v-model="page.data.description"></textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="suggested_hiring" class="form-label"
-                                            >Forma de Contratação Sugerida</label
-                                        >
-                                        <select
-                                            name="suggested_hiring"
-                                            class="form-control"
-                                            :class="{
-                                                'form-control-alert':
-                                                    page.rules.valids.suggested_hiring
-                                            }"
-                                            id="suggested_hiring"
-                                            v-model="page.data.suggested_hiring"
-                                        >
+                                        <label for="suggested_hiring" class="form-label">Forma de Contratação
+                                            Sugerida</label>
+                                        <select name="suggested_hiring" class="form-control" :class="{
+                                            'form-control-alert':
+                                                page.rules.valids.suggested_hiring
+                                        }" id="suggested_hiring" v-model="page.data.suggested_hiring">
                                             <option value=""></option>
-                                            <option
-                                                v-for="s in page.selects.hirings"
-                                                :value="s.id"
-                                                :key="s.id"
-                                            >
+                                            <option v-for="s in page.selects.hirings" :value="s.id" :key="s.id">
                                                 {{ s.title }}
                                             </option>
                                         </select>
@@ -673,74 +477,54 @@ onMounted(() => {
                                     <div class="col-sm-12 col-md-4">
                                         <label for="bonds" class="form-label">Vinculo ou Dependência</label>
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="bonds" v-model="page.data.bonds">
-                                            <label class="form-check-label" for="bonds">Indicação de vinculação ou dependência com o objeto de outro documento de formalização de demanda.</label>
+                                            <input class="form-check-input" type="checkbox" role="switch" id="bonds"
+                                                v-model="page.data.bonds">
+                                            <label class="form-check-label" for="bonds">Indicação de vinculação ou
+                                                dependência com o objeto de outro documento de formalização de
+                                                demanda.</label>
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <label class="form-label" for="price_taking">Registro de Preço</label>
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="price_taking" v-model="page.data.price_taking">
-                                            <label class="form-check-label" for="price_taking">Indique se a demanda se trata de registro de preços.</label>
+                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                id="price_taking" v-model="page.data.price_taking">
+                                            <label class="form-check-label" for="price_taking">Indique se a demanda se
+                                                trata de registro de preços.</label>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div
-                                class="tab-pane fade"
-                                :class="{ 'show active': navtab.activate_tab('items') }"
-                                id="items-tab-pane"
-                                role="tabpanel"
-                                aria-labelledby="items-tab"
-                                tabindex="0"
-                            >
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('items') }"
+                                id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
                                 <!-- search items -->
                                 <div class="row mb-3 position-relative">
                                     <div class="col-sm-12">
-                                        <label for="search-item" class="form-label"
-                                            >Localizar Item no Catálogo Padronizado</label
-                                        >
+                                        <label for="search-item" class="form-label">Localizar Item no Catálogo
+                                            Padronizado</label>
                                         <div class="input-group">
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                id="search-item"
+                                            <input type="text" class="form-control" id="search-item"
                                                 placeholder="Pesquise por parte do nome do item"
                                                 aria-label="Pesquise por parte do nome do item"
-                                                aria-describedby="btn-search-item"
-                                                v-model="items.search"
-                                                @keydown.enter.prevent="search_items"
-                                            />
-                                            <button
-                                                class="btn btn-group-input"
-                                                type="button"
-                                                id="btn-search-item"
-                                                @click="search_items"
-                                            >
+                                                aria-describedby="btn-search-item" v-model="items.search"
+                                                @keydown.enter.prevent="search_items" />
+                                            <button class="btn btn-group-input" type="button" id="btn-search-item"
+                                                @click="search_items">
                                                 <i class="bi bi-search"></i>
                                             </button>
                                         </div>
-                                        <div
-                                            id="search-item-HelpBlock"
-                                            class="form-text txt-color-sec"
-                                        >
+                                        <div id="search-item-HelpBlock" class="form-text txt-color-sec">
                                             Localize itens no catálogo padronizado de itens do Orgão
                                         </div>
                                     </div>
 
                                     <!-- List Search Items -->
-                                    <div
-                                        v-if="items.search && items.search_list.length"
-                                        class="position-absolute my-2 top-100 start-0"
-                                    >
+                                    <div v-if="items.search && items.search_list.length"
+                                        class="position-absolute my-2 top-100 start-0">
                                         <div class="form-control load-items-cat p-0 m-0">
                                             <ul class="search-list-items">
-                                                <li
-                                                    v-for="i in items.search_list"
-                                                    :key="i.id"
-                                                    @click="select_item(i)"
-                                                    class="d-flex align-items-center px-3 py-2"
-                                                >
+                                                <li v-for="i in items.search_list" :key="i.id" @click="select_item(i)"
+                                                    class="d-flex align-items-center px-3 py-2">
                                                     <div class="me-3 item-type">
                                                         {{ i.type == '1' ? 'M' : 'S' }}
                                                     </div>
@@ -751,11 +535,10 @@ onMounted(() => {
                                                         <p class="m-0 p-0 small">
                                                             {{
                                                                 `Unidade: ${i.und} - Volume:
-                                                            ${i.volume} - Categoria: ${
-                                                                page.selects.categories.find(
+                                                            ${i.volume} - Categoria: ${page.selects.categories.find(
                                                                     (o) => o.id === i.category
                                                                 )?.title
-                                                            } `
+                                                                } `
                                                             }}
                                                         </p>
                                                         <p class="m-0 p-0 small">
@@ -770,9 +553,7 @@ onMounted(() => {
 
                                 <!-- add item -->
                                 <div v-if="items.selected_item.item">
-                                    <div
-                                        class="form-control d-flex align-items-center px-3 py-2 mb-3"
-                                    >
+                                    <div class="form-control d-flex align-items-center px-3 py-2 mb-3">
                                         <div class="me-3 item-type">
                                             {{ items.selected_item.item.type == '1' ? 'M' : 'S' }}
                                         </div>
@@ -788,13 +569,12 @@ onMounted(() => {
                                                     `Unidade: ${items.selected_item.item.und} -
                                                 Volume:
                                                 ${items.selected_item.item.volume} - Categoria:
-                                                ${
-                                                    page.selects.categories.find(
+                                                ${page.selects.categories.find(
                                                         (o) =>
                                                             o.id ===
                                                             items.selected_item.item.category
                                                     )?.title
-                                                } `
+                                                    } `
                                                 }}
                                             </p>
                                             <p class="m-0 p-0 small">
@@ -804,63 +584,33 @@ onMounted(() => {
                                     </div>
                                     <div class="row mb-3 g-3">
                                         <div class="col-sm-12 col-md-4">
-                                            <label for="item-program" class="form-label"
-                                                >Programa</label
-                                            >
-                                            <select
-                                                name="item-program"
-                                                class="form-control"
-                                                id="item-program"
-                                                v-model="items.selected_item.program"
-                                            >
+                                            <label for="item-program" class="form-label">Programa</label>
+                                            <select name="item-program" class="form-control" id="item-program"
+                                                v-model="items.selected_item.program">
                                                 <option value=""></option>
-                                                <option
-                                                    v-for="p in page.selects.programs"
-                                                    :key="p.id"
-                                                    :value="p.id"
-                                                >
+                                                <option v-for="p in page.selects.programs" :key="p.id" :value="p.id">
                                                     {{ p.title }}
                                                 </option>
                                             </select>
                                         </div>
                                         <div class="col-sm-12 col-md-4">
-                                            <label for="item-dotation" class="form-label"
-                                                >Dotação</label
-                                            >
-                                            <select
-                                                name="item-dotation"
-                                                class="form-control"
-                                                id="item-dotation"
-                                                v-model="items.selected_item.dotation"
-                                            >
+                                            <label for="item-dotation" class="form-label">Dotação</label>
+                                            <select name="item-dotation" class="form-control" id="item-dotation"
+                                                v-model="items.selected_item.dotation">
                                                 <option value=""></option>
-                                                <option
-                                                    v-for="d in page.selects.dotations"
-                                                    :key="d.id"
-                                                    :value="d.id"
-                                                >
+                                                <option v-for="d in page.selects.dotations" :key="d.id" :value="d.id">
                                                     {{ d.title }}
                                                 </option>
                                             </select>
                                         </div>
                                         <div class="col-sm-12 col-md-4">
-                                            <label for="item-quantity" class="form-label"
-                                                >Quantidade</label
-                                            >
+                                            <label for="item-quantity" class="form-label">Quantidade</label>
                                             <div class="input-group">
-                                                <input
-                                                    type="text"
-                                                    name="item-quantity"
-                                                    class="form-control"
-                                                    id="item-quantity"
-                                                    v-maska:[masks.masknumbs]
+                                                <input type="text" name="item-quantity" class="form-control"
+                                                    id="item-quantity" v-maska:[masks.masknumbs]
                                                     v-model="items.selected_item.quantity"
-                                                    @keydown.enter.prevent="add_item"
-                                                />
-                                                <button
-                                                    @click="add_item"
-                                                    class="btn btn-group-input"
-                                                    type="button"
+                                                    @keydown.enter.prevent="add_item" />
+                                                <button @click="add_item" class="btn btn-group-input" type="button"
                                                     id="btn-search-item">
                                                     <i class="bi bi-plus-circle"></i>
                                                 </button>
@@ -871,92 +621,48 @@ onMounted(() => {
 
                                 <!-- list items -->
                                 <div v-if="page.data?.items">
-                                    <TableList
-                                        :smaller="true"
-                                        :count="false"
-                                        :header="items.headers_list"
-                                        :body="page.data?.items"
-                                        :actions="['update', 'fastdelete']"
-                                        :casts="{
+                                    <TableList :smaller="true" :count="false" :header="items.headers_list"
+                                        :body="page.data?.items" :actions="['update', 'fastdelete']" :casts="{
                                             type: [
                                                 { id: 1, title: 'Material' },
                                                 { id: 2, title: 'Serviço' }
                                             ],
                                             program: page.selects.programs,
                                             dotation: page.selects.dotations
-                                        }"
-                                        @action:update="update_item"
-                                        @action:fastdelete="delete_item"
-                                    />
+                                        }" @action:update="update_item" @action:fastdelete="delete_item" />
                                 </div>
                             </div>
-                            <div
-                                class="tab-pane fade"
-                                :class="{ 'show active': navtab.activate_tab('details') }"
-                                id="details-tab-pane"
-                                role="tabpanel"
-                                aria-labelledby="details-tab"
-                                tabindex="0"
-                            >
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('details') }"
+                                id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12">
-                                        <label
-                                            for="justification"
-                                            class="form-label d-flex justify-content-between"
-                                        >
+                                        <label for="justification" class="form-label d-flex justify-content-between">
                                             Justificativa da necessidade da contratação
-                                            <a
-                                                href="#"
-                                                class="a-ia"
-                                                @click="generate('dfd_justification')"
-                                                ><i class="bi bi-cpu me-1"></i> Gerar com I.A</a
-                                            >
+                                            <a href="#" class="a-ia" @click="generate('dfd_justification')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
-                                        <textarea
-                                            name="justification"
-                                            class="form-control"
-                                            rows="4"
-                                            :class="{
-                                                'form-control-alert':
-                                                    page.rules.valids.justification
-                                            }"
-                                            id="justification"
-                                            v-model="page.data.justification"
-                                        ></textarea>
+                                        <textarea name="justification" class="form-control" rows="4" :class="{
+                                            'form-control-alert':
+                                                page.rules.valids.justification
+                                        }" id="justification" v-model="page.data.justification"></textarea>
                                     </div>
                                 </div>
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12">
-                                        <label
-                                            for="justification_quantity"
-                                            class="form-label d-flex justify-content-between"
-                                        >
+                                        <label for="justification_quantity"
+                                            class="form-label d-flex justify-content-between">
                                             Justificativa dos quantitativos demandados
-                                            <a
-                                                href="#"
-                                                class="a-ia"
-                                                @click="generate('dfd_quantitys')"
-                                                ><i class="bi bi-cpu me-1"></i> Gerar com I.A</a
-                                            >
+                                            <a href="#" class="a-ia" @click="generate('dfd_quantitys')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
                                         </label>
-                                        <textarea
-                                            name="justification_quantity"
-                                            class="form-control"
-                                            rows="4"
+                                        <textarea name="justification_quantity" class="form-control" rows="4"
                                             id="justification_quantity"
-                                            v-model="page.data.justification_quantity"
-                                        ></textarea>
+                                            v-model="page.data.justification_quantity"></textarea>
                                     </div>
                                 </div>
                             </div>
-                            <div
-                                class="tab-pane fade"
-                                :class="{ 'show active': navtab.activate_tab('revisor') }"
-                                id="revisor-tab-pane"
-                                role="tabpanel"
-                                aria-labelledby="revisor-tab"
-                                tabindex="0"
-                            >
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('revisor') }"
+                                id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
                                 <!-- origin -->
                                 <div class="box-revisor mb-4">
                                     <div class="box-revisor-title d-flex mb-4">
@@ -1030,8 +736,10 @@ onMounted(() => {
                                             </div>
                                             <div class="col-md-4 mb-4">
                                                 <h4>Integrantes da Comissão</h4>
-                                                <span class="p-0 m-0 small" v-for="m in page.data.comission_members" :key="m.id">
-                                                    {{ `${utils.getTxt(page.selects.responsibilitys, m.responsibility)} : ${m.name}; ` }}
+                                                <span class="p-0 m-0 small" v-for="m in page.data.comission_members"
+                                                    :key="m.id">
+                                                    {{ `${utils.getTxt(page.selects.responsibilitys, m.responsibility)}
+                                                    : ${m.name}; ` }}
                                                 </span>
                                             </div>
                                         </div>
@@ -1072,9 +780,9 @@ onMounted(() => {
                                                 <h4>Prioridade</h4>
                                                 <p>
                                                     <TableListStatus :data="utils.getTxt(
-                                                            page.selects.prioritys,
-                                                            page.data.priority
-                                                        )" />
+                                                        page.selects.prioritys,
+                                                        page.data.priority
+                                                    )" />
                                                 </p>
                                             </div>
                                             <div class="col-md-2">
@@ -1083,7 +791,7 @@ onMounted(() => {
                                             </div>
                                         </div>
                                         <div class="row">
-                                            
+
                                             <div class="col-md-3">
                                                 <h4>Tipo de Aquisição</h4>
                                                 <p>
@@ -1154,22 +862,15 @@ onMounted(() => {
                                     <div class="box-revisor-content">
                                         <!-- list items -->
                                         <div v-if="page.data?.items">
-                                            <TableList
-                                                :smaller="true"
-                                                :count="false"
-                                                :header="items.headers_list"
-                                                :body="page.data?.items"
-                                                :casts="{
+                                            <TableList :smaller="true" :count="false" :header="items.headers_list"
+                                                :body="page.data?.items" :casts="{
                                                     type: [
                                                         { id: 1, title: 'Material' },
                                                         { id: 2, title: 'Serviço' }
                                                     ],
                                                     program: page.selects.programs,
                                                     dotation: page.selects.dotations
-                                                }"
-                                                @action:update="update_item"
-                                                @action:fastdelete="delete_item"
-                                            />
+                                                }" @action:update="update_item" @action:fastdelete="delete_item" />
                                         </div>
                                     </div>
                                 </div>
@@ -1209,31 +910,21 @@ onMounted(() => {
                         </div>
 
                         <div class="d-flex flex-row-reverse mt-4">
-                            <button
-                                @click="ui.toggle('list')"
-                                type="button"
-                                class="btn btn-outline-warning"
-                            >
+                            <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">
                                 Cancelar <i class="bi bi-x-circle"></i>
                             </button>
-                            <button @click="data.save({status:2})" type="button" class="btn btn-outline-primary me-2">
+                            <button @click="data.save({ status: 2 })" type="button" class="btn btn-outline-primary me-2">
                                 Enviar <i class="bi bi-check2-circle"></i>
                             </button>
-                            <button @click="data.save({status:1})" type="button" class="btn btn-outline-secondary me-2">
+                            <button @click="data.save({ status: 1 })" type="button" class="btn btn-outline-secondary me-2">
                                 Rascunho <i class="bi bi-receipt-cutoff"></i>
                             </button>
-                            <button
-                                @click="navtab.navigate_tab('next')"
-                                type="button"
-                                class="btn btn-outline-secondary me-2"
-                            >
+                            <button @click="navtab.navigate_tab('next')" type="button"
+                                class="btn btn-outline-secondary me-2">
                                 <i class="bi bi-arrow-right-circle"></i>
                             </button>
-                            <button
-                                @click="navtab.navigate_tab('prev')"
-                                type="button"
-                                class="btn btn-outline-secondary me-2"
-                            >
+                            <button @click="navtab.navigate_tab('prev')" type="button"
+                                class="btn btn-outline-secondary me-2">
                                 <i class="bi bi-arrow-left-circle"></i>
                             </button>
                         </div>
@@ -1330,12 +1021,10 @@ onMounted(() => {
 
 .nav-item .active .nav-line-step {
     background: rgb(202, 201, 201);
-    background: linear-gradient(
-        90deg,
-        var(--color-shadow) 0%,
-        var(--color-base) 50%,
-        var(--color-shadow) 100%
-    );
+    background: linear-gradient(90deg,
+            var(--color-shadow) 0%,
+            var(--color-base) 50%,
+            var(--color-shadow) 100%);
     transition: 400ms;
 }
 

@@ -23,9 +23,10 @@ const page = ref({
     data: {},
     datalist: props.datalist,
     dataheader: [
-        { key: 'number', title: 'NÚMERO' },
-        { key: 'necessity', title: 'NECESSIDADE' },
-        { key: 'status', title: 'STATUS' },
+        { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+        { key: 'name', obj: 'organ', title: 'ÓRIGEM', sub: [{ obj: 'comission', key: 'name' }] },
+        { title: 'NECESSIDADE', sub: [{ key: 'necessity' }] },
+        { key: 'status', cast: 'title', title: 'STATUS' },
     ],
     search: {},
     selects: {
@@ -197,7 +198,9 @@ onMounted(() => {
 
                     <!-- DATA LIST -->
                     <TableList @action:update="data.update" @action:delete="data.remove" :header="page.dataheader"
-                        :body="page.datalist" :actions="['update', 'delete']" />
+                        :body="page.datalist" :actions="['update', 'delete']" :casts="{
+                            'status': page.selects.status
+                        }" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -210,9 +213,8 @@ onMounted(() => {
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="protocol"
-                                            data-tooltip="O protocolo é gerado automaticamente ao selecionar o Órgão"
-                                            class="form-label custom-tooltip">
+                                        <label for="protocol" data-tooltip="É necessário selecionar um Órgão"
+                                            :class="{ 'active': page.data.organ }" class="form-label custom-tooltip">
                                             <i v-if="page.data.protocol" class="bi bi-check-circle text-success"></i>
                                             <i v-if="!page.data.protocol" class="bi bi-info-circle text-warning"></i>
                                             Protocolo
@@ -252,6 +254,9 @@ onMounted(() => {
                                                 {{ o.title }}
                                             </option>
                                         </select>
+                                        <div class="form-text txt-color-sec">
+                                            Ao selecionar o órgão, o protocolo será automaticamente preenchido.
+                                        </div>
                                     </div>
                                     <div class="col-sm-12 col-md-8">
                                         <label for="comission" class="form-label">Comissão</label>
@@ -285,8 +290,18 @@ onMounted(() => {
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
-                                <DfdsSelect :valid="page.rules.valids.dfds" identifier="necessity"
-                                    v-model="page.data.dfds" @callAlert="(msg) => emit('callAlert', msg)" />
+                                <div v-if="!page.data.protocol">
+                                    <h2 class="txt-color text-center m-0">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        Erro ao iniciar DFDs
+                                    </h2>
+                                    <p class="txt-color-sec small text-center m-0">
+                                        É necessário selecionar um órgão para continuar
+                                    </p>
+                                </div>
+                                <DfdsSelect v-if="page.data.organ" :organ="page.data.organ"
+                                    :valid="page.rules.valids.dfds" identifier="dfds" v-model="page.data.dfds"
+                                    @callAlert="(msg) => emit('callAlert', msg)" />
                             </div>
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('necessidade') }"
@@ -325,6 +340,14 @@ onMounted(() => {
                                             :class="{ 'form-control-alert': page.rules.valids.solution_full_description }"
                                             identifier="solution_full_description"
                                             v-model="page.data.solution_full_description" />
+                                    </div>
+
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="contract_forecast" class="form-label">Previsão de Realização
+                                            da Contratação</label>
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.contract_forecast }"
+                                            identifier="contract_forecast" v-model="page.data.contract_forecast" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="contract_calculus_memories" class="form-label">Estimativa das
@@ -381,6 +404,13 @@ onMounted(() => {
                                             v-model="page.data.contract_previous_actions" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
+                                        <label for="contract_alignment" class="form-label">Alinhamento de
+                                            Contrato</label>
+                                        <InputRichText
+                                            :class="{ 'form-control-alert': page.rules.valids.contract_alignment }"
+                                            identifier="contract_alignment" v-model="page.data.contract_alignment" />
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
                                         <label for="ambiental_impacts" class="form-label">Possíveis Impactos
                                             Ambientais</label>
                                         <InputRichText
@@ -434,7 +464,7 @@ onMounted(() => {
                                     </p>
                                 </div>
                                 <AttachmentsList v-if="page.data.protocol" @callAlert="(m) => emit('callAlert', m)"
-                                    :origin="5" :protocol="page.data.protocol" :types="attachmentTypes" />
+                                    origin="5" :protocol="page.data.protocol" :types="attachmentTypes" />
                             </div>
                         </div>
 
@@ -467,6 +497,10 @@ onMounted(() => {
     position: relative;
 }
 
+.custom-tooltip i {
+    font-size: 1em;
+}
+
 .custom-tooltip:hover::before {
     top: -28px;
     left: 0;
@@ -477,5 +511,10 @@ onMounted(() => {
     border-radius: 4px;
     display: flex;
     width: fit-content;
+}
+
+.custom-tooltip.active:hover::before {
+    content: '';
+    display: none;
 }
 </style>

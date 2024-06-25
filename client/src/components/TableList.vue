@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue'
 import ActionNav from './ActionNav.vue'
 import TableListStatus from './TableListStatus.vue'
+import utils from '@/utils/utils';
 
 const props = defineProps({
     header: { type: Array },
@@ -75,7 +76,7 @@ watch(() => props.body, (newValue) => {
                        <template v-else>{{ getdata(b, h?.obj, h.key, h?.cast) }}</template>
                         <p v-if="h.sub" class="small txt-color-sec p-0 m-0">
                             <span v-for="s in h.sub" :key="s.key" class="inline-block small">
-                                {{ `${s.title ?? ''} ${getdata(b, s?.obj, s.key, s?.cast)}` }}
+                                {{ utils.truncate(`${s.title ?? ''} ${getdata(b, s?.obj, s.key, s?.cast)}`, 250) }}
                             </span>
                         </p>
                     </td>

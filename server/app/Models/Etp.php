@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Validation\Rule;
+use App\Casts\Json;
+use App\Utils\Dates;
 
 class Etp extends Model
 {
@@ -14,9 +17,11 @@ class Etp extends Model
     protected $table = 'etps';
 
     protected $fillable = [
-        'dfds',
-        'protocol',
         'ip',
+        'protocol',
+        'emission',
+        'status',
+        'dfds',
         'organ',
         'comission',
         'user',
@@ -102,5 +107,13 @@ class Etp extends Model
             ['id' => 3, 'title' => 'Finalizado'],
             ['id' => 4, 'title' => 'Bloqueado'],
         ];
+    }
+
+    public function emission(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
     }
 }

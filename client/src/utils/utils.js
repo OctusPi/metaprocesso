@@ -31,6 +31,10 @@ function getTxt(objs, key_subject, key_search = 'id', key_txt = 'title'){
 }
 
 function truncate(str, len = 100) {
+    if (str == null) {
+        return null
+    }
+    
     if (str.length <= len) {
         return str
     }

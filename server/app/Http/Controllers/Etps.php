@@ -22,7 +22,11 @@ class Etps extends Controller
 
     public function save(Request $request)
     {
-        return $this->baseSave(Etp::class, $request->all());
+        $user = Guardian::getUser();
+        \Log::info($user);
+        $autoFilledData = ['ip' => $request->ip(),'user' => $user->id];
+
+        return $this->baseSave(Etp::class, array_merge($request->all(), $autoFilledData));
     }
 
     public function update(Request $request)
@@ -32,7 +36,7 @@ class Etps extends Controller
 
     public function list(Request $request)
     {
-        return $this->baseList(['protocol', 'organ', 'emission', 'comission', 'necessity'], ['protocol']);
+        return $this->baseList(['protocol', 'organ', 'emission', 'comission', 'necessity'], ['protocol'], ['organ', 'comission']);
     }
 
     public function details(Request $request)
