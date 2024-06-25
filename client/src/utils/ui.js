@@ -36,7 +36,7 @@ class Ui {
 
         if (this.page.value.uiview.register) {
             this.page.value.title.primary = `Registro de ${this.target}`
-            this.page.value.title.secondary = `Insira os dados para registro de ${this.target} vinculad${this.article}s ao(s) Orgão(s)`
+            this.page.value.title.secondary = `Insira os dados para registro de ${this.target}`
         } else {
             this.page.value.title.primary = `Lista de ${this.target}`
             this.page.value.title.secondary = `Dados d${this.article}s ${this.target} inserid${this.article}s no sistema`

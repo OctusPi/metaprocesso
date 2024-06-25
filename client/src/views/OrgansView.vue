@@ -44,6 +44,18 @@ const page = ref({
 const ui = new Ui(page, 'Órgãos')
 const data = new Data(page, emit, ui)
 
+function handleFile(event) {
+	const file = event.target.files[0]
+	if (file) {
+
+		const reader  = new FileReader()
+		reader.readAsDataURL(file)
+		reader.onloadend = () =>{
+			page.value.data.logomarca = reader.result
+		}
+	}
+}
+
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
@@ -127,6 +139,18 @@ onMounted(() => {
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
                     <form class="form-row" @submit.prevent="data.save()">
                         <input type="hidden" name="id" v-model="page.data.id">
+                        
+                        <div class="my-4 text-center position-relative c-logo">
+                            <div class="v-logo position-absolute">
+                                <img v-if="page.data.logomarca" :src="page.data.logomarca"  class="img-logo">
+                                <div v-else class="icon-logo mt-4">
+                                    <i class="bi bi-image"></i>
+                                    <p>Adicionar Logo</p>
+                                </div>
+                            </div>
+                            <input type="file" name="logo" class="i-logo position-absolute" @change="handleFile">
+                        </div>
+
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="name" class="form-label">Nome</label>
@@ -201,3 +225,41 @@ onMounted(() => {
         </section>
     </main>
 </template>
+
+<style scoped>
+    .c-logo{
+        height: 120px;
+    }
+    .v-logo{
+        width: 120px;
+        height: 120px;
+        left: calc(50% - 60px);
+        border-radius: 50%;
+        border: 1px dashed var(--color-base);
+    }
+
+    .i-logo{
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        cursor: pointer;
+        left: calc(50% - 60px);
+        opacity: 0;
+    }
+
+    .img-logo{
+        width: 118px;
+        height: 118px;
+        border-radius: 50%;
+    }
+
+    .icon-logo i{
+        font-size: 2rem;
+        opacity: 0.6;
+    }
+
+    .icon-logo p{
+        font-size: 0.7rem;
+        color: var(--color-text-secondary);
+    }
+</style>
