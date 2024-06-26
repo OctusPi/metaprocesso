@@ -4,7 +4,7 @@ import Quill from 'quill'
 import 'quill/dist/quill.core.css'
 
 const model = defineModel()
-const initialValue = ref(model.value)
+const initialValue = ref(model.value ?? '')
 
 const props = defineProps({
     identifier: { type: String },
@@ -28,7 +28,11 @@ onMounted(() => {
         focus.value = quill.value.hasFocus()
     })
     quill.value.on('text-change', () => {
-        model.value = quill.value.getSemanticHTML()
+        if (quill.value.getLength() < 2) {
+            model.value = null
+        } else {
+            model.value = quill.value.getSemanticHTML()
+        }
     })
 })
 

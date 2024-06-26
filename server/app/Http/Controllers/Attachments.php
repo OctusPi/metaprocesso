@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Attachment;
 use App\Models\User;
 use App\Security\Guardian;
+use App\Utils\Notify;
 use App\Utils\Uploads;
 use Illuminate\Http\Request;
 
@@ -32,7 +33,7 @@ class Attachments extends Controller
     public function update(Request $request)
     {
         $comission = Attachment::findOrFail($request->id);
-        
+
         $values = $request->all();
 
         if ($request->hasFile('file')) {
@@ -42,5 +43,16 @@ class Attachments extends Controller
         }
 
         return $this->baseUpdate(Attachment::class, $request->id, $values);
+    }
+
+    public function download(Request $request)
+    {
+        $attachment = Attachment::findOrFail($request->id);
+        $fileName = $attachment->protocol . '-' . $attachment->id;
+        if ($attachment && $attachment->file) {
+            return response()->download(storage_path('uploads' . '/' . $attachment->file), $fileName . '.pdf');
+        }
+
+        return response()->json(Notify::warning('Arquivo Indisponível'));
     }
 }

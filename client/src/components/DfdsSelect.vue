@@ -1,6 +1,5 @@
 <script setup>
 import Data from '@/services/data';
-import masks from '@/utils/masks';
 import Ui from '@/utils/ui';
 import { onMounted, ref } from 'vue';
 import TableListSelect from './TableListSelect.vue';
@@ -79,33 +78,49 @@ const accordionCollapseHeaderId = accordionCollapseId + '-header'
                             </p>
                         </div>
                         <div class="row g-3">
-                            <div class="col-sm-12 col-md-12">
-                                <label for="protocol" class="form-label">Protocolo</label>
-                                <input type="text" name="protocol" class="form-control" id="protocol"
-                                    v-model="page.search.protocol" placeholder="Pesquise por partes do protocolo">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false"
+                                    format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
-                            <div class="col-sm-12 col-md-8">
+
+                            <div class="col-sm-12 col-md-4">
+                                <label for="date_s_fin" class="form-label">Data Final</label>
+                                <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
+                                    format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            </div>
+
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-protocol" class="form-label">Protocolo</label>
+                                <input type="text" name="protocol" class="form-control" id="s-protocol"
+                                    v-model="page.search.protocol" placeholder="Número do Protocolo" />
+                            </div>
+                            <div class="col-sm-12 col-md-4">
                                 <label for="s-unit" class="form-label">Unidade</label>
-                                <select v-model="page.search.unit" name="unit" class="form-control" id="s-unit">
+                                <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.units" :key="o.id" :value="o.id">
                                         {{ o.title }}
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="date_ini" class="form-label">Data</label>
-                                <input v-model="page.search.date_ini" type="text" name="date_ini" class="form-control"
-                                    id="date_ini" placeholder="dd/mm/aaaa" v-maska:[masks.maskdate]>
+                            <div class="col-sm-12 col-md-8">
+                                <label for="s-description" class="form-label">Objeto</label>
+                                <input type="text" name="description" class="form-control" id="s-description"
+                                    v-model="page.search.description"
+                                    placeholder="Pesquise por partes do Objeto do DFD" />
                             </div>
+
                             <div class="d-flex flex-row-reverse mt-4">
-                                <button data-bs-toggle="collapse" :data-bs-target="'#' + accordionCollapseId"
-                                    @click="data.listForSearch('organ')" type="button"
-                                    class="btn btn-action btn-action-primary">
-                                    Pesquisar <i class="bi bi-search"></i>
+                                <button @click="data.list" type="button" class="btn btn-primary mx-2">
+                                    Aplicar <i class="bi bi-check2-circle"></i>
                                 </button>
                             </div>
-                        </div>
+                         </div>
                     </div>
                 </div>
             </div>

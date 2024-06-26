@@ -21,7 +21,6 @@ use App\Http\Controllers\Suppliers;
 use App\Http\Controllers\Units;
 use App\Http\Controllers\Sectors;
 use App\Http\Middleware\CheckPermission;
-use App\Models\Attachment;
 use App\Utils\Notify;
 use Illuminate\Support\Facades\Route;
 
@@ -299,6 +298,7 @@ Route::controller(Attachments::class)->group(function () {
             Route::put('/{origin}/{protocol}/update', 'update');
             Route::post('/{origin}/{protocol}/fastdestroy', 'fastdestroy');
             Route::get('/{origin}/{protocol}/details/{id}', 'details');
+            Route::get('/{origin}/{protocol}/download/{id}', 'download');
         });
     });
 })->name('attachments');

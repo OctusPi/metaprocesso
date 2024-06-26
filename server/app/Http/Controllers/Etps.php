@@ -36,7 +36,7 @@ class Etps extends Controller
 
     public function list(Request $request)
     {
-        return $this->baseList(['protocol', 'organ', 'emission', 'comission', 'necessity'], ['protocol'], ['organ', 'comission']);
+        return $this->baseList(['protocol', 'organ', 'emission', 'comission', 'necessity', 'status'], ['protocol'], ['organ', 'comission']);
     }
 
     public function details(Request $request)

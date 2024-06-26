@@ -180,15 +180,27 @@ onMounted(() => {
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-emission" class="form-label">Emissão</label>
-                                <input type="text" name="emission" class="form-control" id="s-emission"
-                                    v-model="page.search.emission" placeholder="dd/mm/aaaa" v-maska:[masks.maskdate] />
+                                <label for="emission" class="form-label">Emissão</label>
+                                <VueDatePicker auto-apply v-model="page.search.emission" :enable-time-picker="false"
+                                    format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
-                            <div class="col-sm-12 col-md-8">
+                            <div class="col-sm-12 col-md-4">
                                 <label for="s-necessity" class="form-label">Necessidade</label>
                                 <input type="text" name="necessity" class="form-control" id="s-necessity"
                                     v-model="page.search.necessity" placeholder="Pesquise por partes da necessidade" />
                             </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-status" class="form-label">Situação</label>
+                                <select name="status" class="form-control" id="s-status" v-model="page.search.status">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+
                             <div class="d-flex flex-row-reverse mt-4">
                                 <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
                                         class="bi bi-check2-circle"></i></button>
@@ -211,39 +223,16 @@ onMounted(() => {
                         <div class="tab-content" id="dfdTabContent">
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('info') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="protocol" data-tooltip="É necessário selecionar um Órgão"
-                                            :class="{ 'active': page.data.organ }" class="form-label custom-tooltip">
-                                            <i v-if="page.data.protocol" class="bi bi-check-circle text-success"></i>
-                                            <i v-if="!page.data.protocol" class="bi bi-info-circle text-warning"></i>
-                                            Protocolo
-                                        </label>
-                                        <input disabled autocomplete="off" type="text" name="protocol"
-                                            class="form-control"
-                                            :class="{ 'form-control-alert': page.rules.valids.protocol }" id="protocol"
-                                            placeholder="000-00000000-0000" v-model="page.data.protocol">
-                                    </div>
+                                <div class="row mb-2 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="emission" class="form-label">Emissão</label>
-                                        <input type="text" name="emission" class="form-control"
-                                            :class="{ 'form-control-alert': page.rules.valids.emission }" id="emission"
-                                            placeholder="dd/mm/aaaa" v-maska:[masks.maskdate]
-                                            v-model="page.data.emission">
+                                        <VueDatePicker auto-apply v-model="page.data.emission"
+                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                            calendar-class-name="dp-custom-calendar"
+                                            calendar-cell-class-name="dp-custom-cell"
+                                            menu-class-name="dp-custom-menu" />
                                     </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="status" class="form-label">Status</label>
-                                        <select name="status" class="form-control"
-                                            :class="{ 'form-control-alert': page.rules.valids.status }" id="status"
-                                            v-model="page.data.status">
-                                            <option value=""></option>
-                                            <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{
-                                                s.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="organ" class="form-label">Órgão</label>
                                         <select name="organ" class="form-control"
@@ -258,6 +247,20 @@ onMounted(() => {
                                             Ao selecionar o órgão, o protocolo será automaticamente preenchido.
                                         </div>
                                     </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="protocol" data-tooltip="É necessário selecionar um Órgão"
+                                            :class="{ 'active': page.data.organ }" class="form-label custom-tooltip">
+                                            <i v-if="page.data.protocol" class="bi bi-check-circle text-success"></i>
+                                            <i v-if="!page.data.protocol" class="bi bi-info-circle text-warning"></i>
+                                            Protocolo
+                                        </label>
+                                        <input disabled autocomplete="off" type="text" name="protocol"
+                                            class="form-control"
+                                            :class="{ 'form-control-alert': page.rules.valids.protocol }" id="protocol"
+                                            placeholder="000-00000000-0000" v-model="page.data.protocol">
+                                    </div>
+                                </div>
+                                <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-8">
                                         <label for="comission" class="form-label">Comissão</label>
                                         <select name="comission" class="form-control"
@@ -266,6 +269,17 @@ onMounted(() => {
                                             <option value=""></option>
                                             <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
                                                 {{ o.title }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="status" class="form-label">Situação Atual</label>
+                                        <select name="status" class="form-control"
+                                            :class="{ 'form-control-alert': page.rules.valids.status }" id="status"
+                                            v-model="page.data.status">
+                                            <option value=""></option>
+                                            <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{
+                                                s.title }}
                                             </option>
                                         </select>
                                     </div>
@@ -292,14 +306,14 @@ onMounted(() => {
                                 <div v-if="!page.data.protocol">
                                     <h2 class="txt-color text-center m-0">
                                         <i class="bi bi-exclamation-triangle me-1"></i>
-                                        Erro ao iniciar DFDs
+                                        Atenção
                                     </h2>
                                     <p class="txt-color-sec small text-center m-0">
                                         É necessário selecionar um órgão para continuar
                                     </p>
                                 </div>
-                                <DfdsSelect v-if="page.data.organ" :organ="page.data.organ"
-                                    :valid="page.rules.valids.dfds" identifier="dfds" v-model="page.data.dfds"
+                                <DfdsSelect v-else :organ="page.data.organ" :valid="page.rules.valids.dfds"
+                                    identifier="dfds" v-model="page.data.dfds"
                                     @callAlert="(msg) => emit('callAlert', msg)" />
                             </div>
 
@@ -456,14 +470,14 @@ onMounted(() => {
                                 <div v-if="!page.data.protocol">
                                     <h2 class="txt-color text-center m-0">
                                         <i class="bi bi-exclamation-triangle me-1"></i>
-                                        Erro ao iniciar anexos
+                                        Atenção
                                     </h2>
                                     <p class="txt-color-sec small text-center m-0">
-                                        É necessário haver o protocolo para continuar
+                                        É necessário selecionar um órgão para continuar
                                     </p>
                                 </div>
-                                <AttachmentsList v-if="page.data.protocol" @callAlert="(m) => emit('callAlert', m)"
-                                    origin="5" :protocol="page.data.protocol" :types="attachmentTypes" />
+                                <AttachmentsList v-else @callAlert="(m) => emit('callAlert', m)" origin="5"
+                                    :protocol="page.data.protocol" :types="attachmentTypes" />
                             </div>
                         </div>
 
