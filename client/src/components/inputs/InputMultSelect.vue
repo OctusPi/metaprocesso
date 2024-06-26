@@ -49,11 +49,11 @@ onMounted(() => {
 			<input class="form-check-input" type="checkbox" :name="option.id + props.identify" v-model="model"
 				:value="!props.idkey ? option : option[props.idkey]" :id="option.id + props.identify">
 			<label class="check-label form-check-label small d-flex gap-1" :for="option.id + props.identify">
-				<span class="cast px-1" v-if="!props.castkey">
+				<span class="cast" v-if="!props.castkey">
 					{{ option.title }}
 				</span>
 				<template v-if="props.castkey">
-					<span v-for="item in mountCasts(option)" :key="item.id" class="cast px-1">
+					<span v-for="item in mountCasts(option)" :key="item.id" class="cast">
 						{{ item.title }}
 					</span>
 				</template>
@@ -73,9 +73,7 @@ onMounted(() => {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border: 1px solid #ccc;
 	font-size: 1.15em;
-	border-radius: 4px;
 }
 
 .check-label {

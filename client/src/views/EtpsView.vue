@@ -25,7 +25,7 @@ const page = ref({
     dataheader: [
         { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
         { key: 'name', obj: 'organ', title: 'ÓRIGEM', sub: [{ obj: 'comission', key: 'name' }] },
-        { title: 'NECESSIDADE', sub: [{ key: 'necessity' }] },
+        { title: 'NECESSIDADE', sub: [{ key: 'necessity', utils: ['truncate', 'html'] }] },
         { key: 'status', cast: 'title', title: 'STATUS' },
     ],
     search: {},
@@ -273,16 +273,15 @@ onMounted(() => {
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
                                         <label for="object_description" class="form-label">Descrição do Objeto</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.object_description }"
-                                            identifier="object_description" v-model="page.data.object_description" />
+                                        <InputRichText :valid="page.rules.valids.object_description"
+                                            placeholder="Descrição do Objeto" identifier="object_description"
+                                            v-model="page.data.object_description" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="object_classification" class="form-label">Classificação do
                                             Objeto</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.object_classification }"
-                                            identifier="object_classification"
+                                        <InputRichText :valid="page.rules.valids.object_classification"
+                                            placeholder="Classificação do Objeto" identifier="object_classification"
                                             v-model="page.data.object_classification" />
                                     </div>
                                 </div>
@@ -310,16 +309,24 @@ onMounted(() => {
                                     <div class="col-sm-12 col-md-12">
                                         <label for="necessity" class="form-label">Descrição da
                                             Necessidade</label>
-                                        <InputRichText :class="{ 'form-control-alert': page.rules.valids.necessity }"
-                                            identifier="necessity" v-model="page.data.necessity" />
+                                        <InputRichText :valid="page.rules.valids.necessity"
+                                            placeholder="Descrição da Necessidade" identifier="necessity"
+                                            v-model="page.data.necessity" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="contract_requirements" class="form-label">Descrição dos Requisitos
                                             da Contratação</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.contract_requirements }"
+                                        <InputRichText :valid="page.rules.valids.contract_requirements"
+                                            placeholder="Descrição dos Requisitos da Contratação"
                                             identifier="contract_requirements"
                                             v-model="page.data.contract_requirements" />
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="contract_forecast" class="form-label">Previsão de Realização
+                                            da Contratação</label>
+                                        <InputRichText :valid="page.rules.valids.contract_forecast"
+                                            placeholder="Previsão de Realização da Contratação"
+                                            identifier="contract_forecast" v-model="page.data.contract_forecast" />
                                     </div>
                                 </div>
                             </div>
@@ -329,39 +336,31 @@ onMounted(() => {
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
                                         <label for="market_survey" class="form-label">Levantamento de Mercado</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.market_survey }"
-                                            identifier="market_survey" v-model="page.data.market_survey" />
+                                        <InputRichText :valid="page.rules.valids.market_survey"
+                                            placeholder="Levantamento de Mercado" identifier="market_survey"
+                                            v-model="page.data.market_survey" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="solution_full_description" class="form-label">Descrição da Solução
                                             como um Todo</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.solution_full_description }"
+                                        <InputRichText :valid="page.rules.valids.solution_full_description"
+                                            placeholder="Descrição da Solução como um Todo"
                                             identifier="solution_full_description"
                                             v-model="page.data.solution_full_description" />
-                                    </div>
-
-                                    <div class="col-sm-12 col-md-12">
-                                        <label for="contract_forecast" class="form-label">Previsão de Realização
-                                            da Contratação</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.contract_forecast }"
-                                            identifier="contract_forecast" v-model="page.data.contract_forecast" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="contract_calculus_memories" class="form-label">Estimativa das
                                             Quantidades Contratadas</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.contract_calculus_memories }"
+                                        <InputRichText :valid="page.rules.valids.contract_calculus_memories"
+                                            placeholder="Estimativa das Quantidades Contratadas"
                                             identifier="contract_calculus_memories"
                                             v-model="page.data.contract_calculus_memories" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="contract_expected_price" class="form-label">Estimativa do Preço da
                                             Contratação</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.contract_expected_price }"
+                                        <InputRichText :valid="page.rules.valids.contract_expected_price"
+                                            placeholder="Estimativa do Preço da Contratação"
                                             identifier="contract_expected_price"
                                             v-model="page.data.contract_expected_price" />
                                     </div>
@@ -369,16 +368,16 @@ onMounted(() => {
                                         <label for="solution_parcel_justification" class="form-label">Justificativa para
                                             o
                                             Parcelamento ou Não</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.solution_parcel_justification }"
+                                        <InputRichText :valid="page.rules.valids.solution_parcel_justification"
+                                            placeholder="Justificativa para o Parcelamento ou Não"
                                             identifier="solution_parcel_justification"
                                             v-model="page.data.solution_parcel_justification" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="correlated_contracts" class="form-label">Contratações Correlatas
                                             e/ou Interdependentes</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.correlated_contracts }"
+                                        <InputRichText :valid="page.rules.valids.correlated_contracts"
+                                            placeholder="Contratações Correlatas e/ou Interdependentes"
                                             identifier="correlated_contracts"
                                             v-model="page.data.correlated_contracts" />
                                     </div>
@@ -391,31 +390,31 @@ onMounted(() => {
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
                                         <label for="expected_results" class="form-label">Resultados Pretendidos</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.expected_results }"
-                                            identifier="expected_results" v-model="page.data.expected_results" />
+                                        <InputRichText :valid="page.rules.valids.expected_results"
+                                            placeholder="Resultados Pretendidos" identifier="expected_results"
+                                            v-model="page.data.expected_results" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="contract_previous_actions" class="form-label">Providências a Serem
                                             Tomadas</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.contract_previous_actions }"
+                                        <InputRichText :valid="page.rules.valids.contract_previous_actions"
+                                            placeholder="Providências a Serem Tomadas"
                                             identifier="contract_previous_actions"
                                             v-model="page.data.contract_previous_actions" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="contract_alignment" class="form-label">Alinhamento de
                                             Contrato</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.contract_alignment }"
-                                            identifier="contract_alignment" v-model="page.data.contract_alignment" />
+                                        <InputRichText :valid="page.rules.valids.contract_alignment"
+                                            placeholder="Alinhamento de Contrato" identifier="contract_alignment"
+                                            v-model="page.data.contract_alignment" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
                                         <label for="ambiental_impacts" class="form-label">Possíveis Impactos
                                             Ambientais</label>
-                                        <InputRichText
-                                            :class="{ 'form-control-alert': page.rules.valids.ambiental_impacts }"
-                                            identifier="ambiental_impacts" v-model="page.data.ambiental_impacts" />
+                                        <InputRichText :valid="page.rules.valids.ambiental_impacts"
+                                            placeholder="Possíveis Impactos Ambientais" identifier="ambiental_impacts"
+                                            v-model="page.data.ambiental_impacts" />
                                     </div>
                                 </div>
                             </div>

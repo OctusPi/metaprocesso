@@ -99,7 +99,7 @@ onMounted(() => {
                 </div>
             </div>
             <div v-if="!page.uiview.register">
-                <div class="inside-box mb-4 form-box">
+                <div class="inside-box mb-4 form-neg-box">
                     <TableList @action:update="data.update" @action:fastdelete="data.fastremove" :header="page.dataheader"
                         :body="page.datalist" :actions="['update', 'fastdelete']"
                         :casts="{ 'type': page.selects.types }" />
@@ -125,17 +125,3 @@ onMounted(() => {
         </template>
     </div>
 </template>
-
-<style>
-.form-box {
-    margin-left: -3rem !important;
-    margin-right: -3rem !important;
-}
-
-@media screen and (max-width: 768px) {
-    .form-box {
-        margin-left: -1.5rem !important;
-        margin-right: -1.5rem !important;
-    }
-}
-</style>
