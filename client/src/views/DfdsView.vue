@@ -35,7 +35,8 @@ const page = ref({
         { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
         { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
     ],
-    search: {},
+    search: {
+    },
     selects: {
         organs: [],
         units: [],
@@ -283,10 +284,31 @@ onMounted(() => {
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
                         <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-name" class="form-label">Nome</label>
-                                <input type="text" name="name" class="form-control" id="s-name"
-                                    v-model="page.search.name" placeholder="Pesquise por partes do nome do setor" />
+                                <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                <VueDatePicker auto-apply v-model="page.search.date_i"
+                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                    input-class-name="dp-custom-input-dtpk"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell"
+                                    menu-class-name="dp-custom-menu" />
                             </div>
+
+                            <div class="col-sm-12 col-md-4">
+                                <label for="date_s_fin" class="form-label">Data Final</label>
+                                <VueDatePicker auto-apply v-model="page.search.date_f"
+                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                    input-class-name="dp-custom-input-dtpk"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell"
+                                    menu-class-name="dp-custom-menu" />
+                            </div>
+
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-protocol" class="form-label">Protocolo</label>
+                                <input type="text" name="protocol" class="form-control" id="s-protocol"
+                                    v-model="page.search.protocol" placeholder="Número do Protocolo" />
+                            </div>
+
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-organ" class="form-label">Orgão</label>
                                 <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ"
@@ -306,6 +328,11 @@ onMounted(() => {
                                     </option>
                                 </select>
                             </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-description" class="form-label">Objeto</label>
+                                <input type="text" name="description" class="form-control" id="s-description"
+                                    v-model="page.search.description" placeholder="Pesquise por partes do Objeto do DFD" />
+                            </div>
 
                             <div class="d-flex flex-row-reverse mt-4">
                                 <button type="submit" class="btn btn-outline-primary mx-2">
@@ -316,7 +343,10 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList @action:update="update_dfd" @action:delete="data.remove" @action:pdf="export_dfd"
+                    <TableList 
+                        @action:update="update_dfd" 
+                        @action:delete="data.remove" 
+                        @action:pdf="export_dfd"
                         :casts="{ 'status': page.selects.status }" :header="page.dataheader" :body="page.datalist"
                         :actions="['export_pdf', 'update', 'delete']" />
                 </div>

@@ -119,7 +119,13 @@ class Dfds extends Controller
 
     public function list(Request $request)
     {
-        return $this->baseList(['organ', 'unit', 'protocol', 'date_ini'], ['date_ini'], ['organ', 'unit', 'demandant', 'ordinator']);
+        if(empty($request->all())){
+            $betw = ['date_ini' => [date('Y').'-01-01', date('Y-m-d')]];
+            return $this->baseList([], ['date_ini'], ['organ', 'unit', 'demandant', 'ordinator'], $betw);
+        }
+
+        $betw = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
+        return $this->baseList(['organ', 'unit', 'protocol', 'description'], ['date_ini'], ['organ', 'unit', 'demandant', 'ordinator'], $betw);
     }
 
     public function details(Request $request)

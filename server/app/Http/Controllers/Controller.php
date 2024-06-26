@@ -131,11 +131,11 @@ class Controller extends BaseController
 
     }
 
-    public function baseList(array $search, ?array $order = null, ?array $with = null)
+    public function baseList(array $search, ?array $order = null, ?array $with = null, ?array $between = null)
     {
         try {
             $search = Utils::map_search($search, array_merge(Request()->route()->parameters(), Request()->all()));
-            $query = Data::list($this->model, $search, $order, $with);
+            $query = Data::list($this->model, $search, $order, $with, $between);
             return Response()->json($query ?? [], 200);
         } catch (\Throwable $th) {
             return Response()->json(Notify::error($th->getMessage() . 'Falha ao recuperar dados!'), 500);

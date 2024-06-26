@@ -9,7 +9,7 @@ use App\Security\Guardian;
 
 class Data
 {
-    public static function list(string $model, array $params = [], ?array $order = null, ?array $with = null, bool $all = true)
+    public static function query(string $model, array $params = [], ?array $order = null, ?array $with = null, ?array $between = null)
     {
         $user = Guardian::getUser();
 
@@ -51,23 +51,47 @@ class Data
                     });
                 }
 
+                //apply order
                 if ($order) {
                     $query->orderBy(...$order);
                 }
 
+                //apply with
                 if ($with) {
                     $query->with($with);
                 }
 
-                return $all ? $query->get() : $query->first();
+                //apply between
+                if($between){
+                    foreach ($between as $key => $value) {
+                        $query->whereBetween($key, $value);
+                    }
+                }
+
+                return $query;
             }
         }
 
-        return $all ? [] : null;
+        return null;
+    }
+
+    public static function list(string $model, array $params = [], ?array $order = null, ?array $with = null, ?array $between = null)
+    {
+        $query = self::query($model, $params, $order, $with, $between);
+        if(!is_null($query)){
+            return $query->get();
+        }
+
+        return [];
     }
 
     public static function find(string $model, array $params = [], ?array $order = null, ?array $with = null){
-        return self::list($model, $params, $order, $with, false);
+        $query = self::query($model, $params, $order, $with);
+        if(!is_null($query)){
+            return $query->first();
+        }
+
+        return null;
     }
 
     private static function conditionsOrgan(User $user): array
