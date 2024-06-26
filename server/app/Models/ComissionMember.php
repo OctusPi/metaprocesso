@@ -25,6 +25,7 @@ class ComissionMember extends Model
         'start_term',
         'end_term',
         'status',
+        'number_doc'
     ];
 
     public function startTerm(): Attribute

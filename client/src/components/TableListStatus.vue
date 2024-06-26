@@ -9,7 +9,7 @@ function get_badge() {
         'text-bg-primary': 'Enviado',
         'text-bg-warning': 'Pendente|Média',
         'text-bg-danger': 'Bloqueado|Alta',
-        'text-bg-success': 'Processado|Ativo'
+        'text-bg-success': 'Processado|Ativo|Ativa'
     }
     for(let i in badges){
         const a = (badges[i]).split('|')

@@ -211,16 +211,6 @@ onMounted(() => {
 
                         <div class="row mb-3 g-3">
                             <div class="col-sm-12 col-md-4">
-                                <label for="status" class="form-label">Status</label>
-                                <select name="status" class="form-control"
-                                    :class="{ 'form-control-alert': page.rules.valids.status }" id="status"
-                                    v-model="page.data.status">
-                                    <option value=""></option>
-                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{ s.title }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-sm-12 col-md-4">
                                 <label for="start_term" class="form-label">Inicio Pleito</label>
                                 <input type="text" name="start_term" class="form-control"
                                     :class="{ 'form-control-alert': page.rules.valids.start_term }" id="start_term"
@@ -230,6 +220,16 @@ onMounted(() => {
                                 <label for="end_term" class="form-label">Término Pleito</label>
                                 <input type="text" name="end_term" class="form-control" id="end_term"
                                     placeholder="dd/mm/aaaa" v-maska:[masks.maskdate] v-model="page.data.end_term">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="status" class="form-label">Status</label>
+                                <select name="status" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.status }" id="status"
+                                    v-model="page.data.status">
+                                    <option value=""></option>
+                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{ s.title }}
+                                    </option>
+                                </select>
                             </div>
                         </div>
 
@@ -245,7 +245,12 @@ onMounted(() => {
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-sm-12 col-md-8">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="number_doc" class="form-label">Número Portaria</label>
+                                <input type="text" name="number_doc" class="form-control" id="number_doc"
+                                    placeholder="00000" v-model="page.data.number_doc">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
                                 <label for="document" class="form-label">Anexar Amparo Legal</label>
                                 <input @change="handleFile" type="file" name="document" class="form-control">
                             </div>
