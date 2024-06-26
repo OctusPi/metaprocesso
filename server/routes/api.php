@@ -268,6 +268,7 @@ Route::controller(Dfds::class)->group(function () {
             Route::put('/update', 'update');
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
+            Route::get('/export/{id}', 'export');
             Route::get('/selects/{key?}/{search?}', 'selects');
             Route::post('/items', 'items');
         });

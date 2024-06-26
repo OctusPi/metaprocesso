@@ -20,7 +20,8 @@ const emit = defineEmits([
     'action:download',
     'action:members',
     'action:extinction',
-    'action:items'
+    'action:items',
+    'action:pdf'
 ])
 
 const body = ref(props.body)

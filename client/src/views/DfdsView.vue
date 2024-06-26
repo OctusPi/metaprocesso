@@ -206,11 +206,15 @@ function update_dfd(id) {
     })
 }
 
-function export_preview(){
-    const containerReport = document.createElement('div')
-    const instanceReport = createApp(DfdReport, {dfd:page.value.data})
-    instanceReport.mount(containerReport)
-    exp.exportPDF(containerReport, 'DFD-Preview')
+function export_dfd(id){
+    http.get(`${page.value.baseURL}/export/${id}`, emit, (resp) => {
+        const dfd = resp.data
+        const containerReport = document.createElement('div')
+        const instanceReport = createApp(DfdReport, {dfd:dfd, selects:page.value.selects})
+        instanceReport.mount(containerReport)
+        exp.exportPDF(containerReport, 'DFD-Preview')
+    })
+    
 }
 
 watch(
@@ -312,7 +316,7 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList @action:update="update_dfd" @action:delete="data.remove"
+                    <TableList @action:update="update_dfd" @action:delete="data.remove" @action:pdf="export_dfd"
                         :casts="{ 'status': page.selects.status }" :header="page.dataheader" :body="page.datalist"
                         :actions="['export_pdf', 'update', 'delete']" />
                 </div>
@@ -672,12 +676,6 @@ onMounted(() => {
                             </div>
                             <div class="tab-pane fade position-relative" :class="{ 'show active': navtab.activate_tab('revisor') }"
                                 id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
-                                
-                                <button 
-                                v-if="page.data.organ && page.data.unit && page.data.ordinator && page.data.demandant && page.data.comission"
-                                @click="export_preview" type="button" class="btn-abs position-absolute text-center">
-                                    <i class="bi bi-printer fs-5"></i>
-                                </button>
 
                                 <!-- origin -->
                                 <div class="box-revisor mb-4">
@@ -807,7 +805,6 @@ onMounted(() => {
                                             </div>
                                         </div>
                                         <div class="row">
-
                                             <div class="col-md-3">
                                                 <h4>Tipo de Aquisição</h4>
                                                 <p>

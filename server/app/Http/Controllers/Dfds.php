@@ -133,6 +133,23 @@ class Dfds extends Controller
         return Response()->json($dfd, 200);
     }
 
+    public function export(Request $request)
+    {
+        $dfd = Dfd::where('id', $request->id)->with([
+            'organ',
+            'unit',
+            'demandant',
+            'ordinator',
+            'comission'
+        ])->first()->toArray();
+        $dfd['items'] = DfdItem::where('dfd', $request->id)->with('item')->get();
+        if (!$dfd) {
+            return Response()->json(Notify::warning('DFD não localizado...'), 404);
+        }
+
+        return Response()->json($dfd, 200);
+    }
+
     public function selects(Request $request)
     {
         //feed selects form

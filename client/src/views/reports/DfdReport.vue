@@ -1,13 +1,16 @@
 <script setup>
 import { ref } from 'vue'
-import dates from '@/utils/dates';
+import dates from '@/utils/dates'
+import utils from '@/utils/utils'
 import TableListReport from '@/views/reports/TableListReport.vue'
 
 const props = defineProps({
-    dfd: { type: Object, required: true }
+    dfd: { type: Object, required: true },
+    selects: { type: Object, required: true }
 })
 
-const dfd = ref(props.dfd);
+const dfd = ref(props.dfd)
+const selects = ref(props.selects)
 const items = ref({
     headers_list: [
         {
@@ -32,14 +35,13 @@ const items = ref({
 <template>
 
     <header>
-        <div class="d-flex">
-            <div class="ct-logo">
+        <div class="d-flex align-items-center">
+            <div class="ct-logo me-2">
                 <img :src="dfd.organ.logomarca" class="h-logo">
             </div>
             <div class="h-info">
-                <p>{{ dfd.organ.name }}</p>
+                <h1>{{ dfd.organ.name }}</h1>
                 <p>{{ dfd.unit.name }}</p>
-                <p>{{ dfd.unit.cnpj }}</p>
                 <p>{{ dfd.unit.address }}</p>
                 <p>{{ dfd.unit.phone }} {{ dfd.unit.email }}</p>
             </div>
@@ -47,10 +49,13 @@ const items = ref({
     </header>
 
     <main>
-        <div class="mb-3">
+        <div class="my-4">
             <h1 class="text-center">DOCUMENTO DE FORMALIZAÇÃO DA DEMANDA</h1>
             <h2 class="text-center">{{ `${dfd.protocol ?? '*****'} - ${dfd.date_ini} - ${dfd.ip ?? '*****'}` }}</h2>
-            <h2 class="text-center">{{ `PCA: ${dfd.year_pca} - Situação: ${dfd.status ?? 'Preview'}` }}</h2>
+            <h2 class="text-center">{{ `PCA: ${dfd.year_pca} - Situação: ${utils.getTxt(
+                selects.status,
+                dfd.status
+            )}` }}</h2>
         </div>
 
         <!-- origin -->
@@ -95,7 +100,10 @@ const items = ref({
             <tr>
                 <td colspan="3">
                     <h3>Integrantes da Comissão</h3>
-                    <p>*****</p>
+                    <p class="p-0 m-0 small" v-for="m in dfd.comission_members" :key="m.id">
+                        {{ `${utils.getTxt(selects.responsibilitys, m.responsibility)}
+                        : ${m.name} ` }}
+                    </p>
                 </td>
             </tr>
         </table>
@@ -122,7 +130,12 @@ const items = ref({
                 <td>
                     <h3>Nivel de Prioridade</h3>
                     <p>
-                        {{ dfd.priority }}
+                        {{
+                            utils.getTxt(
+                                selects.prioritys,
+                                dfd.priority
+                            )
+                        }}
                     </p>
                 </td>
                 <td>
@@ -134,11 +147,23 @@ const items = ref({
             <tr>
                 <td>
                     <h3>Tipo de Aquisição</h3>
-                    <p>{{ dfd.acquisition_type }}</p>
+                    <p>
+                        {{
+                            utils.getTxt(
+                                selects.acquisitions,
+                                dfd.acquisition_type
+                            )
+                        }}
+                    </p>
                 </td>
                 <td>
                     <h3>Forma Sugerida</h3>
-                    <p>{{ dfd.suggested_hiring }}</p>
+                    <p>{{
+                            utils.getTxt(
+                                selects.hirings,
+                                dfd.suggested_hiring
+                            )
+                        }}</p>
                 </td>
                 <td>
                     <h3>Valor Estimado</h3>
@@ -176,14 +201,10 @@ const items = ref({
                 Lista de materiais ou serviços vinculados a Demanda
             </p>
         </div>
-        <div v-if="dfd?.items" >
+        <div v-if="dfd?.items">
             <TableListReport :smaller="true" :count="false" :header="items.headers_list" :body="dfd?.items" :casts="{
-                type: [
-                    { id: 1, title: 'Material' },
-                    { id: 2, title: 'Serviço' }
-                ],
-                program: dfd.programs ?? [],
-                dotation: dfd.dotations ?? []
+                program: selects.programs ?? [],
+                dotation: selects.dotations ?? []
             }" />
         </div>
         <div v-else class="small mb-4">
@@ -268,8 +289,9 @@ td {
 }
 
 .h-logo {
-    height: 80px;
+    height: 70px;
     width: auto;
+    border-radius: 5px;
 }
 
 .table-title {
