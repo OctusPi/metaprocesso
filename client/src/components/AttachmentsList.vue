@@ -91,22 +91,22 @@ onMounted(() => {
                     </div>
                 </div>
 
-                <div class="d-flex flex-row-reverse mt-4">
-                    <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">Cancelar <i
+                <div class="d-flex flex-row-reverse justify-content-center mt-4">
+                    <button @click="ui.toggle('list')" type="button" class="btn btn-warning">Cancelar <i
                             class="bi bi-x-circle"></i></button>
-                    <button @click="data.save()" type="button" class="btn btn-outline-primary mx-2">Salvar <i
+                    <button @click="data.save()" type="button" class="btn btn-primary mx-2">Enviar <i
                             class="bi bi-check2-circle"></i></button>
                 </div>
             </div>
             <div v-if="!page.uiview.register">
                 <div class="inside-box mb-4 form-neg-box">
-                    <TableList @action:update="data.update" @action:fastdelete="data.fastremove" :header="page.dataheader"
-                        :body="page.datalist" :actions="['update', 'fastdelete']"
-                        :casts="{ 'type': page.selects.types }" />
+                    <TableList @action:update="data.update" @action:delete="data.remove"
+                        @action:download="data.download" :header="page.dataheader" :body="page.datalist"
+                        :actions="['update', 'delete', 'download']" :casts="{ 'type': page.selects.types }" />
                 </div>
-                <div class="action-buttons d-flex ms-auto">
+                <div class="action-buttons d-flex">
                     <button @click="ui.toggle('register')" type="button"
-                        class="btn btn-action btn-action-primary ms-auto">
+                        class="btn btn-action btn-action-primary mx-auto">
                         <i class="bi bi-plus-circle"></i>
                         <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Novo Anexo</span>
                     </button>

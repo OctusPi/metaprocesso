@@ -74,7 +74,7 @@ class Data {
     }
 
     download = (id, name = 'Documento') => {
-        http.download(`/ordinators/download/${id}`, this.emit, (response) => {
+        http.download(`${this.page.value.baseURL}/download/${id}`, this.emit, (response) => {
             if (response.headers['content-type'] !== 'application/pdf') {
                 this.emit('callAlert', notifys.warning('Arquivo Indisponível'))
                 return
