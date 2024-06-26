@@ -673,7 +673,9 @@ onMounted(() => {
                             <div class="tab-pane fade position-relative" :class="{ 'show active': navtab.activate_tab('revisor') }"
                                 id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
                                 
-                                <button @click="export_preview" type="button" class="btn-abs position-absolute text-center">
+                                <button 
+                                v-if="page.data.organ && page.data.unit && page.data.ordinator && page.data.demandant && page.data.comission"
+                                @click="export_preview" type="button" class="btn-abs position-absolute text-center">
                                     <i class="bi bi-printer fs-5"></i>
                                 </button>
 
