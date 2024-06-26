@@ -1,9 +1,9 @@
 <script setup>
-import InputMultSelect from '@/components/inputs/InputMultSelect.vue';
 import Data from '@/services/data';
 import masks from '@/utils/masks';
 import Ui from '@/utils/ui';
 import { onMounted, ref } from 'vue';
+import TableListSelect from './TableListSelect.vue';
 
 const props = defineProps({
     valid: { type: Boolean },
@@ -15,11 +15,18 @@ const model = defineModel()
 
 const page = ref({
     baseURL: '/dfds',
+    dataheader: [
+        { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+        { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
+        { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
+        { obj: 'unit', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
+        { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
+        { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
+    ],
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
     data: { items: [] },
     datalist: [],
-    dataheader: [],
     search: {
         organ: props.organ
     },
@@ -93,7 +100,8 @@ const accordionCollapseHeaderId = accordionCollapseId + '-header'
                             </div>
                             <div class="d-flex flex-row-reverse mt-4">
                                 <button data-bs-toggle="collapse" :data-bs-target="'#' + accordionCollapseId"
-                                    @click="data.listForSearch('organ')" type="button" class="btn btn-action btn-action-primary">
+                                    @click="data.listForSearch('organ')" type="button"
+                                    class="btn btn-action btn-action-primary">
                                     Pesquisar <i class="bi bi-search"></i>
                                 </button>
                             </div>
@@ -102,15 +110,9 @@ const accordionCollapseHeaderId = accordionCollapseId + '-header'
                 </div>
             </div>
         </div>
-        <div v-if="page.datalist.length > 0" class="mt-2 col-sm-12 col-md-12">
-            <label for="dfds" class="form-label">Selecione as DFDs</label>
-            <InputMultSelect :castkey="[
-                { cast: 'protocol' },
-                { cast: 'unit', property: 'name' },
-                { cast: 'date_ini' },
-                { cast: 'status', replace: { to: 'title', dataset: page.selects.status } },
-                { cast: 'description' },
-            ]" v-model="model" :options="page.datalist" identify="dfds" />
+        <div v-if="page.datalist.length > 0" class="inside-box mt-4 form-neg-box">
+            <TableListSelect :identify="props.identifier" :casts="{ 'status': page.selects.status }"
+                :header="page.dataheader" :body="page.datalist" v-model="model" />
         </div>
         <div class="mt-4" v-if="page.datalist.length < 1">
             <div class="text-center txt-color-sec">
@@ -120,3 +122,5 @@ const accordionCollapseHeaderId = accordionCollapseId + '-header'
         </div>
     </div>
 </template>
+
+<style></style>

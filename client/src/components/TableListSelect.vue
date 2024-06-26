@@ -1,28 +1,18 @@
 <script setup>
-import { ref, watch } from 'vue'
-import ActionNav from './ActionNav.vue'
+import { onMounted, ref, watch } from 'vue'
 import TableListStatus from './TableListStatus.vue'
 import utils from '@/utils/utils';
 
 const props = defineProps({
     header: { type: Array },
     body: { type: Array, default: () => [] },
-    actions: { type: Array },
     casts: { type: Object },
     smaller: { type: Boolean, default: () => false },
-    count: { type: Boolean, default: () => true }
+    count: { type: Boolean, default: () => true },
+    identify: { type: String },
 })
 
-const emit = defineEmits([
-    'action:update',
-    'action:delete',
-    'action:fastdelete',
-    'action:download',
-    'action:members',
-    'action:extinction',
-    'action:items',
-    'action:pdf'
-])
+const model = defineModel({ default: [] })
 
 const body = ref(props.body)
 
@@ -63,13 +53,24 @@ function matchUtils(str, utilsList = []) {
     return aux
 }
 
-function propagateEmit(emt) {
-    emit(emt.e, emt.i)
+function checkTheBox(e) {
+    e.currentTarget.firstChild.firstChild.click()
 }
+
+function findModelById(item) {
+    return model.value.some((x) => x.id == item.id)
+}
+
 
 watch(() => props.body, (newValue) => {
     body.value = newValue
 });
+
+const checkName = props.identify + '_check'
+
+onMounted(() => {
+    console.log(model.value)
+})
 </script>
 
 <template>
@@ -77,9 +78,10 @@ watch(() => props.body, (newValue) => {
         <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
     </p>
     <div v-if="body.length" class="table-responsive-sm">
-        <table class="table-borderless table-striped table-hover" :class="props.smaller ? 'table tablesm' : 'table'">
+        <table class="table-borderless table-hover" :class="props.smaller ? 'table tablesm' : 'table'">
             <thead v-if="props.header">
                 <tr>
+                    <th></th>
                     <th scope="col" v-for="h in props.header" :key="h.key" @click="orderBy(h.key)">
                         {{ h.title }} <i class="bi bi-arrow-down table-order-icon"></i>
                     </th>
@@ -87,18 +89,21 @@ watch(() => props.body, (newValue) => {
                 </tr>
             </thead>
             <tbody v-if="body">
-                <tr v-for="b in body" :key="b.id">
+                <tr @click="checkTheBox" v-for="b in body" :key="b.id" :class="{ 'active': findModelById(b) }">
+                    <td class="align-middle">
+                        <input class="form-check-input d-none" type="checkbox" :name="checkName" v-model="model"
+                            :value="b" :id="b.id + checkName">
+                        <i class="bi fs-5 bi-check2-square" :class="{ 'txt-color-base': findModelById(b) }"></i>
+                    </td>
                     <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle">
                         <TableListStatus v-if="h.key === 'status'" :data="getdata(b, h?.obj, h.key, h?.cast)" />
                         <template v-else>{{ getdata(b, h?.obj, h.key, h?.cast) }}</template>
                         <p v-if="h.sub" class="small txt-color-sec p-0 m-0">
                             <span v-for="s in h.sub" :key="s.key" class="inline-block small">
-                                {{ matchUtils(`${s.title ?? ''} ${getdata(b, s?.obj, s.key, s?.cast)}`, s?.utils) }}
+                                {{ matchUtils(`${s.title ?? ''} ${getdata(b, s?.obj, s.key, s?.cast)}`,
+                                    s?.utils) }}
                             </span>
                         </p>
-                    </td>
-                    <td v-if="props.actions" class="align-middle">
-                        <ActionNav :id="b.id" :calls="props.actions" @action="propagateEmit" />
                     </td>
                 </tr>
             </tbody>
@@ -110,9 +115,9 @@ watch(() => props.body, (newValue) => {
     </div>
 </template>
 
-<style scoped>
-th{
-    white-space:nowrap;
+<style>
+th {
+    white-space: nowrap;
 }
 
 .table tr th:first-child {
@@ -168,5 +173,13 @@ th{
     border-bottom-right-radius: 5px;
     padding-right: 5px !important;
     text-align: end;
+}
+
+tr {
+    cursor: pointer;
+}
+
+tr.active {
+    background-color: var(--color-shadow);
 }
 </style>

@@ -42,10 +42,16 @@ function truncate(str, len = 100) {
     return str.slice(0, len - 3) + "..."
 }
 
+function stripHTML(str) {
+    const parser = new DOMParser().parseFromString(str, 'text/html')
+    return parser.body.textContent
+}
+
 export default {
     load,
     dateNow,
     randCode,
     getTxt,
-    truncate
+    truncate,
+    stripHTML
 }

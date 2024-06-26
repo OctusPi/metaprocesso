@@ -32,7 +32,7 @@ const page = ref({
         { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
         { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
         { obj: 'unit', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
-        { title: 'OBJETO', sub: [{ key: 'description' }] },
+        { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
         { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
     ],
     search: {},
@@ -926,10 +926,12 @@ onMounted(() => {
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">
                                 Cancelar <i class="bi bi-x-circle"></i>
                             </button>
-                            <button @click="data.save({ status: 2 })" type="button" class="btn btn-outline-primary me-2">
+                            <button @click="data.save({ status: 2 })" type="button"
+                                class="btn btn-outline-primary me-2">
                                 Enviar <i class="bi bi-check2-circle"></i>
                             </button>
-                            <button @click="data.save({ status: 1 })" type="button" class="btn btn-outline-secondary me-2">
+                            <button @click="data.save({ status: 1 })" type="button"
+                                class="btn btn-outline-secondary me-2">
                                 Rascunho <i class="bi bi-receipt-cutoff"></i>
                             </button>
                             <button @click="navtab.navigate_tab('next')" type="button"

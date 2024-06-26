@@ -4,9 +4,12 @@ import Quill from 'quill'
 import 'quill/dist/quill.core.css'
 
 const model = defineModel()
+const initialValue = ref(model.value)
 
 const props = defineProps({
-    identifier: { type: String }
+    identifier: { type: String },
+    placeholder: { type: String },
+    valid: { type: Boolean },
 })
 
 const richTextEl = ref(null)
@@ -14,13 +17,12 @@ const richTextToolbarEl = ref(null)
 
 const quill = ref(null)
 const focus = ref(false)
-const initialValue = ref(model.value)
 
 onMounted(() => {
     quill.value = new Quill(richTextEl.value, {
         modules: {
             toolbar: richTextToolbarEl.value
-        }
+        },
     })
     quill.value.on('editor-change', () => {
         focus.value = quill.value.hasFocus()
@@ -33,7 +35,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div :id="props.identifier" class="ocp-richtext" :class="{ 'is-focus': focus }">
+    <div :id="props.identifier" class="ocp-richtext" :class="{ 'form-control-alert': props.valid, 'is-focus': focus }">
         <div class="ocp-richtext-toolbar" ref="richTextToolbarEl" :class="{ 'is-focus': focus }">
             <button class="ql-bold"><i class="bi bi-type-bold"></i></button>
             <button class="ql-italic"><i class="bi bi-type-italic"></i></button>
