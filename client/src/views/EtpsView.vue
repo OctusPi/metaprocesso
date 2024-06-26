@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import Ui from '@/utils/ui';
-import masks from '@/utils/masks';
 import Data from '@/services/data';
 import Tabs from '@/utils/tabs';
 
@@ -219,7 +218,9 @@ onMounted(() => {
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
                     <form class="form-row" @submit.prevent="data.save()">
                         <input type="hidden" name="id" v-model="page.data.id">
+                        
                         <TabNav :tab-instance="tabSwitch" identify="etps-nav" />
+                        
                         <div class="tab-content" id="dfdTabContent">
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('info') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
