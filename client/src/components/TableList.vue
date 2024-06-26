@@ -109,9 +109,9 @@ watch(() => props.body, (newValue) => {
     </div>
 </template>
 
-<style>
-th {
-    white-space: nowrap;
+<style scoped>
+th{
+    white-space:nowrap;
 }
 
 .table tr th:first-child {
