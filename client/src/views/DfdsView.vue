@@ -213,7 +213,7 @@ function export_dfd(id){
         const containerReport = document.createElement('div')
         const instanceReport = createApp(DfdReport, {dfd:dfd, selects:page.value.selects})
         instanceReport.mount(containerReport)
-        exp.exportPDF(containerReport, 'DFD-Preview')
+        exp.exportPDF(containerReport, `DFD-${dfd.protocol}`)
     })
     
 }

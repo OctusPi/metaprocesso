@@ -26,8 +26,8 @@ return new class extends Migration
             $table->string('year_pca', 5);
             $table->integer('acquisition_type'); // tipo de aquisições possiveis vide lei
             $table->integer('suggested_hiring'); // tipo de contrataçoes possiveis vide lei
-            $table->string('description');
-            $table->string('justification');
+            $table->text('description');
+            $table->text('justification');
             $table->text('justification_quantity')->nullable();
             $table->string('estimated_value');
             $table->date('estimated_date');

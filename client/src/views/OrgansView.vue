@@ -193,7 +193,7 @@ onMounted(() => {
                                 <label for="postalcity" class="form-label">Cidade</label>
                                 <input type="text" name="postalcity" class="form-control"
                                     :class="{ 'form-control-alert': page.rules.valids.postalcity }" id="postalcity"
-                                    placeholder="Campos Sales - CE" v-model="page.data.postalcity">
+                                    placeholder="Cidade - UF" v-model="page.data.postalcity">
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="postalcode" class="form-label">CEP</label>
