@@ -296,7 +296,7 @@ Route::controller(Attachments::class)->group(function () {
             Route::post('/{origin}/{protocol}/list', 'list');
             Route::post('/{origin}/{protocol}/save', 'save');
             Route::put('/{origin}/{protocol}/update', 'update');
-            Route::post('/{origin}/{protocol}/fastdestroy', 'fastdestroy');
+            Route::post('/{origin}/{protocol}/destroy', 'delete');
             Route::get('/{origin}/{protocol}/details/{id}', 'details');
             Route::get('/{origin}/{protocol}/download/{id}', 'download');
         });

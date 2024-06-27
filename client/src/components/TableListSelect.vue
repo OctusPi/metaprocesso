@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import TableListStatus from './TableListStatus.vue'
 import utils from '@/utils/utils';
 
@@ -68,9 +68,6 @@ watch(() => props.body, (newValue) => {
 
 const checkName = props.identify + '_check'
 
-onMounted(() => {
-    console.log(model.value)
-})
 </script>
 
 <template>
@@ -93,7 +90,7 @@ onMounted(() => {
                     <td class="align-middle">
                         <input class="form-check-input d-none" type="checkbox" :name="checkName" v-model="model"
                             :value="b" :id="b.id + checkName">
-                        <i class="bi fs-5 bi-check2-square" :class="{ 'txt-color-base': findModelById(b) }"></i>
+                        <i class="bi fs-5" :class="[findModelById(b) ? 'txt-color-base bi-check-square-fill' : 'bi-square']"></i>
                     </td>
                     <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle">
                         <TableListStatus v-if="h.key === 'status'" :data="getdata(b, h?.obj, h.key, h?.cast)" />

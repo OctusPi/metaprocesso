@@ -13,7 +13,6 @@ use App\Models\User;
 use App\Models\Organ;
 use App\Utils\Notify;
 use App\Utils\Utils;
-use GuzzleHttp\Client;
 use App\Middleware\Data;
 use App\Models\Comission;
 use App\Models\Demandant;
@@ -244,35 +243,6 @@ class Dfds extends Controller
         $comissions_members = Data::list(ComissionMember::class, ['comission' => $request->search], ['responsibility']);
         return Response()->json($comissions_members);
 
-    }
-
-    public function generate(Request $request)
-    {
-        $api_key = getenv('OPENIA_KEY');
-        $client = new Client();
-        $url = 'https://api.openai.com/v1/completions';
-        $data = [
-            'model' => 'gpt-3.5-turbo-instruct',
-            'prompt' => $request->payload,
-            'max_tokens' => 512
-        ];
-
-        try {
-
-            $resp = $client->post($url, [
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $api_key,
-                    'Content-Type' => 'application/json'
-                ],
-                'json' => $data
-            ]);
-
-            return Response()->json(json_decode($resp->getBody()), 200);
-
-        } catch (\Exception $e) {
-            Log::alert('Falha ao receber dados da API: ' . $e->getMessage());
-            return Response()->json(Notify::warning('Falha ao receber dados da API'), 400);
-        }
     }
 
     public function items(Request $request)

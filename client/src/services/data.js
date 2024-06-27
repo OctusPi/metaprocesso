@@ -100,7 +100,6 @@ class Data {
         }
         if (!isFilled) {
             this.emit('callAlert', notifys.warning('Preencha ao menos um campo para continuar'))
-            this.page.value.datalist = []
         }
     }
 }

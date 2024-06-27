@@ -25,7 +25,7 @@ const page = ref({
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
     data: { items: [] },
-    datalist: [],
+    datalist: model.value ?? [],
     search: {
         organ: props.organ
     },
@@ -116,7 +116,7 @@ const accordionCollapseHeaderId = accordionCollapseId + '-header'
                             </div>
 
                             <div class="d-flex flex-row-reverse mt-4">
-                                <button @click="data.list" type="button" class="btn btn-primary mx-2">
+                                <button @click="data.listForSearch('organ')" type="button" class="btn btn-primary mx-2">
                                     Aplicar <i class="bi bi-check2-circle"></i>
                                 </button>
                             </div>

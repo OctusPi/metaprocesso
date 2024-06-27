@@ -14,7 +14,6 @@ const pass = ref({
 })
 
 function remove() {
-
     if (!pass.value.userpass) {
         pass.value.is_out = true
         emit('callAlert', notifys.warning('Informe sua senha de acesso!'))

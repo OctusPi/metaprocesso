@@ -7,6 +7,7 @@ use App\Utils\Utils;
 use App\Utils\Notify;
 use App\Middleware\Data;
 use App\Security\Guardian;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -182,6 +183,35 @@ class Controller extends BaseController
             return Response()->json(Notify::warning('Dados para exclusão nao localizado!'), 404);
         } catch (\Exception $e) {
             return Response()->json(Notify::error('Ação não permitida, registro referenciado em outros contextos!'), 500);
+        }
+    }
+
+    public function generate(Request $request)
+    {
+        $api_key = getenv('OPENIA_KEY');
+        $client = new Client();
+        $url = 'https://api.openai.com/v1/completions';
+        $data = [
+            'model' => 'gpt-3.5-turbo-instruct',
+            'prompt' => $request->payload,
+            'max_tokens' => 512
+        ];
+
+        try {
+
+            $resp = $client->post($url, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $api_key,
+                    'Content-Type' => 'application/json'
+                ],
+                'json' => $data
+            ]);
+
+            return Response()->json(json_decode($resp->getBody()), 200);
+
+        } catch (\Exception $e) {
+            Log::alert('Falha ao receber dados da API: ' . $e->getMessage());
+            return Response()->json(Notify::warning('Falha ao receber dados da API'), 400);
         }
     }
 }

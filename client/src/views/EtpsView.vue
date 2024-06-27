@@ -11,6 +11,7 @@ import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import InputRichText from '@/components/inputs/InputRichText.vue';
 import DfdsSelect from '@/components/DfdsSelect.vue';
+import gpt from '@/services/gpt';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -62,7 +63,7 @@ const page = ref({
 })
 
 const tabs = ref([
-    { id: 'info', icon: 'bi-info-circle', title: 'Infos', status: true },
+    { id: 'info', icon: 'bi-chat-square-dots', title: 'Infos', status: true },
     { id: 'dfds', icon: 'bi-journal-album', title: 'DFDs', status: false },
     { id: 'necessidade', icon: 'bi-question-circle', title: 'Necessidade', status: false },
     { id: 'solucao', icon: 'bi-card-checklist', title: 'Solução', status: false },
@@ -97,6 +98,77 @@ function autoProtocol(organId) {
 
 function setProtocol() {
     page.value.data.protocol = autoProtocol(page.value.data.organ)
+}
+
+function generate(type) {
+    const etp = page.value.data
+    const slc = page.value.selects
+    const base = {
+        organ: slc?.organs.find((o) => o.id === etp.organ),
+        comission: slc?.comissions.find((o) => o.id === etp.comission),
+        object_description: etp.object_description,
+    }
+
+    let callresp, payload = null
+
+    function setValuesAndPayload(key, mPayload) {
+        callresp = (resp) => {
+            page.value[key] = resp.data?.choices[0]?.text;
+        };
+        payload = mPayload;
+    }
+
+    switch (type) {
+        case 'object_description':
+            setValuesAndPayload('object_description', 'Create: Please provide a concise description of the contracting object.');
+            break;
+        case 'object_classification':
+            setValuesAndPayload('object_classification', `Create: Please provide the classification of the contracting object. ${base.object_description}`);
+            break;
+        case 'necessity':
+            setValuesAndPayload('necessity', 'Create: Please provide the necessity description.');
+            break;
+        case 'contract_forecast':
+            setValuesAndPayload('contract_forecast', 'Create: Please provide the forecast for the contract.');
+            break;
+        case 'contract_requirements':
+            setValuesAndPayload('contract_requirements', 'Create: Please provide the contract requirements.');
+            break;
+        case 'market_survey':
+            setValuesAndPayload('market_survey', 'Create: Please provide the market survey description.');
+            break;
+        case 'contract_calculus_memories':
+            setValuesAndPayload('contract_calculus_memories', 'Create: Please provide the memories of contract calculations.');
+            break;
+        case 'contract_expected_price':
+            setValuesAndPayload('contract_expected_price', 'Create: Please provide the expected price for the contract.');
+            break;
+        case 'solution_full_description':
+            setValuesAndPayload('solution_full_description', 'Create: Please provide a full description of the solution.');
+            break;
+        case 'solution_parcel_justification':
+            setValuesAndPayload('solution_parcel_justification', 'Create: Please provide justification for solution parcel.');
+            break;
+        case 'correlated_contracts':
+            setValuesAndPayload('correlated_contracts', 'Create: Please provide description of correlated contracts.');
+            break;
+        case 'contract_alignment':
+            setValuesAndPayload('contract_alignment', 'Create: Please provide contract alignment details.');
+            break;
+        case 'expected_results':
+            setValuesAndPayload('expected_results', 'Create: Please provide expected results description.');
+            break;
+        case 'contract_previous_actions':
+            setValuesAndPayload('contract_previous_actions', 'Create: Please provide previous contract actions.');
+            break;
+        case 'ambiental_impacts':
+            setValuesAndPayload('ambiental_impacts', 'Create: Please provide possible environmental impacts.');
+            break;
+        default:
+            break;
+    }
+    
+    gpt.generate(`${page.value.baseURL}/generate`, payload, emit, callresp)
 }
 
 const attachmentTypes = [
@@ -218,9 +290,9 @@ onMounted(() => {
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
                     <form class="form-row" @submit.prevent="data.save()">
                         <input type="hidden" name="id" v-model="page.data.id">
-                        
+
                         <TabNav :tab-instance="tabSwitch" identify="etps-nav" />
-                        
+
                         <div class="tab-content" id="dfdTabContent">
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('info') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
@@ -228,9 +300,9 @@ onMounted(() => {
                                     <div class="col-sm-12 col-md-4">
                                         <label for="emission" class="form-label">Emissão</label>
                                         <VueDatePicker auto-apply v-model="page.data.emission"
+                                            :input-class-name="page.rules.valids.emission ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                             :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
-                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
-                                            calendar-class-name="dp-custom-calendar"
+                                            locale="pt-br" calendar-class-name="dp-custom-calendar"
                                             calendar-cell-class-name="dp-custom-cell"
                                             menu-class-name="dp-custom-menu" />
                                     </div>
@@ -285,16 +357,25 @@ onMounted(() => {
                                         </select>
                                     </div>
                                 </div>
-                                <div class="row mb-3 g-3">
+                                <div class="row g-3">
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="object_description" class="form-label">Descrição do Objeto</label>
+                                        <label for="object_description"
+                                            class="form-label d-flex justify-content-between">
+                                            Descrição sucinta do objeto
+                                            <a href="#" class="a-ia" @click="generate('object_description')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.object_description"
                                             placeholder="Descrição do Objeto" identifier="object_description"
                                             v-model="page.data.object_description" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="object_classification" class="form-label">Classificação do
-                                            Objeto</label>
+                                        <label for="object_classification"
+                                            class="form-label d-flex justify-content-between">
+                                            Classificação do objeto
+                                            <a href="#" class="a-ia" @click="generate('object_classification')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.object_classification"
                                             placeholder="Classificação do Objeto" identifier="object_classification"
                                             v-model="page.data.object_classification" />
@@ -322,75 +403,109 @@ onMounted(() => {
                                 id="necessity-tab-pane" role="tabpanel" aria-labelledby="necessity-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="necessity" class="form-label">Descrição da
-                                            Necessidade</label>
+                                        <label for="necessity" class="form-label d-flex justify-content-between">
+                                            Necessidade
+                                            <a href="#" class="a-ia" @click="generate('necessity')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.necessity"
                                             placeholder="Descrição da Necessidade" identifier="necessity"
                                             v-model="page.data.necessity" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="contract_requirements" class="form-label">Descrição dos Requisitos
-                                            da Contratação</label>
+                                        <label for="contract_requirements"
+                                            class="form-label d-flex justify-content-between">
+                                            Descrição dos Requisitos da Contratação
+                                            <a href="#" class="a-ia" @click="generate('contract_requirements')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.contract_requirements"
                                             placeholder="Descrição dos Requisitos da Contratação"
                                             identifier="contract_requirements"
                                             v-model="page.data.contract_requirements" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="contract_forecast" class="form-label">Previsão de Realização
-                                            da Contratação</label>
+                                        <label for="contract_forecast"
+                                            class="form-label d-flex justify-content-between">
+                                            Previsão de Realização da Contratação
+                                            <a href="#" class="a-ia" @click="generate('contract_forecast')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.contract_forecast"
                                             placeholder="Previsão de Realização da Contratação"
                                             identifier="contract_forecast" v-model="page.data.contract_forecast" />
                                     </div>
                                 </div>
                             </div>
-
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('solucao') }"
                                 id="solution-tab-pane" role="tabpanel" aria-labelledby="solution-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="market_survey" class="form-label">Levantamento de Mercado</label>
+                                        <label for="market_survey"
+                                            class="form-label d-flex justify-content-between">Levantamento de Mercado
+                                            <a href="#" class="a-ia" @click="generate('market_survey')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.market_survey"
                                             placeholder="Levantamento de Mercado" identifier="market_survey"
                                             v-model="page.data.market_survey" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="solution_full_description" class="form-label">Descrição da Solução
-                                            como um Todo</label>
+                                        <label for="solution_full_description"
+                                            class="form-label d-flex justify-content-between">Descrição da Solução como
+                                            um Todo
+                                            <a href="#" class="a-ia" @click="generate('solution_full_description')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.solution_full_description"
                                             placeholder="Descrição da Solução como um Todo"
                                             identifier="solution_full_description"
                                             v-model="page.data.solution_full_description" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="contract_calculus_memories" class="form-label">Estimativa das
-                                            Quantidades Contratadas</label>
+                                        <label for="contract_calculus_memories"
+                                            class="form-label d-flex justify-content-between">Estimativa das Quantidades
+                                            Contratadas
+                                            <a href="#" class="a-ia" @click="generate('contract_calculus_memories')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.contract_calculus_memories"
                                             placeholder="Estimativa das Quantidades Contratadas"
                                             identifier="contract_calculus_memories"
                                             v-model="page.data.contract_calculus_memories" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="contract_expected_price" class="form-label">Estimativa do Preço da
-                                            Contratação</label>
+                                        <label for="contract_expected_price"
+                                            class="form-label d-flex justify-content-between">Estimativa do Preço da
+                                            Contratação
+                                            <a href="#" class="a-ia" @click="generate('contract_expected_price')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.contract_expected_price"
                                             placeholder="Estimativa do Preço da Contratação"
                                             identifier="contract_expected_price"
                                             v-model="page.data.contract_expected_price" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="solution_parcel_justification" class="form-label">Justificativa para
-                                            o
-                                            Parcelamento ou Não</label>
+                                        <label for="solution_parcel_justification"
+                                            class="form-label d-flex justify-content-between">Justificativa para o
+                                            Parcelamento ou Não
+                                            <a href="#" class="a-ia"
+                                                @click="generate('solution_parcel_justification')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.solution_parcel_justification"
                                             placeholder="Justificativa para o Parcelamento ou Não"
                                             identifier="solution_parcel_justification"
                                             v-model="page.data.solution_parcel_justification" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="correlated_contracts" class="form-label">Contratações Correlatas
-                                            e/ou Interdependentes</label>
+                                        <label for="correlated_contracts"
+                                            class="form-label d-flex justify-content-between">Contratações Correlatas
+                                            e/ou Interdependentes
+                                            <a href="#" class="a-ia" @click="generate('correlated_contracts')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.correlated_contracts"
                                             placeholder="Contratações Correlatas e/ou Interdependentes"
                                             identifier="correlated_contracts"
@@ -404,29 +519,44 @@ onMounted(() => {
                                 id="solution-tab-pane" role="tabpanel" aria-labelledby="solution-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="expected_results" class="form-label">Resultados Pretendidos</label>
+                                        <label for="expected_results"
+                                            class="form-label d-flex justify-content-between">Resultados Pretendidos
+                                            <a href="#" class="a-ia" @click="generate('expected_results')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.expected_results"
                                             placeholder="Resultados Pretendidos" identifier="expected_results"
                                             v-model="page.data.expected_results" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="contract_previous_actions" class="form-label">Providências a Serem
-                                            Tomadas</label>
+                                        <label for="contract_previous_actions"
+                                            class="form-label d-flex justify-content-between">Providências a Serem
+                                            Tomadas
+                                            <a href="#" class="a-ia" @click="generate('contract_previous_actions')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.contract_previous_actions"
                                             placeholder="Providências a Serem Tomadas"
                                             identifier="contract_previous_actions"
                                             v-model="page.data.contract_previous_actions" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="contract_alignment" class="form-label">Alinhamento de
-                                            Contrato</label>
+                                        <label for="contract_alignment"
+                                            class="form-label d-flex justify-content-between">Alinhamento de Contrato
+                                            <a href="#" class="a-ia" @click="generate('contract_alignment')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.contract_alignment"
                                             placeholder="Alinhamento de Contrato" identifier="contract_alignment"
                                             v-model="page.data.contract_alignment" />
                                     </div>
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="ambiental_impacts" class="form-label">Possíveis Impactos
-                                            Ambientais</label>
+                                        <label for="ambiental_impacts"
+                                            class="form-label d-flex justify-content-between">Possíveis Impactos
+                                            Ambientais
+                                            <a href="#" class="a-ia" @click="generate('ambiental_impacts')"><i
+                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
+                                        </label>
                                         <InputRichText :valid="page.rules.valids.ambiental_impacts"
                                             placeholder="Possíveis Impactos Ambientais" identifier="ambiental_impacts"
                                             v-model="page.data.ambiental_impacts" />
