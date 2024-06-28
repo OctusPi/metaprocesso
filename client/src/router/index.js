@@ -127,6 +127,12 @@ const router = createRouter({
 			component: () => import('../views/EtpsView.vue')
 		},
 		{
+			path: '/process',
+			name: 'process',
+			// meta: { auth: true },
+			component: () => import('../views/ProcessView.vue')
+		},
+		{
 			path: '/forbidden',
 			name: 'forbidden',
 			component: () => import('../views/ForbiddenView.vue')

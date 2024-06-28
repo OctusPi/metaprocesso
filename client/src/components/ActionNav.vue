@@ -59,6 +59,11 @@ const actions = {
         action: (id) => { emit('action', { e: 'action:items', i: id }) },
         icon: 'bi-boxes',
         title: 'Itens'
+    },
+    'clone': {
+        action: (id) => { emit('action', { e: 'action:clone', i: id }) },
+        icon: 'bi-copy',
+        title: 'Clonar'
     }
 
 }

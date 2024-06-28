@@ -218,6 +218,15 @@ function export_dfd(id) {
 
 }
 
+function clone_dfd(id) {
+    http.get(`${page.value.baseURL}/details/${id}`, emit, (response) => {
+        response.data.id = null
+        page.value.data = response.data
+        data.selects('unit', page.value.data.unit)
+        ui.toggle('update')
+    })
+}
+
 watch(
     () => props.datalist,
     (newdata) => {
@@ -251,25 +260,11 @@ onMounted(() => {
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
                     </div>
                     <div class="action-buttons d-flex my-2">
-                        <div class="dropdown">
-                            <button type="button" class="btn btn-action btn-action-primary" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical"></i>
-                                <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li class="dropdown-item c-pointer" @click="ui.toggle('register')">
-                                    <i class="bi bi-plus-circle me-1"></i> Novo em Branco
-                                </li>
-                                <li class="dropdown-item c-pointer">
-                                    <i class="bi bi-journal-bookmark me-1"></i> Novo a partir de
-                                    Contrato liquidado
-                                </li>
-                                <li class="dropdown-item c-pointer">
-                                    <i class="bi bi-journal-album me-1"></i> Novo a partir de DFD anterior
-                                </li>
-                            </ul>
-                        </div>
+                        <button @click="ui.toggle('register')" type="button" class="btn btn-action btn-action-primary"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-plus-circle"></i>
+                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
+                        </button>
                         <button @click="ui.toggle('search')" type="button"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-search"></i>
@@ -341,8 +336,8 @@ onMounted(() => {
 
                     <!-- DATA LIST -->
                     <TableList @action:update="update_dfd" @action:delete="data.remove" @action:pdf="export_dfd"
-                        :casts="{ 'status': page.selects.status }" :header="page.dataheader" :body="page.datalist"
-                        :actions="['export_pdf', 'update', 'delete']" />
+                        @action:clone="clone_dfd" :casts="{ 'status': page.selects.status }" :header="page.dataheader"
+                        :body="page.datalist" :actions="['export_pdf', 'clone', 'update', 'delete']" />
                 </div>
 
                 <!--BOX REGISTER-->
