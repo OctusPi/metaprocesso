@@ -8,7 +8,7 @@
     const menuitens = {
         'management': {href: '/management', icon:'bi-house-gear', title:'Gestão', description:'Dados Administrativos e Estruturais'},
         'catalogs': {href: '/catalogs', icon:'bi-book-half', title:'Catálogos', description:'Catálogos de Itens GOV'},
-        'proccess': {href: '/proccess', icon:'bi-journal-bookmark', title:'Processos', description:'Formalização de Processos'},
+        'proccess': {href: '/process', icon:'bi-journal-bookmark', title:'Processos', description:'Formalização de Processos'},
         'dfds': {href: '/dfds', icon:'bi-journal-album', title:'DFDs', description:'Formalização de Demandas'},
         'etps': {href: '/etps', icon:'bi-journal-medical', title:'ETPs', description:'Estudos Técnicos Preliminares'},
         'pricerecords': {href: '/pricerecords', icon:'bi-cash-coin', title:'Preços', description:'Mapa de Registro de Preços'},
