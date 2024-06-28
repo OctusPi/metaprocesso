@@ -78,6 +78,11 @@ class User extends Model
         return $this->belongsTo(Etp::class);
     }
 
+    public function proccess(): BelongsTo
+    {
+        return $this->belongsTo(Process::class);
+    }
+
     public function nowlogin(): Attribute
     {
         return Attribute::make(

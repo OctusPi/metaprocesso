@@ -67,6 +67,11 @@ class Comission extends Model
         return $this->belongsTo(Etp::class);
     }
 
+    public function proccess(): BelongsTo
+    {
+        return $this->belongsTo(Process::class);
+    }
+
     public function startTerm(): Attribute
     {
         return Attribute::make(

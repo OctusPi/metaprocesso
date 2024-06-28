@@ -91,6 +91,11 @@ class Organ extends Model
         return $this->belongsTo(Etp::class);
     }
 
+    public function proccess(): BelongsTo
+    {
+        return $this->belongsTo(Process::class);
+    }
+
     public static function validateFields(?int $id = null): array
     {
         return [
