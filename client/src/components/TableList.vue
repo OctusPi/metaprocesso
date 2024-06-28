@@ -21,7 +21,8 @@ const emit = defineEmits([
     'action:members',
     'action:extinction',
     'action:items',
-    'action:pdf'
+    'action:pdf',
+    'action:clone'
 ])
 
 const body = ref(props.body)
