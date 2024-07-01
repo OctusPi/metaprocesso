@@ -193,9 +193,9 @@ onMounted(() => {
 
         <section class="container-main">
             <MainHeader :header="{
-                icon: 'bi-journal-album',
-                title: 'Formalização de Demandas',
-                description: 'Registro de demandas solicitadas pelas as Unidades'
+                icon: 'bi-journal-medical',
+                title: 'Gerenciamento de Estudos Técnicos Preliminares',
+                description: 'Registro dos ETPs elaborados pelos Órgãos'
             }" />
 
             <div class="box box-main p-0 rounded-4">
