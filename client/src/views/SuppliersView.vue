@@ -19,8 +19,13 @@ const page = ref({
     datalist: props.datalist,
     dataheader: [
         { key: 'name', title: 'FORNECEDOR', sub: [{ key: 'cnpj', title: 'CNPJ: ' }] },
+        { key: 'modality', cast: 'title', title: 'DEFINIÇÃO', sub: [{ key: 'size', cast: 'title' }] },
         { key: 'address', title: 'ENDEREÇO' },
     ],
+    selects: {
+        modalities: [],
+        sizes: [],
+    },
     search: {},
     rules: {
         fields: {
@@ -50,6 +55,7 @@ function populateWithGovData(govdata) {
 
 onMounted(() => {
     data.list()
+    data.selects()
 })
 
 </script>
@@ -92,7 +98,7 @@ onMounted(() => {
                     <!--SEARCH BAR-->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
                         <form @submit.prevent="data.list" class="row g-3">
-                            <div class="col-sm-12 col-md-4">
+                            <div class="col-sm-12 col-md-8">
                                 <label for="s-name" class="form-label">Fornecedor</label>
                                 <input type="text" name="name" class="form-control" id="s-name"
                                     v-model="page.search.name" placeholder="Pesquise por partes do nome do Fornecedor">
@@ -108,6 +114,24 @@ onMounted(() => {
                                     v-model="page.search.address"
                                     placeholder="Pesquise por partes do endereço do Fornecedor">
                             </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="modality" class="form-label">Modalidade</label>
+                                <select name="modality" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.modality }" id="modality"
+                                    v-model="page.data.modality">
+                                    <option value=""></option>
+                                    <option v-for="s in page.selects.modalities" :value="s.id" :key="s.id">{{ s.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="size" class="form-label">Porte</label>
+                                <select name="size" class="form-control" id="size" v-model="page.data.size">
+                                    <option value=""></option>
+                                    <option v-for="s in page.selects.sizes" :value="s.id" :key="s.id">{{ s.title }}
+                                    </option>
+                                </select>
+                            </div>
 
                             <div class="d-flex flex-row-reverse mt-4">
                                 <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
@@ -118,7 +142,10 @@ onMounted(() => {
 
                     <!--DATA LIST-->
                     <TableList @action:update="data.update" @action:delete="data.remove" :header="page.dataheader"
-                        :body="page.datalist" :actions="['update', 'delete']" />
+                        :body="page.datalist" :actions="['update', 'delete']" :casts="{
+                            'size': page.selects.sizes,
+                            'modality': page.selects.modalities,
+                        }" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -127,11 +154,21 @@ onMounted(() => {
                     <form class="form-row" @submit.prevent="data.save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
-                            <div class="col-sm-12 col-md-8">
+                            <div class="col-sm-12 col-md-4">
                                 <label for="name" class="form-label">Fornecedor</label>
                                 <input type="text" name="name" class="form-control"
                                     :class="{ 'form-control-alert': page.rules.valids.name }" id="name"
                                     placeholder="Nome do Fornecedor" v-model="page.data.name">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="modality" class="form-label">Modalidade</label>
+                                <select name="modality" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.modality }" id="modality"
+                                    v-model="page.data.modality">
+                                    <option value=""></option>
+                                    <option v-for="s in page.selects.modalities" :value="s.id" :key="s.id">{{ s.title }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="cnpj" class="form-label">CNPJ</label>
@@ -163,12 +200,22 @@ onMounted(() => {
                         </div>
 
                         <div class="row mb-3 g-3">
-                            <div class="col-sm-12 col-md-8">
+                            <div class="col-sm-12 col-md-4">
                                 <label for="address" class="form-label">Endereço</label>
                                 <input type="text" name="address" class="form-control"
                                     :class="{ 'form-control-alert': page.rules.valids.address }" id="address"
                                     placeholder="Logradouro, número - bairro (Rua do Amor, 110 - Centro)"
                                     v-model="page.data.address">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="size" class="form-label">Porte</label>
+                                <select name="size" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.size }" id="size"
+                                    v-model="page.data.size">
+                                    <option value=""></option>
+                                    <option v-for="s in page.selects.sizes" :value="s.id" :key="s.id">{{ s.title }}
+                                    </option>
+                                </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="email" class="form-label">Email</label>

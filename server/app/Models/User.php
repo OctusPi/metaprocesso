@@ -154,7 +154,7 @@ class User extends Model
             ['id' => self::MOD_PRICERECORDS, 'module' => 'pricerecords', 'title' => 'Registro de Preços'],
             ['id' => self::MOD_REFTERM, 'module' => 'refterms', 'title' => 'Termos de Referência'],
             ['id' => self::MOD_RISKINESS, 'module' => 'riskiness', 'title' => 'Mapas de Risco'],
-            ['id' => self::MOD_PROCCESS, 'module' => 'proccess', 'title' => 'Processos'],
+            ['id' => self::MOD_PROCCESS, 'module' => 'process', 'title' => 'Processos'],
             ['id' => self::MOD_TRANSMISSION, 'module' => 'trasmission', 'title' => 'Publicação e Transmissão'],
             ['id' => self::MOD_REPORTS, 'module' => 'reports', 'title' => 'Relatórios']
         ];
