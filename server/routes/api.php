@@ -16,6 +16,7 @@ use App\Http\Controllers\Etps;
 use App\Http\Controllers\Management;
 use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\Organs;
+use App\Http\Controllers\PriceRecords;
 use App\Http\Controllers\Processes;
 use App\Http\Controllers\Programs;
 use App\Http\Controllers\Suppliers;
@@ -291,19 +292,22 @@ Route::controller(Etps::class)->group(function () {
     });
 })->name('etps');
 
-Route::controller(Attachments::class)->group(function () {
-    Route::prefix('/attachments')->group(function () {
+Route::controller(PriceRecords::class)->group(function () {
+    Route::prefix('/pricerecords')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
             Route::get('', 'index');
-            Route::post('/{origin}/{protocol}/list', 'list');
-            Route::post('/{origin}/{protocol}/save', 'save');
-            Route::put('/{origin}/{protocol}/update', 'update');
-            Route::post('/{origin}/{protocol}/destroy', 'delete');
-            Route::get('/{origin}/{protocol}/details/{id}', 'details');
-            Route::get('/{origin}/{protocol}/download/{id}', 'download');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::post('/generate', 'generate');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/export/{id}', 'export');
+            Route::get('/selects/{key?}/{search?}', 'selects');
+            Route::post('/items', 'items');
         });
     });
-})->name('attachments');
+})->name('pricerecords');
 
 Route::controller(Processes::class)->group(function () {
     Route::prefix('/process')->group(function () {
@@ -318,6 +322,20 @@ Route::controller(Processes::class)->group(function () {
         });
     });
 })->name('process');
+
+Route::controller(Attachments::class)->group(function () {
+    Route::prefix('/attachments')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/{origin}/{protocol}/list', 'list');
+            Route::post('/{origin}/{protocol}/save', 'save');
+            Route::put('/{origin}/{protocol}/update', 'update');
+            Route::post('/{origin}/{protocol}/destroy', 'delete');
+            Route::get('/{origin}/{protocol}/details/{id}', 'details');
+            Route::get('/{origin}/{protocol}/download/{id}', 'download');
+        });
+    });
+})->name('attachments');
 
 Route::fallback(function () {
     return Response()->json(Notify::warning('Destino solicitado não existe...'), 404);
