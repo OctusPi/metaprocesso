@@ -167,7 +167,7 @@ function generate(type) {
         default:
             break;
     }
-    
+
     gpt.generate(`${page.value.baseURL}/generate`, payload, emit, callresp)
 }
 

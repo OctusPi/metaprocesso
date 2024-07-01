@@ -207,18 +207,18 @@ function update_dfd(id) {
     })
 }
 
-function export_dfd(id){
+function export_dfd(id) {
     http.get(`${page.value.baseURL}/export/${id}`, emit, (resp) => {
         const dfd = resp.data
         const containerReport = document.createElement('div')
-        const instanceReport = createApp(DfdReport, {dfd:dfd, selects:page.value.selects})
+        const instanceReport = createApp(DfdReport, { dfd: dfd, selects: page.value.selects })
         instanceReport.mount(containerReport)
         exp.exportPDF(containerReport, `DFD-${dfd.protocol}`)
     })
-    
+
 }
 
-function clone_dfd(id){
+function clone_dfd(id) {
     http.get(`${page.value.baseURL}/details/${id}`, emit, (response) => {
         response.data.id = null
         page.value.data = response.data
@@ -260,8 +260,8 @@ onMounted(() => {
                         <p class="small txt-color-sec p-0 m-0">{{ page.title.secondary }}</p>
                     </div>
                     <div class="action-buttons d-flex my-2">
-                        <button @click="ui.toggle('register')" type="button" class="btn btn-action btn-action-primary" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <button @click="ui.toggle('register')" type="button" class="btn btn-action btn-action-primary"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-plus-circle"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Adicionar</span>
                         </button>
@@ -280,22 +280,18 @@ onMounted(() => {
                         <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="date_s_ini" class="form-label">Data Inicial</label>
-                                <VueDatePicker auto-apply v-model="page.search.date_i"
-                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
-                                    input-class-name="dp-custom-input-dtpk"
+                                <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false"
+                                    format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
                                     locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                    calendar-cell-class-name="dp-custom-cell"
-                                    menu-class-name="dp-custom-menu" />
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
 
                             <div class="col-sm-12 col-md-4">
                                 <label for="date_s_fin" class="form-label">Data Final</label>
-                                <VueDatePicker auto-apply v-model="page.search.date_f"
-                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
-                                    input-class-name="dp-custom-input-dtpk"
+                                <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
+                                    format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
                                     locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                    calendar-cell-class-name="dp-custom-cell"
-                                    menu-class-name="dp-custom-menu" />
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
 
                             <div class="col-sm-12 col-md-4">
@@ -326,7 +322,8 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-description" class="form-label">Objeto</label>
                                 <input type="text" name="description" class="form-control" id="s-description"
-                                    v-model="page.search.description" placeholder="Pesquise por partes do Objeto do DFD" />
+                                    v-model="page.search.description"
+                                    placeholder="Pesquise por partes do Objeto do DFD" />
                             </div>
 
                             <div class="d-flex flex-row-reverse mt-4">
@@ -338,13 +335,9 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList 
-                        @action:update="update_dfd" 
-                        @action:delete="data.remove" 
-                        @action:pdf="export_dfd"
-                        @action:clone="clone_dfd"
-                        :casts="{ 'status': page.selects.status }" :header="page.dataheader" :body="page.datalist"
-                        :actions="['export_pdf', 'clone', 'update', 'delete']" />
+                    <TableList @action:update="update_dfd" @action:delete="data.remove" @action:pdf="export_dfd"
+                        @action:clone="clone_dfd" :casts="{ 'status': page.selects.status }" :header="page.dataheader"
+                        :body="page.datalist" :actions="['export_pdf', 'clone', 'update', 'delete']" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -700,8 +693,9 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade position-relative" :class="{ 'show active': navtab.activate_tab('revisor') }"
-                                id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
+                            <div class="tab-pane fade position-relative"
+                                :class="{ 'show active': navtab.activate_tab('revisor') }" id="revisor-tab-pane"
+                                role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
 
                                 <!-- origin -->
                                 <div class="box-revisor mb-4">
@@ -1114,7 +1108,7 @@ onMounted(() => {
     font-size: 0.9rem;
 }
 
-.btn-abs{
+.btn-abs {
     top: -20px;
     right: 0;
 }
