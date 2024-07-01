@@ -19,4 +19,12 @@ class Suppliers extends Controller
     {
         return $this->baseList(['name', 'cnpj', 'address'], ['name']);
     }
+
+    public function selects(Request $request)
+    {
+        return Response()->json([
+            'modalities' => Supplier::list_modalitys(),
+            'sizes' => Supplier::list_sizes(),
+        ], 200);
+    }
 }

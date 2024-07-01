@@ -227,6 +227,7 @@ Route::controller(Suppliers::class)->group(function () {
             Route::put('/update', 'update');
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
+            Route::get('/selects', 'selects');
         });
     });
 })->name('suppliers');

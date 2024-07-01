@@ -19,6 +19,8 @@ class Supplier extends Model
         'phone',
         'email',
         'address',
+        'modality',
+        'size',
     ];
 
     public static function validateFields(?int $id = null):array
@@ -34,6 +36,25 @@ class Supplier extends Model
     {
         return [
             'required' => 'Campo obrigatório não informado!'
+        ];
+    }
+
+    public static function list_modalitys(): array
+    {
+        return [
+            ['id' => 0, 'title' => 'Microempreendedor Individual (MEI)'],
+            ['id' => 1, 'title' => 'Microempresa (ME)'],
+            ['id' => 2, 'title' => 'Empresa de Pequeno Porte (EPP)'],
+            ['id' => 3, 'title' => 'Empresa de Grande Porte (EGP)'],
+        ];
+    }
+
+    public static function list_sizes(): array
+    {
+        return [
+            ['id' => 0, 'title' => 'Porte 1'],
+            ['id' => 1, 'title' => 'Porte 2'],
+            ['id' => 2, 'title' => 'Porte 3'],
         ];
     }
 }
