@@ -129,7 +129,7 @@ const router = createRouter({
 		{
 			path: '/process',
 			name: 'process',
-			// meta: { auth: true },
+			meta: { auth: true },
 			component: () => import('../views/ProcessView.vue')
 		},
 		{

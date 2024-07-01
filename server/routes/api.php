@@ -16,6 +16,7 @@ use App\Http\Controllers\Etps;
 use App\Http\Controllers\Management;
 use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\Organs;
+use App\Http\Controllers\Processes;
 use App\Http\Controllers\Programs;
 use App\Http\Controllers\Suppliers;
 use App\Http\Controllers\Units;
@@ -302,6 +303,20 @@ Route::controller(Attachments::class)->group(function () {
         });
     });
 })->name('attachments');
+
+Route::controller(Processes::class)->group(function () {
+    Route::prefix('/process')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects', 'selects');
+        });
+    });
+})->name('process');
 
 Route::fallback(function () {
     return Response()->json(Notify::warning('Destino solicitado não existe...'), 404);

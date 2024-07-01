@@ -10,6 +10,15 @@ class Process extends Model
 {
     use HasFactory;
 
+    public const S_ABERTA = 0;
+    public const S_ADIADA = 1;
+    public const S_ANULADO = 2;
+    public const S_CANCELADO = 3;
+    public const S_DESERTA = 4;
+    public const S_FINALIZADA = 5;
+    public const S_FRACASSADA = 6;
+    public const S_REVOGADA = 7;
+
     protected $table = 'processes';
 
     protected $fillable = [
@@ -69,24 +78,26 @@ class Process extends Model
     public static function list_situations(): array
     {
         return [
-            ['id' => 0, 'title' => 'Aberta'],
-            ['id' => 1, 'title' => 'Adiada'],
-            ['id' => 2, 'title' => 'Anulado'],
-            ['id' => 3, 'title' => 'Cancelado'],
-            ['id' => 4, 'title' => 'Deserta'],
-            ['id' => 5, 'title' => 'Finalizada'],
-            ['id' => 6, 'title' => 'Fracassada'],
-            ['id' => 7, 'title' => 'Revogada'],
+            ['id' => self::S_ABERTA, 'title' => 'Aberta'],
+            ['id' => self::S_ADIADA, 'title' => 'Adiada'],
+            ['id' => self::S_ANULADO, 'title' => 'Anulado'],
+            ['id' => self::S_CANCELADO, 'title' => 'Cancelado'],
+            ['id' => self::S_DESERTA, 'title' => 'Deserta'],
+            ['id' => self::S_FINALIZADA, 'title' => 'Finalizada'],
+            ['id' => self::S_FRACASSADA, 'title' => 'Fracassada'],
+            ['id' => self::S_REVOGADA, 'title' => 'Revogada'],
         ];
     }
 
-    public static function list_types(): array
+    public function list_types(): array
     {
         return [
-            ['id' => 0, 'title' => 'Menor Preço'],
-            ['id' => 1, 'title' => 'Melhor Técnica'],
-            ['id' => 2, 'title' => 'Preço e Técnica'],
-            ['id' => 3, 'title' => 'Outro'],
+            ['id' => 0, 'title' => 'Menor preço'],
+            ['id' => 1, 'title' => 'Maior desconto'],
+            ['id' => 2, 'title' => 'Melhor técnica ou conteúdo artístico'],
+            ['id' => 3, 'title' => 'Técnica e preço'],
+            ['id' => 4, 'title' => 'Maior lance, no caso de leilão'],
+            ['id' => 5, 'title' => 'Maior retorno econômico'],
         ];
     }
 }
