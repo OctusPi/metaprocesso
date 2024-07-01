@@ -72,6 +72,11 @@ class Comission extends Model
         return $this->belongsTo(Process::class);
     }
 
+    public function pricerecord():BelongsTo
+    {
+        return $this->belongsTo(PriceRecord::class);
+    }
+
     public function startTerm(): Attribute
     {
         return Attribute::make(

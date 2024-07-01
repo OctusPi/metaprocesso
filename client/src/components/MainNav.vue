@@ -12,8 +12,8 @@
         'dfds': {href: '/dfds', icon:'bi-journal-album', title:'DFDs', description:'Formalização de Demandas'},
         'etps': {href: '/etps', icon:'bi-journal-medical', title:'ETPs', description:'Estudos Técnicos Preliminares'},
         'pricerecords': {href: '/pricerecords', icon:'bi-cash-coin', title:'Preços', description:'Mapa de Registro de Preços'},
-        'refterms': {href: '/refterms', icon:'bi-file-font', title:'Termos', description:'Termos de Referência'},
         'riskiness': {href: '/riskiness', icon:'bi-map', title:'Mapa de Riscos', description:'Mapa de Riscos'},
+        'refterms': {href: '/refterms', icon:'bi-file-font', title:'Termos', description:'Termos de Referência'},
         'trasmission': {href: '/trasmission', icon:'bi-send-check', title:'Publicar', description:'Publicação e Transmissão'},
         'reports': {href: '/reports', icon:'bi-clipboard-data', title:'Relatórios', description:'Relatórios de Acompanhamento e Planejamento'}
 

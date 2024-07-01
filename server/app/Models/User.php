@@ -83,6 +83,11 @@ class User extends Model
         return $this->belongsTo(Process::class);
     }
 
+    public function pricerecord():BelongsTo
+    {
+        return $this->belongsTo(PriceRecord::class);
+    }
+
     public function nowlogin(): Attribute
     {
         return Attribute::make(

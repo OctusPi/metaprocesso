@@ -4,40 +4,38 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Process extends Model
+class PriceRecord extends Model
 {
     use HasFactory;
 
-    protected $table = 'processes';
+    public string $table = 'price_records';
 
     protected $fillable = [
         'protocol',
         'ip',
         'date_ini',
-        'hour_ini',
-        'year_pca',
-        'type',
-        'modality',
+        'date_fin',
+        'process',
         'organ',
         'units',
-        'ordinators',
         'comission',
         'comission_members',
-        'comission_address',
+        'suppliers',
         'author',
-        'object',
-        'situation',
-        'initial_value',
-        'winner_value',
-        'dfds',
+        'status'
     ];
 
     public function organ(): HasOne
     {
         return $this->hasOne(Organ::class, 'id', 'organ');
+    }
+
+    public function process():HasOne
+    {
+        return $this->hasOne(Process::class, 'id', 'process');
     }
 
     public function comission(): HasOne
@@ -50,13 +48,17 @@ class Process extends Model
         return $this->hasOne(User::class, 'id', 'author');
     }
 
-    public function pricerecord():BelongsTo
-    {
-        return $this->belongsTo(PriceRecord::class);
-    }
-
     public function proposal():BelongsTo
     {
         return $this->belongsTo(Proposal::class);
+    }
+
+    public static function list_status():array
+    {
+        return [
+            ['id' => 1, 'title' => 'Iniciada'],
+            ['id' => 2, 'title' => 'Pendente'],
+            ['id' => 3, 'title' => 'Finalizada']
+        ];
     }
 }
