@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref, watch, createApp } from 'vue'
-import utils from '@/utils/utils'
-import dates from '@/utils/dates'
+
 import Ui from '@/utils/ui'
 import masks from '@/utils/masks'
 import notifys from '@/utils/notifys'
@@ -14,7 +13,6 @@ import exp from '@/services/export'
 import MainNav from '@/components/MainNav.vue'
 import MainHeader from '@/components/MainHeader.vue'
 import TableList from '@/components/TableList.vue'
-import TableListStatus from '@/components/TableListStatus.vue'
 import TabNav from '@/components/TabNav.vue'
 import DfdReport from '@/views/reports/DfdReport.vue'
 
@@ -193,12 +191,6 @@ function generate(type) {
     gpt.generate(`${page.value.baseURL}/generate`, payload, emit, callresp)
 }
 
-function rescue_members() {
-    http.get(`${page.value.baseURL}/selects/comission/${page.value.data.comission}`, emit, (resp) => {
-        page.value.data.comission_members = resp.data
-    })
-}
-
 function update_dfd(id) {
     http.get(`${page.value.baseURL}/details/${id}`, emit, (response) => {
         page.value.data = response.data
@@ -247,9 +239,9 @@ onMounted(() => {
 
         <section class="container-main">
             <MainHeader :header="{
-                icon: 'bi-journal-album',
-                title: 'Formalização de Demandas',
-                description: 'Registro de demandas solicitadas pelas as Unidades'
+                icon: 'bi-cash-coin',
+                title: 'Coleta de Preços',
+                description: 'Registro de Cotações de Preços para o Mapa'
             }" />
 
             <div class="box box-main p-0 rounded-4">
@@ -348,74 +340,89 @@ onMounted(() => {
                         <TabNav identify="dfdsTab" :tab-instance="navtab" />
 
                         <div class="tab-content" id="dfdTabContent">
-                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('origin') }"
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('process') }"
                                 id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="organ" class="form-label">Orgão</label>
-                                        <select name="organ" class="form-control" :class="{
-                                            'form-control-alert': page.rules.valids.organ
-                                        }" id="organ" v-model="page.data.organ"
-                                            @change="data.selects('organ', page.data.organ)">
-                                            <option value=""></option>
-                                            <option v-for="s in page.selects.organs" :value="s.id" :key="s.id">
-                                                {{ s.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="unit" class="form-label">Unidade</label>
-                                        <select name="unit" class="form-control" :class="{
-                                            'form-control-alert': page.rules.valids.unit
-                                        }" id="unit" @change="data.selects('unit', page.data.unit)"
-                                            v-model="page.data.unit">
-                                            <option value=""></option>
-                                            <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
-                                                {{ s.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="ordinator" class="form-label">Ordenador</label>
-                                        <select name="ordinator" class="form-control" :class="{
-                                            'form-control-alert': page.rules.valids.ordinator
-                                        }" id="ordinator" v-model="page.data.ordinator">
-                                            <option value=""></option>
-                                            <option v-for="s in page.selects.ordinators" :value="s.id" :key="s.id">
-                                                {{ s.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="demandant" class="form-label">Demandante</label>
-                                        <select name="demandant" class="form-control" :class="{
-                                            'form-control-alert': page.rules.valids.demandant
-                                        }" id="demandant" v-model="page.data.demandant">
-                                            <option value=""></option>
-                                            <option v-for="s in page.selects.demandants" :value="s.id" :key="s.id">
-                                                {{ s.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-8">
-                                        <label for="comission" class="form-label">Comissão/Equipe de
-                                            Planejamento</label>
-                                        <select name="comission" class="form-control" :class="{
-                                            'form-control-alert': page.rules.valids.comission
-                                        }" id="comission" @change="rescue_members" v-model="page.data.comission">
-                                            <option value=""></option>
-                                            <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
-                                                {{ s.title }}
-                                            </option>
-                                        </select>
-                                        <div id="comissionHelpBlock" class="form-text txt-color-sec">
-                                            Ao selecionar a comissão/equipe de planejamento seus
-                                            integrantes serão vinculados ao documento
+
+                                <div class="accordion" id="accordionSearchProcess">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="accordionSearchProcessHeadId">
+                                            <button class="w-100 text-center p-2" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#accordionSearchColapseId"
+                                                aria-expanded="true" aria-controls="accordionSearchColapseId">
+                                                <h2 class="txt-color text-center m-0">
+                                                    <i class="bi bi-journal-album me-1"></i>
+                                                    Selecione as DFDs
+                                                </h2>
+                                                <p class="validation txt-color-sec small text-center m-0"
+                                                    :class="{ 'text-danger': props.valid }">
+                                                    Preencha os campos abaixo para escolher as DFDs
+                                                </p>
+                                            </button>
+                                        </h2>
+                                        <div id="accordionSearchColapseId" class="accordion-collapse collapse"
+                                            aria-labelledby="accordionSearchProcessHeadId"
+                                            data-bs-parent="#accordionSearchProcess">
+                                            <div class="accordion-body">
+
+                                                <div class="row g-3">
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                                        <VueDatePicker auto-apply v-model="page.search.date_i"
+                                                            :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            model-type="yyyy-MM-dd"
+                                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                                            calendar-class-name="dp-custom-calendar"
+                                                            calendar-cell-class-name="dp-custom-cell"
+                                                            menu-class-name="dp-custom-menu" />
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="date_s_fin" class="form-label">Data Final</label>
+                                                        <VueDatePicker auto-apply v-model="page.search.date_f"
+                                                            :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            model-type="yyyy-MM-dd"
+                                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                                            calendar-class-name="dp-custom-calendar"
+                                                            calendar-cell-class-name="dp-custom-cell"
+                                                            menu-class-name="dp-custom-menu" />
+                                                    </div>
+
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-protocol" class="form-label">Protocolo</label>
+                                                        <input type="text" name="protocol" class="form-control"
+                                                            id="s-protocol" v-model="page.search.protocol"
+                                                            placeholder="Número do Protocolo" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-unit" class="form-label">Unidade</label>
+                                                        <select name="unit" class="form-control" id="s-unit"
+                                                            v-model="page.search.unit">
+                                                            <option value=""></option>
+                                                            <option v-for="o in page.selects.units" :key="o.id"
+                                                                :value="o.id">
+                                                                {{ o.title }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-8">
+                                                        <label for="s-description" class="form-label">Objeto</label>
+                                                        <input type="text" name="description" class="form-control"
+                                                            id="s-description" v-model="page.search.description"
+                                                            placeholder="Pesquise por partes do Objeto do DFD" />
+                                                    </div>
+
+                                                    <div class="d-flex flex-row-reverse mt-4">
+                                                        <button @click="data.listForSearch('organ')" type="button"
+                                                            class="btn btn-primary mx-2">
+                                                            Aplicar <i class="bi bi-check2-circle"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('infos') }"
                                 id="infos-tab-pane" role="tabpanel" aria-labelledby="infos-tab" tabindex="0">
@@ -527,7 +534,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('items') }"
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('dfds') }"
                                 id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
                                 <!-- search items -->
                                 <div class="row mb-3 position-relative">
@@ -664,7 +671,7 @@ onMounted(() => {
                                         }" @action:update="update_item" @action:fastdelete="delete_item" />
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('details') }"
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('suppliers') }"
                                 id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12">
@@ -693,252 +700,9 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="tab-pane fade position-relative"
-                                :class="{ 'show active': navtab.activate_tab('revisor') }" id="revisor-tab-pane"
-                                role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
-
-                                <!-- origin -->
-                                <div class="box-revisor mb-4">
-                                    <div class="box-revisor-title d-flex mb-4">
-                                        <div class="bar-revisor-title me-2"></div>
-                                        <div class="txt-revisor-title">
-                                            <h3>Origem da Demanda</h3>
-                                            <p>
-                                                Dados referentes a origem e responsabilidade pela
-                                                Demanda
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="box-revisor-content">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <h4>Orgão</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.organs,
-                                                            page.data.organ
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <h4>Unidade</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.units,
-                                                            page.data.unit
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <h4>Ordenador de Despesas</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.ordinators,
-                                                            page.data.ordinator
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <h4>Demadantes</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.demandants,
-                                                            page.data.demandant
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <h4>Comissão / Equipe de Planejamento</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.comissions,
-                                                            page.data.comission
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4 mb-4">
-                                                <h4>Integrantes da Comissão</h4>
-                                                <span class="p-0 m-0 small" v-for="m in page.data.comission_members"
-                                                    :key="m.id">
-                                                    {{ `${utils.getTxt(page.selects.responsibilitys, m.responsibility)}
-                                                    : ${m.name}; ` }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Infos -->
-                                <div class="box-revisor mb-4">
-                                    <div class="box-revisor-title d-flex mb-4">
-                                        <div class="bar-revisor-title me-2"></div>
-                                        <div class="txt-revisor-title">
-                                            <h3>Informações Gerais</h3>
-                                            <p>
-                                                Dados de prioridade, previsão de contratação e
-                                                detalhamento de Objeto
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="box-revisor-content">
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <h4>Data Envio</h4>
-                                                <p>{{ page.data.date_ini }}</p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h4>Previsão Contratação</h4>
-                                                <p>
-                                                    {{
-                                                        dates.getMonthYear(page.data.estimated_date)
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <h4>Ano PCA</h4>
-                                                <p>{{ page.data.year_pca ?? '*****' }}</p>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <h4>Prioridade</h4>
-                                                <p>
-                                                    <TableListStatus :data="utils.getTxt(
-                                                        page.selects.prioritys,
-                                                        page.data.priority
-                                                    )" />
-                                                </p>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <h4>Valor Estimado</h4>
-                                                <p>R${{ page.data.estimated_value ?? '*****' }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <h4>Tipo de Aquisição</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.acquisitions,
-                                                            page.data.acquisition_type
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h4>Forma Sugerida</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.hirings,
-                                                            page.data.suggested_hiring
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h4>Vinculo ou Dependência</h4>
-                                                <p class="txt-very-small p-0 m-0">
-                                                    Dependência com o
-                                                    objeto de outro documento de formalização de
-                                                    demanda
-                                                </p>
-                                                <p>
-                                                    {{
-                                                        page.data.bonds ? 'Sim Possui' : 'Não Possui'
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h4>Registro de Preço</h4>
-                                                <p class="txt-very-small p-0 m-0">
-                                                    Indique se a demanda se trata de registro de preços.
-                                                </p>
-                                                <p>
-                                                    {{
-                                                        page.data.price_taking ? 'Sim' : 'Não'
-                                                    }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <h4>Descrição sucinta do Objeto</h4>
-                                                <p>{{ page.data.description ?? '*****' }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Items -->
-                                <div class="box-revisor mb-4">
-                                    <div class="box-revisor-title d-flex mb-4">
-                                        <div class="bar-revisor-title me-2"></div>
-                                        <div class="txt-revisor-title">
-                                            <h3>Lista de Itens</h3>
-                                            <p>
-                                                Lista de materiais ou serviços vinculados a Demanda
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="box-revisor-content">
-                                        <!-- list items -->
-                                        <div v-if="page.data?.items">
-                                            <TableList :smaller="true" :count="false" :header="items.headers_list"
-                                                :body="page.data?.items" :casts="{
-                                                    type: [
-                                                        { id: 1, title: 'Material' },
-                                                        { id: 2, title: 'Serviço' }
-                                                    ],
-                                                    program: page.selects.programs,
-                                                    dotation: page.selects.dotations
-                                                }" @action:update="update_item" @action:fastdelete="delete_item" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- details -->
-                                <div class="box-revisor mb-4">
-                                    <div class="box-revisor-title d-flex mb-4">
-                                        <div class="bar-revisor-title me-2"></div>
-                                        <div class="txt-revisor-title">
-                                            <h3>Detalhamento da Necessidade</h3>
-                                            <p>
-                                                Justificativas para necessidade e quantitativo de
-                                                itens demandados
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="box-revisor-content">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <h4>Justificativa da necessidade da contratação</h4>
-                                                <p>{{ page.data.justification ?? '*****' }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <h4>Justificativa dos quantitativos demandados</h4>
-                                                <p>
-                                                    {{
-                                                        page.data.justification_quantity ?? '*****'
-                                                    }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('proposals') }"
+                                id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
+                                <p>Propostas</p>
                             </div>
                         </div>
 
@@ -946,13 +710,8 @@ onMounted(() => {
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">
                                 Cancelar <i class="bi bi-x-circle"></i>
                             </button>
-                            <button @click="data.save({ status: 2 })" type="button"
-                                class="btn btn-outline-primary me-2">
-                                Enviar <i class="bi bi-check2-circle"></i>
-                            </button>
-                            <button @click="data.save({ status: 1 })" type="button"
-                                class="btn btn-outline-secondary me-2">
-                                Rascunho <i class="bi bi-receipt-cutoff"></i>
+                            <button @click="data.save" type="button" class="btn btn-outline-primary me-2">
+                                Salvar <i class="bi bi-check2-circle"></i>
                             </button>
                             <button @click="navtab.navigate_tab('next')" type="button"
                                 class="btn btn-outline-secondary me-2">

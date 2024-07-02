@@ -57,26 +57,23 @@ const accordionCollapseHeaderId = accordionCollapseId + '-header'
         <div class="accordion" :id="accordionId">
             <div class="accordion-item">
                 <h2 class="accordion-header" :id="accordionCollapseHeaderId">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    <button class="w-100 text-center px-2 py-3" type="button" data-bs-toggle="collapse"
                         :data-bs-target="'#' + accordionCollapseId" aria-expanded="false"
                         :aria-controls="accordionCollapseId">
-                        <i class="bi bi-search me-2"></i>
-                        Pesquisar por DFDs
+                        <h2 class="txt-color text-center m-0">
+                                <i class="bi bi-journal-album me-1"></i>
+                                Localizar DFDs
+                            </h2>
+                            <p class="validation txt-color-sec small text-center m-0"
+                                :class="{ 'text-danger': props.valid }">
+                                Preencha os campos abaixo para localizar as DFDs
+                            </p>
                     </button>
                 </h2>
                 <div :id="accordionCollapseId" class="accordion-collapse collapse"
                     :aria-labelledby="accordionCollapseHeaderId" :data-bs-parent="'#' + accordionId">
                     <div class="accordion-body">
-                        <div class="my-2">
-                            <h2 class="txt-color text-center m-0">
-                                <i class="bi bi-journal-album me-1"></i>
-                                Selecione as DFDs
-                            </h2>
-                            <p class="validation txt-color-sec small text-center m-0"
-                                :class="{ 'text-danger': props.valid }">
-                                Preencha os campos abaixo para escolher as DFDs
-                            </p>
-                        </div>
+
                         <div class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="date_s_ini" class="form-label">Data Inicial</label>
@@ -137,5 +134,3 @@ const accordionCollapseHeaderId = accordionCollapseId + '-header'
         </div>
     </div>
 </template>
-
-<style></style>
