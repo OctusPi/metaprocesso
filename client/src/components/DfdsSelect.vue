@@ -41,14 +41,13 @@ const page = ref({
 })
 
 const data = new Data(page, emit, new Ui(page, '-'))
+const accordionId = props.identifier + '-accordion'
+const accordionCollapseId = accordionId + '-collapse'
+const accordionCollapseHeaderId = accordionCollapseId + '-header'
 
 onMounted(() => {
     data.selects('organ', props.organ)
 })
-
-const accordionId = props.identifier + '-accordion'
-const accordionCollapseId = accordionId + '-collapse'
-const accordionCollapseHeaderId = accordionCollapseId + '-header'
 
 </script>
 

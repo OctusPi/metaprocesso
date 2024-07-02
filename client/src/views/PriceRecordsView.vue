@@ -346,7 +346,7 @@ onMounted(() => {
                                 <div class="accordion" id="accordionSearchProcess">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="accordionSearchProcessHeadId">
-                                            <button class="w-100 text-center p-2" type="button"
+                                            <button class="w-100 text-center px-2 py-3" type="button"
                                                 data-bs-toggle="collapse" data-bs-target="#accordionSearchColapseId"
                                                 aria-expanded="true" aria-controls="accordionSearchColapseId">
                                                 <h2 class="txt-color text-center m-0">
