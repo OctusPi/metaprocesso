@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import auth from '@/stores/auth'
+import utils from '@/utils/utils'
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -153,6 +154,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
 	if (to.meta?.auth) {
+		utils.load(true)
 		try {
 			const isAuthenticated = await auth.isLoggedIn(to.path)
 			if (!isAuthenticated) {
@@ -161,8 +163,9 @@ router.beforeEach(async (to) => {
 		} catch (e) {
 			return e.response?.status === 403 ? '/forbidden' :
 				e.response?.status === 404 ? '/notfound' : '/'
+		}finally{
+			utils.load(false)
 		}
-
 	}
 })
 

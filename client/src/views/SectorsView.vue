@@ -76,7 +76,7 @@ onMounted(() => {
                         <button @click="ui.toggle('search')" type="button"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-search"></i>
-                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Pesquisar</span>
+                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Localizar</span>
                         </button>
                     </div>
                 </div>
