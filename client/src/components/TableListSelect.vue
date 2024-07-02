@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
-import TableListStatus from './TableListStatus.vue'
 import utils from '@/utils/utils';
+import TableListStatus from './TableListStatus.vue'
 
 const props = defineProps({
     header: { type: Array },

@@ -15,6 +15,7 @@ import MainHeader from '@/components/MainHeader.vue'
 import TableList from '@/components/TableList.vue'
 import TabNav from '@/components/TabNav.vue'
 import DfdReport from '@/views/reports/DfdReport.vue'
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue'
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -34,6 +35,10 @@ const page = ref({
         { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
     ],
     search: {
+    },
+    search_process: {
+        date_ini: [],
+        units: []
     },
     selects: {
         organs: [],
@@ -107,7 +112,7 @@ const items = ref({
     }
 })
 
-const ui = new Ui(page, 'DFDs')
+const ui = new Ui(page, 'Coletas de Preços')
 const data = new Data(page, emit, ui)
 const navtab = new Tabs(tabs)
 
@@ -227,7 +232,7 @@ watch(
 )
 
 onMounted(() => {
-    // data.selects()
+    data.selects()
     // data.list()
 })
 
@@ -342,7 +347,6 @@ onMounted(() => {
                         <div class="tab-content" id="dfdTabContent">
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('process') }"
                                 id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
-
                                 <div class="accordion" id="accordionSearchProcess">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="accordionSearchProcessHeadId">
@@ -350,12 +354,12 @@ onMounted(() => {
                                                 data-bs-toggle="collapse" data-bs-target="#accordionSearchColapseId"
                                                 aria-expanded="true" aria-controls="accordionSearchColapseId">
                                                 <h2 class="txt-color text-center m-0">
-                                                    <i class="bi bi-journal-album me-1"></i>
-                                                    Selecione as DFDs
+                                                    <i class="bi bi-journal-bookmark me-1"></i>
+                                                    Localizar Processo
                                                 </h2>
                                                 <p class="validation txt-color-sec small text-center m-0"
                                                     :class="{ 'text-danger': props.valid }">
-                                                    Preencha os campos abaixo para escolher as DFDs
+                                                    Preencha os campos abaixo para localiza o Processo
                                                 </p>
                                             </button>
                                         </h2>
@@ -363,7 +367,6 @@ onMounted(() => {
                                             aria-labelledby="accordionSearchProcessHeadId"
                                             data-bs-parent="#accordionSearchProcess">
                                             <div class="accordion-body">
-
                                                 <div class="row g-3">
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="date_s_ini" class="form-label">Data Inicial</label>
@@ -375,7 +378,6 @@ onMounted(() => {
                                                             calendar-cell-class-name="dp-custom-cell"
                                                             menu-class-name="dp-custom-menu" />
                                                     </div>
-
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="date_s_fin" class="form-label">Data Final</label>
                                                         <VueDatePicker auto-apply v-model="page.search.date_f"
@@ -386,7 +388,6 @@ onMounted(() => {
                                                             calendar-cell-class-name="dp-custom-cell"
                                                             menu-class-name="dp-custom-menu" />
                                                     </div>
-
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
                                                         <input type="text" name="protocol" class="form-control"
@@ -394,21 +395,27 @@ onMounted(() => {
                                                             placeholder="Número do Protocolo" />
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
-                                                        <label for="s-unit" class="form-label">Unidade</label>
-                                                        <select name="unit" class="form-control" id="s-unit"
-                                                            v-model="page.search.unit">
+                                                        <label for="s-organ" class="form-label">Orgão</label>
+                                                        <select name="organ" class="form-control" id="s-organ"
+                                                            v-model="page.search.organ"
+                                                            @change="data.selects('organ', page.search.organ)">
                                                             <option value=""></option>
-                                                            <option v-for="o in page.selects.units" :key="o.id"
+                                                            <option v-for="o in page.selects.organs" :key="o.id"
                                                                 :value="o.id">
                                                                 {{ o.title }}
                                                             </option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-sm-12 col-md-8">
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-unit" class="form-label">Unidades</label>
+                                                        <InputDropMultSelect v-model="page.search_process.units"
+                                                            :options="page.selects.units" identify="p_units" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
                                                         <label for="s-description" class="form-label">Objeto</label>
                                                         <input type="text" name="description" class="form-control"
                                                             id="s-description" v-model="page.search.description"
-                                                            placeholder="Pesquise por partes do Objeto do DFD" />
+                                                            placeholder="Pesquise por partes do Objeto do Processo" />
                                                     </div>
 
                                                     <div class="d-flex flex-row-reverse mt-4">
@@ -422,7 +429,6 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('infos') }"
                                 id="infos-tab-pane" role="tabpanel" aria-labelledby="infos-tab" tabindex="0">
