@@ -41,7 +41,7 @@ class Process extends Model
         'situation',
         'initial_value',
         'winner_value',
-        'dfds',
+        'dfds'
     ];
 
     public function organ(): HasOne
