@@ -56,10 +56,10 @@ class CatalogItems extends Controller
         ]));
 
         return Response()->json([
-            'types' => CatalogItem::list_tipo(),
-            'categories' => CatalogItem::list_categoria(),
+            'types' => CatalogItem::list_types(),
+            'categories' => CatalogItem::list_categories(),
             'status' => CatalogItem::list_status(),
-            'origins' => CatalogItem::list_origem(),
+            'origins' => CatalogItem::list_origins(),
             'groups' => $groups,
         ], 200);
     }
