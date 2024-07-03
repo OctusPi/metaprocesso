@@ -5,8 +5,10 @@ import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import Ui from '@/utils/ui';
 import Data from '@/services/data';
-import Tabs from '@/utils/tabs';
-import TabNav from '@/components/TabNav.vue';
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
+import masks from '@/utils/masks';
+import DfdsSelect from '@/components/DfdsSelect.vue';
+import dates from '@/utils/dates';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -27,6 +29,7 @@ const page = ref({
         modalities: [],
         situations: [],
         dfds: [],
+        units: [],
         ordinators: [],
     },
     rules: {
@@ -51,20 +54,21 @@ const page = ref({
     }
 })
 
-const tabs = ref([
-    { id: 'origem', icon: 'bi-bounding-box', title: 'Origem', status: true },
-    { id: 'infos', icon: 'bi-chat-square-dots', title: 'Infos', status: false },
-    { id: 'dfds', icon: 'bi-journal-album', title: 'DFDs', status: false },
-    { id: 'ordinators', icon: 'bi-person-raised-hand', title: 'Ordenadores', status: false },
-])
-
 const ui = new Ui(page, 'Processos')
 const data = new Data(page, emit, ui)
-const tabSwitch = new Tabs(tabs)
 
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
+
+watch(() => page.value.uiview.register, (newval) => {
+    if (newval && !page.value.data.id) {
+        const {date, time} = dates.now_utc()
+        page.value.data.date_ini = date
+        page.value.data.hour_ini = time
+    }
+})
+
 
 function autoProtocol(organId) {
     if (!organId) {
@@ -207,113 +211,137 @@ onMounted(() => {
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
                     <form class="form-row" @submit.prevent="data.save()">
                         <input type="hidden" name="id" v-model="page.data.id">
-
-                        <TabNav :tab-instance="tabSwitch" identify="process-nav" />
-
-                        <div class="tab-content" id="dfdTabContent">
-                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('origem') }"
-                                id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="organ" class="form-label">Orgão</label>
-                                        <select name="organ" class="form-control"
-                                            :class="{ 'form-control-alert': page.rules.valids.organ }" id="organ"
-                                            v-model="page.data.organ" @change="setProtocol">
-                                            <option value=""></option>
-                                            <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">
-                                                {{ o.title }}
-                                            </option>
-                                        </select>
-                                        <div class="form-text txt-color-sec">
-                                            Ao selecionar o órgão o protocolo é automaticamente preenchido
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="comission" class="form-label">Comissão</label>
-                                        <select name="comission" class="form-control"
-                                            :class="{ 'form-control-alert': page.rules.valids.comission }"
-                                            id="comission" v-model="page.search.comission"
-                                            @change="data.selects('comission')">
-                                            <option value=""></option>
-                                            <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
-                                                {{ o.title }}
-                                            </option>
-                                        </select>
-                                        <div class="form-text txt-color-sec">
-                                            Ao selecionar a comissão/equipe de planejamento seus
-                                            integrantes serão vinculados ao documento
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="protocol" class="form-label">Protocolo</label>
-                                        <input type="text" name="protocol" class="form-control"
-                                            :class="{ 'form-control-alert': page.rules.valids.protocol }" id="protocol"
-                                            v-model="page.data.protocol" placeholder="XXXXXXXXXXXXXXX">
-                                    </div>
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12 col-md-3">
+                                <label for="organ" class="form-label">Orgão</label>
+                                <select name="organ" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.organ }" id="organ"
+                                    v-model="page.data.organ" @change="setProtocol">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                                <div class="form-text txt-color-sec">
+                                    Ao selecionar o órgão o protocolo é automaticamente preenchido
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('infos') }"
-                                id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
-
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-8">
-                                        <label for="situation" class="form-label">Situação</label>
-                                        <select name="situation" class="form-control" id="situation"
-                                            v-model="page.search.situation">
-                                            <option value=""></option>
-                                            <option v-for="o in page.selects.situations" :key="o.id" :value="o.id">
-                                                {{ o.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="modality" class="form-label">Modalidade</label>
-                                        <select name="modality" class="form-control" id="modality"
-                                            v-model="page.search.modality">
-                                            <option value=""></option>
-                                            <option v-for="o in page.selects.modalities" :key="o.id" :value="o.id">
-                                                {{ o.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-8">
-                                        <label for="type" class="form-label">Tipo</label>
-                                        <select name="type" class="form-control" id="type" v-model="page.search.type">
-                                            <option value=""></option>
-                                            <option v-for="o in page.selects.types" :key="o.id" :value="o.id">
-                                                {{ o.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="s-date_ini" class="form-label">Data Inicial</label>
-                                        <VueDatePicker id="s-date_ini" auto-apply v-model="page.search.date_ini"
-                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
-                                            :input-class-name="page.rules.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                            locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                            calendar-cell-class-name="dp-custom-cell"
-                                            menu-class-name="dp-custom-menu" />
-                                    </div>
-                                </div>
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-12">
-                                        <label for="object" class="form-label">Objeto</label>
-                                        <textarea name="object" class="form-control" rows="4" :class="{
-                                            'form-control-alert': page.rules.valids.object
-                                        }" id="object" v-model="page.data.object"></textarea>
-                                    </div>
+                            <div class="col-sm-12 col-md-3">
+                                <label for="unit" class="form-label">Unidades</label>
+                                <InputDropMultSelect :valid="page.rules.valids.units" v-model="page.data.units"
+                                    :options="page.selects.units" identify="units" />
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <label for="protocol" class="form-label">Protocolo</label>
+                                <input type="text" name="protocol" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.protocol }" id="protocol"
+                                    v-model="page.data.protocol" placeholder="XXXXXXXXXXXXXXX">
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <label for="year_pca" class="form-label">Ano do PCA</label>
+                                <input type="text" name="year_pca" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.year_pca }" id="year_pca"
+                                    v-model="page.data.year_pca" placeholder="AAAA">
+                            </div>
+                        </div>
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12 col-md-3">
+                                <label for="date_ini" class="form-label">Data Inicial</label>
+                                <VueDatePicker id="date_ini" auto-apply v-model="page.data.date_ini"
+                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                    :input-class-name="page.rules.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <label for="hour_ini" class="form-label">Hora Inicial</label>
+                                <VueDatePicker time-picker id="hour_ini" auto-apply v-model="page.data.hour_ini"
+                                    :enable-time-picker="false"
+                                    :input-class-name="page.rules.valids.hour_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <label for="type" class="form-label">Tipo</label>
+                                <select name="type" class="form-control" :class="{
+                                    'form-control-alert': page.rules.valids.type
+                                }" id="type" v-model="page.search.type">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.types" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <label for="modality" class="form-label">Modalidade</label>
+                                <select name="modality" class="form-control" :class="{
+                                    'form-control-alert': page.rules.valids.modality
+                                }" id="modality" v-model="page.search.modality">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.modalities" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12 col-md-3">
+                                <label for="comission" class="form-label">Comissão</label>
+                                <select name="comission" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.comission }" id="comission"
+                                    v-model="page.search.comission" @change="data.selects('comission')">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                                <div class="form-text txt-color-sec">
+                                    Ao selecionar a comissão/equipe de planejamento seus
+                                    integrantes serão vinculados ao documento
                                 </div>
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
-                                id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
-
+                            <div class="col-sm-12 col-md-3">
+                                <label for="initial_value" class="form-label">Valor Inicial</label>
+                                <input type="text" name="initial_value" class="form-control" v-maska:[masks.maskmoney]
+                                    :class="{ 'form-control-alert': page.rules.valids.initial_value }"
+                                    id="initial_value" v-model="page.data.initial_value" placeholder="0,00">
                             </div>
-                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('ordinators') }"
-                                id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
-
+                            <div class="col-sm-12 col-md-3">
+                                <label for="winner_value" class="form-label">Valor Vencedor</label>
+                                <input type="text" name="winner_value" class="form-control" v-maska:[masks.maskmoney]
+                                    :class="{ 'form-control-alert': page.rules.valids.winner_value }" id="winner_value"
+                                    v-model="page.data.winner_value" placeholder="0,00">
                             </div>
+                            <div class="col-sm-12 col-md-3">
+                                <label for="situation" class="form-label">Situação</label>
+                                <select name="situation" class="form-control"
+                                    :class="{ 'form-control-alert': page.rules.valids.situation }" id="situation"
+                                    v-model="page.search.situation">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.situations" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3 g-3">
+                            <div class="col-sm-12 col-md-12">
+                                <label for="description" class="form-label">Descrição</label>
+                                <textarea name="description" class="form-control" rows="4" :class="{
+                                    'form-control-alert': page.rules.valids.description
+                                }" id="description" v-model="page.data.description"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mb-3 g-3">
+                            <DfdsSelect :organ="page.data.organ" :valid="page.rules.valids.dfds" identifier="dfds"
+                                v-model="page.data.dfds" @callAlert="(msg) => emit('callAlert', msg)" />
+                        </div>
+
+                        <div class="d-flex flex-row-reverse mt-4">
+                            <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">Cancelar <i
+                                    class="bi bi-x-circle"></i></button>
+                            <button type="submit" class="btn btn-outline-primary mx-2">Salvar <i
+                                    class="bi bi-check2-circle"></i></button>
                         </div>
                     </form>
                 </div>

@@ -1,13 +1,13 @@
 <script setup>
 import Data from '@/services/data';
 import Ui from '@/utils/ui';
-import { onMounted, ref } from 'vue';
+import { ref, watch } from 'vue';
 import TableListSelect from './TableListSelect.vue';
 
 const props = defineProps({
     valid: { type: Boolean },
     identifier: { type: String },
-    organ: { type: Number }
+    organ: { type: Number, defaut: null }
 })
 const emit = defineEmits(['callAlert', 'callRemove'])
 const model = defineModel()
@@ -41,12 +41,17 @@ const page = ref({
 })
 
 const data = new Data(page, emit, new Ui(page, '-'))
+
 const accordionId = props.identifier + '-accordion'
 const accordionCollapseId = accordionId + '-collapse'
 const accordionCollapseHeaderId = accordionCollapseId + '-header'
 
-onMounted(() => {
-    data.selects('organ', props.organ)
+const organ = ref(props.organ)
+
+watch(() => props.organ, (newVal) => {
+    organ.value = newVal
+    page.value.search.organ = newVal
+    data.selects('organ', newVal)
 })
 
 </script>
@@ -56,23 +61,26 @@ onMounted(() => {
         <div class="accordion" :id="accordionId">
             <div class="accordion-item">
                 <h2 class="accordion-header" :id="accordionCollapseHeaderId">
-                    <button class="w-100 text-center px-2 py-3" type="button" data-bs-toggle="collapse"
+                    <button class="w-100 text-center px-2 py-3" type="button" :data-bs-toggle="[organ && 'collapse']"
                         :data-bs-target="'#' + accordionCollapseId" aria-expanded="false"
                         :aria-controls="accordionCollapseId">
                         <h2 class="txt-color text-center m-0">
-                                <i class="bi bi-journal-album me-1"></i>
-                                Localizar DFDs
-                            </h2>
-                            <p class="validation txt-color-sec small text-center m-0"
-                                :class="{ 'text-danger': props.valid }">
-                                Preencha os campos abaixo para localizar as DFDs
-                            </p>
+                            <i class="bi bi-journal-album me-1"></i>
+                            Localizar DFDs
+                        </h2>
+                        <p class="validation txt-color-sec small text-center m-0"
+                            :class="{ 'text-danger': props.valid }">
+                            {{
+                                organ
+                                    ? "Preencha os campos abaixo para localizar as DFDs"
+                                    : "É necessário selecionar um órgão para continuar"
+                            }}
+                        </p>
                     </button>
                 </h2>
                 <div :id="accordionCollapseId" class="accordion-collapse collapse"
                     :aria-labelledby="accordionCollapseHeaderId" :data-bs-parent="'#' + accordionId">
                     <div class="accordion-body">
-
                         <div class="row g-3">
                             <div class="col-sm-12 col-md-4">
                                 <label for="date_s_ini" class="form-label">Data Inicial</label>
@@ -116,16 +124,16 @@ onMounted(() => {
                                     Aplicar <i class="bi bi-check2-circle"></i>
                                 </button>
                             </div>
-                         </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div v-if="page.datalist.length > 0" class="inside-box mt-4 form-neg-box">
+        <div v-if="organ && page.datalist.length > 0" class="inside-box mt-4 form-neg-box">
             <TableListSelect :identify="props.identifier" :casts="{ 'status': page.selects.status }"
                 :header="page.dataheader" :body="page.datalist" v-model="model" />
         </div>
-        <div class="mt-4" v-if="page.datalist.length < 1">
+        <div class="mt-4" v-if="organ && page.datalist.length < 1">
             <div class="text-center txt-color-sec">
                 <i class="bi bi-boxes fs-4"></i>
                 <p class="small">Não foram localizados registros...</p>

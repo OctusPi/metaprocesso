@@ -88,6 +88,14 @@ function toPtBr(datetime) {
     
 }
 
+function now_utc() {
+    const date = (new Date()).toISOString().split('T')
+    return {
+        date: date[0],
+        time: date[1]
+    }
+}
+
 export default {
     months,
     dateTxtNow,
@@ -97,5 +105,6 @@ export default {
     createBetween,
     toPtBr,
     getMonthYear,
-    getYear
+    getYear,
+    now_utc
 }
