@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comission;
+use App\Models\Dfd;
+use App\Models\Ordinator;
 use App\Models\Organ;
 use App\Models\Process;
 use App\Models\User;
@@ -77,9 +79,29 @@ class Processes extends Controller
             ]
         ], ['name'])) : Utils::map_select(Data::list(Comission::class));
 
+        $dfds = $request->key && $request->key == 'comission' ? Utils::map_select(Data::list(Dfd::class, [
+            [
+                'column' => $request->key,
+                'operator' => '=',
+                'value' => $request->search,
+                'mode' => 'AND'
+            ]
+        ], ['date_ini']), 'protocol') : Utils::map_select(Data::list(Dfd::class), 'protocol');
+
+        $ordinators = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Ordinator::class, [
+            [
+                'column' => $request->key,
+                'operator' => '=',
+                'value' => $request->search,
+                'mode' => 'AND'
+            ]
+        ], ['name'])) : Utils::map_select(Data::list(Ordinator::class));
+
         return Response()->json([
             'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
             'comissions' => $comissions,
+            'ordinators' => $ordinators,
+            'dfds' => $dfds,
             'types' => Process::list_types(),
             'situations' => Process::list_situations(),
             'modalities' => Process::list_modalitys(),

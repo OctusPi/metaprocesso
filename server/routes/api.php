@@ -287,7 +287,7 @@ Route::controller(Etps::class)->group(function () {
             Route::put('/update', 'update');
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
-            Route::get('/selects', 'selects');
+            Route::get('/selects/{key?}/{search?}', 'selects');
         });
     });
 })->name('etps');
@@ -318,7 +318,7 @@ Route::controller(Processes::class)->group(function () {
             Route::put('/update', 'update');
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
-            Route::get('/selects', 'selects');
+            Route::get('/selects/{key?}/{search?}', 'selects');
         });
     });
 })->name('process');

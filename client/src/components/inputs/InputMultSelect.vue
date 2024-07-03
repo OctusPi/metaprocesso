@@ -6,7 +6,7 @@ const props = defineProps({
 	options: { type: Array, required: true },
 	identify: { type: String, required: true },
 	idkey: { type: [Object, String], default: () => null },
-	castkey: { type: [Array], default: () => null },
+	castkey: { type: String, default: () => null },
 });
 
 const model = defineModel({ default: [] })
@@ -25,7 +25,7 @@ onMounted(() => {
 			<input class="form-check-input" type="checkbox" :name="option.id + props.identify" v-model="model"
 				:value="!props.idkey ? option : option[props.idkey]" :id="option.id + props.identify">
 			<label class="check-label form-check-label small d-flex gap-1" :for="option.id + props.identify">
-				{{ option.title }}
+				{{ option[props.castkey || 'title'] }}
 			</label>
 		</div>
 	</div>
@@ -37,5 +37,4 @@ onMounted(() => {
 	overflow: auto;
 	padding: 16px;
 }
-
 </style>

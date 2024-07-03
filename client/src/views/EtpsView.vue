@@ -97,6 +97,7 @@ function autoProtocol(organId) {
 }
 
 function setProtocol() {
+    data.selects('organ', page.value.data.organ)
     page.value.data.protocol = autoProtocol(page.value.data.organ)
 }
 
