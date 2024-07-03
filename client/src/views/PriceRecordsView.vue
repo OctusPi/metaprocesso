@@ -2,12 +2,9 @@
 import { onMounted, ref, watch, createApp } from 'vue'
 
 import Ui from '@/utils/ui'
-import masks from '@/utils/masks'
-import notifys from '@/utils/notifys'
 import Tabs from '@/utils/tabs'
 import Data from '@/services/data'
 import http from '@/services/http'
-import gpt from '@/services/gpt'
 import exp from '@/services/export'
 
 import MainNav from '@/components/MainNav.vue'
@@ -22,7 +19,7 @@ const props = defineProps({ datalist: { type: Array, default: () => [] } })
 
 const page = ref({
     baseURL: '/pricerecords',
-    title: { primary: '', secondary: '' },
+    title: { primary: 'Registro de Coletas de Preços', secondary: 'Insira os dados para registro de Coletas de Preços' },
     uiview: { register: true, search: false },
     data: { items: [] },
     datalist: props.datalist,
@@ -83,118 +80,10 @@ const tabs = ref([
     { id: 'suppliers', icon: 'bi-person-lines-fill', title: 'Fornecedores', status: false },
     { id: 'proposals', icon: 'bi-journal-check', title: 'Propostas', status: false }
 ])
-const items = ref({
-    search: null,
-    search_list: [],
-    headers_list: [
-        {
-            obj: 'item',
-            key: 'code',
-            title: 'COD',
-            sub: [{ obj: 'item', cast: 'title', key: 'type' }]
-        },
-        { obj: 'item', key: 'name', title: 'ITEM' },
-        { obj: 'item', key: 'description', title: 'DESCRIÇÃO' },
-        { obj: 'item', key: 'und', title: 'UDN', sub: [{ obj: 'item', key: 'volume' }] },
-        {
-            key: 'program',
-            cast: 'title',
-            title: 'VINC.',
-            sub: [{ key: 'dotation', cast: 'title' }]
-        },
-        { key: 'quantity', title: 'QUANT.' }
-    ],
-    selected_item: {
-        item: null,
-        program: null,
-        dotation: null,
-        quantity: 0
-    }
-})
 
-const ui = new Ui(page, 'Coletas de Preços')
-const data = new Data(page, emit, ui)
+const ui     = new Ui(page, 'Coletas de Preços')
+const data   = new Data(page, emit, ui)
 const navtab = new Tabs(tabs)
-
-function search_items() {
-    http.post(`${page.value.baseURL}/items`, { name: items.value.search }, emit, (resp) => {
-        items.value.search_list = resp.data
-        items.value.selected_item.item = null
-    })
-}
-
-function select_item(item) {
-    items.value.selected_item.item = item
-    items.value.search = null
-    items.value.search_list = []
-}
-
-function add_item() {
-    if (!items.value.selected_item.quantity || items.value.selected_item.quantity == 0) {
-        emit('callAlert', notifys.warning('A quantidade não pode ser zero!'))
-        return
-    }
-
-    if (!page.value.data.items) {
-        page.value.data.items = []
-    }
-
-    items.value.selected_item.id = `${items.value.selected_item.item?.id}:${items.value.selected_item.program ?? '0'}:${items.value.selected_item.dotation ?? '0'}`
-    let item = page.value.data.items.find((obj) => obj.id === items.value.selected_item.id)
-
-    if (item) {
-        item = { ...items.value.selected_item }
-    } else {
-        page.value.data.items.push({ ...items.value.selected_item })
-    }
-
-    items.value.selected_item = {}
-}
-
-function update_item(id) {
-    items.value.selected_item = page.value.data.items.find((obj) => obj.id === id)
-}
-
-function delete_item(id) {
-    page.value.data.items = page.value.data.items.filter((obj) => obj.id !== id)
-}
-
-function generate(type) {
-    let callresp = null
-    const dfd = page.value.data
-    const slc = page.value.selects
-    const base = {
-        organ: slc?.organs.find((o) => o.id === dfd.organ),
-        unit: slc?.units.find((o) => o.id === dfd.unit),
-        type: slc?.acquisitions.find((o) => o.id === dfd.acquisition_type),
-        items: JSON.stringify(dfd.items),
-        description: dfd.description,
-        justification: dfd.justification
-    }
-
-    switch (type) {
-        case 'dfd_description':
-            callresp = (resp) => {
-                page.value.data.description = resp.data?.choices[0]?.text
-            }
-            break
-        case 'dfd_justification':
-            callresp = (resp) => {
-                page.value.data.justification = resp.data?.choices[0]?.text
-            }
-            break
-        case 'dfd_quantitys':
-            callresp = (resp) => {
-                page.value.data.justification_quantity = resp.data?.choices[0]?.text
-            }
-            break
-        default:
-            break
-    }
-
-    const payload = gpt.make_payload(type, base)
-    gpt.generate(`${page.value.baseURL}/generate`, payload, emit, callresp)
-}
 
 function update_dfd(id) {
     http.get(`${page.value.baseURL}/details/${id}`, emit, (response) => {
@@ -282,7 +171,6 @@ onMounted(() => {
                                     locale="pt-br" calendar-class-name="dp-custom-calendar"
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
-
                             <div class="col-sm-12 col-md-4">
                                 <label for="date_s_fin" class="form-label">Data Final</label>
                                 <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
@@ -290,13 +178,11 @@ onMounted(() => {
                                     locale="pt-br" calendar-class-name="dp-custom-calendar"
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
-
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-protocol" class="form-label">Protocolo</label>
                                 <input type="text" name="protocol" class="form-control" id="s-protocol"
-                                    v-model="page.search.protocol" placeholder="Número do Protocolo" />
+                                    v-model="page.search.protocol" placeholder="Número do Protocolo da Coleta" />
                             </div>
-
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-organ" class="form-label">Orgão</label>
                                 <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ"
@@ -322,7 +208,6 @@ onMounted(() => {
                                     v-model="page.search.description"
                                     placeholder="Pesquise por partes do Objeto do DFD" />
                             </div>
-
                             <div class="d-flex flex-row-reverse mt-4">
                                 <button type="submit" class="btn btn-outline-primary mx-2">
                                     Aplicar <i class="bi bi-check2-circle"></i>
@@ -392,7 +277,7 @@ onMounted(() => {
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
                                                         <input type="text" name="protocol" class="form-control"
                                                             id="s-protocol" v-model="page.search.protocol"
-                                                            placeholder="Número do Protocolo" />
+                                                            placeholder="Número do Protocolo do Processo" />
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-organ" class="form-label">Orgão</label>
@@ -417,7 +302,6 @@ onMounted(() => {
                                                             id="s-description" v-model="page.search.description"
                                                             placeholder="Pesquise por partes do Objeto do Processo" />
                                                     </div>
-
                                                     <div class="d-flex flex-row-reverse mt-4">
                                                         <button @click="data.listForSearch('organ')" type="button"
                                                             class="btn btn-primary mx-2">
@@ -434,7 +318,13 @@ onMounted(() => {
                                 id="infos-tab-pane" role="tabpanel" aria-labelledby="infos-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="date_ini" class="form-label">Data Envio Demanda</label>
+                                        <label for="protocol" class="form-label">Número Protocolo</label>
+                                        <input type="text" name="protocol" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.protocol
+                                        }" id="protocol" placeholder="000-000000-0000" v-model="page.data.protocol" />
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="date_ini" class="form-label">Data Inicio da Coleta</label>
                                         <VueDatePicker auto-apply v-model="page.data.date_ini"
                                             :input-class-name="page.rules.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                             :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
@@ -444,271 +334,54 @@ onMounted(() => {
 
                                     </div>
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="estimated_date" class="form-label">Data Prevista Contratação</label>
-                                        <VueDatePicker auto-apply v-model="page.data.estimated_date"
-                                            :input-class-name="page.rules.valids.estimated_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                        <label for="date_fin" class="form-label">Data Finalização da Coleta</label>
+                                        <VueDatePicker auto-apply v-model="page.data.date_fin"
+                                            :input-class-name="page.rules.valids.date_fin ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                             :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
                                             locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                            calendar-cell-class-name="dp-custom-cell"
-                                            menu-class-name="dp-custom-menu" />
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="year_pca" class="form-label">Ano do PCA</label>
-                                        <input type="text" name="year_pca" class="form-control" :class="{
-                                            'form-control-alert': page.rules.valids.year_pca
-                                        }" id="year_pca" placeholder="AAAA" v-maska:[masks.masknumbs]
-                                            v-model="page.data.year_pca" />
-                                    </div>
-                                </div>
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="acquisition_type" class="form-label">Tipo de Aquisição</label>
-                                        <select name="acquisition_type" class="form-control" :class="{
-                                            'form-control-alert':
-                                                page.rules.valids.acquisition_type
-                                        }" id="acquisition_type" v-model="page.data.acquisition_type">
-                                            <option value=""></option>
-                                            <option v-for="s in page.selects.acquisitions" :value="s.id" :key="s.id">
-                                                {{ s.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="estimated_value" class="form-label">Valor Estimado</label>
-                                        <input type="text" name="estimated_value" class="form-control" :class="{
-                                            'form-control-alert':
-                                                page.rules.valids.estimated_value
-                                        }" id="estimated_value" placeholder="R$0,00" v-maska:[masks.maskmoney]
-                                            v-model="page.data.estimated_value" />
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="priority" class="form-label">Prioridade</label>
-                                        <select name="priority" class="form-control" :class="{
-                                            'form-control-alert': page.rules.valids.priority
-                                        }" id="priority" v-model="page.data.priority">
-                                            <option value=""></option>
-                                            <option v-for="s in page.selects.prioritys" :value="s.id" :key="s.id">
-                                                {{ s.title }}
-                                            </option>
-                                        </select>
+                                            calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu"
+                                            disabled />
+                                            <div id="comissionHelpBlock" class="form-text txt-color-sec">
+                                            A data final será preenchida automaticamente.
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12">
-                                        <label for="description" class="form-label d-flex justify-content-between">
-                                            Descrição sucinta do objeto
-                                            <a href="#" class="a-ia" @click="generate('dfd_description')"><i
-                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
-                                        </label>
-                                        <textarea name="description" class="form-control" rows="4" :class="{
-                                            'form-control-alert': page.rules.valids.description
-                                        }" id="description" v-model="page.data.description"></textarea>
-                                    </div>
-                                </div>
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="suggested_hiring" class="form-label">Forma de Contratação
-                                            Sugerida</label>
-                                        <select name="suggested_hiring" class="form-control" :class="{
-                                            'form-control-alert':
-                                                page.rules.valids.suggested_hiring
-                                        }" id="suggested_hiring" v-model="page.data.suggested_hiring">
+                                        <label for="comission" class="form-label">Comissão</label>
+                                        <select name="comission" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.comission
+                                        }" id="comission" v-model="page.data.comission">
                                             <option value=""></option>
-                                            <option v-for="s in page.selects.hirings" :value="s.id" :key="s.id">
+                                            <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
                                                 {{ s.title }}
                                             </option>
                                         </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="bonds" class="form-label">Vinculo ou Dependência</label>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch" id="bonds"
-                                                v-model="page.data.bonds">
-                                            <label class="form-check-label" for="bonds">Indicação de vinculação ou
-                                                dependência com o objeto de outro documento de formalização de
-                                                demanda.</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label class="form-label" for="price_taking">Registro de Preço</label>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" role="switch"
-                                                id="price_taking" v-model="page.data.price_taking">
-                                            <label class="form-check-label" for="price_taking">Indique se a demanda se
-                                                trata de registro de preços.</label>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('dfds') }"
                                 id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
-                                <!-- search items -->
-                                <div class="row mb-3 position-relative">
-                                    <div class="col-sm-12">
-                                        <label for="search-item" class="form-label">Localizar Item no Catálogo
-                                            Padronizado</label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="search-item"
-                                                placeholder="Pesquise por parte do nome do item"
-                                                aria-label="Pesquise por parte do nome do item"
-                                                aria-describedby="btn-search-item" v-model="items.search"
-                                                @keydown.enter.prevent="search_items" />
-                                            <button class="btn btn-group-input" type="button" id="btn-search-item"
-                                                @click="search_items">
-                                                <i class="bi bi-search"></i>
-                                            </button>
-                                        </div>
-                                        <div id="search-item-HelpBlock" class="form-text txt-color-sec">
-                                            Localize itens no catálogo padronizado de itens do Orgão
-                                        </div>
-                                    </div>
-
-                                    <!-- List Search Items -->
-                                    <div v-if="items.search && items.search_list.length"
-                                        class="position-absolute my-2 top-100 start-0">
-                                        <div class="form-control load-items-cat p-0 m-0">
-                                            <ul class="search-list-items">
-                                                <li v-for="i in items.search_list" :key="i.id" @click="select_item(i)"
-                                                    class="d-flex align-items-center px-3 py-2">
-                                                    <div class="me-3 item-type">
-                                                        {{ i.type == '1' ? 'M' : 'S' }}
-                                                    </div>
-                                                    <div class="item-desc">
-                                                        <h3 class="m-0 p-0 small">
-                                                            {{ `${i.code} - ${i.name}` }}
-                                                        </h3>
-                                                        <p class="m-0 p-0 small">
-                                                            {{
-                                                                `Unidade: ${i.und} - Volume:
-                                                            ${i.volume} - Categoria: ${page.selects.categories.find(
-                                                                    (o) => o.id === i.category
-                                                                )?.title
-                                                                } `
-                                                            }}
-                                                        </p>
-                                                        <p class="m-0 p-0 small">
-                                                            {{ i.description }}
-                                                        </p>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
+                                <div v-if="page.data.process">
+                                    listar DFDs e Items
                                 </div>
-
-                                <!-- add item -->
-                                <div v-if="items.selected_item.item">
-                                    <div class="form-control d-flex align-items-center px-3 py-2 mb-3">
-                                        <div class="me-3 item-type">
-                                            {{ items.selected_item.item.type == '1' ? 'M' : 'S' }}
-                                        </div>
-                                        <div class="item-desc">
-                                            <h3 class="m-0 p-0 small">
-                                                {{
-                                                    `${items.selected_item.item.code} -
-                                                ${items.selected_item.item.name}`
-                                                }}
-                                            </h3>
-                                            <p class="m-0 p-0 small">
-                                                {{
-                                                    `Unidade: ${items.selected_item.item.und} -
-                                                Volume:
-                                                ${items.selected_item.item.volume} - Categoria:
-                                                ${page.selects.categories.find(
-                                                        (o) =>
-                                                            o.id ===
-                                                            items.selected_item.item.category
-                                                    )?.title
-                                                    } `
-                                                }}
-                                            </p>
-                                            <p class="m-0 p-0 small">
-                                                {{ items.selected_item.item.description }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3 g-3">
-                                        <div class="col-sm-12 col-md-4">
-                                            <label for="item-program" class="form-label">Programa</label>
-                                            <select name="item-program" class="form-control" id="item-program"
-                                                v-model="items.selected_item.program">
-                                                <option value=""></option>
-                                                <option v-for="p in page.selects.programs" :key="p.id" :value="p.id">
-                                                    {{ p.title }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-sm-12 col-md-4">
-                                            <label for="item-dotation" class="form-label">Dotação</label>
-                                            <select name="item-dotation" class="form-control" id="item-dotation"
-                                                v-model="items.selected_item.dotation">
-                                                <option value=""></option>
-                                                <option v-for="d in page.selects.dotations" :key="d.id" :value="d.id">
-                                                    {{ d.title }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-sm-12 col-md-4">
-                                            <label for="item-quantity" class="form-label">Quantidade</label>
-                                            <div class="input-group">
-                                                <input type="text" name="item-quantity" class="form-control"
-                                                    id="item-quantity" v-maska:[masks.masknumbs]
-                                                    v-model="items.selected_item.quantity"
-                                                    @keydown.enter.prevent="add_item" />
-                                                <button @click="add_item" class="btn btn-group-input" type="button"
-                                                    id="btn-search-item">
-                                                    <i class="bi bi-plus-circle"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- list items -->
-                                <div v-if="page.data?.items">
-                                    <TableList :smaller="true" :count="false" :header="items.headers_list"
-                                        :body="page.data?.items" :actions="['update', 'fastdelete']" :casts="{
-                                            type: [
-                                                { id: 1, title: 'Material' },
-                                                { id: 2, title: 'Serviço' }
-                                            ],
-                                            program: page.selects.programs,
-                                            dotation: page.selects.dotations
-                                        }" @action:update="update_item" @action:fastdelete="delete_item" />
+                                <div v-else>
+                                    <h2 class="txt-color text-center m-0">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        Atenção
+                                    </h2>
+                                    <p class="txt-color-sec small text-center m-0">
+                                        É necessário selecionar um processo para visualizar os DFDs
+                                    </p>
                                 </div>
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('suppliers') }"
                                 id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12">
-                                        <label for="justification" class="form-label d-flex justify-content-between">
-                                            Justificativa da necessidade da contratação
-                                            <a href="#" class="a-ia" @click="generate('dfd_justification')"><i
-                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
-                                        </label>
-                                        <textarea name="justification" class="form-control" rows="4" :class="{
-                                            'form-control-alert':
-                                                page.rules.valids.justification
-                                        }" id="justification" v-model="page.data.justification"></textarea>
-                                    </div>
-                                </div>
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12">
-                                        <label for="justification_quantity"
-                                            class="form-label d-flex justify-content-between">
-                                            Justificativa dos quantitativos demandados
-                                            <a href="#" class="a-ia" @click="generate('dfd_quantitys')"><i
-                                                    class="bi bi-cpu me-1"></i> Gerar com I.A</a>
-                                        </label>
-                                        <textarea name="justification_quantity" class="form-control" rows="4"
-                                            id="justification_quantity"
-                                            v-model="page.data.justification_quantity"></textarea>
-                                    </div>
-                                </div>
+                                <p>Adicionar Fornecedores: Localizar por cnpj, nome fantasia, nome social ou atividade</p>
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('proposals') }"
                                 id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
-                                <p>Propostas</p>
+                                <p>Solicitaçao ou Inclusao de Propostas</p>
                             </div>
                         </div>
 

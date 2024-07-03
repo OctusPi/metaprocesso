@@ -385,7 +385,12 @@ onMounted(() => {
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
-                                <div v-if="!page.data.protocol">
+                                
+                                <DfdsSelect v-if="page.data.protocol" :organ="page.data.organ" :valid="page.rules.valids.dfds"
+                                    identifier="dfds" v-model="page.data.dfds"
+                                    @callAlert="(msg) => emit('callAlert', msg)" />
+
+                                <div v-else>
                                     <h2 class="txt-color text-center m-0">
                                         <i class="bi bi-exclamation-triangle me-1"></i>
                                         Atenção
@@ -394,9 +399,6 @@ onMounted(() => {
                                         É necessário selecionar um órgão para continuar
                                     </p>
                                 </div>
-                                <DfdsSelect v-else :organ="page.data.organ" :valid="page.rules.valids.dfds"
-                                    identifier="dfds" v-model="page.data.dfds"
-                                    @callAlert="(msg) => emit('callAlert', msg)" />
                             </div>
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('necessidade') }"
