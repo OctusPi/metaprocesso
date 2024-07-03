@@ -233,7 +233,7 @@ class Dfds extends Controller
                 'acquisitions' => Dfd::list_acquisitions(),
                 'programs' => $programs,
                 'dotations' => $dotations,
-                'categories' => CatalogItem::list_categoria(),
+                'categories' => CatalogItem::list_categories(),
                 'responsibilitys' => ComissionMember::list_responsabilities(),
                 'status' => Dfd::list_status()
             ], 200);
