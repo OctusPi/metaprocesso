@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Utils;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 
 class Utils
@@ -36,12 +38,11 @@ class Utils
         return $map;
     }
 
-    public static function map_select($list)
+    public static function map_select(Collection $list, string $display = 'name')
     {
-
         if ($list) {
-            return $list->map(function ($item) {
-                return ['id' => (int) $item->id, 'title' => $item->name];
+            return $list->map(function (Model $item) use ($display) {
+                return ['id' => (int) $item->id, 'title' => $item->$display];
             });
         }
         return [];

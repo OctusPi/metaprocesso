@@ -100,7 +100,7 @@ class Process extends Model
         ];
     }
 
-    public function list_types(): array
+    public static function list_types(): array
     {
         return [
             ['id' => 0, 'title' => 'Menor preço'],
