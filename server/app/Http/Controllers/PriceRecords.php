@@ -6,13 +6,30 @@ use App\Middleware\Data;
 use App\Models\Comission;
 use App\Models\ComissionMember;
 use App\Models\Organ;
+use App\Models\Process;
 use App\Models\Unit;
+use App\Utils\Notify;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PriceRecords extends Controller
 {
     
+    public function list_processes(Request $request){
+
+        if(empty($request->all())){
+            return Response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
+        }
+        
+        $search     = Utils::map_search(['protocol', 'organ', 'description'], $request->all());
+        $search_obj = Utils::map_search_obj($request->units, 'units', 'id');
+        $betw       = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
+    
+        
+        $query  = Data::list(Process::class, $search, ['date_ini'], ['comission'], $betw, $search_obj);
+        return Response()->json($query, 200);
+    }
 
     public function selects(Request $request)
     {

@@ -6,10 +6,11 @@ use App\Models\Organ;
 use App\Models\Unit;
 use App\Models\User;
 use App\Security\Guardian;
+use Illuminate\Support\Facades\Log;
 
 class Data
 {
-    public static function query(string $model, array $params = [], ?array $order = null, ?array $with = null, ?array $between = null)
+    public static function query(string $model, array $params = [], ?array $order = null, ?array $with = null, ?array $between = null, ?array $objects = null)
     {
         $user = Guardian::getUser();
 
@@ -51,6 +52,21 @@ class Data
                     });
                 }
 
+
+                //apply between
+                if($between){
+                    foreach ($between as $key => $value) {
+                        $query->whereBetween($key, $value);
+                    }
+                }
+
+                // apply objects
+                if($objects){
+                    foreach ($objects as $key => $value) {
+                        $query->whereJsonContains($key, $value);
+                    }
+                }
+
                 //apply order
                 if ($order) {
                     $query->orderBy(...$order);
@@ -61,12 +77,7 @@ class Data
                     $query->with($with);
                 }
 
-                //apply between
-                if($between){
-                    foreach ($between as $key => $value) {
-                        $query->whereBetween($key, $value);
-                    }
-                }
+                Log::info($query->toSql());
 
                 return $query;
             }
@@ -75,9 +86,9 @@ class Data
         return null;
     }
 
-    public static function list(string $model, array $params = [], ?array $order = null, ?array $with = null, ?array $between = null)
+    public static function list(string $model, array $params = [], ?array $order = null, ?array $with = null, ?array $between = null, ?array $objects = null)
     {
-        $query = self::query($model, $params, $order, $with, $between);
+        $query = self::query($model, $params, $order, $with, $between, $objects);
         if(!is_null($query)){
             return $query->get();
         }
@@ -175,7 +186,7 @@ class Data
     {
         $conditions = [];
 
-        foreach ($params as $key => $param) {
+        foreach ($params as $param) {
 
             if(is_array($param)){
                 if ($param['mode'] === 'OR') {
@@ -185,12 +196,6 @@ class Data
                         'value' => $param['value'] ?? $param[1]
                     ];
                 }
-            }else{
-                $conditions[] = [
-                    'column' => $key, 
-                    'operator' => '=', 
-                    'value' => $param
-                ];
             }
         }
 

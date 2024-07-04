@@ -1,17 +1,16 @@
 <script setup>
-import { onMounted, ref, watch, createApp } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 import Ui from '@/utils/ui'
 import Tabs from '@/utils/tabs'
 import Data from '@/services/data'
 import http from '@/services/http'
-import exp from '@/services/export'
+
 
 import MainNav from '@/components/MainNav.vue'
 import MainHeader from '@/components/MainHeader.vue'
 import TableList from '@/components/TableList.vue'
 import TabNav from '@/components/TabNav.vue'
-import DfdReport from '@/views/reports/DfdReport.vue'
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue'
 
 const emit = defineEmits(['callAlert', 'callRemove'])
@@ -37,6 +36,7 @@ const page = ref({
         date_ini: [],
         units: []
     },
+    data_process:[],
     selects: {
         organs: [],
         units: [],
@@ -85,31 +85,10 @@ const ui     = new Ui(page, 'Coletas de Preços')
 const data   = new Data(page, emit, ui)
 const navtab = new Tabs(tabs)
 
-function update_dfd(id) {
-    http.get(`${page.value.baseURL}/details/${id}`, emit, (response) => {
-        page.value.data = response.data
-        data.selects('unit', page.value.data.unit)
-        ui.toggle('update')
-    })
-}
-
-function export_dfd(id) {
-    http.get(`${page.value.baseURL}/export/${id}`, emit, (resp) => {
-        const dfd = resp.data
-        const containerReport = document.createElement('div')
-        const instanceReport = createApp(DfdReport, { dfd: dfd, selects: page.value.selects })
-        instanceReport.mount(containerReport)
-        exp.exportPDF(containerReport, `DFD-${dfd.protocol}`)
-    })
-
-}
-
-function clone_dfd(id) {
-    http.get(`${page.value.baseURL}/details/${id}`, emit, (response) => {
-        response.data.id = null
-        page.value.data = response.data
-        data.selects('unit', page.value.data.unit)
-        ui.toggle('update')
+function search_process(){
+    http.post('/pricerecords/list_processes', page.value.search_process, emit, (resp) => {
+        page.value.data_process = resp.data ?? []
+        console.log(resp.data)
     })
 }
 
@@ -217,9 +196,9 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList @action:update="update_dfd" @action:delete="data.remove" @action:pdf="export_dfd"
-                        @action:clone="clone_dfd" :casts="{ 'status': page.selects.status }" :header="page.dataheader"
-                        :body="page.datalist" :actions="['export_pdf', 'clone', 'update', 'delete']" />
+                    <TableList @action:update="data.update" @action:delete="data.remove" 
+                    :casts="{ 'status': page.selects.status }" :header="page.dataheader"
+                    :body="page.datalist" :actions="['export_pdf', 'clone', 'update', 'delete']" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -255,7 +234,7 @@ onMounted(() => {
                                                 <div class="row g-3">
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="date_s_ini" class="form-label">Data Inicial</label>
-                                                        <VueDatePicker auto-apply v-model="page.search.date_i"
+                                                        <VueDatePicker auto-apply v-model="page.search_process.date_i"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
                                                             input-class-name="dp-custom-input-dtpk" locale="pt-br"
@@ -265,7 +244,7 @@ onMounted(() => {
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="date_s_fin" class="form-label">Data Final</label>
-                                                        <VueDatePicker auto-apply v-model="page.search.date_f"
+                                                        <VueDatePicker auto-apply v-model="page.search_process.date_f"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
                                                             input-class-name="dp-custom-input-dtpk" locale="pt-br"
@@ -276,14 +255,14 @@ onMounted(() => {
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
                                                         <input type="text" name="protocol" class="form-control"
-                                                            id="s-protocol" v-model="page.search.protocol"
+                                                            id="s-protocol" v-model="page.search_process.protocol"
                                                             placeholder="Número do Protocolo do Processo" />
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-organ" class="form-label">Orgão</label>
                                                         <select name="organ" class="form-control" id="s-organ"
-                                                            v-model="page.search.organ"
-                                                            @change="data.selects('organ', page.search.organ)">
+                                                            v-model="page.search_process.organ"
+                                                            @change="data.selects('organ', page.search_process.organ)">
                                                             <option value=""></option>
                                                             <option v-for="o in page.selects.organs" :key="o.id"
                                                                 :value="o.id">
@@ -299,11 +278,11 @@ onMounted(() => {
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-description" class="form-label">Objeto</label>
                                                         <input type="text" name="description" class="form-control"
-                                                            id="s-description" v-model="page.search.description"
+                                                            id="s-description" v-model="page.search_process.description"
                                                             placeholder="Pesquise por partes do Objeto do Processo" />
                                                     </div>
                                                     <div class="d-flex flex-row-reverse mt-4">
-                                                        <button @click="data.listForSearch('organ')" type="button"
+                                                        <button @click="search_process" type="button"
                                                             class="btn btn-primary mx-2">
                                                             Aplicar <i class="bi bi-check2-circle"></i>
                                                         </button>
@@ -409,39 +388,7 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.search-list-items {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
 
-.search-list-items li {
-    cursor: pointer;
-    border-bottom: var(--border-box);
-}
-
-.search-list-items li h3 {
-    font-weight: 700;
-    color: var(--color-base);
-}
-
-.search-list-items li:hover {
-    background-color: var(--color-contrast-hover);
-}
-
-.item-type {
-    width: 35px;
-    border-right: var(--border-box);
-}
-
-.item-desc h3 {
-    color: var(--color-base);
-}
-
-.item-desc p {
-    font-size: 0.7rem;
-    color: var(--color-text-sec);
-}
 
 .nav-step {
     margin: 0 !important;

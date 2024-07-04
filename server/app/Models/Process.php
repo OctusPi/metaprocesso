@@ -37,7 +37,7 @@ class Process extends Model
         'comission_members',
         'comission_address',
         'author',
-        'object',
+        'description',
         'situation',
         'initial_value',
         'winner_value',

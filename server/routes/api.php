@@ -277,6 +277,20 @@ Route::controller(Dfds::class)->group(function () {
     });
 })->name('dfds');
 
+Route::controller(Processes::class)->group(function () {
+    Route::prefix('/process')->group(function () {
+        Route::middleware(CheckPermission::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('/list', 'list');
+            Route::post('/save', 'save');
+            Route::put('/update', 'update');
+            Route::post('/destroy', 'delete');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects/{key?}/{search?}', 'selects');
+        });
+    });
+})->name('process');
+
 Route::controller(Etps::class)->group(function () {
     Route::prefix('/etps')->group(function () {
         Route::middleware(CheckPermission::class)->group(function () {
@@ -304,24 +318,10 @@ Route::controller(PriceRecords::class)->group(function () {
             Route::get('/details/{id}', 'details');
             Route::get('/export/{id}', 'export');
             Route::get('/selects/{key?}/{search?}', 'selects');
-            Route::post('/items', 'items');
+            Route::post('/list_processes', 'list_processes');
         });
     });
 })->name('pricerecords');
-
-Route::controller(Processes::class)->group(function () {
-    Route::prefix('/process')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-        });
-    });
-})->name('process');
 
 Route::controller(Attachments::class)->group(function () {
     Route::prefix('/attachments')->group(function () {
