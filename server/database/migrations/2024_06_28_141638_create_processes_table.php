@@ -28,7 +28,7 @@ return new class extends Migration
             $table->json('comission_members');
             $table->string('comission_address');
             $table->foreignId('author')->constrained('users');
-            $table->text('object');
+            $table->text('description');
             $table->integer('situation');
             $table->string('initial_value')->nullable();
             $table->string('winner_value')->nullable();

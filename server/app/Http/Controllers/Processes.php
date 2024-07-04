@@ -7,6 +7,7 @@ use App\Models\Dfd;
 use App\Models\Ordinator;
 use App\Models\Organ;
 use App\Models\Process;
+use App\Models\Unit;
 use App\Models\User;
 use App\Security\Guardian;
 use App\Utils\Notify;
@@ -70,6 +71,15 @@ class Processes extends Controller
 
     public function selects(Request $request)
     {
+        $units = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
+            [
+                'column' => $request->key,
+                'operator' => '=',
+                'value' => $request->search,
+                'mode' => 'AND'
+            ]
+        ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+
         $comissions = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Comission::class, [
             [
                 'column' => $request->key,
@@ -102,6 +112,7 @@ class Processes extends Controller
             'comissions' => $comissions,
             'ordinators' => $ordinators,
             'dfds' => $dfds,
+            'units' => $units,
             'types' => Process::list_types(),
             'situations' => Process::list_situations(),
             'modalities' => Process::list_modalitys(),

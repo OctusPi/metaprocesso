@@ -20,6 +20,25 @@ class Process extends Model
     public const S_FRACASSADA = 6;
     public const S_REVOGADA = 7;
 
+    public const T_PRICE = 0;
+    public const T_DISCOUNT = 1;
+    public const T_TECHNIQUE = 2;
+    public const T_TECHNIQUE_AND_PRICE = 3;
+    public const T_AUCTION = 4;
+    public const T_ECONOMIC = 5;
+
+    public const M_PROCLAMATION = 0;
+    public const M_PRICE_TAKING = 1;
+    public const M_INVITATION = 2;
+    public const M_COMPETITION = 3;
+    public const M_PRICE_REGISTRY = 4;
+    public const M_AUCTION = 5;
+    public const M_CONTEST = 6;
+    public const M_WAIVER = 7;
+    public const M_INEXIGIBILITY = 8;
+    public const M_CARPOOL = 9;
+    public const M_CALL = 10;
+
     protected $table = 'processes';
 
     protected $fillable = [
@@ -59,12 +78,12 @@ class Process extends Model
         return $this->hasOne(User::class, 'id', 'author');
     }
 
-    public function pricerecord():BelongsTo
+    public function pricerecord(): BelongsTo
     {
         return $this->belongsTo(PriceRecord::class);
     }
 
-    public function proposal():BelongsTo
+    public function proposal(): BelongsTo
     {
         return $this->belongsTo(Proposal::class);
     }
@@ -72,17 +91,17 @@ class Process extends Model
     public static function list_modalitys(): array
     {
         return [
-            ['id' => 0, 'title' => 'Pregão'],
-            ['id' => 1, 'title' => 'Tomada de Preço'],
-            ['id' => 2, 'title' => 'Convite'],
-            ['id' => 3, 'title' => 'Concorrência'],
-            ['id' => 4, 'title' => 'Registro de Preço'],
-            ['id' => 5, 'title' => 'Leilão'],
-            ['id' => 6, 'title' => 'Concurso'],
-            ['id' => 7, 'title' => 'Dispensa'],
-            ['id' => 8, 'title' => 'Inexigibiliadade'],
-            ['id' => 9, 'title' => 'Carona'],
-            ['id' => 10, 'title' => 'Chamada'],
+            ['id' => self::M_PROCLAMATION, 'title' => 'Pregão'],
+            ['id' => self::M_PRICE_TAKING, 'title' => 'Tomada de Preço'],
+            ['id' => self::M_INVITATION, 'title' => 'Convite'],
+            ['id' => self::M_COMPETITION, 'title' => 'Concorrência'],
+            ['id' => self::M_PRICE_REGISTRY, 'title' => 'Registro de Preço'],
+            ['id' => self::M_AUCTION, 'title' => 'Leilão'],
+            ['id' => self::M_CONTEST, 'title' => 'Concurso'],
+            ['id' => self::M_WAIVER, 'title' => 'Dispensa'],
+            ['id' => self::M_INEXIGIBILITY, 'title' => 'Inexigibiliadade'],
+            ['id' => self::M_CARPOOL, 'title' => 'Carona'],
+            ['id' => self::M_CALL, 'title' => 'Chamada'],
         ];
     }
 
@@ -103,12 +122,12 @@ class Process extends Model
     public static function list_types(): array
     {
         return [
-            ['id' => 0, 'title' => 'Menor preço'],
-            ['id' => 1, 'title' => 'Maior desconto'],
-            ['id' => 2, 'title' => 'Melhor técnica ou conteúdo artístico'],
-            ['id' => 3, 'title' => 'Técnica e preço'],
-            ['id' => 4, 'title' => 'Maior lance, no caso de leilão'],
-            ['id' => 5, 'title' => 'Maior retorno econômico'],
+            ['id' => self::T_PRICE, 'title' => 'Menor preço'],
+            ['id' => self::T_DISCOUNT, 'title' => 'Maior desconto'],
+            ['id' => self::T_TECHNIQUE, 'title' => 'Melhor técnica ou conteúdo artístico'],
+            ['id' => self::T_TECHNIQUE_AND_PRICE, 'title' => 'Técnica e preço'],
+            ['id' => self::T_AUCTION, 'title' => 'Maior lance, no caso de leilão'],
+            ['id' => self::T_ECONOMIC, 'title' => 'Maior retorno econômico'],
         ];
     }
 }

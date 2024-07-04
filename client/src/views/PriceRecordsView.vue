@@ -81,8 +81,8 @@ const tabs = ref([
     { id: 'proposals', icon: 'bi-journal-check', title: 'Propostas', status: false }
 ])
 
-const ui     = new Ui(page, 'Coletas de Preços')
-const data   = new Data(page, emit, ui)
+const ui = new Ui(page, 'Coletas de Preços')
+const data = new Data(page, emit, ui)
 const navtab = new Tabs(tabs)
 
 function search_process(){
@@ -320,7 +320,7 @@ onMounted(() => {
                                             locale="pt-br" calendar-class-name="dp-custom-calendar"
                                             calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu"
                                             disabled />
-                                            <div id="comissionHelpBlock" class="form-text txt-color-sec">
+                                        <div id="comissionHelpBlock" class="form-text txt-color-sec">
                                             A data final será preenchida automaticamente.
                                         </div>
                                     </div>
@@ -356,7 +356,8 @@ onMounted(() => {
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('suppliers') }"
                                 id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
-                                <p>Adicionar Fornecedores: Localizar por cnpj, nome fantasia, nome social ou atividade</p>
+                                <p>Adicionar Fornecedores: Localizar por cnpj, nome fantasia, nome social ou atividade
+                                </p>
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('proposals') }"
                                 id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
