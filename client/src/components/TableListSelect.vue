@@ -90,7 +90,8 @@ const checkName = props.identify + '_check'
                     <td class="align-middle">
                         <input class="form-check-input d-none" type="checkbox" :name="checkName" v-model="model"
                             :value="b" :id="b.id + checkName">
-                        <i class="bi fs-5" :class="[findModelById(b) ? 'txt-color-base bi-check-square-fill' : 'bi-square']"></i>
+                        <i class="bi fs-5"
+                            :class="[findModelById(b) ? 'txt-color-base bi-check-square-fill' : 'bi-square']"></i>
                     </td>
                     <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle">
                         <TableListStatus v-if="h.key === 'status'" :data="getdata(b, h?.obj, h.key, h?.cast)" />

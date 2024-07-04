@@ -7,9 +7,9 @@ import TableListSelect from './TableListSelect.vue';
 const props = defineProps({
     valid: { type: Boolean },
     identifier: { type: String },
-    organ: { type: Number, defaut: null }
+    organ: { type: [Number, String], defaut: null }
 })
-const emit = defineEmits(['callAlert', 'callRemove'])
+const emit = defineEmits(['callAlert', 'callRemove', 'getMeta'])
 const model = defineModel()
 
 const page = ref({
@@ -25,7 +25,7 @@ const page = ref({
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
     data: { items: [] },
-    datalist: model.value ?? [],
+    datalist: [],
     search: {
         organ: props.organ
     },
@@ -49,9 +49,12 @@ const accordionCollapseHeaderId = accordionCollapseId + '-header'
 const organ = ref(props.organ)
 
 watch(() => props.organ, (newVal) => {
-    organ.value = newVal
-    page.value.search.organ = newVal
-    data.selects('organ', newVal)
+    if (newVal != "") {
+        emit('getMeta', page)
+        organ.value = newVal
+        page.value.search.organ = newVal
+        data.selects('organ', newVal)
+    }
 })
 
 </script>
@@ -61,7 +64,7 @@ watch(() => props.organ, (newVal) => {
         <div class="accordion" :id="accordionId">
             <div class="accordion-item">
                 <h2 class="accordion-header" :id="accordionCollapseHeaderId">
-                    <button class="w-100 text-center px-2 py-3" type="button" :data-bs-toggle="[organ && 'collapse']"
+                    <button @click="page.datalist = []" class="w-100 text-center px-2 py-3" type="button" :data-bs-toggle="[organ && 'collapse']"
                         :data-bs-target="'#' + accordionCollapseId" aria-expanded="false"
                         :aria-controls="accordionCollapseId">
                         <h2 class="txt-color text-center m-0">
@@ -129,9 +132,13 @@ watch(() => props.organ, (newVal) => {
                 </div>
             </div>
         </div>
-        <div v-if="organ && page.datalist.length > 0" class="inside-box mt-4 form-neg-box">
+        <div v-if="organ && page.datalist.length > 0" class="mt-4 form-neg-box">
             <TableListSelect :identify="props.identifier" :casts="{ 'status': page.selects.status }"
                 :header="page.dataheader" :body="page.datalist" v-model="model" />
+        </div>
+        <div v-if="model?.length > 0 && page.datalist.length < 1" class="mt-4 form-neg-box">
+            <TableListSelect :count="false" :identify="props.identifier" :casts="{ 'status': page.selects.status }"
+                :header="page.dataheader" :body="model" v-model="model" />
         </div>
         <div class="mt-4" v-if="organ && page.datalist.length < 1">
             <div class="text-center txt-color-sec">

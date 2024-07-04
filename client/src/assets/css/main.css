@@ -112,7 +112,7 @@
   font-weight: 450;
 }
 
-.btn-abs{
+.btn-abs {
   background-color: var(--color-base);
   color: white;
   border-radius: 50%;
@@ -329,4 +329,45 @@
     margin-left: -1.5em !important;
     margin-right: -1.5em !important;
   }
+}
+
+.box-revisor {
+  border-bottom: var(--border-box);
+}
+
+.bar-revisor-title {
+  width: 5px;
+  background-color: var(--color-base);
+  border-radius: 2px;
+}
+
+.box-revisor-title h3 {
+  color: var(--color-base);
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+}
+
+.box-revisor-title p {
+  color: var(--color-text-secondary);
+  font-size: small;
+  margin: 0;
+  padding: 0;
+}
+
+.box-revisor-content {
+  padding: 0 10px 0 10px;
+}
+
+.box-revisor-content h4 {
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.box-revisor-content p {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
 }

@@ -62,13 +62,13 @@ function createBetween(month, year) {
 
 function getMonthYear(date_ptbr) {
 
-    if(date_ptbr){
+    if (date_ptbr) {
         const d = date_ptbr.split('/')
         return d ? `${months.find(m => m.id == d[1])?.title} de ${d[2]}` : null
     }
 
     return '*****'
-    
+
 }
 
 function getYear(datetime) {
@@ -78,21 +78,20 @@ function getYear(datetime) {
 }
 
 function toPtBr(datetime) {
-    if(datetime != null){
+    if (datetime != null) {
         const data = new Date(datetime);
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
         return data.toLocaleDateString('pt-BR', options);
     }
 
-    return null
-    
+    return null   
 }
 
 function now_utc() {
     const date = (new Date()).toISOString().split('T')
     return {
         date: date[0],
-        time: date[1]
+        time: date[1].slice(0, 5)
     }
 }
 
