@@ -39,18 +39,14 @@ const page = ref({
         fields: {
             protocol: 'required',
             date_ini: 'required',
-            hour_ini: 'required',
             year_pca: 'required',
             type: 'required',
             modality: 'required',
             organ: 'required',
             units: 'required',
-            ordinators: 'required',
             comission: 'required',
-            object: 'required',
+            description: 'required',
             situation: 'required',
-            initial_value: 'required',
-            winner_value: 'required',
             dfds: 'required'
         },
         valids: {}
@@ -74,7 +70,7 @@ watch(() => props.datalist, (newdata) => {
 
 watch(() => page.value.uiview.register, (newval) => {
     if (newval && !page.value.data.id) {
-        const { date, time } = dates.now_utc()
+        const { date, time } = dates.nowPtbr()
         page.value.data.date_ini = date
         page.value.data.hour_ini = time
     }
@@ -180,7 +176,7 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-date_ini" class="form-label">Data Inicial</label>
                                 <VueDatePicker id="s-date_ini" auto-apply v-model="page.search.date_ini"
-                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
                                     input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                     calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
                                     menu-class-name="dp-custom-menu" />
@@ -267,7 +263,7 @@ onMounted(() => {
                                         <label for="comission" class="form-label">Comissão</label>
                                         <select name="comission" class="form-control"
                                             :class="{ 'form-control-alert': page.rules.valids.comission }"
-                                            id="comission" v-model="page.search.comission"
+                                            id="comission" v-model="page.data.comission"
                                             @change="data.selects('comission')">
                                             <option value=""></option>
                                             <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
@@ -293,7 +289,7 @@ onMounted(() => {
                                     <div class="col-sm-12 col-md-4">
                                         <label for="date_ini" class="form-label">Data Inicial</label>
                                         <VueDatePicker id="date_ini" auto-apply v-model="page.data.date_ini"
-                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
                                             :input-class-name="page.rules.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                             locale="pt-br" calendar-class-name="dp-custom-calendar"
                                             calendar-cell-class-name="dp-custom-cell"
@@ -391,7 +387,7 @@ onMounted(() => {
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <h4>Data Inicial</h4>
-                                                <p>{{ dates.toPtBr(page.data.date_ini) }}</p>
+                                                <p>{{ page.data.date_ini }}</p>
                                             </div>
                                             <div class="col-md-3">
                                                 <h4>Horário Inicial</h4>
@@ -476,6 +472,22 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
+                        <div class="d-flex flex-row-reverse mt-4">
+                            <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">
+                                Cancelar <i class="bi bi-x-circle"></i>
+                            </button>
+                            <button type="submit" class="btn btn-outline-primary me-2">
+                                Enviar <i class="bi bi-check2-circle"></i>
+                            </button>
+                            <button @click="navtab.navigate_tab('next')" type="button"
+                                class="btn btn-outline-secondary me-2">
+                                <i class="bi bi-arrow-right-circle"></i>
+                            </button>
+                            <button @click="navtab.navigate_tab('prev')" type="button"
+                                class="btn btn-outline-secondary me-2">
+                                <i class="bi bi-arrow-left-circle"></i>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -483,4 +495,5 @@ onMounted(() => {
     </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

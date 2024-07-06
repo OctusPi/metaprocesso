@@ -84,11 +84,14 @@ function toPtBr(datetime) {
         return data.toLocaleDateString('pt-BR', options);
     }
 
-    return null   
+    return null
 }
 
-function now_utc() {
-    const date = (new Date()).toISOString().split('T')
+function nowPtbr() {
+    const date = (new Date())
+        .toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })
+        .split(', ')
+
     return {
         date: date[0],
         time: date[1].slice(0, 5)
@@ -105,5 +108,5 @@ export default {
     toPtBr,
     getMonthYear,
     getYear,
-    now_utc
+    nowPtbr
 }

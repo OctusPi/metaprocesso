@@ -26,10 +26,21 @@ class Processes extends Controller
 
     public function save(Request $request)
     {
-        return $this->baseSave(Process::class, array_merge($request->all(), [
-            'ip' => $request->ip(),
-            'author' => $this->user_loged->id
-        ]));
+        $comission = Comission::find($request->comission);
+        \Log::info($comission->comissionmembers);
+        if (empty($comission->comissionmembers)) {
+            return Response()->json(Notify::warning("A comissão não possui nenhum membro!"), 403);
+        }
+
+        $premodel = new Process();
+        $premodel->ip = $request->ip();
+        $premodel->author = $this->user_loged->id;
+        $premodel->comission_members = $comission->comissionmembers;
+        $premodel->comission_address = $comission->unit()->value('address');
+        $premodel->dfds = $request->dfds;
+        $premodel->ordinators = collect($premodel->dfds)->pluck('ordinator');
+
+        return $this->baseSave(Process::class, array_merge($request->all(), $premodel->toArray()));
     }
 
     public function list(Request $request)

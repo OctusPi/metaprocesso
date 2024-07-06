@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Comission extends Model
@@ -57,9 +59,9 @@ class Comission extends Model
         return $this->belongsTo(ComissionEnd::class);
     }
 
-    public function comissionmember(): BelongsTo
+    public function comissionmembers(): HasMany
     {
-        return $this->belongsTo(ComissionMember::class);
+        return $this->hasMany(ComissionMember::class, 'comission', 'id');
     }
 
     public function etp(): BelongsTo

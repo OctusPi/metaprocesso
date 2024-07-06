@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use App\Utils\Dates;
+use App\Casts\Json;
 
 class Process extends Model
 {
@@ -62,6 +65,50 @@ class Process extends Model
         'winner_value',
         'dfds'
     ];
+
+    protected $casts = [
+        'units' => Json::class,
+        'dfds' => Json::class,
+        'ordinators' => Json::class,
+        'comission_members' => Json::class,
+    ];
+
+    public static function validateFields(?int $id = null): array
+    {
+        return [
+            'protocol' => 'required',
+            'ip' => 'required',
+            'date_ini' => 'required',
+            'year_pca' => 'required',
+            'type' => 'required',
+            'modality' => 'required',
+            'organ' => 'required',
+            'units' => 'required',
+            'ordinators' => 'required',
+            'comission' => 'required',
+            'comission_members' => 'required',
+            'comission_address' => 'required',
+            'author' => 'required',
+            'description' => 'required',
+            'situation' => 'required',
+            'dfds' => 'required'
+        ];
+    }
+
+    public static function validateMsg(): array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!'
+        ];
+    }
+
+    public function dateIni(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
+    }
 
     public function organ(): HasOne
     {
