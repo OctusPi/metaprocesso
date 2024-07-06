@@ -12,6 +12,7 @@ import MainHeader from '@/components/MainHeader.vue'
 import TableList from '@/components/TableList.vue'
 import TabNav from '@/components/TabNav.vue'
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue'
+import TableListSelectRadio from '@/components/TableListSelectRadio.vue'
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -37,6 +38,13 @@ const page = ref({
         units: []
     },
     data_process:[],
+    header_process:[
+        { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+        { obj: 'ordinators', key: 'name', title: 'ORDENADORES' },
+        { obj: 'units', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
+        { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
+        { key: 'status', title: 'SITUAÇÃO' }
+    ],
     selects: {
         organs: [],
         units: [],
@@ -211,7 +219,7 @@ onMounted(() => {
                         <div class="tab-content" id="dfdTabContent">
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('process') }"
                                 id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
-                                <div class="accordion" id="accordionSearchProcess">
+                                <div class="accordion mb-3" id="accordionSearchProcess">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="accordionSearchProcessHeadId">
                                             <button class="w-100 text-center px-2 py-3" type="button"
@@ -223,7 +231,7 @@ onMounted(() => {
                                                 </h2>
                                                 <p class="validation txt-color-sec small text-center m-0"
                                                     :class="{ 'text-danger': props.valid }">
-                                                    Preencha os campos abaixo para localiza o Processo
+                                                    Aplique os filtros abaixo para localizar os Processos
                                                 </p>
                                             </button>
                                         </h2>
@@ -281,10 +289,10 @@ onMounted(() => {
                                                             id="s-description" v-model="page.search_process.description"
                                                             placeholder="Pesquise por partes do Objeto do Processo" />
                                                     </div>
-                                                    <div class="d-flex flex-row-reverse mt-4">
+                                                    <div class="mt-4">
                                                         <button @click="search_process" type="button"
                                                             class="btn btn-primary mx-2">
-                                                            Aplicar <i class="bi bi-check2-circle"></i>
+                                                            <i class="bi bi-search"></i> Localizar
                                                         </button>
                                                     </div>
                                                 </div>
@@ -292,6 +300,7 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
+                                <TableListSelectRadio :header="page.header_process" :body="page.data_process" v-model="page.data.process" />
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('infos') }"
                                 id="infos-tab-pane" role="tabpanel" aria-labelledby="infos-tab" tabindex="0">
@@ -364,6 +373,8 @@ onMounted(() => {
                                 <p>Solicitaçao ou Inclusao de Propostas</p>
                             </div>
                         </div>
+
+                        
 
                         <div class="d-flex flex-row-reverse mt-4">
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">
