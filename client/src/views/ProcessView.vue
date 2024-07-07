@@ -24,6 +24,9 @@ const page = ref({
     datalist: props.datalist,
     dataheader: [
         { key: 'protocol', title: 'PROTOCOLO' },
+        { key: 'date_ini', title: 'DATA INICIAL' },
+        { obj: 'comission', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
+        { key: 'type', cast: 'title', title: 'CLASSIFICAÇÃO', sub: [{ key: 'modality', cast: 'title' }] }
     ],
     selects: {
         organs: [],
@@ -218,8 +221,10 @@ onMounted(() => {
                         </form>
                     </div>
                     <TableList @action:update="data.update" @action:delete="data.remove" :header="page.dataheader"
-                        :body="page.datalist" :actions="['update', 'delete']"
-                        :casts="{ 'status': page.selects.status }" />
+                        :body="page.datalist" :actions="['update', 'delete']" :casts="{
+                            'type': page.selects.types,
+                            'modality': page.selects.modalities,
+                        }" />
                 </div>
 
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
@@ -495,5 +500,4 @@ onMounted(() => {
     </main>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

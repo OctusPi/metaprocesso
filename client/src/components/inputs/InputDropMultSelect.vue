@@ -50,6 +50,7 @@ onMounted(() => {
 
 <style>
 .btn-drop {
+	user-select: none;
 	cursor: pointer;
 }
 
