@@ -15,8 +15,6 @@ class BaseModel extends Model
     public const S_SUSPENDED = 2;
     public const S_ANALYSIS = 3;
 
-    
-
     public static function validateFields(?int $id = null): array
     {
         return [];

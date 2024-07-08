@@ -33,33 +33,12 @@ const page = ref({
     ],
     search: {
     },
-    search_process: {
-        date_ini: [],
-        units: []
-    },
-    data_process:[],
-    header_process:[
-        { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-        { obj: 'ordinators', key: 'name', title: 'ORDENADORES' },
-        { obj: 'units', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
-        { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
-        { key: 'status', title: 'SITUAÇÃO' }
-    ],
     selects: {
         organs: [],
         units: [],
-        ordinators: [],
-        demandants: [],
         comissions: [],
-        prioritys: [],
-        hirings: [],
-        acquisitions: [],
-        bonds: [],
-        programs: [],
-        dotations: [],
-        categories: [],
-        responsibilitys: [],
-        status: []
+        status: [],
+        process_status:[]
     },
     rules: {
         fields: {
@@ -79,6 +58,17 @@ const page = ref({
             justification: 'required'
         },
         valids: {}
+    },
+    process:{
+        search:{},
+        data:[],
+        headers:[
+            { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { obj: 'ordinators', key: 'name', title: 'ORDENADORES' },
+            { obj: 'units', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
+            { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
+            { key: 'situation', cast:'title', title: 'SITUAÇÃO' }
+        ]
     }
 })
 const tabs = ref([
@@ -94,8 +84,8 @@ const data = new Data(page, emit, ui)
 const navtab = new Tabs(tabs)
 
 function search_process(){
-    http.post('/pricerecords/list_processes', page.value.search_process, emit, (resp) => {
-        page.value.data_process = resp.data ?? []
+    http.post('/pricerecords/list_processes', page.value.process.search, emit, (resp) => {
+        page.value.process.data = resp.data ?? []
         console.log(resp.data)
     })
 }
@@ -238,11 +228,11 @@ onMounted(() => {
                                         <div id="accordionSearchColapseId" class="accordion-collapse collapse"
                                             aria-labelledby="accordionSearchProcessHeadId"
                                             data-bs-parent="#accordionSearchProcess">
-                                            <div class="accordion-body">
-                                                <div class="row g-3">
+                                            <div class="accordion-body p-0 m-0">
+                                                <div class="row g-3 p-4">
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="date_s_ini" class="form-label">Data Inicial</label>
-                                                        <VueDatePicker auto-apply v-model="page.search_process.date_i"
+                                                        <VueDatePicker auto-apply v-model="page.process.search.date_i"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
                                                             input-class-name="dp-custom-input-dtpk" locale="pt-br"
@@ -252,7 +242,7 @@ onMounted(() => {
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="date_s_fin" class="form-label">Data Final</label>
-                                                        <VueDatePicker auto-apply v-model="page.search_process.date_f"
+                                                        <VueDatePicker auto-apply v-model="page.process.search.date_f"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
                                                             input-class-name="dp-custom-input-dtpk" locale="pt-br"
@@ -263,14 +253,14 @@ onMounted(() => {
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
                                                         <input type="text" name="protocol" class="form-control"
-                                                            id="s-protocol" v-model="page.search_process.protocol"
+                                                            id="s-protocol" v-model="page.process.search.protocol"
                                                             placeholder="Número do Protocolo do Processo" />
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-organ" class="form-label">Orgão</label>
                                                         <select name="organ" class="form-control" id="s-organ"
-                                                            v-model="page.search_process.organ"
-                                                            @change="data.selects('organ', page.search_process.organ)">
+                                                            v-model="page.process.search.organ"
+                                                            @change="data.selects('organ', page.process.search.organ)">
                                                             <option value=""></option>
                                                             <option v-for="o in page.selects.organs" :key="o.id"
                                                                 :value="o.id">
@@ -280,28 +270,33 @@ onMounted(() => {
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-unit" class="form-label">Unidades</label>
-                                                        <InputDropMultSelect v-model="page.search_process.units"
+                                                        <InputDropMultSelect v-model="page.process.search.units"
                                                             :options="page.selects.units" identify="p_units" />
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-description" class="form-label">Objeto</label>
                                                         <input type="text" name="description" class="form-control"
-                                                            id="s-description" v-model="page.search_process.description"
+                                                            id="s-description" v-model="page.process.search.description"
                                                             placeholder="Pesquise por partes do Objeto do Processo" />
                                                     </div>
                                                     <div class="mt-4">
                                                         <button @click="search_process" type="button"
                                                             class="btn btn-primary mx-2">
-                                                            <i class="bi bi-search"></i> Localizar
+                                                            <i class="bi bi-search"></i> Localizar Processos
                                                         </button>
                                                     </div>
                                                 </div>
+                                                <TableListSelectRadio 
+                                                v-model="page.data.process"
+                                                :header="page.process.headers" 
+                                                :body="page.process.data"
+                                                :casts="{situation: page.selects.status_process}" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <TableListSelectRadio :header="page.header_process" :body="page.data_process" v-model="page.data.process" />
                             </div>
+
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('infos') }"
                                 id="infos-tab-pane" role="tabpanel" aria-labelledby="infos-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
@@ -348,6 +343,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
+
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('dfds') }"
                                 id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
                                 <div v-if="page.data.process">
@@ -363,18 +359,18 @@ onMounted(() => {
                                     </p>
                                 </div>
                             </div>
+
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('suppliers') }"
                                 id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
                                 <p>Adicionar Fornecedores: Localizar por cnpj, nome fantasia, nome social ou atividade
                                 </p>
                             </div>
+
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('proposals') }"
                                 id="revisor-tab-pane" role="tabpanel" aria-labelledby="revisor-tab" tabindex="0">
                                 <p>Solicitaçao ou Inclusao de Propostas</p>
                             </div>
                         </div>
-
-                        
 
                         <div class="d-flex flex-row-reverse mt-4">
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">

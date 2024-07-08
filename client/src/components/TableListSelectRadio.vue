@@ -26,11 +26,25 @@ function orderBy(key) {
     })
 }
 
-function getdata(data, obj, key, cast = null, subject = 'id') {
-    const value = obj ? data[obj][key] : data[key] ?? '';
+function extract_data(data, key){
+    if(data.length){
+        const extract = []
+        data.forEach(a => {
+            extract.push(a[key])
+        })
 
+        return extract.toString()
+    }
+
+    return data[key]
+}
+
+function getdata(data, obj, key, cast = null, subject = 'id') {
+    const value = obj ? extract_data(data[obj],key) : data[key] ?? '';
+    
     if (cast && props?.casts[key]) {
-        const datacast = (props.casts[key]).find(obj => obj[subject] === value) ?? {}
+
+        const datacast = (props.casts[key]).find(ob => ob[subject] === value) ?? {}
         return datacast[cast] ?? ''
     }
 
@@ -68,7 +82,7 @@ watch(() => props.body, (newValue) => {
 </script>
 
 <template>
-    <p v-if="body.length && props.count" class="small txt-color-sec ps-5">
+    <p v-if="body.length && props.count" class="small txt-color-sec text-end pe-5">
         <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
     </p>
     <div v-if="body.length" class="table-responsive-sm">
@@ -120,7 +134,6 @@ th {
 
 .table tr td:last-child {
     padding-right: 4cap;
-    text-align: end;
 }
 
 .table,

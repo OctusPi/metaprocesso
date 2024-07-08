@@ -6,6 +6,7 @@ use App\Middleware\Data;
 use App\Models\Comission;
 use App\Models\ComissionMember;
 use App\Models\Organ;
+use App\Models\PriceRecord;
 use App\Models\Process;
 use App\Models\Unit;
 use App\Utils\Notify;
@@ -27,7 +28,7 @@ class PriceRecords extends Controller
         $betw       = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
     
         
-        $query  = Data::list(Process::class, $search, ['date_ini'], ['comission'], $betw, $search_obj);
+        $query  = Data::list(Process::class, $search, ['date_ini'], ['organ', 'comission'], $betw, $search_obj);
         return Response()->json($query, 200);
     }
 
@@ -64,6 +65,8 @@ class PriceRecords extends Controller
                 'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
                 'units' => $units,
                 'comissions' => $comissions,
+                'status' => PriceRecord::list_status(),
+                'status_process' => Process::list_situations()
             ], 200);
         }
 

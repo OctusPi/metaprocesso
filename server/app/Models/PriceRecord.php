@@ -11,7 +11,7 @@ class PriceRecord extends Model
 {
     use HasFactory;
 
-    public string $table = 'price_records';
+    protected $table = 'price_records';
 
     protected $fillable = [
         'protocol',
