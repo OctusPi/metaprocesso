@@ -16,8 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('protocol');
             $table->string('ip');
-            $table->date('date_ini');
-            $table->string('hour_ini')->nullable();
+            $table->dateTime('date_hour_ini');
             $table->integer('year_pca');
             $table->integer('type');
             $table->integer('modality');

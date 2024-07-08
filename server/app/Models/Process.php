@@ -47,8 +47,7 @@ class Process extends Model
     protected $fillable = [
         'protocol',
         'ip',
-        'date_ini',
-        'hour_ini',
+        'date_hour_ini',
         'year_pca',
         'type',
         'modality',
@@ -78,7 +77,7 @@ class Process extends Model
         return [
             'protocol' => 'required',
             'ip' => 'required',
-            'date_ini' => 'required',
+            'date_hour_ini' => 'required',
             'year_pca' => 'required',
             'type' => 'required',
             'modality' => 'required',
@@ -102,11 +101,11 @@ class Process extends Model
         ];
     }
 
-    public function dateIni(): Attribute
+    public function dateHourIni(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
-            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC_TIME, Dates::PTBR_TIME),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR_TIME, Dates::UTC_TIME)
         );
     }
 

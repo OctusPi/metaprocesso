@@ -46,8 +46,8 @@ class Processes extends Controller
     public function list(Request $request)
     {
         return $this->baseList(
-            ['organ', 'comission', 'protocol', 'date_ini', 'type', 'modality', 'situation', 'object'],
-            ['date_ini'],
+            ['organ', 'comission', 'protocol', 'date_hour_ini', 'type', 'modality', 'situation', 'object'],
+            ['date_hour_ini'],
             ['organ', 'comission']
         );
     }
