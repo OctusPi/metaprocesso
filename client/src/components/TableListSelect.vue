@@ -75,7 +75,7 @@ const checkName = props.identify + '_check'
         <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
     </p>
     <div v-if="body.length" class="table-responsive-sm">
-        <table class="table-borderless table-hover" :class="props.smaller ? 'table tablesm' : 'table'">
+        <table class="table-borderless table-hover m-0" :class="props.smaller ? 'table tablesm' : 'table'">
             <thead v-if="props.header">
                 <tr>
                     <th></th>

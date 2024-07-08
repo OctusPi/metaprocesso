@@ -8,7 +8,6 @@ import Data from '@/services/data';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import masks from '@/utils/masks';
 import DfdsSelect from '@/components/DfdsSelect.vue';
-import dates from '@/utils/dates';
 import Tabs from '@/utils/tabs';
 import TabNav from '@/components/TabNav.vue';
 import utils from '@/utils/utils';
@@ -24,7 +23,7 @@ const page = ref({
     datalist: props.datalist,
     dataheader: [
         { key: 'protocol', title: 'PROTOCOLO' },
-        { key: 'date_ini', title: 'DATA INICIAL' },
+        { key: 'date_hour_ini', title: 'DATA E HORA DE ABERTURA' },
         { obj: 'comission', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
         { key: 'type', cast: 'title', title: 'CLASSIFICAÇÃO', sub: [{ key: 'modality', cast: 'title' }] }
     ],
@@ -41,7 +40,7 @@ const page = ref({
     rules: {
         fields: {
             protocol: 'required',
-            date_ini: 'required',
+            date_hour_ini: 'required',
             year_pca: 'required',
             type: 'required',
             modality: 'required',
@@ -50,7 +49,7 @@ const page = ref({
             comission: 'required',
             description: 'required',
             situation: 'required',
-            dfds: 'required'
+            dfds: 'required',
         },
         valids: {}
     }
@@ -69,14 +68,6 @@ const tabSwitch = new Tabs(tabs)
 
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
-})
-
-watch(() => page.value.uiview.register, (newval) => {
-    if (newval && !page.value.data.id) {
-        const { date, time } = dates.nowPtbr()
-        page.value.data.date_ini = date
-        page.value.data.hour_ini = time
-    }
 })
 
 // Metadata from DFDs select
@@ -177,9 +168,9 @@ onMounted(() => {
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-date_ini" class="form-label">Data Inicial</label>
-                                <VueDatePicker id="s-date_ini" auto-apply v-model="page.search.date_ini"
-                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                <label for="s-date_hour_ini" class="form-label">Data de Abertura</label>
+                                <VueDatePicker id="s-date_hour_ini" auto-apply v-model="page.search.date_hour_ini"
+                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy 00:00"
                                     input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                     calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
                                     menu-class-name="dp-custom-menu" />
@@ -292,22 +283,25 @@ onMounted(() => {
                                 id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="date_ini" class="form-label">Data Inicial</label>
-                                        <VueDatePicker id="date_ini" auto-apply v-model="page.data.date_ini"
-                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
-                                            :input-class-name="page.rules.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                        <label for="date_hour_ini" class="form-label">Data e Hora de Abertura</label>
+                                        <VueDatePicker id="date_hour_ini" time-picker-inline 
+                                            model-type="dd/MM/yyyy HH:mm"
+                                            v-model="page.data.date_hour_ini" auto-apply
+                                            :input-class-name="page.rules.valids.date_hour_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                             locale="pt-br" calendar-class-name="dp-custom-calendar"
                                             calendar-cell-class-name="dp-custom-cell"
                                             menu-class-name="dp-custom-menu" />
                                     </div>
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="hour_ini" class="form-label">Hora Inicial</label>
-                                        <VueDatePicker time-picker id="hour_ini" auto-apply v-model="page.data.hour_ini"
-                                            :enable-time-picker="false" model-type="HH:mm"
-                                            :input-class-name="page.rules.valids.hour_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                            locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                            calendar-cell-class-name="dp-custom-cell"
-                                            menu-class-name="dp-custom-menu" />
+                                        <label for="type" class="form-label">Tipo</label>
+                                        <select name="type" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.type
+                                        }" id="type" v-model="page.data.type">
+                                            <option value=""></option>
+                                            <option v-for="o in page.selects.types" :key="o.id" :value="o.id">
+                                                {{ o.title }}
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <label for="situation" class="form-label">Situação</label>
@@ -343,19 +337,6 @@ onMounted(() => {
                                         }" id="modality" v-model="page.data.modality">
                                             <option value=""></option>
                                             <option v-for="o in page.selects.modalities" :key="o.id" :value="o.id">
-                                                {{ o.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-12">
-                                        <label for="type" class="form-label">Tipo</label>
-                                        <select name="type" class="form-control" :class="{
-                                            'form-control-alert': page.rules.valids.type
-                                        }" id="type" v-model="page.data.type">
-                                            <option value=""></option>
-                                            <option v-for="o in page.selects.types" :key="o.id" :value="o.id">
                                                 {{ o.title }}
                                             </option>
                                         </select>
@@ -466,11 +447,30 @@ onMounted(() => {
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="box-revisor-content">
+                                    <div class="box-revisor-content p-0">
                                         <!-- list items -->
-                                        <div v-if="page.data.dfds && page.data.dfds?.length > 0">
+                                        <div v-if="page.data.dfds?.length > 0">
                                             <TableList :smaller="true" :count="false" @action:fastdelete="unselect_dfd"
-                                                :casts="{ 'status': dfds.selects.status }" :header="dfds.dataheader"
+                                                :casts="{ 'status': dfds.selects?.status }" :header="dfds.dataheader"
+                                                :body="page.data.dfds" :actions="['fastdelete']" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title d-flex mb-4">
+                                        <div class="bar-revisor-title me-2"></div>
+                                        <div class="txt-revisor-title">
+                                            <h3>Items das DFDs</h3>
+                                            <p>
+                                                Lista de items das DFDs atreladas ao processo
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor-content p-0">
+                                        <!-- list items -->
+                                        <div v-if="page.data.dfds?.length > 0">
+                                            <TableList :smaller="true" :count="false" @action:fastdelete="unselect_dfd"
+                                                :casts="{ 'status': dfds.selects?.status }" :header="dfds.dataheader"
                                                 :body="page.data.dfds" :actions="['fastdelete']" />
                                         </div>
                                     </div>
@@ -484,11 +484,11 @@ onMounted(() => {
                             <button type="submit" class="btn btn-outline-primary me-2">
                                 Enviar <i class="bi bi-check2-circle"></i>
                             </button>
-                            <button @click="navtab.navigate_tab('next')" type="button"
+                            <button @click="tabSwitch.navigate_tab('next')" type="button"
                                 class="btn btn-outline-secondary me-2">
                                 <i class="bi bi-arrow-right-circle"></i>
                             </button>
-                            <button @click="navtab.navigate_tab('prev')" type="button"
+                            <button @click="tabSwitch.navigate_tab('prev')" type="button"
                                 class="btn btn-outline-secondary me-2">
                                 <i class="bi bi-arrow-left-circle"></i>
                             </button>
