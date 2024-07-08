@@ -21,7 +21,7 @@ const page = ref({
     baseURL: '/pricerecords',
     title: { primary: 'Registro de Coletas de Preços', secondary: 'Insira os dados para registro de Coletas de Preços' },
     uiview: { register: true, search: false },
-    data: { items: [] },
+    data: {},
     datalist: props.datalist,
     dataheader: [
         { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
@@ -209,6 +209,18 @@ onMounted(() => {
                         <div class="tab-content" id="dfdTabContent">
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('process') }"
                                 id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
+                                
+                                <div v-if="page.data.process" class="mb-3">
+                                    <TableList 
+                                    :header="page.process.headers" 
+                                    :body="[{...page.data.process}]" 
+                                    :casts="{'situation':page.selects.status_process}"
+                                    :actions="['fastdelete']"
+                                    :smaller="true"
+                                    :count="false"
+                                     />
+                                </div>
+
                                 <div class="accordion mb-3" id="accordionSearchProcess">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="accordionSearchProcessHeadId">
@@ -288,6 +300,7 @@ onMounted(() => {
                                                 </div>
                                                 <TableListSelectRadio 
                                                 v-model="page.data.process"
+                                                identify="process"
                                                 :header="page.process.headers" 
                                                 :body="page.process.data"
                                                 :casts="{situation: page.selects.status_process}" />

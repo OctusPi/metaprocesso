@@ -23,7 +23,7 @@ const actions = {
     'fastdelete': {
         action: (id) => { emit('action', { e: 'action:fastdelete', i: id }) },
         icon: 'bi-trash',
-        title: 'Excluir'
+        title: 'Remover'
     },
     'download': {
         action: (id) => { emit('action', { e: 'action:download', i: id }) },

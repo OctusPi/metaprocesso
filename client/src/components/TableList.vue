@@ -37,8 +37,21 @@ function orderBy(key) {
     })
 }
 
+function extract_data(data, key){
+    if(data.length){
+        const extract = []
+        data.forEach(a => {
+            extract.push(a[key])
+        })
+
+        return extract.toString()
+    }
+
+    return data[key]
+}
+
 function getdata(data, obj, key, cast = null, subject = 'id') {
-    const value = obj ? data[obj][key] : data[key] ?? '';
+    const value = obj ? extract_data(data[obj],key) : data[key] ?? '';
 
     if (cast && props?.casts[key]) {
         const datacast = (props.casts[key]).find(obj => obj[subject] === value) ?? {}
