@@ -59,7 +59,7 @@ class Process extends Model
         'comission_address',
         'author',
         'description',
-        'situation',
+        'status',
         'initial_value',
         'winner_value',
         'dfds'

@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('comission_address');
             $table->foreignId('author')->constrained('users');
             $table->text('description');
-            $table->integer('situation');
+            $table->integer('status');
             $table->string('initial_value')->nullable();
             $table->string('winner_value')->nullable();
             $table->json('dfds');
