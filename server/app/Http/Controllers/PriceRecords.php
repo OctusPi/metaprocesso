@@ -29,7 +29,7 @@ class PriceRecords extends Controller
         $betw       = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
     
         
-        $query  = Data::list(Process::class, $search, ['date_ini'], ['organ', 'comission'], $betw, $search_obj);
+        $query  = Data::list(Process::class, $search, null, ['organ', 'comission'], $betw, $search_obj);
         return Response()->json($query, 200);
     
     }
@@ -68,7 +68,7 @@ class PriceRecords extends Controller
                 'units' => $units,
                 'comissions' => $comissions,
                 'status' => PriceRecord::list_status(),
-                'status_process' => Process::list_situations()
+                'status_process' => Process::list_status()
             ], 200);
         }
 
