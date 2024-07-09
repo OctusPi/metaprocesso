@@ -68,7 +68,8 @@ class PriceRecords extends Controller
                 'units' => $units,
                 'comissions' => $comissions,
                 'status' => PriceRecord::list_status(),
-                'status_process' => Process::list_status()
+                'status_process' => Process::list_status(),
+                'status_dfds' => Dfd::list_status()
             ], 200);
         }
 

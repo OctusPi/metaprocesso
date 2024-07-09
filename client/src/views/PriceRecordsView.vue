@@ -38,7 +38,8 @@ const page = ref({
         units: [],
         comissions: [],
         status: [],
-        process_status:[]
+        status_process:[],
+        status_dfds:[]
     },
     rules: {
         fields: {
@@ -152,7 +153,6 @@ onMounted(() => {
     </div>
   </div>
 </div>
-
     <main class="container-primary">
         <MainNav />
 
@@ -411,7 +411,7 @@ onMounted(() => {
                                     <TableList 
                                     :header="page.process.dfds_headers"
                                     :body="page.data.process.dfds"
-                                    :casts="{}"
+                                    :casts="{status:page.selects.status_dfds}"
                                     :actions="['modaldetails']"
                                     :smaller="true"
                                     @action:modaldetails="dfd_details" />
