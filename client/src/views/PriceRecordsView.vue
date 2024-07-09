@@ -6,7 +6,6 @@ import Tabs from '@/utils/tabs'
 import Data from '@/services/data'
 import http from '@/services/http'
 
-
 import MainNav from '@/components/MainNav.vue'
 import MainHeader from '@/components/MainHeader.vue'
 import TableList from '@/components/TableList.vue'
@@ -31,8 +30,7 @@ const page = ref({
         { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
         { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
     ],
-    search: {
-    },
+    search: {},
     selects: {
         organs: [],
         units: [],

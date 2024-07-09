@@ -10,8 +10,9 @@ import AttachmentsList from '@/components/AttachmentsList.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import InputRichText from '@/components/inputs/InputRichText.vue';
-import DfdsSelect from '@/components/DfdsSelect.vue';
 import gpt from '@/services/gpt';
+import TableListSelect from '@/components/TableListSelect.vue';
+import http from '@/services/http';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -32,6 +33,7 @@ const page = ref({
     selects: {
         organs: [],
         status: [],
+        units: [],
     },
     rules: {
         fields: {
@@ -59,8 +61,26 @@ const page = ref({
             viability_declaration: 'required',
         },
         valids: {}
+    },
+    dfds: {
+        search: [],
+        datalist: [],
+        headers: [
+            { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
+            { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
+            { obj: 'comission', key: 'name', title: 'ORIGEM', sub: [{ obj: 'unit', key: 'name' }] },
+            { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
+            { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
+        ],
     }
 })
+
+function listDfds() {
+    http.post('/etps/list_dfds', page.value.dfds.search, emit, (resp) => {
+        page.value.dfds.datalist = resp.data ?? []
+    })
+}
 
 const tabs = ref([
     { id: 'info', icon: 'bi-chat-square-dots', title: 'Infos', status: true },
@@ -254,7 +274,7 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="emission" class="form-label">Emissão</label>
                                 <VueDatePicker auto-apply v-model="page.search.emission" :enable-time-picker="false"
-                                    format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
+                                    format="dd/MM/yyyy" model-type="dd/MM/yyyy" input-class-name="dp-custom-input-dtpk"
                                     locale="pt-br" calendar-class-name="dp-custom-calendar"
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
@@ -302,7 +322,7 @@ onMounted(() => {
                                         <label for="emission" class="form-label">Emissão</label>
                                         <VueDatePicker auto-apply v-model="page.data.emission"
                                             :input-class-name="page.rules.valids.emission ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
                                             locale="pt-br" calendar-class-name="dp-custom-calendar"
                                             calendar-cell-class-name="dp-custom-cell"
                                             menu-class-name="dp-custom-menu" />
@@ -386,9 +406,121 @@ onMounted(() => {
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
-                                <DfdsSelect :organ="page.data.organ" :valid="page.rules.valids.dfds"
-                                    identifier="dfds" v-model="page.data.dfds"
-                                    @callAlert="(msg) => emit('callAlert', msg)" />
+                                <div>
+                                    <div v-if="page.data.dfds?.length > 0" class="mb-4 form-neg-box">
+                                        <TableListSelect :count="false" identify="dfds-list"
+                                            :casts="{ 'status': page.selects.status }" :header="page.dfds.headers"
+                                            :body="page.data.dfds" v-model="page.data.dfds" />
+                                    </div>
+                                    <div class="accordion" id="accordion-dfds">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="accordion-dfds-header">
+                                                <button class="w-100 text-center px-2 py-3" type="button"
+                                                    :data-bs-toggle="[page.data.organ && 'collapse']"
+                                                    data-bs-target="#accordion-dfds-collapse" aria-expanded="false"
+                                                    aria-controls="accordion-dfds-collapse">
+                                                    <h2 class="txt-color text-center m-0">
+                                                        <i class="bi bi-journal-album me-1"></i>
+                                                        Localizar DFDs
+                                                    </h2>
+                                                    <p class="validation txt-color-sec small text-center m-0"
+                                                        :class="{ 'text-danger': page.rules.valids.dfds || !page.data.organ }">
+                                                        {{
+                                                            page.data.organ
+                                                                ? "Preencha os campos abaixo para localizar as DFDs"
+                                                                : "É necessário selecionar um órgão para continuar"
+                                                        }}
+                                                    </p>
+                                                </button>
+                                            </h2>
+                                            <div id="accordion-dfds-collapse" class="accordion-collapse collapse"
+                                                aria-labelledby="accordion-dfds-header"
+                                                data-bs-parent="#accordion-dfds">
+                                                <div class="accordion-body p-0">
+                                                    <div class="p-4">
+                                                        <div class="row g-3">
+                                                            <div class="col-sm-12 col-md-4">
+                                                                <label for="date_s_ini" class="form-label">Data
+                                                                    Inicial</label>
+                                                                <VueDatePicker auto-apply
+                                                                    v-model="page.dfds.search.date_i"
+                                                                    :enable-time-picker="false" format="dd/MM/yyyy"
+                                                                    model-type="yyyy-MM-dd"
+                                                                    input-class-name="dp-custom-input-dtpk"
+                                                                    locale="pt-br"
+                                                                    calendar-class-name="dp-custom-calendar"
+                                                                    calendar-cell-class-name="dp-custom-cell"
+                                                                    menu-class-name="dp-custom-menu" />
+                                                            </div>
+                                                            <div class="col-sm-12 col-md-4">
+                                                                <label for="date_s_fin" class="form-label">Data
+                                                                    Final</label>
+                                                                <VueDatePicker auto-apply
+                                                                    v-model="page.dfds.search.date_f"
+                                                                    :enable-time-picker="false" format="dd/MM/yyyy"
+                                                                    model-type="yyyy-MM-dd"
+                                                                    input-class-name="dp-custom-input-dtpk"
+                                                                    locale="pt-br"
+                                                                    calendar-class-name="dp-custom-calendar"
+                                                                    calendar-cell-class-name="dp-custom-cell"
+                                                                    menu-class-name="dp-custom-menu" />
+                                                            </div>
+                                                            <div class="col-sm-12 col-md-4">
+                                                                <label for="s-protocol"
+                                                                    class="form-label">Protocolo</label>
+                                                                <input type="text" name="protocol" class="form-control"
+                                                                    id="s-protocol" v-model="page.dfds.search.protocol"
+                                                                    placeholder="Número do Protocolo" />
+                                                            </div>
+                                                            <div v-if="!props.hasUnits" class="col-sm-12 col-md-4">
+                                                                <label for="s-unit" class="form-label">Unidade</label>
+                                                                <select name="unit" class="form-control" id="s-unit"
+                                                                    v-model="page.dfds.search.unit">
+                                                                    <option value=""></option>
+                                                                    <option v-for="o in page.selects.units"
+                                                                        :key="o.id" :value="o.id">
+                                                                        {{ o.title }}
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-sm-12"
+                                                                :class="[!props.hasUnits && 'col-md-8']">
+                                                                <label for="s-description"
+                                                                    class="form-label">Objeto</label>
+                                                                <input type="text" name="description"
+                                                                    class="form-control" id="s-description"
+                                                                    v-model="page.dfds.search.description"
+                                                                    placeholder="Pesquise por partes do Objeto do DFD" />
+                                                            </div>
+
+                                                            <div class="d-flex flex-row mt-4">
+                                                                <button @click="listDfds"
+                                                                    type="button" class="btn btn-primary">
+                                                                    <i class="bi bi-search"></i>
+                                                                    Localizar DFDs
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div v-if="page.data.organ && page.dfds.datalist.length > 0"
+                                                        class="mt-4">
+                                                        <TableListSelect identify="dfds"
+                                                            :casts="{ 'status': page.selects.status }"
+                                                            :header="page.dfds.headers" :body="page.dfds.datalist"
+                                                            v-model="page.data.dfds" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4" v-if="page.data.organ && page.datalist.length < 1">
+                                        <div class="text-center txt-color-sec">
+                                            <i class="bi bi-boxes fs-4"></i>
+                                            <p class="small">Não foram localizados registros...</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('necessidade') }"

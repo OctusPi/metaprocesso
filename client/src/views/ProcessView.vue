@@ -25,7 +25,8 @@ const page = ref({
         { key: 'protocol', title: 'PROTOCOLO' },
         { key: 'date_hour_ini', title: 'DATA E HORA DE ABERTURA' },
         { obj: 'comission', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
-        { key: 'type', cast: 'title', title: 'CLASSIFICAÇÃO', sub: [{ key: 'modality', cast: 'title' }] }
+        { key: 'type', cast: 'title', title: 'CLASSIFICAÇÃO', sub: [{ key: 'modality', cast: 'title' }] },
+        { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
     ],
     selects: {
         organs: [],
@@ -177,8 +178,7 @@ onMounted(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-statu" class="form-label">Situação</label>
-                                <select name="statu" class="form-control" id="s-statu"
-                                    v-model="page.search.statu">
+                                <select name="statu" class="form-control" id="s-statu" v-model="page.search.statu">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
                                         {{ o.title }}
@@ -215,6 +215,7 @@ onMounted(() => {
                         :body="page.datalist" :actions="['update', 'delete']" :casts="{
                             'type': page.selects.types,
                             'modality': page.selects.modalities,
+                            'status': page.selects.status,
                         }" />
                 </div>
 
@@ -284,13 +285,23 @@ onMounted(() => {
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
                                         <label for="date_hour_ini" class="form-label">Data e Hora de Abertura</label>
-                                        <VueDatePicker id="date_hour_ini" time-picker-inline 
-                                            model-type="dd/MM/yyyy HH:mm"
-                                            v-model="page.data.date_hour_ini" auto-apply
+                                        <VueDatePicker id="date_hour_ini" time-picker-inline
+                                            model-type="dd/MM/yyyy HH:mm" v-model="page.data.date_hour_ini" auto-apply
                                             :input-class-name="page.rules.valids.date_hour_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                             locale="pt-br" calendar-class-name="dp-custom-calendar"
                                             calendar-cell-class-name="dp-custom-cell"
                                             menu-class-name="dp-custom-menu" />
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="modality" class="form-label">Modalidade</label>
+                                        <select name="modality" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.modality
+                                        }" id="modality" v-model="page.data.modality">
+                                            <option value=""></option>
+                                            <option v-for="o in page.selects.modalities" :key="o.id" :value="o.id">
+                                                {{ o.title }}
+                                            </option>
+                                        </select>
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <label for="type" class="form-label">Tipo</label>
@@ -299,17 +310,6 @@ onMounted(() => {
                                         }" id="type" v-model="page.data.type">
                                             <option value=""></option>
                                             <option v-for="o in page.selects.types" :key="o.id" :value="o.id">
-                                                {{ o.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="status" class="form-label">Situação</label>
-                                        <select name="status" class="form-control"
-                                            :class="{ 'form-control-alert': page.rules.valids.status }"
-                                            id="status" v-model="page.data.status">
-                                            <option value=""></option>
-                                            <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
                                                 {{ o.title }}
                                             </option>
                                         </select>
@@ -331,12 +331,11 @@ onMounted(() => {
                                             id="winner_value" v-model="page.data.winner_value" placeholder="0,00">
                                     </div>
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="modality" class="form-label">Modalidade</label>
-                                        <select name="modality" class="form-control" :class="{
-                                            'form-control-alert': page.rules.valids.modality
-                                        }" id="modality" v-model="page.data.modality">
-                                            <option value=""></option>
-                                            <option v-for="o in page.selects.modalities" :key="o.id" :value="o.id">
+                                        <label for="status" class="form-label">Situação</label>
+                                        <select name="status" class="form-control"
+                                            :class="{ 'form-control-alert': page.rules.valids.status }" id="status"
+                                            v-model="page.data.status">
+                                            <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
                                                 {{ o.title }}
                                             </option>
                                         </select>
@@ -344,7 +343,7 @@ onMounted(() => {
                                 </div>
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-12">
-                                        <label for="description" class="form-label">Descrição</label>
+                                        <label for="description" class="form-label">Descrição do Objeto</label>
                                         <textarea name="description" class="form-control" rows="4" :class="{
                                             'form-control-alert': page.rules.valids.description
                                         }" id="description" v-model="page.data.description"></textarea>
@@ -354,9 +353,10 @@ onMounted(() => {
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
                                 id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
-                                    <DfdsSelect :organ="page.data.organ" :valid="page.rules.valids.dfds"
-                                        identifier="dfds" v-model="page.data.dfds"
-                                        @callAlert="(msg) => emit('callAlert', msg)" @getMeta="(meta) => dfds = meta" />
+                                    <DfdsSelect :presearch="{ 'organ': page.data.organ, 'units': page.data.units }"
+                                        :valid="page.rules.valids.dfds" identifier="dfds" v-model="page.data.dfds"
+                                        @callAlert="(msg) => emit('callAlert', msg)" @getMeta="(meta) => dfds = meta">
+                                    </DfdsSelect>
                                 </div>
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('revisar') }"
@@ -372,22 +372,18 @@ onMounted(() => {
                                     <div class="box-revisor-content">
                                         <div class="row">
                                             <div class="col-md-3">
-                                                <h4>Data Inicial</h4>
-                                                <p>{{ page.data.date_ini }}</p>
+                                                <h4>Data e Hora de Abertura</h4>
+                                                <p>{{ page.data.date_hour_ini }}</p>
                                             </div>
                                             <div class="col-md-3">
-                                                <h4>Horário Inicial</h4>
-                                                <p>{{ page.data.hour_ini }}</p>
-                                            </div>
-                                            <div class="col-md-2">
                                                 <h4>Valor Inicial</h4>
                                                 <p>R${{ page.data.initial_value ?? '*****' }}</p>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-3">
                                                 <h4>Valor Vencedor</h4>
                                                 <p>R${{ page.data.winner_value ?? '*****' }}</p>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-3">
                                                 <h4>Ano PCA</h4>
                                                 <p>{{ page.data.year_pca ?? '*****' }}</p>
                                             </div>
@@ -444,25 +440,6 @@ onMounted(() => {
                                             <h3>DFDs</h3>
                                             <p>
                                                 Lista das DFDs atreladas ao processo
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="box-revisor-content p-0">
-                                        <!-- list items -->
-                                        <div v-if="page.data.dfds?.length > 0">
-                                            <TableList :smaller="true" :count="false" @action:fastdelete="unselect_dfd"
-                                                :casts="{ 'status': dfds.selects?.status }" :header="dfds.dataheader"
-                                                :body="page.data.dfds" :actions="['fastdelete']" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="box-revisor mb-4">
-                                    <div class="box-revisor-title d-flex mb-4">
-                                        <div class="bar-revisor-title me-2"></div>
-                                        <div class="txt-revisor-title">
-                                            <h3>Items das DFDs</h3>
-                                            <p>
-                                                Lista de items das DFDs atreladas ao processo
                                             </p>
                                         </div>
                                     </div>

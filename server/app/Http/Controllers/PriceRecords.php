@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Middleware\Data;
 use App\Models\Comission;
 use App\Models\ComissionMember;
-use App\Models\Dfd;
 use App\Models\Organ;
 use App\Models\PriceRecord;
 use App\Models\Process;
@@ -13,7 +12,6 @@ use App\Models\Unit;
 use App\Utils\Notify;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class PriceRecords extends Controller
 {
@@ -26,10 +24,10 @@ class PriceRecords extends Controller
         
         $search     = Utils::map_search(['protocol', 'organ', 'description'], $request->all());
         $search_obj = Utils::map_search_obj($request->units, 'units', 'id');
-        $betw       = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
+        $betw       = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
     
         
-        $query  = Data::list(Process::class, $search, ['date_ini'], ['organ', 'comission'], $betw, $search_obj);
+        $query  = Data::list(Process::class, $search, ['date_hour_ini'], ['organ', 'comission'], $betw, $search_obj);
         return Response()->json($query, 200);
     
     }
@@ -68,7 +66,7 @@ class PriceRecords extends Controller
                 'units' => $units,
                 'comissions' => $comissions,
                 'status' => PriceRecord::list_status(),
-                'status_process' => Process::list_situations()
+                'status_process' => Process::list_status()
             ], 200);
         }
 

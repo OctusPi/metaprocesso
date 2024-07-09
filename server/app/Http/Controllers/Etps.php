@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Comission;
 use App\Models\Dfd;
 use App\Models\Organ;
+use App\Models\Unit;
 use App\Models\User;
+use App\Utils\Notify;
 use App\Utils\Utils;
 use App\Middleware\Data;
 use App\Models\Etp;
@@ -37,6 +39,19 @@ class Etps extends Controller
         );
     }
 
+    public function list_dfds(Request $request){
+
+        if(empty($request->all())){
+            return Response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
+        }
+    
+        $search     = Utils::map_search(['protocol', 'organ', 'object', 'unit'], $request->all());
+        $betw       = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
+    
+        $query  = Data::list(Dfd::class, $search, ['date_ini'], ['unit', 'comission', 'demandant', 'ordinator'], $betw);
+        return Response()->json($query, 200);
+    }
+
     public function selects(Request $request)
     {
         $comissions = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Comission::class, [
@@ -48,18 +63,18 @@ class Etps extends Controller
             ]
         ], ['name'])) : Utils::map_select(Data::list(Comission::class));
 
-        $dfds = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Dfd::class, [
+        $units = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
             [
                 'column' => $request->key,
                 'operator' => '=',
                 'value' => $request->search,
                 'mode' => 'AND'
             ]
-        ], ['protocol'])) : Utils::map_select(Data::list(Dfd::class));
+        ], ['name'])) : Utils::map_select(Data::list(Unit::class));
 
         return Response()->json([
             'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
-            'dfds' => $dfds,
+            'units' => $units,
             'status' => Etp::list_status(),
             'comissions' => $comissions,
         ], 200);

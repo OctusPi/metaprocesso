@@ -14,14 +14,14 @@ class Process extends Model
 {
     use HasFactory;
 
-    public const S_ABERTA = 0;
-    public const S_ADIADA = 1;
+    public const S_ABERTO = 0;
+    public const S_ADIADO = 1;
     public const S_ANULADO = 2;
     public const S_CANCELADO = 3;
-    public const S_DESERTA = 4;
-    public const S_FINALIZADA = 5;
-    public const S_FRACASSADA = 6;
-    public const S_REVOGADA = 7;
+    public const S_DESERTO = 4;
+    public const S_FINALIZADO = 5;
+    public const S_FRACASSADO = 6;
+    public const S_REVOGADO = 7;
 
     public const T_PRICE = 0;
     public const T_DISCOUNT = 1;
@@ -154,14 +154,14 @@ class Process extends Model
     public static function list_status(): array
     {
         return [
-            ['id' => self::S_ABERTA, 'title' => 'Aberta'],
-            ['id' => self::S_ADIADA, 'title' => 'Adiada'],
+            ['id' => self::S_ABERTO, 'title' => 'Aberto'],
+            ['id' => self::S_ADIADO, 'title' => 'Adiado'],
             ['id' => self::S_ANULADO, 'title' => 'Anulado'],
             ['id' => self::S_CANCELADO, 'title' => 'Cancelado'],
-            ['id' => self::S_DESERTA, 'title' => 'Deserta'],
-            ['id' => self::S_FINALIZADA, 'title' => 'Finalizada'],
-            ['id' => self::S_FRACASSADA, 'title' => 'Fracassada'],
-            ['id' => self::S_REVOGADA, 'title' => 'Revogada'],
+            ['id' => self::S_DESERTO, 'title' => 'Deserto'],
+            ['id' => self::S_FINALIZADO, 'title' => 'Finalizado'],
+            ['id' => self::S_FRACASSADO, 'title' => 'Fracassado'],
+            ['id' => self::S_REVOGADO, 'title' => 'Revogado'],
         ];
     }
 
