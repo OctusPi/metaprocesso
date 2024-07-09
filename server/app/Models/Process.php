@@ -89,7 +89,7 @@ class Process extends Model
             'comission_address' => 'required',
             'author' => 'required',
             'description' => 'required',
-            'situation' => 'required',
+            'status' => 'required',
             'dfds' => 'required'
         ];
     }
@@ -151,7 +151,7 @@ class Process extends Model
         ];
     }
 
-    public static function list_situations(): array
+    public static function list_status(): array
     {
         return [
             ['id' => self::S_ABERTA, 'title' => 'Aberta'],

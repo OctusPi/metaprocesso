@@ -32,7 +32,7 @@ const page = ref({
         comissions: [],
         types: [],
         modalities: [],
-        situations: [],
+        status: [],
         dfds: [],
         units: [],
         ordinators: [],
@@ -48,7 +48,7 @@ const page = ref({
             units: 'required',
             comission: 'required',
             description: 'required',
-            situation: 'required',
+            status: 'required',
             dfds: 'required',
         },
         valids: {}
@@ -176,11 +176,11 @@ onMounted(() => {
                                     menu-class-name="dp-custom-menu" />
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-situation" class="form-label">Situação</label>
-                                <select name="situation" class="form-control" id="s-situation"
-                                    v-model="page.search.situation">
+                                <label for="s-statu" class="form-label">Situação</label>
+                                <select name="statu" class="form-control" id="s-statu"
+                                    v-model="page.search.statu">
                                     <option value=""></option>
-                                    <option v-for="o in page.selects.situations" :key="o.id" :value="o.id">
+                                    <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
                                         {{ o.title }}
                                     </option>
                                 </select>
@@ -304,12 +304,12 @@ onMounted(() => {
                                         </select>
                                     </div>
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="situation" class="form-label">Situação</label>
-                                        <select name="situation" class="form-control"
-                                            :class="{ 'form-control-alert': page.rules.valids.situation }"
-                                            id="situation" v-model="page.data.situation">
+                                        <label for="status" class="form-label">Situação</label>
+                                        <select name="status" class="form-control"
+                                            :class="{ 'form-control-alert': page.rules.valids.status }"
+                                            id="status" v-model="page.data.status">
                                             <option value=""></option>
-                                            <option v-for="o in page.selects.situations" :key="o.id" :value="o.id">
+                                            <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
                                                 {{ o.title }}
                                             </option>
                                         </select>
@@ -409,8 +409,8 @@ onMounted(() => {
                                                 <p>
                                                     {{
                                                         utils.getTxt(
-                                                            page.selects.situations,
-                                                            page.data.situation
+                                                            page.selects.status,
+                                                            page.data.status
                                                         )
                                                     }}
                                                 </p>

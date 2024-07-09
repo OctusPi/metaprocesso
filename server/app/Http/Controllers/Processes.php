@@ -125,7 +125,7 @@ class Processes extends Controller
             'dfds' => $dfds,
             'units' => $units,
             'types' => Process::list_types(),
-            'situations' => Process::list_situations(),
+            'status' => Process::list_status(),
             'modalities' => Process::list_modalitys(),
         ], 200);
     }
