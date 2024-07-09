@@ -36,8 +36,8 @@ const page = ref({
         units: [],
         comissions: [],
         status: [],
-        status_process:[],
-        status_dfds:[]
+        status_process: [],
+        status_dfds: []
     },
     rules: {
         fields: {
@@ -58,17 +58,17 @@ const page = ref({
         },
         valids: {}
     },
-    process:{
-        search:{},
-        data:[],
-        headers:[
+    process: {
+        search: {},
+        data: [],
+        headers: [
             { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { obj: 'ordinators', key: 'name', title: 'ORDENADORES' },
             { obj: 'units', key: 'title', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
             { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
-            { key: 'status', cast:'title', title: 'SITUAÇÃO' }
+            { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
         ],
-        dfds_headers:[
+        dfds_headers: [
             { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
             { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
@@ -76,23 +76,23 @@ const page = ref({
             { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
             { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
         ],
-        items_dfds_headers:[
-        {
-            obj: 'item',
-            key: 'code',
-            title: 'COD',
-            sub: [{ obj: 'item', cast: 'title', key: 'type' }]
-        },
-        { obj: 'item', key: 'name', title: 'ITEM' },
-        { obj: 'item', key: 'description', title: 'DESCRIÇÃO' },
-        { obj: 'item', key: 'und', title: 'UDN', sub: [{ obj: 'item', key: 'volume' }] },
-        {
-            key: 'program',
-            cast: 'title',
-            title: 'VINC.',
-            sub: [{ key: 'dotation', cast: 'title' }]
-        },
-        { key: 'quantity', title: 'QUANT.' }
+        items_dfds_headers: [
+            {
+                obj: 'item',
+                key: 'code',
+                title: 'COD',
+                sub: [{ obj: 'item', cast: 'title', key: 'type' }]
+            },
+            { obj: 'item', key: 'name', title: 'ITEM' },
+            { obj: 'item', key: 'description', title: 'DESCRIÇÃO' },
+            { obj: 'item', key: 'und', title: 'UDN', sub: [{ obj: 'item', key: 'volume' }] },
+            {
+                key: 'program',
+                cast: 'title',
+                title: 'VINC.',
+                sub: [{ key: 'dotation', cast: 'title' }]
+            },
+            { key: 'quantity', title: 'QUANT.' }
         ]
     }
 })
@@ -108,14 +108,14 @@ const ui = new Ui(page, 'Coletas de Preços')
 const data = new Data(page, emit, ui)
 const navtab = new Tabs(tabs)
 
-function search_process(){
+function search_process() {
     http.post('/pricerecords/list_processes', page.value.process.search, emit, (resp) => {
         page.value.process.data = resp.data ?? []
         console.log(resp.data)
     })
 }
 
-function dfd_details(id){
+function dfd_details(id) {
     console.log(id)
 }
 
@@ -135,22 +135,22 @@ onMounted(() => {
 
 <template>
     <div class="modal fade" id="modalDetails" tabindex="-1" aria-labelledby="modalDetailsLabel" aria-hidden="true">
-  <div class="modal-dialog modal-fullscreen">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modalDetailsLabel">Modal title</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        ...
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalDetailsLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
     <main class="container-primary">
         <MainNav />
 
@@ -240,9 +240,9 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList @action:update="data.update" @action:delete="data.remove" 
-                    :casts="{ 'status': page.selects.status }" :header="page.dataheader"
-                    :body="page.datalist" :actions="['export_pdf', 'clone', 'update', 'delete']" />
+                    <TableList @action:update="data.update" @action:delete="data.remove"
+                        :casts="{ 'status': page.selects.status }" :header="page.dataheader" :body="page.datalist"
+                        :actions="['export_pdf', 'clone', 'update', 'delete']" />
                 </div>
 
                 <!--BOX REGISTER-->
@@ -255,16 +255,11 @@ onMounted(() => {
                         <div class="tab-content" id="priceRecordTabContent">
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('process') }"
                                 id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
-                                
+
                                 <div v-if="page.data.process" class="mb-3">
-                                    <TableList 
-                                    :header="page.process.headers" 
-                                    :body="[page.data.process]" 
-                                    :casts="{'status':page.selects.status_process}"
-                                    :smaller="true"
-                                    :count="false"
-                                    :order="false"
-                                     />
+                                    <TableList :header="page.process.headers" :body="[page.data.process]"
+                                        :casts="{ 'status': page.selects.status_process }" :smaller="true" :count="false"
+                                        :order="false" />
                                 </div>
 
                                 <div class="accordion mb-3" id="accordionSearchProcess">
@@ -344,12 +339,9 @@ onMounted(() => {
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <TableListSelectRadio 
-                                                v-model="page.data.process"
-                                                identify="process"
-                                                :header="page.process.headers" 
-                                                :body="page.process.data"
-                                                :casts="{status: page.selects.status_process}" />
+                                                <TableListSelectRadio v-model="page.data.process" identify="process"
+                                                    :header="page.process.headers" :body="page.process.data"
+                                                    :casts="{ status: page.selects.status_process }" />
                                             </div>
                                         </div>
                                     </div>
@@ -406,13 +398,9 @@ onMounted(() => {
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('dfds') }"
                                 id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
                                 <div v-if="page.data.process">
-                                    <TableList 
-                                    :header="page.process.dfds_headers"
-                                    :body="page.data.process.dfds"
-                                    :casts="{status:page.selects.status_dfds}"
-                                    :actions="['modaldetails']"
-                                    :smaller="true"
-                                    @action:modaldetails="dfd_details" />
+                                    <TableList :header="page.process.dfds_headers" :body="page.data.process.dfds"
+                                        :casts="{ status: page.selects.status_dfds }" :actions="['modaldetails']"
+                                        :smaller="true" @action:modaldetails="dfd_details" />
                                 </div>
                                 <div v-else>
                                     <h2 class="txt-color text-center m-0">
@@ -461,8 +449,6 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
-
 .nav-step {
     margin: 0 !important;
     padding: 0 !important;

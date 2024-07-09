@@ -7,10 +7,11 @@ import Ui from '@/utils/ui';
 import Data from '@/services/data';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import masks from '@/utils/masks';
-import DfdsSelect from '@/components/DfdsSelect.vue';
 import Tabs from '@/utils/tabs';
 import TabNav from '@/components/TabNav.vue';
 import utils from '@/utils/utils';
+import http from '@/services/http';
+import TableListSelect from '@/components/TableListSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -34,6 +35,7 @@ const page = ref({
         types: [],
         modalities: [],
         status: [],
+        dfds_status: [],
         dfds: [],
         units: [],
         ordinators: [],
@@ -53,8 +55,26 @@ const page = ref({
             dfds: 'required',
         },
         valids: {}
+    },
+    dfds: {
+        search: [],
+        datalist: [],
+        headers: [
+            { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
+            { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
+            { obj: 'comission', key: 'name', title: 'ORIGEM', sub: [{ obj: 'unit', key: 'name' }] },
+            { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
+            { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
+        ],
     }
 })
+
+function listDfds() {
+    http.post('/process/list_dfds', page.value.dfds.search, emit, (resp) => {
+        page.value.dfds.datalist = resp.data ?? []
+    })
+}
 
 const tabs = ref([
     { id: 'origem', icon: 'bi-bounding-box', title: 'Origem', status: true },
@@ -71,12 +91,13 @@ watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
 
-// Metadata from DFDs select
-const dfds = ref({})
-
 function unselect_dfd(id) {
     page.value.data.dfds = [...page.value.data.dfds || []]
         .filter((item) => item.id != id)
+}
+
+function dfd_details(id) {
+    console.log(id)
 }
 
 function autoProtocol(organId) {
@@ -317,18 +338,18 @@ onMounted(() => {
                                 </div>
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="initial_value" class="form-label">Valor Inicial</label>
+                                        <label for="initial_value" class="form-label">Valor Inicial (R$)</label>
                                         <input type="text" name="initial_value" class="form-control"
                                             v-maska:[masks.maskmoney]
                                             :class="{ 'form-control-alert': page.rules.valids.initial_value }"
-                                            id="initial_value" v-model="page.data.initial_value" placeholder="0,00">
+                                            id="initial_value" v-model="page.data.initial_value" placeholder="R$ 0.00">
                                     </div>
                                     <div class="col-sm-12 col-md-4">
-                                        <label for="winner_value" class="form-label">Valor Vencedor</label>
+                                        <label for="winner_value" class="form-label">Valor Vencedor (R$)</label>
                                         <input type="text" name="winner_value" class="form-control"
                                             v-maska:[masks.maskmoney]
                                             :class="{ 'form-control-alert': page.rules.valids.winner_value }"
-                                            id="winner_value" v-model="page.data.winner_value" placeholder="0,00">
+                                            id="winner_value" v-model="page.data.winner_value" placeholder="R$ 0.00">
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <label for="status" class="form-label">Situação</label>
@@ -351,12 +372,108 @@ onMounted(() => {
                                 </div>
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
-                                id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
-                                <div class="row mb-3 g-3">
-                                    <DfdsSelect :presearch="{ 'organ': page.data.organ, 'units': page.data.units }"
-                                        :valid="page.rules.valids.dfds" identifier="dfds" v-model="page.data.dfds"
-                                        @callAlert="(msg) => emit('callAlert', msg)" @getMeta="(meta) => dfds = meta">
-                                    </DfdsSelect>
+                                id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
+                                <div>
+                                    <div v-if="page.data.dfds?.length > 0" class="mb-4 form-neg-box">
+                                        <TableListSelect :count="false" identify="dfds-list"
+                                            :casts="{ 'status': page.selects.dfds_status }" :header="page.dfds.headers"
+                                            :body="page.data.dfds" v-model="page.data.dfds" />
+                                    </div>
+                                    <div class="accordion" id="accordion-dfds">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="accordion-dfds-header">
+                                                <button class="w-100 text-center px-2 py-3" type="button"
+                                                    :data-bs-toggle="[(page.data.organ && page.data.units) && 'collapse']"
+                                                    data-bs-target="#accordion-dfds-collapse" aria-expanded="false"
+                                                    aria-controls="accordion-dfds-collapse">
+                                                    <h2 class="txt-color text-center m-0">
+                                                        <i class="bi bi-journal-album me-1"></i>
+                                                        Localizar DFDs
+                                                    </h2>
+                                                    <p class="validation txt-color-sec small text-center m-0"
+                                                        :class="{ 'text-danger': page.rules.valids.dfds || !(page.data.organ && page.data.units) }">
+                                                        {{ (page.data.organ && page.data.units)
+                                                            ? `Preencha os campos abaixo para localizar as DFDs`
+                                                            : `É necessário selecionar o órgão e ao menos uma unidade para
+                                                        continuar`}}
+                                                    </p>
+                                                </button>
+                                            </h2>
+                                            <div id="accordion-dfds-collapse" class="accordion-collapse collapse"
+                                                aria-labelledby="accordion-dfds-header"
+                                                data-bs-parent="#accordion-dfds">
+                                                <div class="accordion-body p-0">
+                                                    <div class="p-4">
+                                                        <div class="row g-3">
+                                                            <div class="col-sm-12 col-md-4">
+                                                                <label for="date_s_ini" class="form-label">Data
+                                                                    Inicial</label>
+                                                                <VueDatePicker auto-apply
+                                                                    v-model="page.dfds.search.date_i"
+                                                                    :enable-time-picker="false" format="dd/MM/yyyy"
+                                                                    model-type="yyyy-MM-dd"
+                                                                    input-class-name="dp-custom-input-dtpk"
+                                                                    locale="pt-br"
+                                                                    calendar-class-name="dp-custom-calendar"
+                                                                    calendar-cell-class-name="dp-custom-cell"
+                                                                    menu-class-name="dp-custom-menu" />
+                                                            </div>
+                                                            <div class="col-sm-12 col-md-4">
+                                                                <label for="date_s_fin" class="form-label">Data
+                                                                    Final</label>
+                                                                <VueDatePicker auto-apply
+                                                                    v-model="page.dfds.search.date_f"
+                                                                    :enable-time-picker="false" format="dd/MM/yyyy"
+                                                                    model-type="yyyy-MM-dd"
+                                                                    input-class-name="dp-custom-input-dtpk"
+                                                                    locale="pt-br"
+                                                                    calendar-class-name="dp-custom-calendar"
+                                                                    calendar-cell-class-name="dp-custom-cell"
+                                                                    menu-class-name="dp-custom-menu" />
+                                                            </div>
+                                                            <div class="col-sm-12 col-md-4">
+                                                                <label for="s-protocol"
+                                                                    class="form-label">Protocolo</label>
+                                                                <input type="text" name="protocol" class="form-control"
+                                                                    id="s-protocol" v-model="page.dfds.search.protocol"
+                                                                    placeholder="Número do Protocolo" />
+                                                            </div>
+                                                            <div class="col-sm-12">
+                                                                <label for="s-description" class="form-label">Descrição
+                                                                    do objeto</label>
+                                                                <input type="text" name="description"
+                                                                    class="form-control" id="s-description"
+                                                                    v-model="page.dfds.search.description"
+                                                                    placeholder="Pesquise por partes do Objeto do DFD" />
+                                                            </div>
+
+                                                            <div class="d-flex flex-row mt-4">
+                                                                <button @click="listDfds" type="button"
+                                                                    class="btn btn-primary">
+                                                                    <i class="bi bi-search"></i>
+                                                                    Localizar DFDs
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div v-if="page.data.organ && page.dfds.datalist.length > 0"
+                                                        class="mt-4">
+                                                        <TableListSelect identify="dfds"
+                                                            :casts="{ 'status': page.selects.dfds_status }"
+                                                            :header="page.dfds.headers" :body="page.dfds.datalist"
+                                                            v-model="page.data.dfds" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4" v-if="page.data.organ && page.datalist.length < 1">
+                                        <div class="text-center txt-color-sec">
+                                            <i class="bi bi-boxes fs-4"></i>
+                                            <p class="small">Não foram localizados registros...</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('revisar') }"
@@ -446,9 +563,11 @@ onMounted(() => {
                                     <div class="box-revisor-content p-0">
                                         <!-- list items -->
                                         <div v-if="page.data.dfds?.length > 0">
-                                            <TableList :smaller="true" :count="false" @action:fastdelete="unselect_dfd"
-                                                :casts="{ 'status': dfds.selects?.status }" :header="dfds.dataheader"
-                                                :body="page.data.dfds" :actions="['fastdelete']" />
+                                            <TableList :smaller="true" :count="false"
+                                                :casts="{ 'status': page.selects.dfds_status }"
+                                                :header="page.dfds.headers" :body="page.data.dfds"
+                                                :actions="['modaldetails', 'fastdelete']"
+                                                @action:modaldetails="dfd_details" @action:fastdelete="unselect_dfd" />
                                         </div>
                                     </div>
                                 </div>
@@ -474,6 +593,23 @@ onMounted(() => {
                 </div>
             </div>
         </section>
+        <div class="modal fade" id="modalDetails" tabindex="-1" aria-labelledby="modalDetailsLabel" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modalDetailsLabel">Modal title</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 </template>
 

@@ -33,6 +33,7 @@ const page = ref({
     selects: {
         organs: [],
         status: [],
+        dfds_status: [],
         units: [],
     },
     rules: {
@@ -409,7 +410,7 @@ onMounted(() => {
                                 <div>
                                     <div v-if="page.data.dfds?.length > 0" class="mb-4 form-neg-box">
                                         <TableListSelect :count="false" identify="dfds-list"
-                                            :casts="{ 'status': page.selects.status }" :header="page.dfds.headers"
+                                            :casts="{ 'status': page.selects.dfds_status }" :header="page.dfds.headers"
                                             :body="page.data.dfds" v-model="page.data.dfds" />
                                     </div>
                                     <div class="accordion" id="accordion-dfds">
@@ -483,10 +484,9 @@ onMounted(() => {
                                                                     </option>
                                                                 </select>
                                                             </div>
-                                                            <div class="col-sm-12"
-                                                                :class="[!props.hasUnits && 'col-md-8']">
+                                                            <div class="col-sm-12 col-md-8">
                                                                 <label for="s-description"
-                                                                    class="form-label">Objeto</label>
+                                                                    class="form-label">Descrição do objeto</label>
                                                                 <input type="text" name="description"
                                                                     class="form-control" id="s-description"
                                                                     v-model="page.dfds.search.description"
@@ -505,7 +505,7 @@ onMounted(() => {
                                                     <div v-if="page.data.organ && page.dfds.datalist.length > 0"
                                                         class="mt-4">
                                                         <TableListSelect identify="dfds"
-                                                            :casts="{ 'status': page.selects.status }"
+                                                            :casts="{ 'status': page.selects.dfds_status }"
                                                             :header="page.dfds.headers" :body="page.dfds.datalist"
                                                             v-model="page.data.dfds" />
                                                     </div>

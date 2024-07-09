@@ -39,16 +39,16 @@ class Etps extends Controller
         );
     }
 
-    public function list_dfds(Request $request){
-
-        if(empty($request->all())){
+    public function list_dfds(Request $request)
+    {
+        if (empty($request->all())) {
             return Response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
         }
-    
-        $search     = Utils::map_search(['protocol', 'organ', 'object', 'unit'], $request->all());
-        $betw       = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
-    
-        $query  = Data::list(Dfd::class, $search, ['date_ini'], ['unit', 'comission', 'demandant', 'ordinator'], $betw);
+
+        $search = Utils::map_search(['protocol', 'organ', 'description', 'unit'], $request->all());
+        $betw = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
+
+        $query = Data::list(Dfd::class, $search, ['date_ini'], ['unit', 'comission', 'demandant', 'ordinator'], $betw);
         return Response()->json($query, 200);
     }
 
@@ -76,6 +76,7 @@ class Etps extends Controller
             'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
             'units' => $units,
             'status' => Etp::list_status(),
+            'dfds_status' => Dfd::list_status(),
             'comissions' => $comissions,
         ], 200);
     }

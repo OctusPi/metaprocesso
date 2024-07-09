@@ -52,6 +52,20 @@ class Processes extends Controller
         );
     }
 
+    public function list_dfds(Request $request)
+    {
+        if (empty($request->except('organ', 'units'))) {
+            return Response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
+        }
+
+        $search = Utils::map_search(['protocol', 'organ', 'description'], $request->all());
+        $betw = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
+        $search_obj = Utils::map_search_obj($request->units, 'units', 'id');
+
+        $query = Data::list(Dfd::class, $search, ['date_ini'], ['unit', 'comission', 'demandant', 'ordinator'], $betw, $search_obj);
+        return Response()->json($query, 200);
+    }
+
     public function update(Request $request)
     {
         $instance = Process::find($request->id);
@@ -100,15 +114,6 @@ class Processes extends Controller
             ]
         ], ['name'])) : Utils::map_select(Data::list(Comission::class));
 
-        $dfds = $request->key && $request->key == 'comission' ? Utils::map_select(Data::list(Dfd::class, [
-            [
-                'column' => $request->key,
-                'operator' => '=',
-                'value' => $request->search,
-                'mode' => 'AND'
-            ]
-        ], ['date_ini']), 'protocol') : Utils::map_select(Data::list(Dfd::class), 'protocol');
-
         $ordinators = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Ordinator::class, [
             [
                 'column' => $request->key,
@@ -122,10 +127,10 @@ class Processes extends Controller
             'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
             'comissions' => $comissions,
             'ordinators' => $ordinators,
-            'dfds' => $dfds,
             'units' => $units,
             'types' => Process::list_types(),
             'status' => Process::list_status(),
+            'dfds_status' => Dfd::list_status(),
             'modalities' => Process::list_modalitys(),
         ], 200);
     }
