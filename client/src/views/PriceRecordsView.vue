@@ -206,18 +206,18 @@ onMounted(() => {
 
                         <TabNav identify="dfdsTab" :tab-instance="navtab" />
 
-                        <div class="tab-content" id="dfdTabContent">
+                        <div class="tab-content" id="priceRecordTabContent">
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('process') }"
                                 id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
                                 
                                 <div v-if="page.data.process" class="mb-3">
                                     <TableList 
                                     :header="page.process.headers" 
-                                    :body="[{...page.data.process}]" 
+                                    :body="[page.data.process]" 
                                     :casts="{'situation':page.selects.status_process}"
-                                    :actions="['fastdelete']"
                                     :smaller="true"
                                     :count="false"
+                                    :order="false"
                                      />
                                 </div>
 
@@ -360,7 +360,7 @@ onMounted(() => {
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('dfds') }"
                                 id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
                                 <div v-if="page.data.process">
-                                    listar DFDs e Items
+                                    
                                 </div>
                                 <div v-else>
                                     <h2 class="txt-color text-center m-0">

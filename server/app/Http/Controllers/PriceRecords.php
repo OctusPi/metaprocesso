@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Middleware\Data;
 use App\Models\Comission;
 use App\Models\ComissionMember;
+use App\Models\Dfd;
 use App\Models\Organ;
 use App\Models\PriceRecord;
 use App\Models\Process;
@@ -30,6 +31,7 @@ class PriceRecords extends Controller
         
         $query  = Data::list(Process::class, $search, ['date_ini'], ['organ', 'comission'], $betw, $search_obj);
         return Response()->json($query, 200);
+    
     }
 
     public function selects(Request $request)

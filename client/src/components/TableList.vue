@@ -10,7 +10,8 @@ const props = defineProps({
     actions: { type: Array },
     casts: { type: Object },
     smaller: { type: Boolean, default: () => false },
-    count: { type: Boolean, default: () => true }
+    count: { type: Boolean, default: () => true },
+    order: { type: Boolean, default: () => true }
 })
 
 const emit = defineEmits([
@@ -95,7 +96,7 @@ watch(() => props.body, (newValue) => {
             <thead v-if="props.header">
                 <tr>
                     <th scope="col" v-for="h in props.header" :key="h.key" @click="orderBy(h.key)">
-                        {{ h.title }} <i class="bi bi-arrow-down table-order-icon"></i>
+                        {{ h.title }} <i v-if="props.order" class="bi bi-arrow-down table-order-icon"></i>
                     </th>
                     <th v-if="props.actions" scope="col"></th>
                 </tr>
@@ -167,20 +168,16 @@ th{
     font-size: 0.85rem !important;
 }
 
-.tablesm tr th:first-child {
-    padding-left: 5px !important;
-}
-
 .tablesm tr td:first-child {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
-    padding-left: 5px !important;
+    padding-left: 10px !important;
 }
 
 .tablesm tr td:last-child {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    padding-right: 5px !important;
+    padding-right: 10px !important;
     text-align: end;
 }
 </style>
