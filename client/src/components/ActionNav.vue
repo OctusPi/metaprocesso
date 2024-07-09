@@ -64,8 +64,24 @@ const actions = {
         action: (id) => { emit('action', { e: 'action:clone', i: id }) },
         icon: 'bi-copy',
         title: 'Clonar'
-    }
+    },
+    'modaldetails': {
+        action: (id) => { emit('action', { e: 'action:modaldetails', i: id }) },
+        icon: 'bi-list-ul',
+        title: 'Detalhar'
+    },
 
+}
+
+function enableModal(call){
+    switch(call){
+        case 'delete':
+            return '#modalDelete'
+        case 'modaldetails':
+            return '#modalDetails'
+        default:
+            return null
+    }
 }
 
 </script>
@@ -78,8 +94,8 @@ const actions = {
         <ul class="dropdown-menu px-2 py-3">
             <li>
                 <a class="dropdown-item item-action-menu" href="#" v-for="c in calls" :key="actions[c].title"
-                    :data-bs-toggle="c === 'delete' ? 'modal' : null"
-                    :data-bs-target="c === 'delete' ? '#modalDelete' : null"
+                    :data-bs-toggle="enableModal(c) ? 'modal' : null"
+                    :data-bs-target="enableModal(c)"
                     @click.prevent="actions[c].action(props.id)">
                     <i class="bi me-2" :class="actions[c].icon"></i>
                     {{ actions[c].title }}

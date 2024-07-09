@@ -9,6 +9,7 @@ const props = defineProps({
     body: { type: Array, default: () => [] },
     actions: { type: Array },
     casts: { type: Object },
+    hshow: { type: Boolean, default: () => true },
     smaller: { type: Boolean, default: () => false },
     count: { type: Boolean, default: () => true },
     order: { type: Boolean, default: () => true }
@@ -23,7 +24,8 @@ const emit = defineEmits([
     'action:extinction',
     'action:items',
     'action:pdf',
-    'action:clone'
+    'action:clone',
+    'action:modaldetails'
 ])
 
 const body = ref(props.body)
@@ -88,12 +90,12 @@ watch(() => props.body, (newValue) => {
 </script>
 
 <template>
-    <p v-if="body.length && props.count" class="small txt-color-sec ps-5">
+    <p v-if="body.length && props.count" class="small txt-color-sec" :class="{'ps-5':!props.smaller}">
         <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
     </p>
     <div v-if="body.length" class="table-responsive-sm">
         <table class="table-borderless table-striped table-hover" :class="props.smaller ? 'table tablesm' : 'table'">
-            <thead v-if="props.header">
+            <thead v-if="props.header && props.hshow">
                 <tr>
                     <th scope="col" v-for="h in props.header" :key="h.key" @click="orderBy(h.key)">
                         {{ h.title }} <i v-if="props.order" class="bi bi-arrow-down table-order-icon"></i>

@@ -36,7 +36,8 @@ const page = ref({
         units: [],
         comissions: [],
         status: [],
-        process_status:[]
+        status_process:[],
+        status_dfds:[]
     },
     rules: {
         fields: {
@@ -61,11 +62,37 @@ const page = ref({
         search:{},
         data:[],
         headers:[
-            { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { obj: 'ordinators', key: 'name', title: 'ORDENADORES' },
-            { obj: 'units', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
+            { obj: 'units', key: 'title', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
             { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
-            { key: 'situation', cast:'title', title: 'SITUAÇÃO' }
+            { key: 'status', cast:'title', title: 'SITUAÇÃO' }
+        ],
+        dfds_headers:[
+            { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
+            { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
+            { obj: 'unit', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
+            { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
+            { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
+        ],
+        items_dfds_headers:[
+        {
+            obj: 'item',
+            key: 'code',
+            title: 'COD',
+            sub: [{ obj: 'item', cast: 'title', key: 'type' }]
+        },
+        { obj: 'item', key: 'name', title: 'ITEM' },
+        { obj: 'item', key: 'description', title: 'DESCRIÇÃO' },
+        { obj: 'item', key: 'und', title: 'UDN', sub: [{ obj: 'item', key: 'volume' }] },
+        {
+            key: 'program',
+            cast: 'title',
+            title: 'VINC.',
+            sub: [{ key: 'dotation', cast: 'title' }]
+        },
+        { key: 'quantity', title: 'QUANT.' }
         ]
     }
 })
@@ -88,6 +115,10 @@ function search_process(){
     })
 }
 
+function dfd_details(id){
+    console.log(id)
+}
+
 watch(
     () => props.datalist,
     (newdata) => {
@@ -103,6 +134,23 @@ onMounted(() => {
 </script>
 
 <template>
+    <div class="modal fade" id="modalDetails" tabindex="-1" aria-labelledby="modalDetailsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalDetailsLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
     <main class="container-primary">
         <MainNav />
 
@@ -212,7 +260,7 @@ onMounted(() => {
                                     <TableList 
                                     :header="page.process.headers" 
                                     :body="[page.data.process]" 
-                                    :casts="{'situation':page.selects.status_process}"
+                                    :casts="{'status':page.selects.status_process}"
                                     :smaller="true"
                                     :count="false"
                                     :order="false"
@@ -301,7 +349,7 @@ onMounted(() => {
                                                 identify="process"
                                                 :header="page.process.headers" 
                                                 :body="page.process.data"
-                                                :casts="{situation: page.selects.status_process}" />
+                                                :casts="{status: page.selects.status_process}" />
                                             </div>
                                         </div>
                                     </div>
@@ -358,7 +406,13 @@ onMounted(() => {
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('dfds') }"
                                 id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
                                 <div v-if="page.data.process">
-                                    
+                                    <TableList 
+                                    :header="page.process.dfds_headers"
+                                    :body="page.data.process.dfds"
+                                    :casts="{status:page.selects.status_dfds}"
+                                    :actions="['modaldetails']"
+                                    :smaller="true"
+                                    @action:modaldetails="dfd_details" />
                                 </div>
                                 <div v-else>
                                     <h2 class="txt-color text-center m-0">
