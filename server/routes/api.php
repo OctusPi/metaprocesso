@@ -288,6 +288,7 @@ Route::controller(Processes::class)->group(function () {
             Route::get('/details/{id}', 'details');
             Route::get('/selects/{key?}/{search?}', 'selects');
             Route::post('/list_dfds', 'list_dfds');
+            Route::get('/list_dfd_items/{id}', 'list_dfd_items');
         });
     });
 })->name('process');

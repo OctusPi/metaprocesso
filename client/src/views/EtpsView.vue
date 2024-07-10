@@ -1,8 +1,11 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import Ui from '@/utils/ui';
-import Data from '@/services/data';
+import utils from '@/utils/utils';
 import Tabs from '@/utils/tabs';
+import Data from '@/services/data';
+import http from '@/services/http';
+import gpt from '@/services/gpt';
 
 import MainNav from '@/components/MainNav.vue';
 import TabNav from '@/components/TabNav.vue';
@@ -10,9 +13,7 @@ import AttachmentsList from '@/components/AttachmentsList.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import InputRichText from '@/components/inputs/InputRichText.vue';
-import gpt from '@/services/gpt';
 import TableListSelect from '@/components/TableListSelect.vue';
-import http from '@/services/http';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -97,29 +98,9 @@ const ui = new Ui(page, 'ETPs')
 const data = new Data(page, emit, ui)
 const tabSwitch = new Tabs(tabs)
 
-function autoProtocol(organId) {
-    if (!organId) {
-        return null
-    }
-
-    const d = new Date();
-
-    const date = (
-        d.getDay().toString().padStart(2, '0')
-        + d.getMonth().toString().padStart(2, '0')
-        + d.getFullYear().toString().padStart(4, '0')
-    )
-
-    const mili = (
-        d.getMilliseconds().toString().padStart(4, '0')
-    )
-
-    return `${String(organId).padStart(3, '0')}-${date}-${mili}`
-}
-
 function setProtocol() {
     data.selects('organ', page.value.data.organ)
-    page.value.data.protocol = autoProtocol(page.value.data.organ)
+    page.value.data.protocol = utils.dateProtocol(page.value.data.organ, '-')
 }
 
 function generate(type) {

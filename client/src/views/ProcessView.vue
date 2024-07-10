@@ -6,6 +6,7 @@ import masks from '@/utils/masks';
 import utils from '@/utils/utils';
 import Ui from '@/utils/ui';
 import Tabs from '@/utils/tabs';
+import dates from '@/utils/dates';
 
 import MainHeader from '@/components/MainHeader.vue';
 import MainNav from '@/components/MainNav.vue';
@@ -13,6 +14,7 @@ import TabNav from '@/components/TabNav.vue';
 import TableList from '@/components/TableList.vue';
 import TableListSelect from '@/components/TableListSelect.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
+import TableListStatus from '@/components/TableListStatus.vue';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -24,10 +26,10 @@ const page = ref({
     data: {},
     datalist: props.datalist,
     dataheader: [
-        { key: 'protocol', title: 'PROTOCOLO' },
-        { key: 'date_hour_ini', title: 'DATA E HORA DE ABERTURA' },
+        { key: 'date_hour_ini', title: 'EMISSÃO', sub: [{ key: 'protocol' }] },
         { obj: 'comission', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
         { key: 'type', cast: 'title', title: 'CLASSIFICAÇÃO', sub: [{ key: 'modality', cast: 'title' }] },
+        { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
         { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
     ],
     selects: {
@@ -37,6 +39,9 @@ const page = ref({
         modalities: [],
         status: [],
         dfds_status: [],
+        prioritys_dfd: [],
+        hirings_dfd: [],
+        acquisitions_dfd: [],
         dfds: [],
         units: [],
         ordinators: [],
@@ -60,6 +65,7 @@ const page = ref({
     dfds: {
         search: [],
         datalist: [],
+        items: [],
         headers: [
             { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
@@ -68,13 +74,45 @@ const page = ref({
             { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
             { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
         ],
-    }
+        items_headers: [
+            {
+                obj: 'item',
+                key: 'code',
+                title: 'COD',
+                sub: [{ obj: 'item', cast: 'title', key: 'type' }]
+            },
+            { obj: 'item', key: 'name', title: 'ITEM' },
+            { obj: 'item', key: 'description', title: 'DESCRIÇÃO' },
+            { obj: 'item', key: 'und', title: 'UDN', sub: [{ obj: 'item', key: 'volume' }] },
+            {
+                key: 'program',
+                cast: 'title',
+                title: 'VINC.',
+                sub: [{ key: 'dotation', cast: 'title' }]
+            },
+            { key: 'quantity', title: 'QUANT.' }
+        ]
+    },
 })
 
 function listDfds() {
-    http.post('/process/list_dfds', page.value.dfds.search, emit, (resp) => {
+    http.post(`/${page.value.baseURL}/list_dfds`, page.value.dfds.search, emit, (resp) => {
         page.value.dfds.datalist = resp.data ?? []
     })
+}
+
+function dfd_details(id) {
+    if (page.value.data.dfds) {
+        page.value.dfds.data = (page.value.data.dfds).find(obj => obj.id === id)
+        http.get(`${page.value.baseURL}/list_dfd_items/${id}`, emit, (resp) => {
+            page.value.dfds.items = resp.data
+        })
+    }
+}
+
+function unselect_dfd(id) {
+    page.value.data.dfds = [...page.value.data.dfds || []]
+        .filter((item) => item.id != id)
 }
 
 const tabs = ref([
@@ -92,38 +130,9 @@ watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
 })
 
-function unselect_dfd(id) {
-    page.value.data.dfds = [...page.value.data.dfds || []]
-        .filter((item) => item.id != id)
-}
-
-function dfd_details(id) {
-    console.log(id)
-}
-
-function autoProtocol(organId) {
-    if (!organId) {
-        return null
-    }
-
-    const d = new Date();
-
-    const date = (
-        d.getDay().toString().padStart(2, '0')
-        + d.getMonth().toString().padStart(2, '0')
-        + d.getFullYear().toString().padStart(4, '0')
-    )
-
-    const mili = (
-        d.getMilliseconds().toString().padStart(4, '0')
-    )
-
-    return `${String(organId).padStart(3, '0')}${date}${mili}`
-}
-
 function setProtocol() {
     data.selects('organ', page.value.data.organ)
-    page.value.data.protocol = autoProtocol(page.value.data.organ)
+    page.value.data.protocol = utils.dateProtocol(page.value.data.organ)
 }
 
 onMounted(() => {
@@ -574,7 +583,7 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="d-flex flex-row-reverse mt-4">
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">
                                 Cancelar <i class="bi bi-x-circle"></i>
@@ -597,17 +606,230 @@ onMounted(() => {
         </section>
         <div class="modal fade" id="modalDetails" tabindex="-1" aria-labelledby="modalDetailsLabel" aria-hidden="true">
             <div class="modal-dialog modal-fullscreen">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="modalDetailsLabel">Modal title</h1>
+                <div class="modal-content p-4" v-if="page.dfds.data">
+                    <div class="modal-header border-0">
+                        <h1 class="modal-title fs-6 p-0 m-0" id="modalDetailsLabel">DFD: {{ page.dfds.data.protocol }}
+                        </h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        ...
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                    <div class="modal-body border-0">
+                        <!-- origin -->
+                        <div class="box-revisor mb-4">
+                            <div class="box-revisor-title d-flex mb-4">
+                                <div class="bar-revisor-title me-2"></div>
+                                <div class="txt-revisor-title">
+                                    <h3>Origem da Demanda</h3>
+                                    <p>
+                                        Dados referentes a origem e responsabilidade pela
+                                        Demanda
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="box-revisor-content">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h4>Orgão</h4>
+                                        <p>
+                                            {{ page.dfds.data.organ.name }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h4>Unidade</h4>
+                                        <p>
+                                            {{ page.dfds.data.unit.name }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h4>Ordenador de Despesas</h4>
+                                        <p>
+                                            {{ page.dfds.data.ordinator.name }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h4>Demadantes</h4>
+                                        <p>
+                                            {{ page.dfds.data.demandant.name }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h4>Comissão / Equipe de Planejamento</h4>
+                                        <p>
+                                            {{ page.dfds.data.comission.name }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <h4>Integrantes da Comissão</h4>
+                                        <span class="p-0 m-0 small" v-for="m in page.dfds.data.comission_members"
+                                            :key="m.id">
+                                            {{ `${utils.getTxt(page.selects.responsibilitys, m.responsibility)}
+                                            : ${m.name}; ` }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Infos -->
+                        <div class="box-revisor mb-4">
+                            <div class="box-revisor-title d-flex mb-4">
+                                <div class="bar-revisor-title me-2"></div>
+                                <div class="txt-revisor-title">
+                                    <h3>Informações Gerais</h3>
+                                    <p>
+                                        Dados de prioridade, previsão de contratação e
+                                        detalhamento de Objeto
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="box-revisor-content">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h4>Data Envio</h4>
+                                        <p>{{ page.dfds.data.date_ini }}</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h4>Previsão Contratação</h4>
+                                        <p>
+                                            {{
+                                                dates.getMonthYear(page.dfds.data.estimated_date)
+                                            }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h4>Ano PCA</h4>
+                                        <p>{{ page.dfds.data.year_pca ?? '*****' }}</p>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h4>Prioridade</h4>
+                                        <p>
+                                            <TableListStatus :data="utils.getTxt(
+                                                page.selects.prioritys_dfd,
+                                                page.dfds.data.priority
+                                            )" />
+                                        </p>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <h4>Valor Estimado</h4>
+                                        <p>R${{ page.dfds.data.estimated_value ?? '*****' }}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <h4>Tipo de Aquisição</h4>
+                                        <p>
+                                            {{
+                                                utils.getTxt(
+                                                    page.selects.acquisitions_dfd,
+                                                    page.dfds.data.acquisition_type
+                                                )
+                                            }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h4>Forma Sugerida</h4>
+                                        <p>
+                                            {{
+                                                utils.getTxt(
+                                                    page.selects.hirings_dfd,
+                                                    page.dfds.data.suggested_hiring
+                                                )
+                                            }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h4>Vinculo ou Dependência</h4>
+                                        <p class="txt-very-small p-0 m-0">
+                                            Dependência com o
+                                            objeto de outro documento de formalização de
+                                            demanda
+                                        </p>
+                                        <p>
+                                            {{
+                                                page.dfds.data.bonds ? 'Sim Possui' : 'Não Possui'
+                                            }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h4>Registro de Preço</h4>
+                                        <p class="txt-very-small p-0 m-0">
+                                            Indique se a demanda se trata de registro de preços.
+                                        </p>
+                                        <p>
+                                            {{
+                                                page.dfds.data.price_taking ? 'Sim' : 'Não'
+                                            }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4>Descrição sucinta do Objeto</h4>
+                                        <p>{{ page.dfds.data.description ?? '*****' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Items -->
+                        <div class="box-revisor mb-4">
+                            <div class="box-revisor-title d-flex mb-4">
+                                <div class="bar-revisor-title me-2"></div>
+                                <div class="txt-revisor-title">
+                                    <h3>Lista de Itens</h3>
+                                    <p>
+                                        Lista de materiais ou serviços vinculados a Demanda
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="box-revisor-content">
+                                <!-- list items -->
+                                <div v-if="page.dfds?.items">
+                                    <TableList :smaller="true" :count="false" :header="page.dfds.items_headers"
+                                        :body="page.dfds?.items" :casts="{
+                                            type: [
+                                                { id: 1, title: 'Material' },
+                                                { id: 2, title: 'Serviço' }
+                                            ],
+                                            program: page.selects.programs,
+                                            dotation: page.selects.dotations
+                                        }" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- details -->
+                        <div class="box-revisor mb-4">
+                            <div class="box-revisor-title d-flex mb-4">
+                                <div class="bar-revisor-title me-2"></div>
+                                <div class="txt-revisor-title">
+                                    <h3>Detalhamento da Necessidade</h3>
+                                    <p>
+                                        Justificativas para necessidade e quantitativo de
+                                        itens demandados
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="box-revisor-content">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4>Justificativa da necessidade da contratação</h4>
+                                        <p>{{ page.dfds.data.justification ?? '*****' }}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h4>Justificativa dos quantitativos demandados</h4>
+                                        <p>
+                                            {{
+                                                page.dfds.data.justification_quantity ?? '*****'
+                                            }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Comission;
 use App\Models\Dfd;
+use App\Models\DfdItem;
 use App\Models\Ordinator;
 use App\Models\Organ;
 use App\Models\Process;
@@ -64,6 +65,11 @@ class Processes extends Controller
 
         $query = Data::list(Dfd::class, $search, ['date_ini'], ['organ', 'unit', 'comission', 'demandant', 'ordinator'], $betw, $search_obj);
         return Response()->json($query, 200);
+    }
+
+    public function list_dfd_items(Request $request)
+    {
+        return Data::list(DfdItem::class, ['dfd' => $request->id], null, ['item']);
     }
 
     public function update(Request $request)
@@ -131,6 +137,9 @@ class Processes extends Controller
             'types' => Process::list_types(),
             'status' => Process::list_status(),
             'dfds_status' => Dfd::list_status(),
+            'prioritys_dfd' => Dfd::list_priority(),
+            'hirings_dfd' => Dfd::list_hirings(),
+            'acquisitions_dfd' => Dfd::list_acquisitions(),
             'modalities' => Process::list_modalitys(),
         ], 200);
     }
