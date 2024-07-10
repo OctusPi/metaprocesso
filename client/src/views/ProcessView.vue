@@ -1,17 +1,18 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
-import MainNav from '@/components/MainNav.vue';
-import MainHeader from '@/components/MainHeader.vue';
-import TableList from '@/components/TableList.vue';
-import Ui from '@/utils/ui';
 import Data from '@/services/data';
-import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
-import masks from '@/utils/masks';
-import Tabs from '@/utils/tabs';
-import TabNav from '@/components/TabNav.vue';
-import utils from '@/utils/utils';
 import http from '@/services/http';
+import masks from '@/utils/masks';
+import utils from '@/utils/utils';
+import Ui from '@/utils/ui';
+import Tabs from '@/utils/tabs';
+
+import MainHeader from '@/components/MainHeader.vue';
+import MainNav from '@/components/MainNav.vue';
+import TabNav from '@/components/TabNav.vue';
+import TableList from '@/components/TableList.vue';
 import TableListSelect from '@/components/TableListSelect.vue';
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -573,6 +574,7 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="d-flex flex-row-reverse mt-4">
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">
                                 Cancelar <i class="bi bi-x-circle"></i>
@@ -612,5 +614,3 @@ onMounted(() => {
         </div>
     </main>
 </template>
-
-<style scoped></style>

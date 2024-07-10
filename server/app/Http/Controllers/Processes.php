@@ -62,7 +62,7 @@ class Processes extends Controller
         $betw = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
         $search_obj = Utils::map_search_obj($request->units, 'units', 'id');
 
-        $query = Data::list(Dfd::class, $search, ['date_ini'], ['unit', 'comission', 'demandant', 'ordinator'], $betw, $search_obj);
+        $query = Data::list(Dfd::class, $search, ['date_ini'], ['organ', 'unit', 'comission', 'demandant', 'ordinator'], $betw, $search_obj);
         return Response()->json($query, 200);
     }
 

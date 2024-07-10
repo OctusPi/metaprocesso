@@ -903,7 +903,7 @@ onMounted(() => {
                                                     ],
                                                     program: page.selects.programs,
                                                     dotation: page.selects.dotations
-                                                }" @action:update="update_item" @action:fastdelete="delete_item" />
+                                                }" />
                                         </div>
                                     </div>
                                 </div>

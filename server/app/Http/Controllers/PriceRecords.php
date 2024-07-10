@@ -6,9 +6,12 @@ use App\Middleware\Data;
 use App\Models\Comission;
 use App\Models\ComissionMember;
 use App\Models\Dfd;
+use App\Models\DfdItem;
+use App\Models\Dotation;
 use App\Models\Organ;
 use App\Models\PriceRecord;
 use App\Models\Process;
+use App\Models\Program;
 use App\Models\Unit;
 use App\Utils\Notify;
 use App\Utils\Utils;
@@ -33,12 +36,18 @@ class PriceRecords extends Controller
     
     }
 
+    public function list_dfd_items(Request $request){
+        return Data::list(DfdItem::class, ['dfd' => $request->id], null, ['item']);
+    }
+
     public function selects(Request $request)
     {
         //feed selects form
         if ($request->key != 'comission') {
             $units = [];
             $comissions = [];
+            $programs = [];
+            $dotations = [];
 
 
             if ($request->key) {
@@ -60,15 +69,38 @@ class PriceRecords extends Controller
                     ]
                 ], ['name']));
 
+                $programs = Utils::map_select(Data::list(Program::class, [
+                    [
+                        'column' => $request->key,
+                        'operator' => '=',
+                        'value' => $request->search,
+                        'mode' => 'AND'
+                    ]
+                ], ['name']));
+
+                $dotations = Utils::map_select(Data::list(Dotation::class, [
+                    [
+                        'column' => $request->key,
+                        'operator' => '=',
+                        'value' => $request->search,
+                        'mode' => 'AND'
+                    ]
+                ], ['name']));
+
             }
 
             return Response()->json([
                 'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
                 'units' => $units,
                 'comissions' => $comissions,
+                'prioritys_dfd' => Dfd::list_priority(),
+                'hirings_dfd' => Dfd::list_hirings(),
+                'acquisitions_dfd' => Dfd::list_acquisitions(),
                 'status' => PriceRecord::list_status(),
                 'status_process' => Process::list_status(),
-                'status_dfds' => Dfd::list_status()
+                'status_dfds' => Dfd::list_status(),
+                'programs' => $programs,
+                'dotations' => $dotations,
             ], 200);
         }
 

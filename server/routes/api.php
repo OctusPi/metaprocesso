@@ -321,6 +321,7 @@ Route::controller(PriceRecords::class)->group(function () {
             Route::get('/export/{id}', 'export');
             Route::get('/selects/{key?}/{search?}', 'selects');
             Route::post('/list_processes', 'list_processes');
+            Route::get('/list_dfd_items/{id}', 'list_dfd_items');
         });
     });
 })->name('pricerecords');

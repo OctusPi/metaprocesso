@@ -5,10 +5,13 @@ import Ui from '@/utils/ui'
 import Tabs from '@/utils/tabs'
 import Data from '@/services/data'
 import http from '@/services/http'
+import utils from '@/utils/utils'
+import dates from '@/utils/dates'
 
 import MainNav from '@/components/MainNav.vue'
 import MainHeader from '@/components/MainHeader.vue'
 import TableList from '@/components/TableList.vue'
+import TableListStatus from '@/components/TableListStatus.vue'
 import TabNav from '@/components/TabNav.vue'
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue'
 import TableListSelectRadio from '@/components/TableListSelectRadio.vue'
@@ -35,9 +38,14 @@ const page = ref({
         organs: [],
         units: [],
         comissions: [],
+        prioritys_dfd:[],
+        hirings_dfd:[],
+        acquisitions_dfd:[],
         status: [],
         status_process: [],
-        status_dfds: []
+        status_dfds: [],
+        programs:[],
+        dotations:[]
     },
     rules: {
         fields: {
@@ -68,7 +76,11 @@ const page = ref({
             { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
             { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
         ],
-        dfds_headers: [
+    },
+    dfd: {
+        data: null,
+        items: [],
+        headers: [
             { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
             { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
@@ -76,7 +88,7 @@ const page = ref({
             { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
             { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
         ],
-        items_dfds_headers: [
+        items_headers: [
             {
                 obj: 'item',
                 key: 'code',
@@ -111,12 +123,17 @@ const navtab = new Tabs(tabs)
 function search_process() {
     http.post('/pricerecords/list_processes', page.value.process.search, emit, (resp) => {
         page.value.process.data = resp.data ?? []
-        console.log(resp.data)
     })
 }
 
 function dfd_details(id) {
-    console.log(id)
+    if (page.value.data.process.dfds) {
+        page.value.dfd.data = (page.value.data.process.dfds).find(obj => obj.id === id)
+        http.get(`${page.value.baseURL}/list_dfd_items/${id}`, emit, (resp) => {
+            page.value.dfd.items = resp.data
+        })
+        console.log(page.value.dfd)
+    }
 }
 
 watch(
@@ -136,21 +153,233 @@ onMounted(() => {
 <template>
     <div class="modal fade" id="modalDetails" tabindex="-1" aria-labelledby="modalDetailsLabel" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="modalDetailsLabel">Modal title</h1>
+            <div class="modal-content p-4" v-if="page.dfd.data">
+                <div class="modal-header border-0">
+                    <h1 class="modal-title fs-6 p-0 m-0" id="modalDetailsLabel">DFD: {{ page.dfd.data.protocol }}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    ...
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                <div class="modal-body border-0">
+                    <!-- origin -->
+                    <div class="box-revisor mb-4">
+                        <div class="box-revisor-title d-flex mb-4">
+                            <div class="bar-revisor-title me-2"></div>
+                            <div class="txt-revisor-title">
+                                <h3>Origem da Demanda</h3>
+                                <p>
+                                    Dados referentes a origem e responsabilidade pela
+                                    Demanda
+                                </p>
+                            </div>
+                        </div>
+                        <div class="box-revisor-content">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h4>Orgão</h4>
+                                    <p>
+                                        {{page.dfd.data.organ.name}}
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4>Unidade</h4>
+                                    <p>
+                                        {{page.dfd.data.unit.name}}
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4>Ordenador de Despesas</h4>
+                                    <p>
+                                        {{page.dfd.data.ordinator.name}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h4>Demadantes</h4>
+                                    <p>
+                                        {{page.dfd.data.demandant.name}}
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4>Comissão / Equipe de Planejamento</h4>
+                                    <p>
+                                        {{page.dfd.data.comission.name}}
+                                    </p>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <h4>Integrantes da Comissão</h4>
+                                    <span class="p-0 m-0 small" v-for="m in page.dfd.data.comission_members" :key="m.id">
+                                        {{ `${utils.getTxt(page.selects.responsibilitys, m.responsibility)}
+                                        : ${m.name}; ` }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Infos -->
+                    <div class="box-revisor mb-4">
+                        <div class="box-revisor-title d-flex mb-4">
+                            <div class="bar-revisor-title me-2"></div>
+                            <div class="txt-revisor-title">
+                                <h3>Informações Gerais</h3>
+                                <p>
+                                    Dados de prioridade, previsão de contratação e
+                                    detalhamento de Objeto
+                                </p>
+                            </div>
+                        </div>
+                        <div class="box-revisor-content">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h4>Data Envio</h4>
+                                    <p>{{ page.dfd.data.date_ini }}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4>Previsão Contratação</h4>
+                                    <p>
+                                        {{
+                                            dates.getMonthYear(page.dfd.data.estimated_date)
+                                        }}
+                                    </p>
+                                </div>
+                                <div class="col-md-2">
+                                    <h4>Ano PCA</h4>
+                                    <p>{{ page.dfd.data.year_pca ?? '*****' }}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <h4>Prioridade</h4>
+                                    <p>
+                                        <TableListStatus :data="utils.getTxt(
+                                            page.selects.prioritys_dfd,
+                                            page.dfd.data.priority
+                                        )" />
+                                    </p>
+                                </div>
+                                <div class="col-md-2">
+                                    <h4>Valor Estimado</h4>
+                                    <p>R${{ page.dfd.data.estimated_value ?? '*****' }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h4>Tipo de Aquisição</h4>
+                                    <p>
+                                        {{
+                                            utils.getTxt(
+                                                page.selects.acquisitions_dfd,
+                                                page.dfd.data.acquisition_type
+                                            )
+                                        }}
+                                    </p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4>Forma Sugerida</h4>
+                                    <p>
+                                        {{
+                                            utils.getTxt(
+                                                page.selects.hirings_dfd,
+                                                page.dfd.data.suggested_hiring
+                                            )
+                                        }}
+                                    </p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4>Vinculo ou Dependência</h4>
+                                    <p class="txt-very-small p-0 m-0">
+                                        Dependência com o
+                                        objeto de outro documento de formalização de
+                                        demanda
+                                    </p>
+                                    <p>
+                                        {{
+                                            page.dfd.data.bonds ? 'Sim Possui' : 'Não Possui'
+                                        }}
+                                    </p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4>Registro de Preço</h4>
+                                    <p class="txt-very-small p-0 m-0">
+                                        Indique se a demanda se trata de registro de preços.
+                                    </p>
+                                    <p>
+                                        {{
+                                            page.dfd.data.price_taking ? 'Sim' : 'Não'
+                                        }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Descrição sucinta do Objeto</h4>
+                                    <p>{{ page.dfd.data.description ?? '*****' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Items -->
+                    <div class="box-revisor mb-4">
+                        <div class="box-revisor-title d-flex mb-4">
+                            <div class="bar-revisor-title me-2"></div>
+                            <div class="txt-revisor-title">
+                                <h3>Lista de Itens</h3>
+                                <p>
+                                    Lista de materiais ou serviços vinculados a Demanda
+                                </p>
+                            </div>
+                        </div>
+                        <div class="box-revisor-content">
+                            <!-- list items -->
+                            <div v-if="page.dfd?.items">
+                                <TableList :smaller="true" :count="false" :header="page.dfd.items_headers"
+                                    :body="page.dfd?.items" :casts="{
+                                        type: [
+                                            { id: 1, title: 'Material' },
+                                            { id: 2, title: 'Serviço' }
+                                        ],
+                                        program: page.selects.programs,
+                                        dotation: page.selects.dotations
+                                    }" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- details -->
+                    <div class="box-revisor mb-4">
+                        <div class="box-revisor-title d-flex mb-4">
+                            <div class="bar-revisor-title me-2"></div>
+                            <div class="txt-revisor-title">
+                                <h3>Detalhamento da Necessidade</h3>
+                                <p>
+                                    Justificativas para necessidade e quantitativo de
+                                    itens demandados
+                                </p>
+                            </div>
+                        </div>
+                        <div class="box-revisor-content">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Justificativa da necessidade da contratação</h4>
+                                    <p>{{ page.dfd.data.justification ?? '*****' }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Justificativa dos quantitativos demandados</h4>
+                                    <p>
+                                        {{
+                                            page.dfd.data.justification_quantity ?? '*****'
+                                        }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
     <main class="container-primary">
         <MainNav />
 
@@ -256,10 +485,10 @@ onMounted(() => {
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('process') }"
                                 id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
 
-                                <div v-if="page.data.process" class="mb-3">
+                                <div v-if="page.data.process" class="mb-4 form-neg-box">
                                     <TableList :header="page.process.headers" :body="[page.data.process]"
-                                        :casts="{ 'status': page.selects.status_process }" :smaller="true" :count="false"
-                                        :order="false" />
+                                        :casts="{ 'status': page.selects.status_process }"
+                                        :count="false" :order="false" />
                                 </div>
 
                                 <div class="accordion mb-3" id="accordionSearchProcess">
@@ -397,10 +626,10 @@ onMounted(() => {
 
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('dfds') }"
                                 id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
-                                <div v-if="page.data.process">
-                                    <TableList :header="page.process.dfds_headers" :body="page.data.process.dfds"
+                                <div v-if="page.data.process" class="form-neg-box">
+                                    <TableList :header="page.dfd.headers" :body="page.data.process.dfds"
                                         :casts="{ status: page.selects.status_dfds }" :actions="['modaldetails']"
-                                        :smaller="true" @action:modaldetails="dfd_details" />
+                                        @action:modaldetails="dfd_details" />
                                 </div>
                                 <div v-else>
                                     <h2 class="txt-color text-center m-0">

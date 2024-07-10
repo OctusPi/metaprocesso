@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('initial_value')->nullable();
             $table->string('winner_value')->nullable();
             $table->json('dfds');
+            $table->index('date_hour_ini');
         });
     }
 
