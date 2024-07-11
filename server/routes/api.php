@@ -215,6 +215,7 @@ Route::controller(Catalogs::class)->group(function () {
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
             Route::get('/selects/{key?}/{search?}', 'selects');
+            Route::get('/export/{id}', 'export');
         });
     });
 })->name('catalogs');

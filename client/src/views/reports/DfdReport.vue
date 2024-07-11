@@ -201,7 +201,7 @@ const items = ref({
                 Lista de materiais ou serviços vinculados a Demanda
             </p>
         </div>
-        <div v-if="dfd?.items">
+        <div v-if="dfd?.items.length > 0">
             <TableListReport :smaller="true" :count="false" :header="items.headers_list" :body="dfd?.items" :casts="{
                 program: selects.programs ?? [],
                 dotation: selects.dotations ?? []

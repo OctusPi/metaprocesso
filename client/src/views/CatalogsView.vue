@@ -1,12 +1,16 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { createApp, onMounted, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import Data from '@/services/data';
+import http from '@/services/http';
 import Ui from '@/utils/ui';
+import exp from '@/services/export';
+
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import CatalogsNav from '@/components/CatalogsNav.vue';
-import { useRouter } from 'vue-router';
-import Data from '@/services/data';
+import CatalogReport from '@/views/reports/CatalogReport.vue';
 
 const router = useRouter()
 const emit = defineEmits(['callAlert', 'callRemove'])
@@ -18,13 +22,15 @@ const page = ref({
     data: {},
     datalist: props.datalist,
     dataheader: [
+        { obj: 'comission', key: 'name', title: 'ORIGEM', sub: [{ obj: 'comission', key: 'name' }] },
         { key: 'name', title: 'CATÁLOGO' },
         { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
     ],
     search: {},
     selects: {
         organs: [],
-        comissions: []
+        comissions: [],
+        items_status: [],
     },
     rules: {
         fields: {
@@ -38,6 +44,16 @@ const page = ref({
 
 const ui = new Ui(page, 'Catálogos')
 const data = new Data(page, emit, ui)
+
+function export_catalog(id) {
+    http.get(`${page.value.baseURL}/export/${id}`, emit, (resp) => {
+        const containerReport = document.createElement('div')
+        const instanceReport = createApp(CatalogReport, { catalog: resp.data, selects: page.value.selects })
+        instanceReport.mount(containerReport)
+        exp.exportPDF(containerReport, `CATÁLOGO-${resp.data.protocol}`)
+    })
+
+}
 
 function selectCatalog(id) {
     router.replace({ name: 'catalogitems', params: { catalog: id } })
@@ -129,7 +145,8 @@ onMounted(() => {
 
                     <!-- DATA LIST -->
                     <TableList @action:update="data.update" @action:delete="data.remove" @action:items="selectCatalog"
-                        :header="page.dataheader" :body="page.datalist" :actions="['items', 'update', 'delete']" />
+                        @action:pdf="export_catalog" :header="page.dataheader" :body="page.datalist"
+                        :actions="['items', 'update', 'delete', 'export_pdf']" />
                 </div>
 
                 <!--BOX REGISTER-->

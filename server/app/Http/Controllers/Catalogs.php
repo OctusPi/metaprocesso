@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CatalogItem;
 use App\Models\User;
+use App\Utils\Notify;
 use App\Utils\Utils;
 use App\Models\Organ;
 use App\Models\Catalog;
@@ -24,6 +26,22 @@ class Catalogs extends Controller
         return $this->baseList(['organ', 'comission', 'name'], ['name'], ['organ', 'comission']);
     }
 
+    public function export(Request $request)
+    {
+        $instance = Catalog::where('id', $request->id)->with([
+            'organ',
+            'comission'
+        ])->first()->toArray();
+
+        $instance['items'] = CatalogItem::where('catalog', $request->id)->get();
+
+        if (!$instance) {
+            return Response()->json(Notify::warning('instance não localizado...'), 404);
+        }
+
+        return Response()->json($instance, 200);
+    }
+
     public function selects(Request $request)
     {
         $comissions = $request->key ? Utils::map_select(Data::list(Comission::class, [
@@ -38,6 +56,7 @@ class Catalogs extends Controller
         return Response()->json([
             'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
             'comissions' => $comissions,
+            'items_status' => CatalogItem::list_status(),
         ], 200);
     }
 }
