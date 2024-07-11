@@ -45,7 +45,8 @@ const page = ref({
         status_process: [],
         status_dfds: [],
         programs:[],
-        dotations:[]
+        dotations:[],
+        responsibilitys: []
     },
     rules: {
         fields: {

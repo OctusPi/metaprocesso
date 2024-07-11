@@ -61,7 +61,7 @@ const props = defineProps({
 }
 
 .nav-label {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--color-shadow-2);
 }

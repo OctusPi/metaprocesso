@@ -8,12 +8,20 @@ const props = defineProps({
 	options: { type: Array, required: true },
 	identify: { type: String, required: true },
 	idkey: { type: [Object, String], default: () => null },
-	valid: { type: Boolean, default: false }
+	valid: { type: Boolean, default: false },
+	label: {type: String, default: () => 'title'}
 });
 
 const model = defineModel({ default: [] })
-
 const valid = ref(props.valid)
+
+function show_selected(){
+	if(model.value.length > 0){
+		return `${(model.value.length).toString().padStart(2, '0')} Itens Selecionados`
+	}
+
+	return 'Selecionar Itens'
+}
 
 watch(() => props.valid, (newVal) => {
 	valid.value = newVal
@@ -28,9 +36,9 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="position-relative">
-		<div :class="{ 'form-control-alert': valid }" @click="show_items = !show_items" class="form-control d-flex justify-content-between btn-drop">
-			<span>Selecionar Itens</span>
+	<div class="position-relative" @mouseover="show_items = true" @mouseleave="show_items = false">
+		<div :class="{ 'form-control-alert': valid }" class="form-control d-flex justify-content-between btn-drop">
+			<span>{{ show_selected() }}</span>
 			<i class="bi" :class="show_items ? 'bi-caret-up-fill' : 'bi-caret-down-fill'"></i>
 		</div>
 		<div v-show="show_items" class="w-100 position-absolute div-drop">
@@ -52,6 +60,8 @@ onMounted(() => {
 .btn-drop {
 	user-select: none;
 	cursor: pointer;
+	overflow: hidden;
+	font-size: 0.7rem !important;
 }
 
 .div-drop {
@@ -61,6 +71,8 @@ onMounted(() => {
 	padding: 10px 14px;
 	color: var(--color-text);
 	font-weight: 500;
+	max-height: 220px;
+	overflow: auto;
 	z-index: 2000;
 }
 

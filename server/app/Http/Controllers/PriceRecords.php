@@ -101,6 +101,7 @@ class PriceRecords extends Controller
                 'status_dfds' => Dfd::list_status(),
                 'programs' => $programs,
                 'dotations' => $dotations,
+                'responsibilitys' => ComissionMember::list_responsabilities()
             ], 200);
         }
 

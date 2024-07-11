@@ -56,3 +56,11 @@
 .dp__active_date{
     background-color: var(--color-base) !important;
 }
+
+.dp__time_display{
+    color: var(--color-text) !important;
+}
+
+.dp__time_display:hover{
+    background-color: var(--color-base-translucid) !important;
+}

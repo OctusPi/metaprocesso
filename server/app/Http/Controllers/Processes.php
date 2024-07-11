@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comission;
+use App\Models\ComissionMember;
 use App\Models\Dfd;
 use App\Models\DfdItem;
+use App\Models\Dotation;
 use App\Models\Ordinator;
 use App\Models\Organ;
 use App\Models\Process;
+use App\Models\Program;
 use App\Models\Unit;
 use App\Models\User;
 use App\Security\Guardian;
@@ -28,12 +31,11 @@ class Processes extends Controller
     public function save(Request $request)
     {
         $comission = Comission::find($request->comission);
-        \Log::info($comission->comissionmembers);
         if (empty($comission->comissionmembers)) {
             return Response()->json(Notify::warning("A comissão não possui nenhum membro!"), 403);
         }
 
-        $premodel = new Process();
+        $premodel = new Process($request->all());
         $premodel->ip = $request->ip();
         $premodel->author = $this->user_loged->id;
         $premodel->comission_members = $comission->comissionmembers;
@@ -41,7 +43,7 @@ class Processes extends Controller
         $premodel->dfds = $request->dfds;
         $premodel->ordinators = collect($premodel->dfds)->pluck('ordinator');
 
-        return $this->baseSave(Process::class, array_merge($request->all(), $premodel->toArray()));
+        return $this->baseSave(Process::class, $premodel->toArray());
     }
 
     public function list(Request $request)
@@ -102,37 +104,66 @@ class Processes extends Controller
 
     public function selects(Request $request)
     {
-        $units = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
-            [
-                'column' => $request->key,
-                'operator' => '=',
-                'value' => $request->search,
-                'mode' => 'AND'
-            ]
-        ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+        $units      = [];
+        $comissions = [];
+        $ordinators = [];
+        $programs   = [];
+        $dotations  = [];
 
-        $comissions = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Comission::class, [
-            [
-                'column' => $request->key,
-                'operator' => '=',
-                'value' => $request->search,
-                'mode' => 'AND'
-            ]
-        ], ['name'])) : Utils::map_select(Data::list(Comission::class));
+        if ($request->key){
 
-        $ordinators = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Ordinator::class, [
-            [
-                'column' => $request->key,
-                'operator' => '=',
-                'value' => $request->search,
-                'mode' => 'AND'
-            ]
-        ], ['name'])) : Utils::map_select(Data::list(Ordinator::class));
+            $units = Utils::map_select(Data::list(Unit::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name']));
+
+            $comissions = Utils::map_select(Data::list(Comission::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name']));
+
+            $ordinators = Utils::map_select(Data::list(Ordinator::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name']));
+
+            $programs = Utils::map_select(Data::list(Program::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name']));
+
+            $dotations = Utils::map_select(Data::list(Dotation::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name']));
+        }
 
         return Response()->json([
             'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
             'comissions' => $comissions,
             'ordinators' => $ordinators,
+            'programs' => $programs,
+            'dotations' => $dotations,
             'units' => $units,
             'types' => Process::list_types(),
             'status' => Process::list_status(),
@@ -141,13 +172,14 @@ class Processes extends Controller
             'hirings_dfd' => Dfd::list_hirings(),
             'acquisitions_dfd' => Dfd::list_acquisitions(),
             'modalities' => Process::list_modalitys(),
+            'responsibilitys' => ComissionMember::list_responsabilities()
         ], 200);
     }
 
     private function verifySituation(Process $process, int $status, string $action): ?JsonResponse
     {
         if ($process->status >= $status) {
-            return Response()->json(Notify::warning('Não é possível ' . $action . ' registro!'), 403);
+            return Response()->json(Notify::warning("Não é possível $action registro!"), 403);
         }
 
         return null;
