@@ -57,6 +57,8 @@ class Catalogs extends Controller
             'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
             'comissions' => $comissions,
             'items_status' => CatalogItem::list_status(),
+            'items_categories' => CatalogItem::list_categories(),
+            'items_origins' => CatalogItem::list_origins(),
         ], 200);
     }
 }

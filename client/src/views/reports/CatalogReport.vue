@@ -15,7 +15,8 @@ const items = ref({
     headers_list: [
         { key: 'code', title: 'COD.', sub: [{ key: 'origin', cast: 'title' }] },
         { key: 'name', title: 'ITEM', sub: [{ key: 'category', cast: 'title' }] },
-        { key: 'und', title: 'UND.', sub: [{ key: 'volume' }] },
+        { key: 'und', title: 'UND.' },
+        { key: 'volume', title: 'VOLUME' },
         { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] },
         { key: 'status', cast: 'title', title: 'STATUS' }
     ]
@@ -76,9 +77,12 @@ const items = ref({
         </div>
 
         <div v-if="catalog?.items.length > 0">
-            <TableListReport :smaller="true" :count="false" :header="items.headers_list" :body="catalog?.items" :casts="{
-                status: selects.items_status ?? [],
-            }" />
+            <TableListReport :detach-status="false" :smaller="true" :count="false" :header="items.headers_list"
+                :body="catalog?.items" :casts="{
+                    status: selects.items_status ?? [],
+                    origin: selects.items_origins ?? [],
+                    category: selects.items_categories ?? [],
+                }" />
         </div>
         <div v-else class="small mb-4">
             <p>Demanda não possuí materiais ou serviços</p>
@@ -90,7 +94,6 @@ const items = ref({
 </template>
 
 <style scoped>
-
 * {
     color: black !important;
     margin: 0;
