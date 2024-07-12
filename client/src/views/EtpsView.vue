@@ -13,7 +13,9 @@ import AttachmentsList from '@/components/AttachmentsList.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
 import InputRichText from '@/components/inputs/InputRichText.vue';
-import TableListSelect from '@/components/TableListSelect.vue';
+import TableListSelectRadio from '@/components/TableListSelectRadio.vue';
+import TableListStatus from '@/components/TableListStatus.vue';
+import dates from '@/utils/dates';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -33,13 +35,21 @@ const page = ref({
     search: {},
     selects: {
         organs: [],
-        status: [],
-        dfds_status: [],
         units: [],
+        comissions: [],
+        prioritys_dfd: [],
+        hirings_dfd: [],
+        acquisitions_dfd: [],
+        status: [],
+        status_process: [],
+        status_dfds: [],
+        programs: [],
+        dotations: [],
+        responsibilitys: []
     },
     rules: {
         fields: {
-            dfds: 'required',
+            process: 'required',
             organ: 'required',
             comission: 'required',
             protocol: 'required',
@@ -64,28 +74,58 @@ const page = ref({
         },
         valids: {}
     },
-    dfds: {
-        search: [],
-        datalist: [],
+    process: {
+        search: {},
+        data: [],
+        headers: [
+            { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { obj: 'ordinators', key: 'name', title: 'ORDENADORES' },
+            { obj: 'units', key: 'title', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
+            { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
+            { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
+        ],
+    },
+    dfd: {
+        data: null,
+        items: [],
         headers: [
             { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
             { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
-            { obj: 'comission', key: 'name', title: 'ORIGEM', sub: [{ obj: 'unit', key: 'name' }] },
+            { obj: 'unit', key: 'name', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
             { title: 'OBJETO', sub: [{ key: 'description', utils: ['truncate'] }] },
             { key: 'status', cast: 'title', title: 'SITUAÇÃO' }
         ],
+        items_headers: [
+            {
+                obj: 'item',
+                key: 'code',
+                title: 'COD',
+                sub: [{ obj: 'item', cast: 'title', key: 'type' }]
+            },
+            { obj: 'item', key: 'name', title: 'ITEM' },
+            { obj: 'item', key: 'description', title: 'DESCRIÇÃO' },
+            { obj: 'item', key: 'und', title: 'UDN', sub: [{ obj: 'item', key: 'volume' }] },
+            {
+                key: 'program',
+                cast: 'title',
+                title: 'VINC.',
+                sub: [{ key: 'dotation', cast: 'title' }]
+            },
+            { key: 'quantity', title: 'QUANT.' }
+        ]
     }
 })
 
-function listDfds() {
-    http.post('/etps/list_dfds', page.value.dfds.search, emit, (resp) => {
-        page.value.dfds.datalist = resp.data ?? []
+function list_processes() {
+    http.post('/etps/list_processes', page.value.process.search, emit, (resp) => {
+        page.value.process.data = resp.data ?? []
     })
 }
 
 const tabs = ref([
     { id: 'info', icon: 'bi-chat-square-dots', title: 'Infos', status: true },
+    { id: 'process', icon: 'bi-journal-album', title: 'Processo', status: false },
     { id: 'dfds', icon: 'bi-journal-album', title: 'DFDs', status: false },
     { id: 'necessidade', icon: 'bi-question-circle', title: 'Necessidade', status: false },
     { id: 'solucao', icon: 'bi-card-checklist', title: 'Solução', status: false },
@@ -178,6 +218,21 @@ const attachmentTypes = [
     { id: 0, title: 'Memória de Cálculo' },
     { id: 1, title: 'Levantamento de Mercado' },
 ]
+
+function save_etp() {
+    page.value.data.process = page.value.data.process.id
+    data.save()
+}
+
+function dfd_details(id) {
+    if (page.value.data.process.dfds) {
+        page.value.dfd.data = (page.value.data.process.dfds).find(obj => obj.id === id)
+        http.get(`${page.value.baseURL}/list_dfd_items/${id}`, emit, (resp) => {
+            page.value.dfd.items = resp.data
+        })
+        console.log(page.value.dfd)
+    }
+}
 
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
@@ -291,7 +346,7 @@ onMounted(() => {
 
                 <!--BOX REGISTER-->
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
-                    <form class="form-row" @submit.prevent="data.save()">
+                    <form class="form-row" @submit.prevent="save_etp">
                         <input type="hidden" name="id" v-model="page.data.id">
 
                         <TabNav :tab-instance="tabSwitch" identify="etps-nav" />
@@ -386,121 +441,105 @@ onMounted(() => {
                                 </div>
                             </div>
 
-                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
-                                id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
-                                <div>
-                                    <div v-if="page.data.dfds?.length > 0" class="mb-4 form-neg-box">
-                                        <TableListSelect :count="false" identify="dfds-list"
-                                            :casts="{ 'status': page.selects.dfds_status }" :header="page.dfds.headers"
-                                            :body="page.data.dfds" v-model="page.data.dfds" />
-                                    </div>
-                                    <div class="accordion" id="accordion-dfds">
-                                        <div class="accordion-item">
-                                            <h2 class="accordion-header" id="accordion-dfds-header">
-                                                <button class="w-100 text-center px-2 py-3" type="button"
-                                                    :data-bs-toggle="[page.data.organ && 'collapse']"
-                                                    data-bs-target="#accordion-dfds-collapse" aria-expanded="false"
-                                                    aria-controls="accordion-dfds-collapse">
-                                                    <h2 class="txt-color text-center m-0">
-                                                        <i class="bi bi-journal-album me-1"></i>
-                                                        Localizar DFDs
-                                                    </h2>
-                                                    <p class="validation txt-color-sec small text-center m-0"
-                                                        :class="{ 'text-danger': page.rules.valids.dfds || !page.data.organ }">
-                                                        {{
-                                                            page.data.organ
-                                                                ? "Preencha os campos abaixo para localizar as DFDs"
-                                                                : "É necessário selecionar um órgão para continuar"
-                                                        }}
-                                                    </p>
-                                                </button>
-                                            </h2>
-                                            <div id="accordion-dfds-collapse" class="accordion-collapse collapse"
-                                                aria-labelledby="accordion-dfds-header"
-                                                data-bs-parent="#accordion-dfds">
-                                                <div class="accordion-body p-0">
-                                                    <div class="p-4">
-                                                        <div class="row g-3">
-                                                            <div class="col-sm-12 col-md-4">
-                                                                <label for="date_s_ini" class="form-label">Data
-                                                                    Inicial</label>
-                                                                <VueDatePicker auto-apply
-                                                                    v-model="page.dfds.search.date_i"
-                                                                    :enable-time-picker="false" format="dd/MM/yyyy"
-                                                                    model-type="yyyy-MM-dd"
-                                                                    input-class-name="dp-custom-input-dtpk"
-                                                                    locale="pt-br"
-                                                                    calendar-class-name="dp-custom-calendar"
-                                                                    calendar-cell-class-name="dp-custom-cell"
-                                                                    menu-class-name="dp-custom-menu" />
-                                                            </div>
-                                                            <div class="col-sm-12 col-md-4">
-                                                                <label for="date_s_fin" class="form-label">Data
-                                                                    Final</label>
-                                                                <VueDatePicker auto-apply
-                                                                    v-model="page.dfds.search.date_f"
-                                                                    :enable-time-picker="false" format="dd/MM/yyyy"
-                                                                    model-type="yyyy-MM-dd"
-                                                                    input-class-name="dp-custom-input-dtpk"
-                                                                    locale="pt-br"
-                                                                    calendar-class-name="dp-custom-calendar"
-                                                                    calendar-cell-class-name="dp-custom-cell"
-                                                                    menu-class-name="dp-custom-menu" />
-                                                            </div>
-                                                            <div class="col-sm-12 col-md-4">
-                                                                <label for="s-protocol"
-                                                                    class="form-label">Protocolo</label>
-                                                                <input type="text" name="protocol" class="form-control"
-                                                                    id="s-protocol" v-model="page.dfds.search.protocol"
-                                                                    placeholder="Número do Protocolo" />
-                                                            </div>
-                                                            <div v-if="!props.hasUnits" class="col-sm-12 col-md-4">
-                                                                <label for="s-unit" class="form-label">Unidade</label>
-                                                                <select name="unit" class="form-control" id="s-unit"
-                                                                    v-model="page.dfds.search.unit">
-                                                                    <option value=""></option>
-                                                                    <option v-for="o in page.selects.units"
-                                                                        :key="o.id" :value="o.id">
-                                                                        {{ o.title }}
-                                                                    </option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-sm-12 col-md-8">
-                                                                <label for="s-description"
-                                                                    class="form-label">Descrição do objeto</label>
-                                                                <input type="text" name="description"
-                                                                    class="form-control" id="s-description"
-                                                                    v-model="page.dfds.search.description"
-                                                                    placeholder="Pesquise por partes do Objeto do DFD" />
-                                                            </div>
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('process') }"
+                                id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
 
-                                                            <div class="d-flex flex-row mt-4">
-                                                                <button @click="listDfds"
-                                                                    type="button" class="btn btn-primary">
-                                                                    <i class="bi bi-search"></i>
-                                                                    Localizar DFDs
-                                                                </button>
-                                                            </div>
-                                                        </div>
+                                <div v-if="page.data.process" class="mb-4 form-neg-box">
+                                    <TableList :header="page.process.headers" :body="[page.data.process]"
+                                        :casts="{ 'status': page.selects.status_process }" :count="false"
+                                        :order="false" />
+                                </div>
+
+                                <div class="accordion mb-3" id="accordionSearchProcess">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="accordionSearchProcessHeadId">
+                                            <button class="w-100 text-center px-2 py-3" type="button"
+                                                :data-bs-toggle="[(page.data.organ && page.data.comission) && 'collapse']"
+                                                data-bs-target="#accordionSearchColapseId" aria-expanded="true"
+                                                aria-controls="accordionSearchColapseId">
+                                                <h2 class="txt-color text-center m-0">
+                                                    <i class="bi bi-journal-bookmark me-1"></i>
+                                                    Localizar Processo
+                                                </h2>
+                                                <p class="validation txt-color-sec small text-center m-0" :class="{
+                                                    'text-danger': page.rules.valids.process || !(page.data.organ && page.data.comission)
+                                                }">
+                                                    {{
+                                                        (page.data.organ && page.data.comission)
+                                                            ? `Aplique os filtros abaixo para localizar os Processos`
+                                                            : `Selecione o órgão e a comissão`
+                                                    }}
+                                                </p>
+                                            </button>
+                                        </h2>
+                                        <div id="accordionSearchColapseId" class="accordion-collapse collapse"
+                                            aria-labelledby="accordionSearchProcessHeadId"
+                                            data-bs-parent="#accordionSearchProcess">
+                                            <div class="accordion-body p-0 m-0">
+                                                <div class="row g-3 p-4">
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                                        <VueDatePicker auto-apply v-model="page.process.search.date_i"
+                                                            :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            model-type="yyyy-MM-dd"
+                                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                                            calendar-class-name="dp-custom-calendar"
+                                                            calendar-cell-class-name="dp-custom-cell"
+                                                            menu-class-name="dp-custom-menu" />
                                                     </div>
-                                                    <div v-if="page.data.organ && page.dfds.datalist.length > 0"
-                                                        class="mt-4">
-                                                        <TableListSelect identify="dfds"
-                                                            :casts="{ 'status': page.selects.dfds_status }"
-                                                            :header="page.dfds.headers" :body="page.dfds.datalist"
-                                                            v-model="page.data.dfds" />
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="date_s_fin" class="form-label">Data Final</label>
+                                                        <VueDatePicker auto-apply v-model="page.process.search.date_f"
+                                                            :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            model-type="yyyy-MM-dd"
+                                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                                            calendar-class-name="dp-custom-calendar"
+                                                            calendar-cell-class-name="dp-custom-cell"
+                                                            menu-class-name="dp-custom-menu" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-protocol" class="form-label">Protocolo</label>
+                                                        <input type="text" name="protocol" class="form-control"
+                                                            id="s-protocol" v-model="page.process.search.protocol"
+                                                            placeholder="Número do Protocolo do Processo" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-12">
+                                                        <label for="s-description" class="form-label">Objeto</label>
+                                                        <input type="text" name="description" class="form-control"
+                                                            id="s-description" v-model="page.process.search.description"
+                                                            placeholder="Pesquise por partes do Objeto do Processo" />
+                                                    </div>
+                                                    <div class="mt-4">
+                                                        <button @click="list_processes" type="button"
+                                                            class="btn btn-primary mx-2">
+                                                            <i class="bi bi-search"></i> Localizar Processos
+                                                        </button>
                                                     </div>
                                                 </div>
+                                                <TableListSelectRadio v-model="page.data.process" identify="process"
+                                                    :header="page.process.headers" :body="page.process.data"
+                                                    :casts="{ status: page.selects.status_process }" />
                                             </div>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
 
-                                    <div class="mt-4" v-if="page.data.organ && page.datalist.length < 1">
-                                        <div class="text-center txt-color-sec">
-                                            <i class="bi bi-boxes fs-4"></i>
-                                            <p class="small">Não foram localizados registros...</p>
-                                        </div>
-                                    </div>
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
+                                id="items-tab-pane" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
+                                <div v-if="page.data.process" class="form-neg-box">
+                                    <TableList :header="page.dfd.headers" :body="page.data.process.dfds"
+                                        :casts="{ status: page.selects.status_dfds }" :actions="['modaldetails']"
+                                        @action:modaldetails="dfd_details" />
+                                </div>
+                                <div v-else>
+                                    <h2 class="txt-color text-center m-0">
+                                        <i class="bi bi-exclamation-triangle me-1"></i>
+                                        Atenção
+                                    </h2>
+                                    <p class="txt-color-sec small text-center m-0">
+                                        É necessário selecionar um processo para visualizar os DFDs
+                                    </p>
                                 </div>
                             </div>
 
@@ -738,6 +777,235 @@ onMounted(() => {
             </div>
         </section>
     </main>
+    <div class="modal fade" id="modalDetails" tabindex="-1" aria-labelledby="modalDetailsLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content p-4" v-if="page.dfd.data">
+                <div class="modal-header border-0">
+                    <h1 class="modal-title fs-6 p-0 m-0" id="modalDetailsLabel">DFD: {{ page.dfd.data.protocol }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body border-0">
+                    <!-- origin -->
+                    <div class="box-revisor mb-4">
+                        <div class="box-revisor-title d-flex mb-4">
+                            <div class="bar-revisor-title me-2"></div>
+                            <div class="txt-revisor-title">
+                                <h3>Origem da Demanda</h3>
+                                <p>
+                                    Dados referentes a origem e responsabilidade pela
+                                    Demanda
+                                </p>
+                            </div>
+                        </div>
+                        <div class="box-revisor-content">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h4>Orgão</h4>
+                                    <p>
+                                        {{ page.dfd.data.organ.name }}
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4>Unidade</h4>
+                                    <p>
+                                        {{ page.dfd.data.unit.name }}
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4>Ordenador de Despesas</h4>
+                                    <p>
+                                        {{ page.dfd.data.ordinator.name }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h4>Demadantes</h4>
+                                    <p>
+                                        {{ page.dfd.data.demandant.name }}
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4>Comissão / Equipe de Planejamento</h4>
+                                    <p>
+                                        {{ page.dfd.data.comission.name }}
+                                    </p>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <h4>Integrantes da Comissão</h4>
+                                    <span class="p-0 m-0 small" v-for="m in page.dfd.data.comission_members"
+                                        :key="m.id">
+                                        {{ `${utils.getTxt(page.selects.responsibilitys, m.responsibility)}
+                                        : ${m.name}; ` }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Infos -->
+                    <div class="box-revisor mb-4">
+                        <div class="box-revisor-title d-flex mb-4">
+                            <div class="bar-revisor-title me-2"></div>
+                            <div class="txt-revisor-title">
+                                <h3>Informações Gerais</h3>
+                                <p>
+                                    Dados de prioridade, previsão de contratação e
+                                    detalhamento de Objeto
+                                </p>
+                            </div>
+                        </div>
+                        <div class="box-revisor-content">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h4>Data Envio</h4>
+                                    <p>{{ page.dfd.data.date_ini }}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4>Previsão Contratação</h4>
+                                    <p>
+                                        {{
+                                            dates.getMonthYear(page.dfd.data.estimated_date)
+                                        }}
+                                    </p>
+                                </div>
+                                <div class="col-md-2">
+                                    <h4>Ano PCA</h4>
+                                    <p>{{ page.dfd.data.year_pca ?? '*****' }}</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <h4>Prioridade</h4>
+                                    <p>
+                                        <TableListStatus :data="utils.getTxt(
+                                            page.selects.prioritys_dfd,
+                                            page.dfd.data.priority
+                                        )" />
+                                    </p>
+                                </div>
+                                <div class="col-md-2">
+                                    <h4>Valor Estimado</h4>
+                                    <p>R${{ page.dfd.data.estimated_value ?? '*****' }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <h4>Tipo de Aquisição</h4>
+                                    <p>
+                                        {{
+                                            utils.getTxt(
+                                                page.selects.acquisitions_dfd,
+                                                page.dfd.data.acquisition_type
+                                            )
+                                        }}
+                                    </p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4>Forma Sugerida</h4>
+                                    <p>
+                                        {{
+                                            utils.getTxt(
+                                                page.selects.hirings_dfd,
+                                                page.dfd.data.suggested_hiring
+                                            )
+                                        }}
+                                    </p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4>Vinculo ou Dependência</h4>
+                                    <p class="txt-very-small p-0 m-0">
+                                        Dependência com o
+                                        objeto de outro documento de formalização de
+                                        demanda
+                                    </p>
+                                    <p>
+                                        {{
+                                            page.dfd.data.bonds ? 'Sim Possui' : 'Não Possui'
+                                        }}
+                                    </p>
+                                </div>
+                                <div class="col-md-3">
+                                    <h4>Registro de Preço</h4>
+                                    <p class="txt-very-small p-0 m-0">
+                                        Indique se a demanda se trata de registro de preços.
+                                    </p>
+                                    <p>
+                                        {{
+                                            page.dfd.data.price_taking ? 'Sim' : 'Não'
+                                        }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Descrição sucinta do Objeto</h4>
+                                    <p>{{ page.dfd.data.description ?? '*****' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Items -->
+                    <div class="box-revisor mb-4">
+                        <div class="box-revisor-title d-flex mb-4">
+                            <div class="bar-revisor-title me-2"></div>
+                            <div class="txt-revisor-title">
+                                <h3>Lista de Itens</h3>
+                                <p>
+                                    Lista de materiais ou serviços vinculados a Demanda
+                                </p>
+                            </div>
+                        </div>
+                        <div class="box-revisor-content">
+                            <!-- list items -->
+                            <div v-if="page.dfd?.items">
+                                <TableList :smaller="true" :count="false" :header="page.dfd.items_headers"
+                                    :body="page.dfd?.items" :casts="{
+                                        type: [
+                                            { id: 1, title: 'Material' },
+                                            { id: 2, title: 'Serviço' }
+                                        ],
+                                        program: page.selects.programs,
+                                        dotation: page.selects.dotations
+                                    }" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- details -->
+                    <div class="box-revisor mb-4">
+                        <div class="box-revisor-title d-flex mb-4">
+                            <div class="bar-revisor-title me-2"></div>
+                            <div class="txt-revisor-title">
+                                <h3>Detalhamento da Necessidade</h3>
+                                <p>
+                                    Justificativas para necessidade e quantitativo de
+                                    itens demandados
+                                </p>
+                            </div>
+                        </div>
+                        <div class="box-revisor-content">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Justificativa da necessidade da contratação</h4>
+                                    <p>{{ page.dfd.data.justification ?? '*****' }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Justificativa dos quantitativos demandados</h4>
+                                    <p>
+                                        {{
+                                            page.dfd.data.justification_quantity ?? '*****'
+                                        }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <style scoped>

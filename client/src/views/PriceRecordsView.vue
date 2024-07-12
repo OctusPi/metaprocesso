@@ -503,7 +503,7 @@ onMounted(() => {
                                                     Localizar Processo
                                                 </h2>
                                                 <p class="validation txt-color-sec small text-center m-0"
-                                                    :class="{ 'text-danger': props.valid }">
+                                                    :class="{ 'text-danger': page.rules.valids.process }">
                                                     Aplique os filtros abaixo para localizar os Processos
                                                 </p>
                                             </button>

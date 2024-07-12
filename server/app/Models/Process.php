@@ -124,6 +124,11 @@ class Process extends Model
         return $this->hasOne(User::class, 'id', 'author');
     }
 
+    public function etp(): BelongsTo
+    {
+        return $this->belongsTo(Etp::class);
+    }
+
     public function pricerecord(): BelongsTo
     {
         return $this->belongsTo(PriceRecord::class);

@@ -81,8 +81,8 @@ class Processes extends Controller
             return Response()->json(Notify::warning('Registro não localizado!'), 404);
         }
 
-        if ($verify = $this->verifySituation($instance, Process::S_ANULADO, 'editar')) {
-            return $verify;
+        if ($instance->status >= Process::S_ANULADO) {
+            return response()->json(Notify::warning("Não é possível editar o registro!"), 403);
         }
 
         return $this->baseUpdate(Process::class, $request->id, $request->all());
@@ -95,8 +95,8 @@ class Processes extends Controller
             return Response()->json(Notify::warning('Registro não localizado!'), 404);
         }
 
-        if ($verify = $this->verifySituation($instance, Process::S_ANULADO, 'excluir')) {
-            return $verify;
+        if ($instance->status >= Process::S_ANULADO) {
+            return response()->json(Notify::warning("Não é possível excluir o registro!"), 403);
         }
 
         return parent::delete($request);
@@ -104,14 +104,13 @@ class Processes extends Controller
 
     public function selects(Request $request)
     {
-        $units      = [];
+        $units = [];
         $comissions = [];
         $ordinators = [];
-        $programs   = [];
-        $dotations  = [];
+        $programs = [];
+        $dotations = [];
 
-        if ($request->key){
-
+        if ($request->key) {
             $units = Utils::map_select(Data::list(Unit::class, [
                 [
                     'column' => $request->key,
@@ -174,14 +173,5 @@ class Processes extends Controller
             'modalities' => Process::list_modalitys(),
             'responsibilitys' => ComissionMember::list_responsabilities()
         ], 200);
-    }
-
-    private function verifySituation(Process $process, int $status, string $action): ?JsonResponse
-    {
-        if ($process->status >= $status) {
-            return Response()->json(Notify::warning("Não é possível $action registro!"), 403);
-        }
-
-        return null;
     }
 }
