@@ -590,6 +590,7 @@ onMounted(() => {
                                                         </button>
                                                     </div>
                                                 </div>
+
                                                 <TableListSelectRadio v-model="page.data.process" identify="process"
                                                     :header="page.process.headers" :body="page.process.data"
                                                     :casts="{ status: page.selects.status_process }" />
@@ -692,7 +693,7 @@ onMounted(() => {
                                         <div id="accordionSearchSuppliersColapseId" class="accordion-collapse collapse"
                                             aria-labelledby="accordionSearchSuppliersHeadId"
                                             data-bs-parent="#accordionSearchSuppliers">
-                                            <div class="accordion-body p-0 m-0">
+                                            <div class="accordion-body p-0 m-0 mb-3">
                                                 <div class="row g-3 p-4">
                                                     
                                                     <div class="col-sm-12">
@@ -710,6 +711,7 @@ onMounted(() => {
                                                         </button>
                                                     </div>
                                                 </div>
+
                                                 <TableListSelect v-model="page.data.suppliers" identify="suppliers"
                                                     :header="page.suppliers.headers" :body="page.suppliers.data"
                                                     :casts="{ modality: page.selects.modalitys_suppliers, size:page.selects.sizes_suppliers }" />
