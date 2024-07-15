@@ -59,20 +59,14 @@ class PriceRecords extends Controller
 
     public function selects(Request $request)
     {
-        if ($request->key == 'comission') {
-            return Response()->json(Data::list(
-                ComissionMember::class,
-                ['comission' => $request->search],
-                ['responsibility']
-            ));
-        }
+        
+        if ($request->key != 'comission') {
+            
+            $units = [];
+            $comissions = [];
+            $programs = [];
+            $dotations = [];
 
-        $units = [];
-        $comissions = [];
-        $programs = [];
-        $dotations = [];
-
-        if ($request->key) {
             $units = $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
                 [
                     'column' => $request->key,
@@ -108,7 +102,6 @@ class PriceRecords extends Controller
                     'mode' => 'AND'
                 ]
             ], ['name']));
-        
 
             return Response()->json([
                 'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
@@ -119,8 +112,6 @@ class PriceRecords extends Controller
                 'acquisitions_dfd' => Dfd::list_acquisitions(),
                 'status' => PriceRecord::list_status(),
                 'status_process' => Process::list_status(),
-                'modalitys_suppliers' => Supplier::list_modalitys(),
-                'sizes_suppliers' => Supplier::list_sizes(),
                 'status_dfds' => Dfd::list_status(),
                 'programs' => $programs,
                 'dotations' => $dotations,
@@ -131,6 +122,6 @@ class PriceRecords extends Controller
         //rescue comission_members
         $comissions_members = Data::list(ComissionMember::class, ['comission' => $request->search], ['responsibility']);
         return Response()->json($comissions_members);
-
+        
     }
 }
