@@ -14,6 +14,7 @@ import TableList from '@/components/TableList.vue'
 import TableListStatus from '@/components/TableListStatus.vue'
 import TabNav from '@/components/TabNav.vue'
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue'
+import TableListSelect from '@/components/TableListSelect.vue'
 import TableListSelectRadio from '@/components/TableListSelectRadio.vue'
 
 const emit = defineEmits(['callAlert', 'callRemove'])
@@ -43,6 +44,8 @@ const page = ref({
         acquisitions_dfd:[],
         status: [],
         status_process: [],
+        modalitys_suppliers: [],
+        sizes_suppliers: [],
         status_dfds: [],
         programs:[],
         dotations:[],
@@ -107,6 +110,15 @@ const page = ref({
             },
             { key: 'quantity', title: 'QUANT.' }
         ]
+    },
+    suppliers:{
+        search:{},
+        headers:[
+            { key: 'name', title: 'FORNECEDOR', sub: [{ key: 'cnpj', title: 'CNPJ: ' }] },
+            { key: 'modality', cast: 'title', title: 'DEFINIÇÃO', sub: [{ key: 'size', cast: 'title' }] },
+            { key: 'email', title: 'CONTATO',sub: [{ key: 'address' }, { key: 'phone', title: ' Telefone: ' }] }
+        ],
+        data:[]
     }
 })
 const tabs = ref([
@@ -125,6 +137,16 @@ function search_process() {
     http.post('/pricerecords/list_processes', page.value.process.search, emit, (resp) => {
         page.value.process.data = resp.data ?? []
     })
+}
+
+function search_supplier(){
+    http.post('/pricerecords/list_suppliers', page.value.suppliers.search, emit, (resp) => {
+        page.value.suppliers.data = resp.data ?? []
+    })
+}
+
+function remove_supplier(id){
+    page.value.data.suppliers = page.value.data.suppliers.filter(obj => obj.id != id);
 }
 
 function dfd_details(id) {
@@ -502,8 +524,7 @@ onMounted(() => {
                                                     <i class="bi bi-journal-bookmark me-1"></i>
                                                     Localizar Processo
                                                 </h2>
-                                                <p class="validation txt-color-sec small text-center m-0"
-                                                    :class="{ 'text-danger': props.valid }">
+                                                <p class="validation txt-color-sec small text-center m-0">
                                                     Aplique os filtros abaixo para localizar os Processos
                                                 </p>
                                             </button>
@@ -564,7 +585,7 @@ onMounted(() => {
                                                     </div>
                                                     <div class="mt-4">
                                                         <button @click="search_process" type="button"
-                                                            class="btn btn-primary mx-2">
+                                                            class="btn btn-primary">
                                                             <i class="bi bi-search"></i> Localizar Processos
                                                         </button>
                                                     </div>
@@ -645,8 +666,57 @@ onMounted(() => {
 
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('suppliers') }"
                                 id="details-tab-pane" role="tabpanel" aria-labelledby="details-tab" tabindex="0">
-                                <p>Adicionar Fornecedores: Localizar por cnpj, nome fantasia, nome social ou atividade
-                                </p>
+                                <div v-if="page.data.suppliers" class="mb-4 form-neg-box">
+                                    <TableList :header="page.suppliers.headers" :body="page.data.suppliers"
+                                        :actions="['fastdelete']"
+                                        :casts="{ modality: page.selects.modalitys_suppliers, size:page.selects.sizes_suppliers }"
+                                        :count="false" :order="false"
+                                        @action:fastdelete="remove_supplier" />
+                                </div>
+
+                                <div class="accordion mb-3" id="accordionSearchSuppliers">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="accordionSearchSuppliersHeadId">
+                                            <button class="w-100 text-center px-2 py-3" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#accordionSearchSuppliersColapseId"
+                                                aria-expanded="true" aria-controls="accordionSearchSuppliersColapseId">
+                                                <h2 class="txt-color text-center m-0">
+                                                    <i class="bi bi-person-vcard me-1"></i>
+                                                    Localizar Fornecedores
+                                                </h2>
+                                                <p class="validation txt-color-sec small text-center m-0">
+                                                    Aplique os filtros abaixo para localizar os Fornecedores
+                                                </p>
+                                            </button>
+                                        </h2>
+                                        <div id="accordionSearchSuppliersColapseId" class="accordion-collapse collapse"
+                                            aria-labelledby="accordionSearchSuppliersHeadId"
+                                            data-bs-parent="#accordionSearchSuppliers">
+                                            <div class="accordion-body p-0 m-0">
+                                                <div class="row g-3 p-4">
+                                                    
+                                                    <div class="col-sm-12">
+                                                        <label for="s-protocol" class="form-label">Dados do Fornecedor</label>
+                                                        <input type="text" name="protocol" class="form-control"
+                                                            id="s-protocol" v-model="page.suppliers.search.data"
+                                                            @keydown.enter.prevent="search_supplier"
+                                                            placeholder="Localizar fornecedor pelo CNPJ, Razão Social ou Nome Fantasia" />
+                                                    </div>
+                                                    
+                                                    <div class="mt-4">
+                                                        <button @click="search_supplier" type="button"
+                                                            class="btn btn-primary">
+                                                            <i class="bi bi-search"></i> Localizar Fornecedores
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <TableListSelect v-model="page.data.suppliers" identify="suppliers"
+                                                    :header="page.suppliers.headers" :body="page.suppliers.data"
+                                                    :casts="{ modality: page.selects.modalitys_suppliers, size:page.selects.sizes_suppliers }" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="tab-pane fade" :class="{ 'show active': navtab.activate_tab('proposals') }"

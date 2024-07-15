@@ -12,10 +12,12 @@ use App\Models\Organ;
 use App\Models\PriceRecord;
 use App\Models\Process;
 use App\Models\Program;
+use App\Models\Supplier;
 use App\Models\Unit;
 use App\Utils\Notify;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
+use Response;
 
 class PriceRecords extends Controller
 {
@@ -31,8 +33,24 @@ class PriceRecords extends Controller
         $betw       = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
     
         
-        $query  = Data::list(Process::class, $search, null, ['organ', 'comission'], $betw, $search_obj);
+        $query  = Data::list(Process::class, $search, ['date_hour_ini'], ['organ', 'comission'], $betw, $search_obj);
         return Response()->json($query, 200);
+    
+    }
+
+    public function list_suppliers(Request $request){
+
+        if(is_null($request->data)){
+            return Response()->json(Notify::warning('Dados de busca não informados...'), 401);
+        }
+
+
+        $suppliers = Supplier::where('cnpj', 'LIKE', "%{$request->data}%")
+        ->orWhere('name', 'LIKE', "%{$request->data}%")
+        ->orWhere('agent', 'LIKE', "%{$request->data}%")
+        ->get();
+        
+        return Response()->json($suppliers ?? []);
     
     }
 
@@ -98,6 +116,8 @@ class PriceRecords extends Controller
                 'acquisitions_dfd' => Dfd::list_acquisitions(),
                 'status' => PriceRecord::list_status(),
                 'status_process' => Process::list_status(),
+                'modalitys_suppliers' => Supplier::list_modalitys(),
+                'sizes_suppliers' => Supplier::list_sizes(),
                 'status_dfds' => Dfd::list_status(),
                 'programs' => $programs,
                 'dotations' => $dotations,
