@@ -90,7 +90,6 @@ class Data
     {
         $query = self::query($model, $params, $order, $with, $between, $objects);
         if(!is_null($query)){
-            Log::info($query->toSql());
             return $query->get();
         }
 
@@ -190,7 +189,7 @@ class Data
         foreach ($params as $param) {
 
             if(is_array($param)){
-                if ($param['mode'] === 'OR') {
+                if (isset($param['mode']) && $param['mode'] === 'OR') {
                     $conditions[] = [
                         'column' => $param['column'] ?? $params[0], 
                         'operator' => $param['operator'] ?? 'LIKE', 
