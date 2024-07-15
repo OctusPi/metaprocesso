@@ -3,8 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comission;
+use App\Models\ComissionMember;
 use App\Models\Dfd;
+use App\Models\DfdItem;
+use App\Models\Dotation;
 use App\Models\Organ;
+use App\Models\PriceRecord;
+use App\Models\Process;
+use App\Models\Program;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Notify;
@@ -39,45 +45,92 @@ class Etps extends Controller
         );
     }
 
-    public function list_dfds(Request $request)
+    public function list_processes(Request $request)
     {
-        if (empty($request->all())) {
+
+        if (empty($request->except('organ', 'comission'))) {
             return Response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
         }
 
-        $search = Utils::map_search(['protocol', 'organ', 'description', 'unit'], $request->all());
-        $betw = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
+        $search = Utils::map_search(['protocol', 'organ', 'comission', 'description'], $request->all());
+        $betw = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
 
-        $query = Data::list(Dfd::class, $search, ['date_ini'], ['unit', 'comission', 'demandant', 'ordinator'], $betw);
+        $query = Data::list(Process::class, $search, null, ['organ', 'comission'], $betw);
         return Response()->json($query, 200);
+    }
+
+    public function list_dfd_items(Request $request)
+    {
+        return Data::list(DfdItem::class, ['dfd' => $request->id], null, ['item']);
     }
 
     public function selects(Request $request)
     {
-        $comissions = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Comission::class, [
-            [
-                'column' => $request->key,
-                'operator' => '=',
-                'value' => $request->search,
-                'mode' => 'AND'
-            ]
-        ], ['name'])) : Utils::map_select(Data::list(Comission::class));
+        if ($request->key == 'comission') {
+            return Response()->json(Data::list(
+                ComissionMember::class,
+                ['comission' => $request->search],
+                ['responsibility']
+            )
+            );
+        }
 
-        $units = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
-            [
-                'column' => $request->key,
-                'operator' => '=',
-                'value' => $request->search,
-                'mode' => 'AND'
-            ]
-        ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+        $units = [];
+        $comissions = [];
+        $programs = [];
+        $dotations = [];
+
+        if ($request->key) {
+            $units = $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+
+            $comissions = Utils::map_select(Data::list(Comission::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name']));
+
+            $programs = Utils::map_select(Data::list(Program::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name']));
+
+            $dotations = Utils::map_select(Data::list(Dotation::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name']));
+        }
 
         return Response()->json([
             'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
             'units' => $units,
-            'status' => Etp::list_status(),
-            'dfds_status' => Dfd::list_status(),
             'comissions' => $comissions,
+            'prioritys_dfd' => Dfd::list_priority(),
+            'hirings_dfd' => Dfd::list_hirings(),
+            'acquisitions_dfd' => Dfd::list_acquisitions(),
+            'status' => PriceRecord::list_status(),
+            'status_process' => Process::list_status(),
+            'status_dfds' => Dfd::list_status(),
+            'programs' => $programs,
+            'dotations' => $dotations,
+            'responsibilitys' => ComissionMember::list_responsabilities()
         ], 200);
     }
 }

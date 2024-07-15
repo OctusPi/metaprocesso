@@ -305,7 +305,8 @@ Route::controller(Etps::class)->group(function () {
             Route::post('/destroy', 'delete');
             Route::get('/details/{id}', 'details');
             Route::get('/selects/{key?}/{search?}', 'selects');
-            Route::post('/list_dfds', 'list_dfds');
+            Route::post('/list_processes', 'list_processes');
+            Route::get('/list_dfd_items/{id}', 'list_dfd_items');
         });
     });
 })->name('etps');

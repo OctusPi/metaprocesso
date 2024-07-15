@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Validation\Rule;
-use App\Casts\Json;
 use App\Utils\Dates;
 
 class Etp extends Model
@@ -21,7 +20,7 @@ class Etp extends Model
         'protocol',
         'emission',
         'status',
-        'dfds',
+        'process',
         'organ',
         'comission',
         'user',
@@ -43,9 +42,10 @@ class Etp extends Model
         'viability_declaration',
     ];
 
-    protected $casts = [
-        'dfds' => Json::class,
-    ];
+    public function process(): HasOne
+    {
+        return $this->hasOne(Process::class, 'id', 'process');
+    }
 
     public function organ(): HasOne
     {
@@ -65,7 +65,7 @@ class Etp extends Model
     public static function validateFields(?int $id = null): array
     {
         return [
-            'dfds' => 'required',
+            'process' => 'required',
             'protocol' => ['required', Rule::unique('etps')->ignore($id)],
             'ip' => 'required',
             'organ' => 'required',

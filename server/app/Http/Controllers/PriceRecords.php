@@ -17,7 +17,6 @@ use App\Models\Unit;
 use App\Utils\Notify;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
-use Response;
 
 class PriceRecords extends Controller
 {
@@ -27,8 +26,8 @@ class PriceRecords extends Controller
         if(empty($request->all())){
             return Response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
         }
-        
-        $search     = Utils::map_search(['protocol', 'organ', 'description'], $request->all());
+
+        $search = Utils::map_search(['protocol', 'organ', 'description'], $request->all());
         $search_obj = Utils::map_search_obj($request->units, 'units', 'id');
         $betw       = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
     
@@ -60,52 +59,56 @@ class PriceRecords extends Controller
 
     public function selects(Request $request)
     {
-        //feed selects form
-        if ($request->key != 'comission') {
-            $units = [];
-            $comissions = [];
-            $programs = [];
-            $dotations = [];
+        if ($request->key == 'comission') {
+            return Response()->json(Data::list(
+                ComissionMember::class,
+                ['comission' => $request->search],
+                ['responsibility']
+            ));
+        }
 
+        $units = [];
+        $comissions = [];
+        $programs = [];
+        $dotations = [];
 
-            if ($request->key) {
-                $units = $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
-                    [
-                        'column' => $request->key,
-                        'operator' => '=',
-                        'value' => $request->search,
-                        'mode' => 'AND'
-                    ]
-                ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+        if ($request->key) {
+            $units = $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name'])) : Utils::map_select(Data::list(Unit::class));
 
-                $comissions = Utils::map_select(Data::list(Comission::class, [
-                    [
-                        'column' => $request->key,
-                        'operator' => '=',
-                        'value' => $request->search,
-                        'mode' => 'AND'
-                    ]
-                ], ['name']));
+            $comissions = Utils::map_select(Data::list(Comission::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name']));
 
-                $programs = Utils::map_select(Data::list(Program::class, [
-                    [
-                        'column' => $request->key,
-                        'operator' => '=',
-                        'value' => $request->search,
-                        'mode' => 'AND'
-                    ]
-                ], ['name']));
+            $programs = Utils::map_select(Data::list(Program::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name']));
 
-                $dotations = Utils::map_select(Data::list(Dotation::class, [
-                    [
-                        'column' => $request->key,
-                        'operator' => '=',
-                        'value' => $request->search,
-                        'mode' => 'AND'
-                    ]
-                ], ['name']));
-
-            }
+            $dotations = Utils::map_select(Data::list(Dotation::class, [
+                [
+                    'column' => $request->key,
+                    'operator' => '=',
+                    'value' => $request->search,
+                    'mode' => 'AND'
+                ]
+            ], ['name']));
+        
 
             return Response()->json([
                 'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),

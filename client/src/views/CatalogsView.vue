@@ -31,6 +31,8 @@ const page = ref({
         organs: [],
         comissions: [],
         items_status: [],
+        items_categories: [],
+        items_origins: [],
     },
     rules: {
         fields: {
@@ -50,7 +52,7 @@ function export_catalog(id) {
         const containerReport = document.createElement('div')
         const instanceReport = createApp(CatalogReport, { catalog: resp.data, selects: page.value.selects })
         instanceReport.mount(containerReport)
-        exp.exportPDF(containerReport, `CATÁLOGO-${resp.data.protocol}`)
+        exp.exportPDF(containerReport, `CATÁLOGO-${resp.data.name}`)
     })
 
 }
