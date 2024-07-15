@@ -34,7 +34,7 @@ function getdata(data, obj, key, cast = null, subject = 'id') {
         <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
     </p>
     <div v-if="body.length" class="table-responsive-sm">
-        <table class="table-borderless table-striped table-hover" :class="props.smaller ? 'table tablesm' : 'table'">
+        <table :class="props.smaller ? 'table tablesm' : 'table'">
             <thead v-if="props.header">
                 <tr>
                     <th scope="col" v-for="h in props.header" :key="h.key">
@@ -73,6 +73,7 @@ th,
 td {
     border: 1px solid black;
     border-collapse: collapse;
+    border-radius: 0;
 }
 
 td {
