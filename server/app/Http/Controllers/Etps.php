@@ -2,37 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comission;
-use App\Models\ComissionMember;
 use App\Models\Dfd;
-use App\Models\DfdItem;
-use App\Models\Dotation;
+use App\Models\Etp;
+use App\Models\Unit;
+use App\Utils\Utils;
 use App\Models\Organ;
-use App\Models\PriceRecord;
+use App\Utils\Notify;
+use App\Models\Common;
+use App\Models\DfdItem;
 use App\Models\Process;
 use App\Models\Program;
-use App\Models\Unit;
-use App\Models\User;
-use App\Utils\Notify;
-use App\Utils\Utils;
 use App\Middleware\Data;
-use App\Models\Etp;
-use App\Security\Guardian;
+use App\Models\Dotation;
+use App\Models\Comission;
+use App\Models\PriceRecord;
 use Illuminate\Http\Request;
+use App\Models\ComissionMember;
 
 class Etps extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Etp::class, User::MOD_ETPS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Etp::class, true, Common::MOD_ETPS['module']);
     }
 
     public function save(Request $request)
     {
         return $this->baseSave(Etp::class, array_merge($request->all(), [
             'ip' => $request->ip(),
-            'user' => $this->user_loged->id
+            'user' => $request->user()->id,
         ]));
     }
 

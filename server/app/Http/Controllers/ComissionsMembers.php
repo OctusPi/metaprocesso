@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comission;
-use App\Models\ComissionMember;
-use App\Models\User;
 use App\Utils\Notify;
+use App\Models\Common;
 use App\Utils\Uploads;
-use App\Security\Guardian;
 use App\Middleware\Data;
+use App\Models\Comission;
 use Illuminate\Http\Request;
+use App\Models\ComissionMember;
 
 class ComissionsMembers extends Controller
 {
     public function __construct()
     {
-        parent::__construct(ComissionMember::class, User::MOD_COMISSIONS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(ComissionMember::class, true, Common::MOD_COMISSIONS['module']);
     }
 
     public function save(Request $request)

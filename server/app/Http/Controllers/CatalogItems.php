@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Middleware\Data;
-use App\Models\CatalogSubCategoryItem;
-use App\Models\User;
-use App\Utils\Notify;
-use App\Models\Catalog;
-use App\Security\Guardian;
-use App\Models\CatalogItem;
 use App\Utils\Utils;
+use App\Utils\Notify;
+use App\Models\Common;
+use App\Models\Catalog;
+use App\Middleware\Data;
+use App\Models\CatalogItem;
 use Illuminate\Http\Request;
+use App\Models\CatalogSubCategoryItem;
 
 class CatalogItems extends Controller
 {
     public function __construct()
     {
-        parent::__construct(CatalogItem::class, User::MOD_CATALOGS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(CatalogItem::class, true, Common::MOD_CATALOGS['module']);
     }
 
     public function save(Request $request)

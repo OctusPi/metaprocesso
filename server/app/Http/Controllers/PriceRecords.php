@@ -2,24 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Middleware\Data;
-use App\Models\Comission;
-use App\Models\ComissionMember;
 use App\Models\Dfd;
-use App\Models\DfdItem;
-use App\Models\Dotation;
+use App\Models\Unit;
+use App\Utils\Utils;
 use App\Models\Organ;
-use App\Models\PriceRecord;
+use App\Utils\Notify;
+use App\Models\Common;
+use App\Models\DfdItem;
 use App\Models\Process;
 use App\Models\Program;
+use App\Middleware\Data;
+use App\Models\Dotation;
 use App\Models\Supplier;
-use App\Models\Unit;
-use App\Utils\Notify;
-use App\Utils\Utils;
+use App\Models\Comission;
+use App\Models\PriceRecord;
 use Illuminate\Http\Request;
+use App\Models\ComissionMember;
 
 class PriceRecords extends Controller
 {
+
+    public function __construct()
+    {
+        parent::__construct(PriceRecord::class, true, Common::MOD_PRICERECORDS['module']);
+    }
     
     public function list_processes(Request $request){
 
@@ -31,7 +37,6 @@ class PriceRecords extends Controller
         $search_obj = Utils::map_search_obj($request->units, 'units', 'id');
         $betw       = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
     
-        
         $query  = Data::list(Process::class, $search, ['date_hour_ini'], ['organ', 'comission'], $betw, $search_obj);
         return Response()->json($query, 200);
     

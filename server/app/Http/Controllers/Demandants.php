@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sector;
 use App\Models\Unit;
-use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Organ;
 use App\Utils\Notify;
+use App\Models\Common;
+use App\Models\Sector;
 use App\Utils\Uploads;
 use App\Middleware\Data;
 use App\Models\Demandant;
-use App\Security\Guardian;
 use Illuminate\Http\Request;
 
 class Demandants extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Demandant::class, User::MOD_DEMANDANTS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Demandant::class, true, Common::MOD_DEMANDANTS['module']);
     }
 
     public function save(Request $request)

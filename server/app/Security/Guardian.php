@@ -1,56 +1,25 @@
 <?php
 
 namespace App\Security;
-use App\Models\User;
+
+use Laravel\Sanctum\PersonalAccessToken;
 
 class Guardian
 {
-    public static function validateAccess(int $module_id = 0): void
-    {
-        if(!self::checkAccessModuleID($module_id)){
-            die();
-        }
-    }
 
-    public static function getToken(): string
+    public static function checkToken(?string $token): bool
     {
-        $authorization = Request()->server('HTTP_AUTHORIZATION');
-        return str_replace('Bearer ', '', $authorization ?? '');
-    }
+        $tokenData = PersonalAccessToken::findToken($token);
 
-    public static function checkToken(): bool
-    {
-        return JWT::validate(self::getToken());
-    }
-
-    public static function checkAccess(string $module_name): bool
-    {
-
-        $user = self::getUser();
-        if (!is_null($user)) {
-            $module_name  = str_replace(['comissionsmembers','comissionsends'], 'comissions', $module_name);
-            $module_name  = str_replace(['catalogitems', 'suppliers', 'catalogsubcategories'], 'catalogs', $module_name);
-            $module_name  = str_replace(['attachments'], 'management', $module_name);
-            $auth_modules = array_column($user->modules, 'module');
-            return in_array(str_replace('api/', '', $module_name), $auth_modules);
+        if (!$tokenData) {
+            return false;
         }
 
-        return false;
-    }
-
-    public static function checkAccessModuleID(int $module_id): bool
-    {
-        $user = self::getUser();
-        if (!is_null($user)) {
-            $auth_modules = array_column($user->modules, 'id');
-            return in_array($module_id, $auth_modules);
+        if ($tokenData->expires_at && now()->greaterThan($tokenData->expires_at)) {
+            return false;
         }
 
-        return false;
-    }
+        return true;
 
-    public static function getUser():?User
-    {
-        return JWT::decoded(self::getToken());
     }
 }

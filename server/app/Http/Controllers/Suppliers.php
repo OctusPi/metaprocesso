@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Common;
 use App\Models\Supplier;
-use App\Models\User;
-use App\Security\Guardian;
 use Illuminate\Http\Request;
 
 class Suppliers extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Supplier::class, User::MOD_CATALOGS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Supplier::class, true, Common::MOD_CATALOGS['module']);
     }
 
     public function list(Request $request)

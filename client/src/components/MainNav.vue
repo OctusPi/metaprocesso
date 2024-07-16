@@ -1,10 +1,10 @@
 <script setup>
-    import { onBeforeMount, ref } from 'vue';
+    // import { onMounted, ref } from 'vue';
     import { useRoute } from 'vue-router';
     import auth from '@/stores/auth';
 
     const router = useRoute()
-    const menu = ref([])
+    const menu = auth.getNavigation()
     const menuitens = {
         'management': {href: '/management', icon:'bi-house-gear', title:'Gestão', description:'Dados Administrativos e Estruturais'},
         'catalogs': {href: '/catalogs', icon:'bi-book-half', title:'Catálogos', description:'Catálogos de Itens GOV'},
@@ -25,9 +25,6 @@
         // 'sanctions': {href: '/sanctions', icon:'bi-x-octagon-fill', title:'Sanções', description:'Processos de Sançao e Penalização'},
     }
 
-    onBeforeMount(() => {
-        menu.value = auth.getNavigation()
-    })
 </script>
 
 <template>
@@ -45,7 +42,7 @@
             </div>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav" v-if="menu != null && Object.keys(menu).length > 0">
                     <li v-for="(i, j) in menuitens" :key="j" class="nav-item"> 
                         <RouterLink v-if="menu.find(m => m.module == j)" :to="i.href" 
                             class="nav-link nav-link-item" :class="{'active-nav' : router.name === i.href.replace('/', '')}">

@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Common;
 use App\Models\DfdItem;
-use App\Models\User;
-use App\Security\Guardian;
 use Illuminate\Http\Request;
 
 class DfdsItems extends Controller
 {
     public function __construct()
     {
-        parent::__construct(DfdItem::class, User::MOD_DFDS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(DfdItem::class, true, Common::MOD_DFDS['module']);
     }
 
     public function list(Request $request)

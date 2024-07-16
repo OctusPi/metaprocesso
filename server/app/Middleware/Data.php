@@ -2,24 +2,25 @@
 
 namespace App\Middleware;
 
-use App\Models\Organ;
+use App\Models\Common;
 use App\Models\Unit;
 use App\Models\User;
-use App\Security\Guardian;
+use App\Models\Organ;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class Data
 {
     public static function query(string $model, array $params = [], ?array $order = null, ?array $with = null, ?array $between = null, ?array $objects = null)
     {
-        $user = Guardian::getUser();
+        $user = Auth::user();
 
         if (!is_null($user)) {
 
-            if ((!is_null($user->organs) && !is_null($user->units)) || $user->profile == User::PRF_ADMIN) {
+            if ((!is_null($user->organs) && !is_null($user->units)) || $user->profile == Common::PRF_ADMIN) {
                 $query = $model::query();
 
-                if ($user->profile != User::PRF_ADMIN) {
+                if ($user->profile != Common::PRF_ADMIN) {
                     $conditionsUser = match ($model) {
                         Organ::class => self::conditionsOrgan($user),
                         Unit::class => self::conditionsUnit($user),
@@ -77,8 +78,6 @@ class Data
                     $query->with($with);
                 }
 
-                Log::info($query->toSql());
-
                 return $query;
             }
         }
@@ -105,7 +104,7 @@ class Data
         return null;
     }
 
-    private static function conditionsOrgan(User $user): array
+    private static function conditionsOrgan($user): array
     {
         $conditions = [];
         $organs = array_keys($user->organs ?? []);
@@ -115,7 +114,7 @@ class Data
         return $conditions;
     }
 
-    private static function conditionsUnit(User $user): array
+    private static function conditionsUnit($user): array
     {
         $conditions = [];
         $organs = array_keys($user->organs ?? []);
@@ -132,12 +131,12 @@ class Data
         return $conditions;
     }
 
-    private static function conditionsUser(User $user): array
+    private static function conditionsUser($user): array
     {
         return [['column' => 'organs', 'operator' => '=', 'value' => json_encode($user->organs)]];
     }
 
-    private static function conditionsGeneric(User $user): array
+    private static function conditionsGeneric($user): array
     {
         $conditions = [];
 

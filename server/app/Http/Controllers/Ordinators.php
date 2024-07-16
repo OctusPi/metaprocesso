@@ -3,22 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Unit;
-use App\Models\User;
-use App\Utils\Notify;
 use App\Utils\Utils;
 use App\Models\Organ;
+use App\Utils\Notify;
+use App\Models\Common;
 use App\Utils\Uploads;
 use App\Middleware\Data;
 use App\Models\Ordinator;
-use App\Security\Guardian;
 use Illuminate\Http\Request;
 
 class Ordinators extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Ordinator::class, User::MOD_ORDINATORS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Ordinator::class, true, Common::MOD_ORDINATORS['module']);
     }
 
     public function save(Request $request)

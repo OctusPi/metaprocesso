@@ -2,23 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CatalogItem;
-use App\Models\User;
-use App\Utils\Notify;
 use App\Utils\Utils;
 use App\Models\Organ;
+use App\Utils\Notify;
+use App\Models\Common;
 use App\Models\Catalog;
 use App\Middleware\Data;
 use App\Models\Comission;
-use App\Security\Guardian;
+use App\Models\CatalogItem;
 use Illuminate\Http\Request;
 
 class Catalogs extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Catalog::class, User::MOD_CATALOGS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Catalog::class, true, Common::MOD_CATALOGS['module']);
     }
 
     public function list()

@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Utils\Utils;
 use App\Utils\Notify;
-use App\Middleware\Data;
-use App\Security\Guardian;
 use GuzzleHttp\Client;
+use App\Middleware\Data;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -19,20 +19,32 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    protected int $module_id;
-    protected ?User $user_loged;
     protected ?string $model;
+    protected bool $secutiry = true;
+    protected ?string $access_check = null;
 
-    public function __construct(?string $model = null, int $module_id = User::MOD_INI)
-    {
-        $this->module_id = $module_id;
-        $this->user_loged = Guardian::getUser();
+    public function __construct(?string $model = null, bool $secutiry = true, ?string $access_check = null){
         $this->model = $model;
+        $this->access_check = $access_check;
+        $this->secutiry = $secutiry;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json('success', 200);
+        if($this->secutiry){
+
+            $user = $request->user();
+
+            if(!$user){
+                return response()->json(Notify::error("Usuário não localizado..."), 401);
+            }
+
+            if($this->access_check == null || !$user->tokenCan($this->access_check)){
+                return response()->json(Notify::error("Acesso não autorizado..."), 403);
+            }
+        }
+
+        return response()->json('success');
     }
 
     public function validateCheck(string $model, ?array $data = [])
@@ -117,9 +129,9 @@ class Controller extends BaseController
 
     public function baseDelete(string $model, ?int $id, string $pass)
     {
-        if (!password_verify($pass, $this->user_loged->getAttribute('password'))) {
-            return Response()->json(Notify::warning('Senha de confirmação inválida!'), 401);
-        }
+        // if (!password_verify($pass, $this->user_loged->getAttribute('password'))) {
+        //     return Response()->json(Notify::warning('Senha de confirmação inválida!'), 401);
+        // }
 
         try {
             $instance = $model::where('id', $id)->first();

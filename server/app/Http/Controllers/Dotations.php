@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Dotation;
 use App\Models\Unit;
-use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Organ;
+use App\Models\Common;
 use App\Middleware\Data;
-use App\Security\Guardian;
+use App\Models\Dotation;
 use Illuminate\Http\Request;
 
 class Dotations extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Dotation::class, User::MOD_DOTATIONS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Dotation::class, true, Common::MOD_DOTATIONS['module']);
     }
 
     public function list(Request $request)

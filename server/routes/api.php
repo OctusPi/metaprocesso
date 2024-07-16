@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Attachments;
-use App\Http\Controllers\Auth;
+use App\Http\Controllers\Authentication;
 use App\Http\Controllers\CatalogItems;
 use App\Http\Controllers\Catalogs;
 use App\Http\Controllers\CatalogSubCategoryItems;
@@ -22,328 +22,114 @@ use App\Http\Controllers\Programs;
 use App\Http\Controllers\Suppliers;
 use App\Http\Controllers\Units;
 use App\Http\Controllers\Sectors;
-use App\Http\Middleware\CheckPermission;
 use App\Utils\Notify;
 use Illuminate\Support\Facades\Route;
 
+function common(string $prefix, string $controller){
+    Route::prefix($prefix)->controller($controller)->group(function(){
+        Route::post('/save', 'save');
+        Route::put('/update', 'update');
+        Route::post('/destroy', 'delete');
+        Route::post('/list', 'list');
+        Route::get('/details/{id}', 'details');
+        Route::get('/selects/{key?}/{search?}', 'selects');
+        Route::get('/download/{id}', 'download');
+        Route::get('/export/{id}', 'export');
+        Route::get('', 'index');
+    });
+}
 
-Route::controller(Auth::class)->group(function () {
-    Route::prefix('/auth')->group(function () {
-        Route::post('', 'auth');
-        Route::post('/verify', 'verify');
-        Route::post('/recover', 'recover');
-        Route::post('/renew', 'renew');
-        Route::get('/check', 'check');
+// open routers
+Route::prefix('auth')->controller(Authentication::class)->group(function(){
+    Route::post('', 'login');
+    Route::post('/recover', 'recover');
+    Route::post('/renew', 'renew');
+    Route::get('/check', 'check');
+});
+
+// protected routes
+Route::middleware('auth:sanctum')->group(function(){
+    
+    // call common routes
+    common('/home', Dashboard::class);
+    common('/dashboard', Dashboard::class);
+    common('/organs', Organs::class);
+    common('/units', Units::class);
+    common('/sectors', Sectors::class);
+    common('/ordinators', Ordinators::class);
+    common('/demandants', Demandants::class);
+    common('/comissions', Comissions::class);
+    common('/comissionsmembers', ComissionsMembers::class);
+    common('/comissionsends', ComissionsEnds::class);
+    common('/programs', Programs::class);
+    common('/dotations', Dotations::class);
+    common('/users', Management::class);
+    common('/catalogs', Catalogs::class);
+    common('/suppliers', Suppliers::class);
+    common('/dfds', Dfds::class);
+    common('/process', Processes::class);
+    common('/etps', Etps::class);
+    common('/pricerecords', PriceRecords::class);
+
+
+    // call especialized routes
+    Route::prefix('/dashboard')->controller(Dashboard::class)->group(function(){
+        Route::get('', 'index');
     });
 
-})->name('auth');
-
-Route::controller(Dashboard::class)->group(function () {
-    Route::prefix('/dashboard')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-        });
+    Route::prefix('/catalogitems')->controller(CatalogItems::class)->group(function(){
+        Route::get('/{catalog}', 'index');
+        Route::post('/{catalog}/list', 'list');
+        Route::post('/{catalog}/save', 'save');
+        Route::put('/{catalog}/update', 'update');
+        Route::post('/{catalog}/destroy', 'delete');
+        Route::get('/{catalog}/details/{id}', 'details');
+        Route::get('/{catalog}/catalog', 'catalog');
+        Route::get('/{catalog}/selects/{key?}/{search?}', 'selects');
     });
 
-})->name('dashboard');
-
-Route::controller(Organs::class)->group(function () {
-    Route::prefix('/organs')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/selects', 'selects');
-        });
+    Route::prefix('/catalogsubcategories')->controller(CatalogSubCategoryItems::class)->group(function(){
+        Route::post('/{organ}/list', 'list');
+        Route::post('/{organ}/save', 'save');
+        Route::put('/{organ}/update', 'update');
+        Route::post('/{organ}/fastdestroy', 'fastdestroy');
+        Route::get('/{organ}/details/{id}', 'details');
     });
-})->name('organs');
 
-Route::controller(Units::class)->group(function () {
-    Route::prefix('/units')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/selects', 'selects');
-        });
+    Route::prefix('/dfds')->controller(Dfds::class)->group(function(){
+        Route::post('/generate', 'generate');
+        Route::post('/items', 'items');
     });
-})->name('units');
 
-Route::controller(Sectors::class)->group(function () {
-    Route::prefix('/sectors')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-        });
+    Route::prefix('/process')->controller(Processes::class)->group(function(){
+        Route::post('/list_dfds', 'list_dfds');
+        Route::get('/list_dfd_items/{id}', 'list_dfd_items');
     });
-})->name('sectors');
 
-Route::controller(Ordinators::class)->group(function () {
-    Route::prefix('/ordinators')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/download/{id}', 'download');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-        });
+    Route::prefix('/etps')->controller(Etps::class)->group(function(){
+        Route::post('/generate', 'generate');
+        Route::post('/list_processes', 'list_processes');
+        Route::get('/list_dfd_items/{id}', 'list_dfd_items');
     });
-})->name('ordinators');
 
-Route::controller(Demandants::class)->group(function () {
-    Route::prefix('/demandants')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/download/{id}', 'download');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-        });
+    Route::prefix('/pricerecords')->controller(PriceRecords::class)->group(function(){
+        Route::post('/list_processes', 'list_processes');
+        Route::get('/list_dfd_items/{id}', 'list_dfd_items');
+        Route::post('/list_suppliers', 'list_suppliers');
     });
-})->name('demandants');
 
-Route::controller(Comissions::class)->group(function () {
-    Route::prefix('/comissions')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/download/{id}', 'download');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-        });
+    Route::prefix('/attachments')->controller(Attachments::class)->group(function(){
+        Route::get('', 'index');
+        Route::post('/{origin}/{protocol}/list', 'list');
+        Route::post('/{origin}/{protocol}/save', 'save');
+        Route::put('/{origin}/{protocol}/update', 'update');
+        Route::post('/{origin}/{protocol}/destroy', 'delete');
+        Route::get('/{origin}/{protocol}/details/{id}', 'details');
+        Route::get('/{origin}/{protocol}/download/{id}', 'download');
     });
-})->name('comissions');
+});
 
-Route::controller(ComissionsMembers::class)->group(function () {
-    Route::prefix('/comissionsmembers')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('/{comission}', 'index');
-            Route::post('/{comission}/list', 'list');
-            Route::post('/{comission}/save', 'save');
-            Route::put('/{comission}/update', 'update');
-            Route::post('/{comission}/destroy', 'delete');
-            Route::get('/{comission}/details/{id}', 'details');
-            Route::get('/{comission}/download/{id}', 'download');
-            Route::get('/{comission}/selects', 'selects');
-        });
-    });
-})->name('comissionsmembers');
-
-Route::controller(ComissionsEnds::class)->group(function () {
-    Route::prefix('/comissionsends')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/download/{id}', 'download');
-        });
-    });
-})->name('comissionsends');
-
-Route::controller(Programs::class)->group(function () {
-    Route::prefix('/programs')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-        });
-    });
-})->name('programs');
-
-Route::controller(Dotations::class)->group(function () {
-    Route::prefix('/dotations')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-        });
-    });
-})->name('dotations');
-
-Route::controller(Management::class)->group(function () {
-    Route::prefix('/users')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/selects', 'selects');
-        });
-    });
-})->name('users');
-
-Route::controller(Catalogs::class)->group(function () {
-    Route::prefix('/catalogs')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-            Route::get('/export/{id}', 'export');
-        });
-    });
-})->name('catalogs');
-
-Route::controller(Suppliers::class)->group(function () {
-    Route::prefix('/suppliers')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/selects', 'selects');
-        });
-    });
-})->name('suppliers');
-
-Route::controller(CatalogItems::class)->group(function () {
-    Route::prefix('/catalogitems')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('/{catalog}', 'index');
-            Route::post('/{catalog}/list', 'list');
-            Route::post('/{catalog}/save', 'save');
-            Route::put('/{catalog}/update', 'update');
-            Route::post('/{catalog}/destroy', 'delete');
-            Route::get('/{catalog}/details/{id}', 'details');
-            Route::get('/{catalog}/catalog', 'catalog');
-            Route::get('/{catalog}/selects/{key?}/{search?}', 'selects');
-        });
-    });
-})->name('catalogitems');
-
-Route::controller(CatalogSubCategoryItems::class)->group(function () {
-    Route::prefix('/catalogsubcategories')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::post('/{organ}/list', 'list');
-            Route::post('/{organ}/save', 'save');
-            Route::put('/{organ}/update', 'update');
-            Route::post('/{organ}/fastdestroy', 'fastdestroy');
-            Route::get('/{organ}/details/{id}', 'details');
-        });
-    });
-})->name('catalogsubcategories');
-
-Route::controller(Dfds::class)->group(function () {
-    Route::prefix('/dfds')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::post('/generate', 'generate');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/export/{id}', 'export');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-            Route::post('/items', 'items');
-        });
-    });
-})->name('dfds');
-
-Route::controller(Processes::class)->group(function () {
-    Route::prefix('/process')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-            Route::post('/list_dfds', 'list_dfds');
-            Route::get('/list_dfd_items/{id}', 'list_dfd_items');
-        });
-    });
-})->name('process');
-
-Route::controller(Etps::class)->group(function () {
-    Route::prefix('/etps')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::post('/generate', 'generate');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-            Route::post('/list_processes', 'list_processes');
-            Route::get('/list_dfd_items/{id}', 'list_dfd_items');
-        });
-    });
-})->name('etps');
-
-Route::controller(PriceRecords::class)->group(function () {
-    Route::prefix('/pricerecords')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/list', 'list');
-            Route::post('/save', 'save');
-            Route::post('/generate', 'generate');
-            Route::put('/update', 'update');
-            Route::post('/destroy', 'delete');
-            Route::get('/details/{id}', 'details');
-            Route::get('/export/{id}', 'export');
-            Route::get('/selects/{key?}/{search?}', 'selects');
-            Route::post('/list_processes', 'list_processes');
-            Route::get('/list_dfd_items/{id}', 'list_dfd_items');
-            Route::post('/list_suppliers', 'list_suppliers');
-        });
-    });
-})->name('pricerecords');
-
-Route::controller(Attachments::class)->group(function () {
-    Route::prefix('/attachments')->group(function () {
-        Route::middleware(CheckPermission::class)->group(function () {
-            Route::get('', 'index');
-            Route::post('/{origin}/{protocol}/list', 'list');
-            Route::post('/{origin}/{protocol}/save', 'save');
-            Route::put('/{origin}/{protocol}/update', 'update');
-            Route::post('/{origin}/{protocol}/destroy', 'delete');
-            Route::get('/{origin}/{protocol}/details/{id}', 'details');
-            Route::get('/{origin}/{protocol}/download/{id}', 'download');
-        });
-    });
-})->name('attachments');
-
+// fallback 404
 Route::fallback(function () {
     return Response()->json(Notify::warning('Destino solicitado não existe...'), 404);
 });
