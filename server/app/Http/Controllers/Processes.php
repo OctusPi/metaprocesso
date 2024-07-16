@@ -11,11 +11,8 @@ use App\Models\Common;
 use App\Models\DfdItem;
 use App\Models\Process;
 use App\Models\Program;
-use App\Models\Unit;
 use App\Models\User;
 use App\Security\Guardian;
-use App\Utils\Notify;
-use App\Utils\Utils;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use App\Models\ComissionMember;
@@ -24,8 +21,7 @@ class Processes extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Process::class, User::MOD_PROCCESS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Program::class, true, Common::MOD_PROCCESS['module']);
     }
 
     private function setDfdStatus(int $status, Collection $collection)
