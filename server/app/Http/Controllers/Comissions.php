@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Organ;
 use App\Utils\Notify;
+use App\Models\Common;
 use App\Utils\Uploads;
 use App\Middleware\Data;
 use App\Models\Comission;
@@ -17,8 +18,7 @@ class Comissions extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Comission::class, User::MOD_COMISSIONS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Comission::class, true, Common::MOD_COMISSIONS['module']);
     }
 
     public function save(Request $request)

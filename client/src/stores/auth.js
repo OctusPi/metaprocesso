@@ -10,14 +10,20 @@ function setToken(tokenValue){
     token.value = tokenValue
 }
 
+function getToken(){
+  return token.value ?? null
+}
+
 function setUser(userValue){
-  localStorage.setItem('user', JSON.stringify(userValue))
-  user.value = userValue
+  const str_value = JSON.stringify(userValue)
+  localStorage.setItem('user', str_value)
+  user.value = str_value
 }
 
 function setNavigation(navValue){
-  localStorage.setItem('navigation', JSON.stringify(navValue))
-  navigation.value = navValue
+  const str_value = JSON.stringify(navValue)
+  localStorage.setItem('navigation', str_value)
+  navigation.value = str_value
 }
 
 function getUser(){
@@ -45,9 +51,11 @@ function clear(){
 }
 
 async function isLoggedIn(path){
+
   const {data} = await axios.get(import.meta.env.VITE_URL_API+path, {
     headers:{
-      Authorization:token.value
+      'Accept': 'application/json',
+      'Authorization':'Bearer '+token.value
     }
   })
 
@@ -56,10 +64,8 @@ async function isLoggedIn(path){
 }
 
 export default {
-  token:token.value,
-  user:user.value,
-  navigation:navigation.value,
   setToken,
+  getToken,
   setUser,
   setNavigation,
   getUser,

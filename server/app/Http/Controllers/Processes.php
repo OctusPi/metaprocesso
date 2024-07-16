@@ -2,30 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comission;
-use App\Models\ComissionMember;
 use App\Models\Dfd;
-use App\Models\DfdItem;
-use App\Models\Dotation;
-use App\Models\Ordinator;
+use App\Models\Unit;
+use App\Utils\Utils;
 use App\Models\Organ;
+use App\Utils\Notify;
+use App\Models\Common;
+use App\Models\DfdItem;
 use App\Models\Process;
 use App\Models\Program;
-use App\Models\Unit;
-use App\Models\User;
-use App\Security\Guardian;
-use App\Utils\Notify;
-use App\Utils\Utils;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use App\Middleware\Data;
+use App\Models\Dotation;
+use App\Models\Comission;
+use App\Models\Ordinator;
+use Illuminate\Http\Request;
+use App\Models\ComissionMember;
 
 class Processes extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Process::class, User::MOD_PROCCESS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Process::class, true, Common::MOD_PROCCESS['module']);
     }
 
     public function save(Request $request)
@@ -37,7 +34,7 @@ class Processes extends Controller
 
         $premodel = new Process($request->all());
         $premodel->ip = $request->ip();
-        $premodel->author = $this->user_loged->id;
+        $premodel->author = $request->user()->id;
         $premodel->comission_members = $comission->comissionmembers;
         $premodel->comission_address = $comission->unit()->value('address');
         $premodel->dfds = $request->dfds;

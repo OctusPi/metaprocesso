@@ -2,31 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CatalogItem;
-use App\Models\ComissionMember;
 use App\Models\Dfd;
-use App\Models\DfdItem;
-use App\Models\Dotation;
-use App\Models\Program;
 use App\Models\Unit;
-use App\Models\User;
+use App\Utils\Utils;
 use App\Models\Organ;
 use App\Utils\Notify;
-use App\Utils\Utils;
+use App\Models\Common;
+use App\Models\DfdItem;
+use App\Models\Program;
 use App\Middleware\Data;
+use App\Models\Dotation;
 use App\Models\Comission;
 use App\Models\Demandant;
 use App\Models\Ordinator;
-use App\Security\Guardian;
+use App\Models\CatalogItem;
 use Illuminate\Http\Request;
+use App\Models\ComissionMember;
 use Illuminate\Support\Facades\Log;
 
 class Dfds extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Dfd::class, User::MOD_DFDS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Dfd::class, true, Common::MOD_DFDS['module']);
     }
 
     public function save(Request $request)
@@ -34,7 +32,7 @@ class Dfds extends Controller
 
         $ip = $request->ip();
         $code = Utils::randCode(6, str_pad($request->unit, 3, '0', STR_PAD_LEFT), date('dmY'));
-        $data = array_merge($request->all(), ['ip' => $ip, 'protocol' => $code, 'author' => $this->user_loged->id]);
+        $data = array_merge($request->all(), ['ip' => $ip, 'protocol' => $code, 'author' => $request->user()->id]);
         $save = $this->baseSaveInstance($data);
 
         if (!is_null($save->instance)) {

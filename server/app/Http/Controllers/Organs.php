@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Organ;
-use App\Security\Guardian;
+use App\Models\Common;
 use Illuminate\Http\Request;
 
 class Organs extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Organ::class, User::MOD_ORGANS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Organ::class, true, Common::MOD_ORGANS['module']);
     }
 
     public function list(Request $request)

@@ -3,19 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Unit;
-use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Organ;
+use App\Models\Common;
 use App\Middleware\Data;
-use App\Security\Guardian;
 use Illuminate\Http\Request;
 
 class Units extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Unit::class, User::MOD_UNITS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Unit::class, true, Common::MOD_UNITS['module']);
     }
 
     public function list(Request $request)

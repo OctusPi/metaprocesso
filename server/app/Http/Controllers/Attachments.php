@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attachment;
-use App\Models\User;
-use App\Security\Guardian;
+use App\Models\Common;
 use App\Utils\Notify;
 use App\Utils\Uploads;
 use Illuminate\Http\Request;
@@ -13,8 +12,7 @@ class Attachments extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Attachment::class, User::MOD_MANAGEMENT);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(Attachment::class, true, Common::MOD_ATTACHMENT['module']);
     }
 
     public function list()

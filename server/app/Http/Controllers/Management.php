@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sector;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Organ;
 use App\Utils\Notify;
 use App\Mail\Wellcome;
+use App\Models\Common;
+use App\Models\Sector;
 use App\Middleware\Data;
-use App\Security\Guardian;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -21,8 +21,7 @@ class Management extends Controller
 {
     public function __construct()
     {
-        parent::__construct(User::class, User::MOD_USERS);
-        Guardian::validateAccess($this->module_id);
+        parent::__construct(User::class, true, Common::MOD_USERS['module']);
     }
 
     public function save(Request $request)
@@ -55,15 +54,15 @@ class Management extends Controller
         
         $profiles = [];
         foreach (User::list_profiles() as $key => $value) {
-            if($key >= $this->user_loged->profile){
+            if($key >= $request->user()->profile){
                 $profiles[] = ['id' => $key, 'title' => $value];
             }
         }
 
         try {
             return Response()->json([
-                'modules'   => $this->user_loged->profile != User::PRF_ADMIN 
-                            ? $this->user_loged->modules 
+                'modules'   => $request->user()->profile != Common::PRF_ADMIN
+                            ? $request->user()->modules 
                             : User::list_modules(),
 
                 'organs'    => Utils::map_select(Data::list(Organ::class, order:['name'])),
