@@ -165,14 +165,14 @@ class Data
                 if (!isset($param['mode']) || $param['mode'] === 'AND') {
                     $conditions[] = [
                         'column' => $param['column'] ?? $param[0], 
-                        'operator' => $param['operator'] ?? '=', 
+                        'operator' => $param['operator'] ?? 'LIKE', 
                         'value' => $param['value'] ?? $param[1]
                     ];
                 }
             }else{
                 $conditions[] = [
                     'column' => $key, 
-                    'operator' => '=', 
+                    'operator' => 'LIKE', 
                     'value' => $param
                 ];
             }
@@ -189,10 +189,10 @@ class Data
         foreach ($params as $param) {
 
             if(is_array($param)){
-                if ($param['mode'] === 'OR') {
+                if (isset($param['mode']) && $param['mode'] === 'OR') {
                     $conditions[] = [
                         'column' => $param['column'] ?? $params[0], 
-                        'operator' => $param['operator'] ?? '=', 
+                        'operator' => $param['operator'] ?? 'LIKE', 
                         'value' => $param['value'] ?? $param[1]
                     ];
                 }

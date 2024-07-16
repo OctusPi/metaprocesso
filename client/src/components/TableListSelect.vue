@@ -128,7 +128,7 @@ th {
 
 .table tr td:last-child {
     padding-right: 4cap;
-    text-align: end;
+    text-align: start;
 }
 
 .table,

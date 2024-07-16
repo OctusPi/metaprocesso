@@ -157,91 +157,53 @@ class Dfds extends Controller
 
     public function selects(Request $request)
     {
-        //feed selects form
-        if ($request->key != 'comission') {
-            $units = [];
-            $ordinators = [];
-            $demandants = [];
-            $comissions = [];
-            $programs = [];
-            $dotations = [];
+        //rescue comission_members
+        if($request->key == 'comission'){
+            $comissions_members = Data::list(ComissionMember::class, ['comission' => $request->search], ['responsibility']);
+            return Response()->json($comissions_members);
+        }
 
-            if ($request->key) {
-                $units = $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
-                    [
-                        'column' => $request->key,
-                        'operator' => '=',
-                        'value' => $request->search,
-                        'mode' => 'AND'
-                    ]
-                ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+        $generic = [
+            'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
+            'prioritys' => Dfd::list_priority(),
+            'hirings' => Dfd::list_hirings(),
+            'acquisitions' => Dfd::list_acquisitions(),
+            'categories' => CatalogItem::list_categories(),
+            'responsibilitys' => ComissionMember::list_responsabilities(),
+            'status' => Dfd::list_status()
+        ];
 
-                $ordinators = Utils::map_select(Data::list(Ordinator::class, [
-                    [
-                        'column' => $request->key,
-                        'operator' => '=',
-                        'value' => $request->search,
-                        'mode' => 'AND'
-                    ]
-                ], ['name']));
+        // rescue organs
+        if(is_null($request->key)){
+            return Response()->json($generic);
+        } 
 
-                $demandants = Utils::map_select(Data::list(Demandant::class, [
-                    [
-                        'column' => $request->key,
-                        'operator' => '=',
-                        'value' => $request->search,
-                        'mode' => 'AND'
-                    ]
-                ], ['name']));
+        // rescues other seclects by organ or unit
+        if ($request->key == 'organ' || $request->key == 'unit') {
+            
+            $units = $request->key == 'organ' 
+            ? Utils::map_select(Data::list(Unit::class, [$request->key => $request->search], ['name'])) 
+            : Utils::map_select(Data::list(Unit::class));
 
-                $comissions = Utils::map_select(Data::list(Comission::class, [
-                    [
-                        'column' => $request->key,
-                        'operator' => '=',
-                        'value' => $request->search,
-                        'mode' => 'AND'
-                    ]
-                ], ['name']));
+            $ordinators = Utils::map_select(Data::list(Ordinator::class, [$request->key => $request->search], ['name']));
+            $demandants = Utils::map_select(Data::list(Demandant::class, [$request->key => $request->search], ['name']));
+            $comissions = Utils::map_select(Data::list(Comission::class, [$request->key => $request->search], ['name']));
+            $programs = Utils::map_select(Data::list(Program::class, [$request->key => $request->search], ['name']));
+            $dotations = Utils::map_select(Data::list(Dotation::class, [$request->key => $request->search], ['name']));
 
-                $programs = Utils::map_select(Data::list(Program::class, [
-                    [
-                        'column' => $request->key,
-                        'operator' => '=',
-                        'value' => $request->search,
-                        'mode' => 'AND'
-                    ]
-                ], ['name']));
-
-                $dotations = Utils::map_select(Data::list(Dotation::class, [
-                    [
-                        'column' => $request->key,
-                        'operator' => '=',
-                        'value' => $request->search,
-                        'mode' => 'AND'
-                    ]
-                ], ['name']));
-            }
-
-            return Response()->json([
-                'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
+            $especializer = array_merge($generic, [
                 'units' => $units,
                 'ordinators' => $ordinators,
                 'demandants' => $demandants,
                 'comissions' => $comissions,
-                'prioritys' => Dfd::list_priority(),
-                'hirings' => Dfd::list_hirings(),
-                'acquisitions' => Dfd::list_acquisitions(),
                 'programs' => $programs,
-                'dotations' => $dotations,
-                'categories' => CatalogItem::list_categories(),
-                'responsibilitys' => ComissionMember::list_responsabilities(),
-                'status' => Dfd::list_status()
-            ], 200);
+                'dotations' => $dotations
+            ]);
+
+            return Response()->json($especializer);
         }
 
-        //rescue comission_members
-        $comissions_members = Data::list(ComissionMember::class, ['comission' => $request->search], ['responsibility']);
-        return Response()->json($comissions_members);
+        return Response()->json(Notify::warning("Selects não localizados..."), 404);
 
     }
 
