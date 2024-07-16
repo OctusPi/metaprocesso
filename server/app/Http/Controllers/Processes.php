@@ -25,7 +25,7 @@ class Processes extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Program::class, true, Common::MOD_PROCCESS['module']);
+        parent::__construct(Process::class, true, Common::MOD_PROCCESS['module']);
     }
 
     private function setDfdStatus(int $status, Collection $collection)
