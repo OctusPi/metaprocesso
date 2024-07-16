@@ -13,6 +13,34 @@ use App\Casts\Json;
 
 class Dfd extends Model
 {
+    public const PRIORITY_BAIXA = 1;
+    public const PRIORITY_MEDIA = 2;
+    public const PRIORITY_ALTA = 3;
+
+    public const STATUS_RASCUNHO = 1;
+    public const STATUS_ENVIADO = 2;
+    public const STATUS_PENDENTE = 3;
+    public const STATUS_BLOQUEADO = 4;
+    public const STATUS_PROCESSADO = 5;
+
+    public const HIRING_CONCORRENCIA = 1;
+    public const HIRING_CONCURSO = 2;
+    public const HIRING_LEILAO = 3;
+    public const HIRING_PREGAO = 4;
+    public const HIRING_DIALOGO_COMPETITIVO = 5;
+    public const HIRING_DISPENSA = 6;
+    public const HIRING_INEXIGIBILIDADE = 7;
+
+    public const ACQUISITION_MATERIAL_CONSUMO = 1;
+    public const ACQUISITION_MATERIAL_PERMANENTE = 2;
+    public const ACQUISITION_SERVICO = 3;
+    public const ACQUISITION_OBRAS = 4;
+    public const ACQUISITION_SERVICOS_ENGENHARIA = 5;
+    public const ACQUISITION_SOLUCOES_TIC = 6;
+    public const ACQUISITION_LOCACAO_IMOVEIS = 7;
+    public const ACQUISITION_ALIENACAO_CONCESSAO = 8;
+    public const ACQUISITION_OBRAS_SERVICOS_ENGENHARIA = 9;
+
     use HasFactory;
 
     protected $table = 'dfds';
@@ -145,80 +173,79 @@ class Dfd extends Model
         ];
     }
 
-    public static function list_priority():array
+    public static function list_priority(): array
     {
         return [
-            ['id' => 1, 'title' => 'Baixa'],
-            ['id' => 2, 'title' => 'Média'],
-            ['id' => 3, 'title' => 'Alta']
+            ['id' => self::PRIORITY_BAIXA, 'title' => 'Baixa'],
+            ['id' => self::PRIORITY_MEDIA, 'title' => 'Média'],
+            ['id' => self::PRIORITY_ALTA, 'title' => 'Alta']
         ];
     }
 
-    public static function list_hirings():array
+    public static function list_hirings(): array
     {
         return [
             [
-                'id' => 1, 
+                'id' => self::HIRING_CONCORRENCIA,
                 'title' => 'Concorrência',
                 'description' => 'Modalidade utilizada para contratações de maior vulto. É aberta a qualquer interessado que, na fase inicial de habilitação preliminar, comprove possuir os requisitos mínimos de qualificação exigidos no edital para a execução do objeto.'
             ],
             [
-                'id' => 2, 
+                'id' => self::HIRING_CONCURSO,
                 'title' => 'Concurso',
                 'description' => 'Modalidade destinada à escolha de trabalho técnico, científico ou artístico, mediante a instituição de prêmios ou remuneração aos vencedores, conforme critérios constantes do edital publicado na imprensa oficial com antecedência mínima de 45 dias.'
             ],
             [
-                'id' => 3, 
+                'id' => self::HIRING_LEILAO,
                 'title' => 'Leilão',
                 'description' => 'Modalidade destinada à venda de bens móveis inservíveis para a administração ou de produtos legalmente apreendidos ou penhorados, bem como para a alienação de bens imóveis oriundos de procedimentos judiciais ou de dação em pagamento.'
             ],
             [
-                'id' => 4, 
+                'id' => self::HIRING_PREGAO,
                 'title' => 'Pregão - Eletrônico/Presencial',
                 'description' => 'Modalidade destinada à aquisição de bens e serviços comuns, qualquer que seja o valor estimado da contratação. O pregão pode ser realizado na forma eletrônica ou presencial.'
             ],
             [
-                'id' => 5, 
+                'id' => self::HIRING_DIALOGO_COMPETITIVO,
                 'title' => 'Diálogo Competitivo',
                 'description' => 'Modalidade destinada à contratação de obras, serviços e compras, em que a administração pública realiza diálogos com licitantes previamente selecionados mediante critérios objetivos, com o objetivo de desenvolver uma ou mais alternativas capazes de atender às suas necessidades.'
             ],
             [
-                'id' => 6, 
+                'id' => self::HIRING_DISPENSA,
                 'title' => 'Dispensa de Licitação',
                 'description' => 'A dispensa de licitação para a contratação direta de serviços pode ocorrer em situações específicas determinadas pela Lei nº 14.133/2021'
-            ]
-            ,
+            ],
             [
-                'id' => 7, 
+                'id' => self::HIRING_INEXIGIBILIDADE,
                 'title' => 'Inexigibilidade',
                 'description' => 'A inexigibilidade é regulamentada pela Lei 8.666/93 e se dá quando não é viável ou necessário um processo licitatório.'
             ]
         ];
     }
 
-    public static function list_acquisitions():array
+    public static function list_acquisitions(): array
     {
         return [
-            ['id' => 1, 'title' => 'Material de Consumo'],
-            ['id' => 2, 'title' => 'Material Permanente / Equipamento'],
-            ['id' => 3, 'title' => 'Serviço'],
-            ['id' => 4, 'title' => 'Obras'],
-            ['id' => 5, 'title' => 'Serviços de Engenharia'],
-            ['id' => 6, 'title' => 'Soluções de TIC'],
-            ['id' => 7, 'title' => 'Locação de Imóveis'],
-            ['id' => 8, 'title' => 'Alienação/Concessão/Permissão'],
-            ['id' => 9, 'title' => 'Obras e Serviços de Engenharia'],
+            ['id' => self::ACQUISITION_MATERIAL_CONSUMO, 'title' => 'Material de Consumo'],
+            ['id' => self::ACQUISITION_MATERIAL_PERMANENTE, 'title' => 'Material Permanente / Equipamento'],
+            ['id' => self::ACQUISITION_SERVICO, 'title' => 'Serviço'],
+            ['id' => self::ACQUISITION_OBRAS, 'title' => 'Obras'],
+            ['id' => self::ACQUISITION_SERVICOS_ENGENHARIA, 'title' => 'Serviços de Engenharia'],
+            ['id' => self::ACQUISITION_SOLUCOES_TIC, 'title' => 'Soluções de TIC'],
+            ['id' => self::ACQUISITION_LOCACAO_IMOVEIS, 'title' => 'Locação de Imóveis'],
+            ['id' => self::ACQUISITION_ALIENACAO_CONCESSAO, 'title' => 'Alienação/Concessão/Permissão'],
+            ['id' => self::ACQUISITION_OBRAS_SERVICOS_ENGENHARIA, 'title' => 'Obras e Serviços de Engenharia'],
         ];
     }
 
-    public static function list_status():array
+    public static function list_status(): array
     {
         return [
-            ['id' => 1, 'title' => 'Rascunho'],
-            ['id' => 2, 'title' => 'Enviado'],
-            ['id' => 3, 'title' => 'Pendente'],
-            ['id' => 4, 'title' => 'Bloqueado'],
-            ['id' => 5, 'title' => 'Processado']
+            ['id' => self::STATUS_RASCUNHO, 'title' => 'Rascunho'],
+            ['id' => self::STATUS_ENVIADO, 'title' => 'Enviado'],
+            ['id' => self::STATUS_PENDENTE, 'title' => 'Pendente'],
+            ['id' => self::STATUS_BLOQUEADO, 'title' => 'Bloqueado'],
+            ['id' => self::STATUS_PROCESSADO, 'title' => 'Processado']
         ];
     }
 }

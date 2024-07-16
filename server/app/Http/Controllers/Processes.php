@@ -16,7 +16,7 @@ use App\Models\User;
 use App\Security\Guardian;
 use App\Utils\Notify;
 use App\Utils\Utils;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use App\Middleware\Data;
 
@@ -28,6 +28,24 @@ class Processes extends Controller
         Guardian::validateAccess($this->module_id);
     }
 
+    private function setDfdStatus(int $status, Collection $collection)
+    {
+        $dfd_instance = Dfd::whereIn('id', $collection->pluck('id'))
+            ->with('organ', 'unit', 'comission', 'demandant', 'ordinator');
+
+        $matched_status = match ($status) {
+            Process::S_ABERTO => Dfd::STATUS_BLOQUEADO,
+            Process::S_FINALIZADO => Dfd::STATUS_PROCESSADO,
+            default => Dfd::STATUS_ENVIADO
+        };
+
+        if ($status != Process::S_FRACASSADO) {
+            $dfd_instance->update(['status' => $matched_status]);
+        }
+
+        return $dfd_instance->get();
+    }
+
     public function save(Request $request)
     {
         $comission = Comission::find($request->comission);
@@ -36,12 +54,15 @@ class Processes extends Controller
         }
 
         $premodel = new Process($request->all());
-        $premodel->ip = $request->ip();
         $premodel->author = $this->user_loged->id;
+        $premodel->ip = $request->ip();
         $premodel->comission_members = $comission->comissionmembers;
         $premodel->comission_address = $comission->unit()->value('address');
-        $premodel->dfds = $request->dfds;
-        $premodel->ordinators = collect($premodel->dfds)->pluck('ordinator');
+
+        $dfds = $this->setDfdStatus($premodel->status, collect($premodel->dfds));
+
+        $premodel->dfds = $dfds->toArray();
+        $premodel->ordinators = $dfds->pluck('ordinator');
 
         return $this->baseSave(Process::class, $premodel->toArray());
     }
@@ -85,7 +106,14 @@ class Processes extends Controller
             return response()->json(Notify::warning("Não é possível editar o registro!"), 403);
         }
 
-        return $this->baseUpdate(Process::class, $request->id, $request->all());
+        $process = new Process($request->all());
+
+        $dfds = $this->setDfdStatus($request->status, collect($process->dfds));
+
+        $process->dfds = $dfds->toArray();
+        $process->ordinators = $dfds->pluck('ordinator');
+
+        return $this->baseUpdate(Process::class, $request->id, $process->toArray());
     }
 
     public function delete(Request $request)
