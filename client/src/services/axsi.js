@@ -13,7 +13,7 @@ const axiosInstanceAuth = axios.create({
     headers: {
         'Accept': 'application/json',
         'Content-Type':'multipart/form-data',
-        'Authorization': 'Bearer '+auth.getToken()
+        'Authorization': 'Bearer '+auth.token
     }
 })
 

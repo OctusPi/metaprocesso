@@ -4,11 +4,10 @@ import auth from '@/stores/auth';
 import http from '@/services/http';
 import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
-import { useRouter } from 'vue-router';
 
 const sysapp = inject('sysapp')
 const user = ref(auth.getUser())
-const router = useRouter()
+
 
 const emit = defineEmits(['callAlert'])
 const page = ref({
@@ -38,7 +37,7 @@ function login(){
         auth.setUser(response.data.user)
         auth.setNavigation(response.data.navigation)
         if(response.status === 200){
-            router.replace('/home')
+            window.location = "/home"
         }
     })
 }

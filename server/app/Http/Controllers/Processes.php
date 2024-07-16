@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Dfd;
 use App\Models\Unit;
+use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Organ;
 use App\Utils\Notify;
@@ -11,11 +12,14 @@ use App\Models\Common;
 use App\Models\DfdItem;
 use App\Models\Process;
 use App\Models\Program;
-use App\Models\User;
+use App\Middleware\Data;
+use App\Models\Dotation;
+use App\Models\Comission;
+use App\Models\Ordinator;
 use App\Security\Guardian;
-use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use App\Models\ComissionMember;
+use Illuminate\Support\Collection;
 
 class Processes extends Controller
 {
@@ -50,7 +54,7 @@ class Processes extends Controller
         }
 
         $premodel = new Process($request->all());
-        $premodel->author = $this->user_loged->id;
+        $premodel->author = $request->user()->id;
         $premodel->ip = $request->ip();
         $premodel->comission_members = $comission->comissionmembers;
         $premodel->comission_address = $comission->unit()->value('address');

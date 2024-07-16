@@ -10,9 +10,6 @@ function setToken(tokenValue){
     token.value = tokenValue
 }
 
-function getToken(){
-  return token.value ?? null
-}
 
 function setUser(userValue){
   const str_value = JSON.stringify(userValue)
@@ -31,7 +28,7 @@ function getUser(){
     return JSON.parse(user.value);
   } catch (e) {
     console.log('Fail parse string to JSON')
-    return {}
+    return null
   }
 }
 
@@ -64,8 +61,8 @@ async function isLoggedIn(path){
 }
 
 export default {
+  token: token.value,
   setToken,
-  getToken,
   setUser,
   setNavigation,
   getUser,

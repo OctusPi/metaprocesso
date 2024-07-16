@@ -1,14 +1,12 @@
 <script setup>
     import { onMounted, ref } from 'vue';
-    import { useRouter } from 'vue-router';
     import auth from '@/stores/auth';
 
-    const router = useRouter()
     const user = auth.getUser()
     const timesession = ref('60:00')
 
     function isLoggedIn(){
-        if(!auth.getToken() || Object.keys(user).length == 0){
+        if(!auth.token || !user){
             logout()
         }
     }
@@ -16,7 +14,7 @@
     function logout(){
         
         auth.clear()
-        router.replace('/')
+        window.location = "/"
     }
 
     function countTimeSession(){
