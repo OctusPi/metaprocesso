@@ -219,18 +219,12 @@ const attachmentTypes = [
     { id: 1, title: 'Levantamento de Mercado' },
 ]
 
-function save_etp() {
-    page.value.data.process = page.value.data.process.id
-    data.save()
-}
-
 function dfd_details(id) {
     if (page.value.data.process.dfds) {
         page.value.dfd.data = (page.value.data.process.dfds).find(obj => obj.id === id)
         http.get(`${page.value.baseURL}/list_dfd_items/${id}`, emit, (resp) => {
             page.value.dfd.items = resp.data
         })
-        console.log(page.value.dfd)
     }
 }
 
@@ -346,7 +340,7 @@ onMounted(() => {
 
                 <!--BOX REGISTER-->
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
-                    <form class="form-row" @submit.prevent="save_etp">
+                    <form class="form-row" @submit.prevent="data.save({'process': page.data.process.id})">
                         <input type="hidden" name="id" v-model="page.data.id">
 
                         <TabNav :tab-instance="tabSwitch" identify="etps-nav" />

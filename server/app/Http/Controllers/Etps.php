@@ -41,8 +41,13 @@ class Etps extends Controller
         return $this->baseList(
             ['protocol', 'organ', 'emission', 'comission', 'necessity', 'status'],
             ['protocol'],
-            ['organ', 'comission']
+            ['organ', 'comission', 'process']
         );
+    }
+
+    public function details(Request $request)
+    {
+        return $this->baseDetails(Etp::class, $request->id, ['process']);
     }
 
     public function list_processes(Request $request)
