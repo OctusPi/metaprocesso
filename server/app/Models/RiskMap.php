@@ -72,6 +72,15 @@ class RiskMap extends Model
         ];
     }
 
+    static function list_actions(): array
+    {
+        return [
+            ['id' => 1, 'title' => 'Baixa', 'value' => 5],
+            ['id' => 2, 'title' => 'Média', 'value' => 10],
+            ['id' => 3, 'title' => 'Alta', 'value' => 15],
+        ];
+    }
+
     public function process(): HasOne
     {
         return $this->hasOne(Process::class, 'id', 'process');

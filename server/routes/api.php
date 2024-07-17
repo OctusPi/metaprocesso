@@ -71,7 +71,7 @@ Route::middleware('auth:sanctum')->group(function(){
     common('/process', Processes::class);
     common('/etps', Etps::class);
     common('/pricerecords', PriceRecords::class);
-    common('/riskmaps', RiskMaps::class);
+    common('/riskiness', RiskMaps::class);
 
 
     // call especialized routes

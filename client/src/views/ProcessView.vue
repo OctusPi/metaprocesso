@@ -519,12 +519,7 @@ onMounted(() => {
                                         <InputDropMultSelect :valid="page.rules.valids.units" v-model="page.data.units"
                                             :options="page.selects.units" identify="units" />
                                     </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="protocol" class="form-label">Protocolo</label>
-                                        <input type="text" name="protocol" class="form-control"
-                                            :class="{ 'form-control-alert': page.rules.valids.protocol }" id="protocol"
-                                            v-model="page.data.protocol" placeholder="XXXXXXXXXXXXXXX">
-                                    </div>
+                                    
                                 </div>
                                 <div class="row mb-3 g-3">
                                     <div class="col-sm-12 col-md-8">

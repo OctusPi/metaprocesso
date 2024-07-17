@@ -15,7 +15,7 @@ class RiskMaps extends Controller
 {
     public function __construct()
     {
-        parent::__construct(RiskMaps::class, true, Common::MOD_RISKINESS['module']);
+        parent::__construct(RiskMap::class, true, Common::MOD_RISKINESS['module']);
     }
 
     public function list(Request $request)
@@ -43,19 +43,10 @@ class RiskMaps extends Controller
 
     public function selects(Request $request)
     {
-        $processes = $request->key ? Utils::map_select(Data::list(Process::class, [
-            [
-                'column' => $request->key,
-                'operator' => '=',
-                'value' => $request->search,
-                'mode' => 'AND'
-            ]
-        ], ['name'])) : Utils::map_select(Data::list(Process::class));
-
         return Response()->json([
-            'processes' => $processes,
             'comissions' => Utils::map_select(Data::list(Comission::class, order: ['name'])),
-            'phases' => RiskMap::list_phases()
+            'phases' => RiskMap::list_phases(),
+            'risk_actions' => RiskMap::list_actions(),
         ], 200);
     }
 }
