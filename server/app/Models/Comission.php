@@ -79,6 +79,11 @@ class Comission extends Model
         return $this->belongsTo(PriceRecord::class);
     }
 
+    public function riskmaps(): BelongsTo
+    {
+        return $this->belongsTo(RiskMap::class);
+    }
+
     public function startTerm(): Attribute
     {
         return Attribute::make(

@@ -139,6 +139,11 @@ class Process extends Model
         return $this->belongsTo(Proposal::class);
     }
 
+    public function riskmaps(): BelongsTo
+    {
+        return $this->belongsTo(RiskMap::class);
+    }
+
     public static function list_modalitys(): array
     {
         return [
