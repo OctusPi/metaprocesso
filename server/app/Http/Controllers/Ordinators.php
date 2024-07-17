@@ -11,6 +11,7 @@ use App\Utils\Uploads;
 use App\Middleware\Data;
 use App\Models\Ordinator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class Ordinators extends Controller
 {
@@ -23,23 +24,13 @@ class Ordinators extends Controller
     {
         //upload file
         $upload = new Uploads($request, ['document' => ['nullable' => true]]);
-        $values = $upload->mergeUploads($request->all());
-
-        return $this->baseSave(Ordinator::class, $values);
-    }
-
-    public function update(Request $request)
-    {
-        if(isset($_FILES['document'])){
-            $ordinator = Ordinator::findOrFail($request->id);
-            $upload = new Uploads($request, ['document' => ['nullable' => true]]);
-            $upload->remove($ordinator->document);
-            $values = $upload->mergeUploads($request->all());
-
-            return $this->baseUpdate(Ordinator::class, $request->id, $values);
+        
+        if($request->id && $request->hasFile('document')) {
+            $instance = $this->model::find($request->id);
+            $upload->remove($instance->document);
         }
-
-        return $this->baseUpdate(Ordinator::class, $request->id, $request->all());
+        
+        return $this->baseSave($upload->mergeUploads($request->all()));
     }
 
     public function list(Request $request)
@@ -51,7 +42,7 @@ class Ordinators extends Controller
     {
         $ordinator = Ordinator::findOrFail($request->id);
         if($ordinator && $ordinator->document){
-            return response()->download(storage_path('uploads'.'/'.$ordinator->document), $ordinator->name.'.pdf');
+            return response()->download(storage_path("uploads/{$ordinator->document}"), "{$ordinator->name}.pdf");
         }
 
         return response()->json(Notify::warning('Arquivo Indisponível'));
@@ -59,14 +50,9 @@ class Ordinators extends Controller
 
     public function selects(Request $request)
     {
-        $units = $request->key ? Utils::map_select(Data::list(Unit::class, [
-            [
-                'column'   => $request->key,
-                'operator' => '=',
-                'value'    => $request->search,
-                'mode'     => 'AND'
-            ]
-            ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+        $units = $request->key 
+        ? Utils::map_select(Data::list(Unit::class, [$request->key => $request->search], ['name'])) 
+        : Utils::map_select(Data::list(Unit::class));
 
         return Response()->json([
             'organs' => Utils::map_select(Data::list(Organ::class, order:['name'])),

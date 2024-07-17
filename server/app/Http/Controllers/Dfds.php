@@ -30,19 +30,26 @@ class Dfds extends Controller
     public function save(Request $request)
     {
 
+        if($request->id){
+            $dfd = Data::find(Dfd::class, ['id' => $request->id]);
+            if(!$dfd || $dfd->status > 3){
+                return Response()->json(Notify::warning('Não é possível editar DFDs em uso no processo!'), 403);
+            }
+        }
+        
+
         $ip = $request->ip();
-        $code = Utils::randCode(6, str_pad($request->unit, 3, '0', STR_PAD_LEFT), date('dmY'));
+        $code = $request->id ? $request->protocol : Utils::randCode(6, str_pad($request->unit, 3, '0', STR_PAD_LEFT), date('dmY'));
         $data = array_merge($request->all(), ['ip' => $ip, 'protocol' => $code, 'author' => $request->user()->id]);
         $save = $this->baseSaveInstance($data);
+        $this->removeItems($request);
 
         if (!is_null($save->instance)) {
-
-            $dfd = $save->instance;
             $items = json_decode($request->items, true);
             if (is_array($items)) {
                 foreach ($items as $item) {
                     $dfdItem = new DfdItem([
-                        'dfd' => $dfd->id,
+                        'dfd' => $save->instance->id,
                         'item' => $item['item']['id'],
                         'quantity' => $item['quantity'],
                         'program' => strlen($item['program'] ?? '') ? $item['program'] : null,
@@ -56,52 +63,6 @@ class Dfds extends Controller
         }
 
         return Response()->json(Notify::warning('Falha ao registrar DFD ' . $save->error), 400);
-    }
-
-    public function update(Request $request)
-    {
-        $dfd = Data::find(Dfd::class, ['id' => $request->id]);
-        if(!$dfd || $dfd->status > 3){
-            return Response()->json(Notify::warning('Não é possível editar DFDs em uso no processo!'), 403);
-        }
-
-        try {
-            $req_items = json_decode($request->items, true);
-            $req_keys = array_column(array_column($req_items, 'item'), 'id');
-            $dfd_items = Data::list(DfdItem::class, ['dfd' => $request->id]);
-
-
-            //remove items
-            foreach ($dfd_items as $dfd_item) {
-                if (!in_array($dfd_item['item'], $req_keys)) {
-                    DfdItem::destroy($dfd_item['id']);
-                }
-            }
-
-            // add or edit items
-            if (is_array($req_items)) {
-                foreach ($req_items as $item) {
-
-                    DfdItem::updateOrCreate(
-                        [
-                            'dfd' => $request->id,
-                            'item' => $item['item']['id']
-                        ],
-                        [
-                            'quantity' => $item['quantity'],
-                            'program' => strlen($item['program'] ?? '') ? $item['program'] : null,
-                            'dotation' => strlen($item['dotation'] ?? '') ? $item['dotation'] : null
-                        ]
-                    );
-                }
-            }
-
-        } catch (\Throwable $th) {
-            Log::error($th->getMessage());
-            return Response()->json(Notify::warning('Falha ao atualizar itens.'), 500);
-        }
-
-        return parent::update($request);
     }
 
     public function delete(Request $request)
@@ -208,5 +169,22 @@ class Dfds extends Controller
     public function items(Request $request)
     {
         return (new CatalogItems())->list($request);
+    }
+
+    private function removeItems(Request $request){
+
+        if($request->id){
+            $req_items = json_decode($request->items, true);
+            $req_keys = array_column(array_column($req_items, 'item'), 'id');
+            $dfd_items = Data::list(DfdItem::class, ['dfd' => $request->id]);
+
+
+            //remove items
+            foreach ($dfd_items as $dfd_item) {
+                if (!in_array($dfd_item['item'], $req_keys)) {
+                    DfdItem::destroy($dfd_item['id']);
+                }
+            }
+        }
     }
 }

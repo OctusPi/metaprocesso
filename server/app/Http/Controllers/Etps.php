@@ -28,7 +28,7 @@ class Etps extends Controller
 
     public function save(Request $request)
     {
-        return $this->baseSave(Etp::class, array_merge($request->all(), [
+        return $this->baseSave(array_merge($request->all(), [
             'ip' => $request->ip(),
             'user' => $request->user()->id,
         ]));
@@ -45,7 +45,7 @@ class Etps extends Controller
 
     public function details(Request $request)
     {
-        return $this->baseDetails(Etp::class, $request->id, ['process']);
+        return $this->baseDetails($request->id, ['process']);
     }
 
     public function list_processes(Request $request)
@@ -84,41 +84,15 @@ class Etps extends Controller
         $dotations = [];
 
         if ($request->key) {
-            $units = $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
-                [
-                    'column' => $request->key,
-                    'operator' => '=',
-                    'value' => $request->search,
-                    'mode' => 'AND'
-                ]
-            ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+            $units = $request->key == 'organ' 
+            ? Utils::map_select(Data::list(Unit::class, [$request->key => $request->search], ['name'])) 
+            : Utils::map_select(Data::list(Unit::class));
 
-            $comissions = Utils::map_select(Data::list(Comission::class, [
-                [
-                    'column' => $request->key,
-                    'operator' => '=',
-                    'value' => $request->search,
-                    'mode' => 'AND'
-                ]
-            ], ['name']));
+            $comissions = Utils::map_select(Data::list(Comission::class, [$request->key => $request->search], ['name']));
 
-            $programs = Utils::map_select(Data::list(Program::class, [
-                [
-                    'column' => $request->key,
-                    'operator' => '=',
-                    'value' => $request->search,
-                    'mode' => 'AND'
-                ]
-            ], ['name']));
+            $programs = Utils::map_select(Data::list(Program::class, [$request->key => $request->search], ['name']));
 
-            $dotations = Utils::map_select(Data::list(Dotation::class, [
-                [
-                    'column' => $request->key,
-                    'operator' => '=',
-                    'value' => $request->search,
-                    'mode' => 'AND'
-                ]
-            ], ['name']));
+            $dotations = Utils::map_select(Data::list(Dotation::class, [$request->key => $request->search], ['name']));
         }
 
         return Response()->json([

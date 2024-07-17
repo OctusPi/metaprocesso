@@ -62,7 +62,7 @@ class Processes extends Controller
         $premodel->dfds = $dfds->toArray();
         $premodel->ordinators = $dfds->pluck('ordinator');
 
-        return $this->baseSave(Process::class, $premodel->toArray());
+        return $this->baseSave($premodel->toArray());
     }
 
     public function list(Request $request)

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Utils\Utils;
 use App\Utils\Notify;
 use GuzzleHttp\Client;
@@ -23,7 +22,8 @@ class Controller extends BaseController
     protected bool $secutiry = true;
     protected ?string $access_check = null;
 
-    public function __construct(?string $model = null, bool $secutiry = true, ?string $access_check = null){
+    public function __construct(?string $model = null, bool $secutiry = true, ?string $access_check = null)
+    {
         $this->model = $model;
         $this->access_check = $access_check;
         $this->secutiry = $secutiry;
@@ -31,15 +31,15 @@ class Controller extends BaseController
 
     public function index(Request $request)
     {
-        if($this->secutiry){
+        if ($this->secutiry) {
 
             $user = $request->user();
 
-            if(!$user){
+            if (!$user) {
                 return response()->json(Notify::error("Usuário não localizado..."), 401);
             }
 
-            if($this->access_check == null || !$user->tokenCan($this->access_check)){
+            if ($this->access_check == null || !$user->tokenCan($this->access_check)) {
                 return response()->json(Notify::error("Acesso não autorizado..."), 403);
             }
         }
@@ -52,12 +52,11 @@ class Controller extends BaseController
         return Validator::make($data, $model::validateFields(), $model::validateMsg());
     }
 
-    public function validateErros(string $model, ?array $data = [], ?int $id = null): ?string
+    public function validateErros(string $model, ?array $data = []): ?string
     {
         if (method_exists($model, 'validateFields') && method_exists($model, 'validateMsg')) {
-            $validator = Validator::make($data, $model::validateFields($id), $model::validateMsg());
+            $validator = Validator::make($data, $model::validateFields($data['id'] ?? null), $model::validateMsg());
             if ($validator->fails()) {
-                \Log::info($validator->errors());
                 return $validator->errors()->first();
             }
         }
@@ -65,24 +64,37 @@ class Controller extends BaseController
         return null;
     }
 
-    public function baseSave(string $model, array $requests)
+    public function baseSave(array $requests)
     {
-        $validateErros = $this->validateErros($model, $requests);
+
+        $validateErros = $this->validateErros($this->model, $requests);
         if ($validateErros) {
             return response()->json(Notify::warning($validateErros), 400);
         }
 
         try {
-            $instance = new $model($requests);
-            if ($instance->save()) {
-                return Response()->json(Notify::success("Cadastro realizado com sucesso!"), 200);
+            
+
+            if (isset($requests['id']) && $requests['id'] > 0) {
+
+                $instance = (new $this->model())->find($requests['id']);
+                if ($instance && $instance->update($requests)) {
+                    return response()->json(Notify::success("Registro salvo com sucesso!"), 200);
+                }
+                
+            } else {
+                $instance = new $this->model($requests);
+                if ($instance->save()) {
+                    return Response()->json(Notify::success("Registro realizado com sucesso!"), 200);
+                }
             }
+
+            return Response()->json(Notify::error("Falha ao salvar registro!"), 500);
+
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            Log::error(json_encode($requests));
-            return Response()->json(Notify::error("Falha ao realizar cadastro!"), 500);
+            return Response()->json(Notify::error("Falha ao salvar registro!"), 500);
         }
-
     }
 
     public function baseSaveInstance(array $requests)
@@ -98,36 +110,28 @@ class Controller extends BaseController
         }
 
         try {
-            $instance = new $this->model($requests);
-            if ($instance->save()) {
-                $exec['instance'] = $instance ;
+            if (isset($requests['id']) && $requests['id'] > 0) {
+                
+                $instance = (new $this->model())->find($requests['id']);
+                if ($instance && $instance->update($requests)) {
+                    $exec['instance'] = $instance;
+                }
+
+            }else{
+                $instance = new $this->model($requests);
+                if ($instance->save()) {
+                    $exec['instance'] = $instance;
+                }
             }
+            
         } catch (\Exception $e) {
             Log::error($e->getMessage());
         }
 
-        return (object)$exec;
+        return (object) $exec;
     }
 
-    public function baseUpdate(string $model, ?int $id, array $requests)
-    {
-        $validateErros = $this->validateErros($model, $requests, $id);
-        if ($validateErros) {
-            return response()->json(Notify::warning($validateErros), 400);
-        }
-
-        try {
-            $instance = $model::findOrFail($id);
-            if ($instance->update($requests)) {
-                return Response()->json(Notify::success("Registro atualizado com sucesso!"), 200);
-            }
-        } catch (\Exception $e) {
-            Log::alert($e->getMessage());
-            return Response()->json(Notify::error("Falha ao atualizar registro!"), 500);
-        }
-    }
-
-    public function baseDelete(string $model, ?int $id, string $pass)
+    public function baseDelete(?int $id, string $pass)
     {
         $user = Auth::user();
         if (!$user || !password_verify($pass, $user->getAttribute('password'))) {
@@ -135,7 +139,7 @@ class Controller extends BaseController
         }
 
         try {
-            $instance = $model::where('id', $id)->first();
+            $instance = $this->model::where('id', $id)->first();
             if ($instance->delete()) {
                 return Response()->json(Notify::success('Registro excluído com sucesso!'), 200);
             }
@@ -157,9 +161,9 @@ class Controller extends BaseController
         }
     }
 
-    public function baseDetails(string $model, ?int $id, ?array $with = [])
+    public function baseDetails(?int $id, ?array $with = [])
     {
-        $instance = $model::where("id", $id)->with($with)->first();
+        $instance = $this->model::where("id", $id)->with($with)->first();
         if (!$instance) {
             return Response()->json(Notify::warning('Registro não localizado!'), 404);
         }
@@ -169,22 +173,17 @@ class Controller extends BaseController
 
     public function save(Request $request)
     {
-        return $this->baseSave($this->model, $request->all());
-    }
-
-    public function update(Request $request)
-    {
-        return $this->baseUpdate($this->model, $request->id, $request->all());
+        return $this->baseSave($request->all());
     }
 
     public function delete(Request $request)
     {
-        return $this->baseDelete($this->model, $request->id, $request->password);
+        return $this->baseDelete($request->id, $request->password);
     }
 
     public function details(Request $request)
     {
-        return $this->baseDetails($this->model, $request->id);
+        return $this->baseDetails($request->id);
     }
 
     public function fastdestroy(Request $request)

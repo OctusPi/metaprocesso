@@ -110,7 +110,7 @@ class Organ extends Model
     {
         return [
             'name' => 'required',
-            'cnpj' => ['required', Rule::unique('organs')->ignore($id)],
+            'cnpj' => ['required', Rule::unique('organs', 'cnpj')->ignore($id)],
             'phone' => 'required',
             'email' => 'required|email',
             'address' => 'required',

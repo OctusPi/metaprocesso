@@ -28,7 +28,6 @@ use Illuminate\Support\Facades\Route;
 function common(string $prefix, string $controller){
     Route::prefix($prefix)->controller($controller)->group(function(){
         Route::post('/save', 'save');
-        Route::put('/update', 'update');
         Route::post('/destroy', 'delete');
         Route::post('/list', 'list');
         Route::get('/details/{id}', 'details');
@@ -81,7 +80,6 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::get('/{catalog}', 'index');
         Route::post('/{catalog}/list', 'list');
         Route::post('/{catalog}/save', 'save');
-        Route::put('/{catalog}/update', 'update');
         Route::post('/{catalog}/destroy', 'delete');
         Route::get('/{catalog}/details/{id}', 'details');
         Route::get('/{catalog}/catalog', 'catalog');
@@ -91,7 +89,6 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::prefix('/catalogsubcategories')->controller(CatalogSubCategoryItems::class)->group(function(){
         Route::post('/{organ}/list', 'list');
         Route::post('/{organ}/save', 'save');
-        Route::put('/{organ}/update', 'update');
         Route::post('/{organ}/fastdestroy', 'fastdestroy');
         Route::get('/{organ}/details/{id}', 'details');
     });
@@ -122,7 +119,6 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::get('', 'index');
         Route::post('/{origin}/{protocol}/list', 'list');
         Route::post('/{origin}/{protocol}/save', 'save');
-        Route::put('/{origin}/{protocol}/update', 'update');
         Route::post('/{origin}/{protocol}/destroy', 'delete');
         Route::get('/{origin}/{protocol}/details/{id}', 'details');
         Route::get('/{origin}/{protocol}/download/{id}', 'download');

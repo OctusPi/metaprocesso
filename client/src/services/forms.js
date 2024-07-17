@@ -1,18 +1,23 @@
-function casting(value){
-    switch (typeof value) {
-        case 'object':
-            return value !== null ? JSON.stringify(value) : ''
-        case 'boolean':
-            return value ? 1 : 0 
-        default:
-            return value !== 'null' ? value : ''
+function casting(key, value){
+    if(key !== 'document'){
+        switch (typeof value) {
+            case 'object':
+                return value !== null ? JSON.stringify(value) : ''
+            case 'boolean':
+                return value ? 1 : 0 
+            default:
+                return value !== 'null' ? value : ''
+        }
     }
+
+    return value
+    
 }
 
 function builddata(data){
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
-        formData.append(key, casting(value))
+        formData.append(key, casting(key, value))
     });
     return formData
 }

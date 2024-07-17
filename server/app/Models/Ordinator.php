@@ -64,8 +64,8 @@ class Ordinator extends Model
     public static function validateFields(?int $id = null):array
     {
         return [
-            'organ'   => 'required',
-            'unit'    => 'required',
+            'organ'      => 'required',
+            'unit'       => 'required',
             'name'       => 'required',
             'cpf'        => ['required', Rule::unique('ordinators')->ignore($id)],
             'start_term' => 'required',

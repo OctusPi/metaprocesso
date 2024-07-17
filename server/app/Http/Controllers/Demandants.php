@@ -24,23 +24,13 @@ class Demandants extends Controller
     {
         //upload file
         $upload = new Uploads($request, ['document' => ['nullable' => true]]);
-        $values = $upload->mergeUploads($request->all());
-
-        return $this->baseSave(Demandant::class, $values);
-    }
-
-    public function update(Request $request)
-    {
-        if(isset($_FILES['document'])){
-            $ordinator = Demandant::findOrFail($request->id);
-            $upload = new Uploads($request, ['document' => ['nullable' => true]]);
-            $upload->remove($ordinator->document);
-            $values = $upload->mergeUploads($request->all());
-
-            return $this->baseUpdate(Demandant::class, $request->id, $values);
+        
+        if($request->id && $request->hasFile('document')) {
+            $instance = $this->model::find($request->id);
+            $upload->remove($instance->document);
         }
 
-        return $this->baseUpdate(Demandant::class, $request->id, $request->all());
+        return $this->baseSave($upload->mergeUploads($request->all()));
     }
 
     public function list(Request $request)
@@ -60,23 +50,13 @@ class Demandants extends Controller
 
     public function selects(Request $request)
     {
-        $units = $request->key && $request->key == 'organ' ? Utils::map_select(Data::list(Unit::class, [
-            [
-                'column'   => $request->key,
-                'operator' => '=',
-                'value'    => $request->search,
-                'mode'     => 'AND'
-            ]
-            ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+        $units = $request->key && $request->key == 'organ' 
+            ? Utils::map_select(Data::list(Unit::class, [$request->key => $request->search], ['name'])) 
+            : Utils::map_select(Data::list(Unit::class));
 
-        $sectors = $request->key && $request->key == 'unit' ? Utils::map_select(Data::list(Sector::class, [
-            [
-                'column'   => $request->key,
-                'operator' => '=',
-                'value'    => $request->search,
-                'mode'     => 'AND'
-            ]
-            ], ['name'])) : Utils::map_select(Data::list(Sector::class));
+        $sectors = $request->key && $request->key == 'unit' 
+            ? Utils::map_select(Data::list(Sector::class, [$request->key => $request->search], ['name'])) 
+            : Utils::map_select(Data::list(Sector::class));
 
         return Response()->json([
             'organs'  => Utils::map_select(Data::list(Organ::class, order:['name'])),

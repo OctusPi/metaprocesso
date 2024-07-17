@@ -26,29 +26,21 @@ class ComissionsMembers extends Controller
             //upload file
             $upload = new Uploads($request, ['document' => ['nullable' => true]]);
             $values = $upload->mergeUploads($request->all());
-            $values['comission'] = $comission->id;
-            $values['organ'] = $comission->organ;
-            $values['unit'] = $comission->unit;
 
-            return $this->baseSave(ComissionMember::class, $values);
+            if($request->id && $request->hasFile('document')) {
+                $instance = $this->model::find($request->id);
+                $upload->remove($instance->document);
+            }
+
+            return $this->baseSave(array_merge($values, [
+                ['organ']     => $comission->organ,
+                ['unit']      => $comission->unit,
+                ['comission'] => $comission->id
+            ]));
         }
 
         return Response()->json(Notify::warning('Comissão inexistente'), 404);
         
-    }
-
-    public function update(Request $request)
-    {
-        if (isset($_FILES['document'])) {
-            $comission = ComissionMember::findOrFail($request->id);
-            $upload = new Uploads($request, ['document' => ['nullable' => true]]);
-            $upload->remove($comission->document);
-            $values = $upload->mergeUploads($request->all());
-
-            return $this->baseUpdate(ComissionMember::class, $request->id, $values);
-        }
-
-        return $this->baseUpdate(ComissionMember::class, $request->id, $request->all());
     }
 
     public function list(Request $request)

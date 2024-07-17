@@ -56,8 +56,8 @@ class Uploads
     private function validate(array $checkfile): bool
     {
         foreach ($checkfile as $file => $options) {
-            $hasFile = ($this->request->hasFile($file) && $this->request->file($file)->isValid());
-            $upfile = $this->request->$file;
+            $hasFile = $this->request->hasFile($file) && $this->request->file($file)->isValid();
+            $upfile  = $this->request->$file;
 
             //upload file no mandatory
             if ($options['nullable']) {
@@ -97,7 +97,7 @@ class Uploads
                     $this->setResult(self::STATUS_SUCCESS, self::UPLOAD_SUCCESS);
                 } catch (\Throwable $e) {
                     Log::error('Falha ao realizar upload: ' . $e->getMessage());
-                    $this->setResult(self::STATUS_WARNING, $upfile->getError());
+                    $this->setResult(self::STATUS_WARNING, self::UPLOAD_INVALID_TYPE);
                 }
             }
         }
@@ -139,7 +139,7 @@ class Uploads
     public function remove(?string $filename = null): void
     {
         if(!is_null($filename)) {
-            unlink(public_path(self::UPLOAD_PATH) . $filename);
+            unlink(storage_path(self::UPLOAD_PATH) .'\\'. $filename);
         }
     }
 }

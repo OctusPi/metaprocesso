@@ -31,6 +31,10 @@ class Management extends Controller
             return response()->json(Notify::warning($validateErros), 400);
         }
 
+        if($request->id){
+            return $this->baseSave($request->all());
+        }
+
         $pass = Str::random(8);
         $user = new User($request->all());
         $user->setAttribute('username',$request->input("email"));

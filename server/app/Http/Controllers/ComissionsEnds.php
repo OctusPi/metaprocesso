@@ -30,10 +30,14 @@ class ComissionsEnds extends Controller
             return response()->json(Notify::info('Comissão já extinta!'), 200);
         }
 
-        $upload = new Uploads($request, ['document' => ['nullable' => true]]);
-        $values = $upload->mergeUploads($request->all());
+        $upload   = new Uploads($request, ['document' => ['nullable' => true]]);
 
-        $creation = $this->baseSave(ComissionEnd::class, $values);
+        if($request->id && $request->hasFile('document')) {
+            $instance = $this->model::find($request->id);
+            $upload->remove($instance->document);
+        }
+
+        $creation = $this->baseSave($upload->mergeUploads($request->all()));
         if ($creation->status() != 200) {
             return $creation;
         }
@@ -43,21 +47,7 @@ class ComissionsEnds extends Controller
             'status' => Comission::STATUS_EXTINGUED,
         ]);
 
-        return $this->baseUpdate(Comission::class, $request->comission, $update);
-    }
-
-    public function update(Request $request)
-    {
-        if (isset($_FILES['document'])) {
-            $comission = ComissionEnd::findOrFail($request->id);
-            $upload = new Uploads($request, ['document' => ['nullable' => true]]);
-            $upload->remove($comission->document);
-            $values = $upload->mergeUploads($request->all());
-
-            return $this->baseUpdate(ComissionEnd::class, $request->id, $values);
-        }
-
-        return $this->baseUpdate(ComissionEnd::class, $request->id, $request->all());
+        return (new Comissions())->baseSave(array_merge(['id' => $request->comission], $update));
     }
 
     public function list(Request $request)
@@ -77,14 +67,9 @@ class ComissionsEnds extends Controller
 
     public function selects(Request $request)
     {
-        $units = $request->key ? Utils::map_select(Data::list(Unit::class, [
-            [
-                'column' => $request->key,
-                'operator' => '=',
-                'value' => $request->search,
-                'mode' => 'AND'
-            ]
-        ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+        $units = $request->key 
+        ? Utils::map_select(Data::list(Unit::class, [$request->key => $request->search], ['name'])) 
+        : Utils::map_select(Data::list(Unit::class));
 
         return Response()->json([
             'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),

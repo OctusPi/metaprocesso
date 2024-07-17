@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Unit;
-use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Organ;
 use App\Utils\Notify;
@@ -11,7 +10,6 @@ use App\Models\Common;
 use App\Utils\Uploads;
 use App\Middleware\Data;
 use App\Models\Comission;
-use App\Security\Guardian;
 use Illuminate\Http\Request;
 
 class Comissions extends Controller
@@ -25,23 +23,13 @@ class Comissions extends Controller
     {
         //upload file
         $upload = new Uploads($request, ['document' => ['nullable' => true]]);
-        $values = $upload->mergeUploads($request->all());
 
-        return $this->baseSave(Comission::class, $values);
-    }
-
-    public function update(Request $request)
-    {
-        if (isset($_FILES['document'])) {
-            $comission = Comission::findOrFail($request->id);
-            $upload = new Uploads($request, ['document' => ['nullable' => true]]);
-            $upload->remove($comission->document);
-            $values = $upload->mergeUploads($request->all());
-
-            return $this->baseUpdate(Comission::class, $request->id, $values);
+        if($request->id && $request->hasFile('document')) {
+            $instance = $this->model::find($request->id);
+            $upload->remove($instance->document);
         }
 
-        return $this->baseUpdate(Comission::class, $request->id, $request->all());
+        return $this->baseSave($upload->mergeUploads($request->all()));
     }
 
     public function list(Request $request)
@@ -52,7 +40,9 @@ class Comissions extends Controller
     public function details(Request $request)
     {
         if ($request->query('display') == 1) {
+
             $instance = Comission::with(['organ', 'unit'])->find($request->id);
+
             if (!$instance) {
                 return Response()->json(Notify::warning('Registro não localizado!'), 404);
             }
@@ -65,7 +55,7 @@ class Comissions extends Controller
             return Response()->json($displayMode, 200);
         }
 
-        return $this->baseDetails(Comission::class, $request->id);
+        return $this->baseDetails($request->id);
     }
 
     public function download(Request $request)

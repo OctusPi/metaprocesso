@@ -24,14 +24,9 @@ class Dotations extends Controller
     
     public function selects(Request $request)
     {
-        $units = $request->key ? Utils::map_select(Data::list(Unit::class, [
-            [
-                'column'   => $request->key,
-                'operator' => '=',
-                'value'    => $request->search,
-                'mode'     => 'AND'
-            ]
-            ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+        $units = $request->key 
+        ? Utils::map_select(Data::list(Unit::class, [$request->key=>$request->search], ['name'])) 
+        : Utils::map_select(Data::list(Unit::class));
 
         return Response()->json([
             'organs' => Utils::map_select(Data::list(Organ::class, order:['name'])),

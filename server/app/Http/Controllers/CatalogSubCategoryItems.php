@@ -20,7 +20,7 @@ class CatalogSubCategoryItems extends Controller
         $organ = Organ::where('id', $request->organ)->first();
         if ($organ) {
             $req = array_merge($request->all(), ['organ' => $organ->id]);
-            return $this->baseSave(CatalogSubCategoryItem::class, $req);
+            return $this->baseSave($req);
         }
 
         return response()->json(Notify::warning("Órgão não localizado!"), 404);

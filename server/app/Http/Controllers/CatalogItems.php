@@ -23,7 +23,7 @@ class CatalogItems extends Controller
         $catalog = Catalog::where('id', $request->catalog)->first();
         if ($catalog) {
             $req = array_merge($request->all(), ['catalog' => $catalog->id, 'organ' => $catalog->organ]);
-            return $this->baseSave(CatalogItem::class, $req);
+            return $this->baseSave($req);
         }
 
         return response()->json(Notify::warning("Catálogo não localizado!"), 404);
@@ -37,7 +37,7 @@ class CatalogItems extends Controller
 
     public function catalog(Request $request)
     {
-        return $this->baseDetails(Catalog::class, $request->catalog, ['organ', 'comission']);
+        return (new Catalogs())->baseDetails($request->catalog, ['organ', 'comission']);
     }
 
     public function selects(Request $request)

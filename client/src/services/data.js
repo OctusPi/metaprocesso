@@ -25,10 +25,7 @@ class Data {
             }
         }
 
-        const url = this.page.value.data?.id ? `${this.page.value.baseURL}/update` : `${this.page.value.baseURL}/save`
-        const exec = this.page.value.data?.id ? http.put : http.post
-
-        exec(url, data, this.emit, () => {
+        http.post(`${this.page.value.baseURL}/save`, data, this.emit, () => {
             this.list();
         })
     }

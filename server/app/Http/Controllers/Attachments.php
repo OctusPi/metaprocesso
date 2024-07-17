@@ -25,23 +25,9 @@ class Attachments extends Controller
         $upload = new Uploads($request, ['file' => ['nullable' => false]]);
         $values = $upload->mergeUploads($request->all());
 
-        return $this->baseSave(Attachment::class, $values);
+        return $this->baseSave($values);
     }
 
-    public function update(Request $request)
-    {
-        $comission = Attachment::findOrFail($request->id);
-
-        $values = $request->all();
-
-        if ($request->hasFile('file')) {
-            $upload = new Uploads($request, ['file' => ['nullable' => false]]);
-            $upload->remove($comission->file);
-            $values = $upload->mergeUploads($values);
-        }
-
-        return $this->baseUpdate(Attachment::class, $request->id, $values);
-    }
 
     public function download(Request $request)
     {
