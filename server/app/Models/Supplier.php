@@ -14,7 +14,7 @@ class Supplier extends Model
     protected $fillable = [
         'name',
         'cnpj',
-        'agent',    
+        'agent',
         'cpf',
         'phone',
         'email',
@@ -23,16 +23,19 @@ class Supplier extends Model
         'size',
     ];
 
-    public static function validateFields(?int $id = null):array
+    public static function validateFields(?int $id = null): array
     {
         return [
-            'name'     => 'required',
+            'name' => 'required',
             'cnpj' => 'required',
-            'address'  => 'required',
+            'address' => 'required',
+            'email' => 'required',
+            'phone' => 'required',
+            'modality' => 'required',
         ];
     }
 
-    public static function validateMsg():array
+    public static function validateMsg(): array
     {
         return [
             'required' => 'Campo obrigatório não informado!'

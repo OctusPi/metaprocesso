@@ -32,6 +32,9 @@ const page = ref({
             name: 'required',
             address: 'required',
             cnpj: 'required',
+            email: 'required',
+            phone: 'required',
+            modality: 'required',
         },
         valids: {}
     }

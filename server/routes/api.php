@@ -19,6 +19,7 @@ use App\Http\Controllers\Organs;
 use App\Http\Controllers\PriceRecords;
 use App\Http\Controllers\Processes;
 use App\Http\Controllers\Programs;
+use App\Http\Controllers\RiskMaps;
 use App\Http\Controllers\Suppliers;
 use App\Http\Controllers\Units;
 use App\Http\Controllers\Sectors;
@@ -69,6 +70,7 @@ Route::middleware('auth:sanctum')->group(function(){
     common('/process', Processes::class);
     common('/etps', Etps::class);
     common('/pricerecords', PriceRecords::class);
+    common('/riskiness', RiskMaps::class);
 
 
     // call especialized routes
