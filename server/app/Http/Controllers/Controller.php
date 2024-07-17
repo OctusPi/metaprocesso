@@ -129,9 +129,10 @@ class Controller extends BaseController
 
     public function baseDelete(string $model, ?int $id, string $pass)
     {
-        // if (!password_verify($pass, $this->user_loged->getAttribute('password'))) {
-        //     return Response()->json(Notify::warning('Senha de confirmação inválida!'), 401);
-        // }
+        $user = Auth::user();
+        if (!$user || !password_verify($pass, $user->getAttribute('password'))) {
+            return Response()->json(Notify::warning('Senha de confirmação inválida!'), 401);
+        }
 
         try {
             $instance = $model::where('id', $id)->first();
