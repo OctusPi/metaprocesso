@@ -66,13 +66,22 @@ class RiskMap extends Model
     static function list_phases(): array
     {
         return [
-            ['id' => 'PCTIC', 'title' => 'Planejamento da Contratação'],
-            ['id' => 'SFTIC', 'title' => 'Seleção de Fornecedores'],
-            ['id' => 'GCTIC', 'title' => 'Gestão do Contrato'],
+            ['id' => 1, 'title' => '(PCTIC) Planejamento da Contratação'],
+            ['id' => 2, 'title' => '(SFTIC) Seleção de Fornecedores'],
+            ['id' => 3, 'title' => '(GCTIC) Gestão do Contrato'],
         ];
     }
 
-    static function list_actions(): array
+    static function list_impacts(): array
+    {
+        return [
+            ['id' => 1, 'title' => 'Baixo', 'value' => 5],
+            ['id' => 2, 'title' => 'Médio', 'value' => 10],
+            ['id' => 3, 'title' => 'Alto', 'value' => 15],
+        ];
+    }
+
+    static function list_probabilities(): array
     {
         return [
             ['id' => 1, 'title' => 'Baixa', 'value' => 5],
