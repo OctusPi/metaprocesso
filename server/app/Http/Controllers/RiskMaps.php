@@ -62,6 +62,7 @@ class RiskMaps extends Controller
             'phases' => RiskMap::list_phases(),
             'risk_impacts' => RiskMap::list_impacts(),
             'risk_probabilities' => RiskMap::list_probabilities(),
+            'risk_actions' => RiskMap::list_actions(),
             'status_process' => Process::list_status(),
         ], 200);
     }

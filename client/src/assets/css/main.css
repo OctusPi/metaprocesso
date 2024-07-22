@@ -375,3 +375,8 @@
     margin-right: -1.5em !important;
   }
 }
+
+.modal-listage {
+  max-height: 400px;
+  overflow: scroll;
+}

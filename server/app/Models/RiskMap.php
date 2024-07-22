@@ -90,6 +90,14 @@ class RiskMap extends Model
         ];
     }
 
+    static function list_actions(): array
+    {
+        return [
+            ['id' => 1, 'title' => 'Ação Preventiva'],
+            ['id' => 2, 'title' => 'Ação de Contingência'],
+        ];
+    }
+
     public function process(): HasOne
     {
         return $this->hasOne(Process::class, 'id', 'process');

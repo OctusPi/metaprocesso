@@ -25,7 +25,9 @@ const emit = defineEmits([
     'action:items',
     'action:pdf',
     'action:clone',
-    'action:modaldetails'
+    'action:modaldetails',
+    'action:damage',
+    'action:actions',
 ])
 
 const body = ref(props.body)
