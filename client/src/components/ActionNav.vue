@@ -77,8 +77,13 @@ const actions = {
     },
     'actions': {
         action: (id) => { emit('action', { e: 'action:actions', i: id }) },
-        icon: 'bi-file',
+        icon: 'bi-list-check',
         title: 'Ações'
+    },
+    'accompaniments': {
+        action: (id) => { emit('action', { e: 'action:accompaniments', i: id }) },
+        icon: 'bi-check2-all',
+        title: 'Acompanhamentos'
     },
 }
 
@@ -92,6 +97,8 @@ function enableModal(call) {
             return '#modalActions'
         case 'damage':
             return '#modalDamage'
+        case 'accompaniments':
+            return '#modalAccompaniments'
         default:
             return null
     }

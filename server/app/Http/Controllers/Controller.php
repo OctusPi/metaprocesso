@@ -57,6 +57,7 @@ class Controller extends BaseController
         if (method_exists($model, 'validateFields') && method_exists($model, 'validateMsg')) {
             $validator = Validator::make($data, $model::validateFields($data['id'] ?? null), $model::validateMsg());
             if ($validator->fails()) {
+                \Log::info($validator->errors());
                 return $validator->errors()->first();
             }
         }

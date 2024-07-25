@@ -23,13 +23,11 @@ class RiskMap extends Model
         'description',
         'comission_members',
         'riskiness',
-        'accompaniment',
     ];
 
     protected $casts = [
         'comission_members' => Json::class,
         'riskiness' => Json::class,
-        'accompaniment' => Json::class,
     ];
 
     public static function validateFields(?int $id = null): array
@@ -44,7 +42,6 @@ class RiskMap extends Model
             'description' => 'required',
             'comission_members' => 'required',
             'riskiness' => 'required',
-            'accompaniment' => 'required',
         ];
     }
 

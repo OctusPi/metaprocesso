@@ -22,10 +22,10 @@ const page = ref({
     data: {},
     datalist: props.datalist,
     dataheader: [
-        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cnpj' }] },
-        { key: 'phone', title: 'CONTATO', sub: [{ key: 'email' }] },
-        { key: 'postalcity', title: 'LOCALIZAÇÃO', sub: [{ key: 'address' }] },
-        { key: 'status', cast: 'title', title: 'STATUS' }
+        { key: 'version', title: 'VERSÃO E DATA', sub: [{ key: 'date_version' }] },
+        { key: 'name', obj: 'comission', title: 'COMISSÃO', sub: [{ key: 'address' }] },
+        { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] },
+        { key: 'phase', cast: 'title', title: 'FASE' }
     ],
     selects: {
         phases: [],
@@ -33,10 +33,15 @@ const page = ref({
         risk_probabilities: [],
         risk_actions: [],
         status_process: [],
+        comissions: [],
     },
     rules: {
         fields: {
-
+            'comission': 'required',
+            'phase': 'required',
+            'description': 'required',
+            'process': 'required',
+            'riskiness': 'required',
         },
         valids: {}
     },
@@ -57,7 +62,6 @@ const tabs = ref([
     { id: 'infos', icon: 'bi-bounding-box', title: 'Origem', status: true },
     { id: 'process', icon: 'bi-bounding-box', title: 'Processo', status: false },
     { id: 'risks', icon: 'bi-journal-bookmark', title: 'Riscos', status: false },
-    { id: 'accomp', icon: 'bi-journal-album', title: 'Acompanhamentos', status: false },
     { id: 'revisar', icon: 'bi-journal-check', title: 'Revisar', status: false },
 ])
 
@@ -72,6 +76,7 @@ const riskiness = ref({
     dataheader: [
         { key: 'id', title: 'ID' },
         { key: 'risk_name', title: 'RISCO', sub: [{ key: 'risk_related' }] },
+        { key: 'risk_treatment', cast: 'title', title: 'TRATAMENTO' },
         { key: 'risk_probability', cast: 'title', title: 'PROBABILIDADE' },
         { key: 'risk_impact', cast: 'title', title: 'IMPACTO' },
         { key: 'risk_level', title: 'NÍVEL DE RISCO' }
@@ -97,8 +102,16 @@ const pseudoData = new PseudoData(riskiness, emit, risknessUi, (data) => {
         page.value.selects[select].find(({ id }) => id === data[name])
 
     return {
+        'risk_actions': data.risk_actions ?? [],
+        'risk_damage': data.risk_damage ?? [],
         'risk_level': getSelect('risk_impacts', 'risk_impact').value
             * getSelect('risk_probabilities', 'risk_probability').value,
+    }
+})
+
+watch(() => page.value.data, (newdata) => {
+    if (newdata.riskiness) {
+        riskiness.value.datalist = newdata.riskiness
     }
 })
 
@@ -111,7 +124,7 @@ const actions = ref({
     search: {},
     dataheader: [
         { key: 'id', title: 'ID', sub: [{ key: 'risk_action_type', cast: 'title' }] },
-        { key: 'risk_action_name', title: 'AÇÃO' },
+        { title: 'AÇÃO', sub: [{ key: 'risk_action_name' }] },
         { key: 'risk_action_responsability', title: 'RESPONSABILIDADE' },
     ],
     rules: {
@@ -123,6 +136,9 @@ const actions = ref({
         valids: {}
     },
 })
+
+const actionsUi = new Ui(actions, 'Ações')
+const actionsData = new PseudoData(actions, emit, actionsUi)
 
 const damage = ref({
     datalist: [],
@@ -142,21 +158,43 @@ const damage = ref({
     },
 })
 
-const actionsUi = new Ui(actions, 'Ações')
-const actionsData = new PseudoData(actions, emit, actionsUi)
 const damageUi = new Ui(damage, 'Danos')
 const damageData = new PseudoData(damage, emit, damageUi)
 
-function swithToModal(id, reference, key) {
-    reference.risk = riskiness.value.datalist.find((item) => item.id == id)
+const accomp = ref({
+    datalist: [],
+    risk: {},
+    uiview: {},
+    title: { primary: '', secondary: '' },
+    data: {},
+    search: {},
+    dataheader: [
+        { key: 'id', title: 'ID' },
+        { key: 'risk_accomp_date', title: 'DATA' },
+        { key: 'risk_accomp_treatment', title: 'TRATAMENTO' },
+    ],
+    rules: {
+        fields: {
+            'risk_accomp_date': 'required',
+            'risk_accomp_treatment': 'required',
+        },
+        valids: {}
+    },
+})
+
+const accompUi = new Ui(accomp, 'Acompanhamentos')
+const accompData = new PseudoData(accomp, emit, accompUi)
+
+function swithToModal(id, reference, ds, key) {
+    reference.risk = ds.datalist.find((item) => item.id == id)
     reference.datalist = reference.risk[key] ?? []
 }
 
-function save_actions(reference, data, key) {
+function saveModal(reference, ds, data, key) {
     data.save()
-    const index = riskiness.value.datalist
+    const index = ds.datalist
         .findIndex((item) => item.id == reference.risk.id)
-    riskiness.value.datalist[index][key] = reference.datalist
+    ds.datalist[index][key] = reference.datalist
 }
 
 function search_process() {
@@ -221,12 +259,13 @@ onMounted(() => {
                     <!-- DATA LIST -->
                     <TableList @action:update="data.update" @action:delete="data.remove" :header="page.dataheader"
                         :body="page.datalist" :actions="['update', 'delete']"
-                        :casts="{ 'phases': page.selects.phases }" />
+                        :casts="{ 'phase': page.selects.phases }" />
                 </div>
 
                 <!--BOX REGISTER-->
                 <div v-if="page.uiview.register" id="register-box" class="inside-box px-4 px-md-5 mb-4">
-                    <form class="form-row" @submit.prevent="data.save()">
+                    <form class="form-row"
+                        @submit.prevent="data.save({ riskiness: riskiness.datalist, process: page.data.process.id })">
                         <input type="hidden" name="id" v-model="page.data.id">
 
                         <TabNav :tab-instance="tabSwitch" identify="process-nav" />
@@ -254,7 +293,7 @@ onMounted(() => {
                                         <label for="phase" class="form-label">Fase</label>
                                         <select name="phase" class="form-control" :class="{
                                             'form-control-alert': page.rules.valids.phase
-                                        }" id="phase" v-model="page.data.phases">
+                                        }" id="phase" v-model="page.data.phase">
                                             <option value=""></option>
                                             <option v-for="o in page.selects.phases" :key="o.id" :value="o.id">
                                                 {{ o.title }}
@@ -297,7 +336,7 @@ onMounted(() => {
                                                     {{
                                                         page.data.comission
                                                             ? `Aplique os filtros abaixo para localizar os Processos`
-                                                            : `Selecione uma comissão`
+                                                            : `É necessário selecionar uma comissão`
                                                     }}
                                                 </p>
                                             </button>
@@ -397,7 +436,7 @@ onMounted(() => {
                                                 <option value=""></option>
                                                 <option v-for="o in page.selects.risk_impacts" :key="o.id"
                                                     :value="o.id">
-                                                    {{ o.value }} - {{ o.title }}
+                                                    {{ o.title }} ({{ o.value }})
                                                 </option>
                                             </select>
                                         </div>
@@ -409,7 +448,7 @@ onMounted(() => {
                                                 <option value=""></option>
                                                 <option v-for="o in page.selects.risk_probabilities" :key="o.id"
                                                     :value="o.id">
-                                                    {{ o.value }} - {{ o.title }}
+                                                    {{ o.title }} ({{ o.value }})
                                                 </option>
                                             </select>
                                         </div>
@@ -430,7 +469,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div v-if="!riskiness.uiview.register">
-                                    <div class="action-buttons d-flex">
+                                    <div class="action-buttons d-flex mb-3">
                                         <button @click="risknessUi.toggle('register')" type="button"
                                             class="btn btn-action btn-action-primary mx-auto">
                                             <i class="bi bi-map"></i>
@@ -440,8 +479,8 @@ onMounted(() => {
                                     </div>
                                     <div class="inside-box mb-4 form-neg-box">
                                         <TableList @action:update="pseudoData.update"
-                                            @action:damage="(id) => swithToModal(id, damage, 'risk_damage')"
-                                            @action:actions="(id) => swithToModal(id, actions, 'risk_actions')"
+                                            @action:damage="(id) => swithToModal(id, damage, riskiness, 'risk_damage')"
+                                            @action:actions="(id) => swithToModal(id, actions, riskiness, 'risk_actions')"
                                             @action:fastdelete="pseudoData.remove" :header="riskiness.dataheader"
                                             :body="riskiness.datalist"
                                             :actions="['update', 'fastdelete', 'damage', 'actions']" :casts="{
@@ -483,7 +522,7 @@ onMounted(() => {
                             <p class="small txt-color-sec p-0 m-0">{{ damage.title.secondary }}</p>
                         </div>
                         <div v-if="damage.uiview.register">
-                            <form @submit.prevent="() => save_actions(damage, damageData, 'risk_damage')"
+                            <form @submit.prevent="() => saveModal(damage, riskiness, damageData, 'risk_damage')"
                                 class="row g-3 p-4 pt-0">
                                 <div class="col-sm-12 col-md-12">
                                     <label for="risk_damage" class="form-label">Dano</label>
@@ -539,7 +578,7 @@ onMounted(() => {
                             <p class="small txt-color-sec p-0 m-0">{{ actions.title.secondary }}</p>
                         </div>
                         <div v-if="actions.uiview.register">
-                            <form @submit.prevent="() => save_actions(actions, actionsData, 'risk_actions')"
+                            <form @submit.prevent="() => saveModal(actions, riskiness, actionsData, 'risk_actions')"
                                 class="row g-3 p-4 pt-0">
                                 <div class="col-sm-12 col-md-12">
                                     <label for="risk_action_name" class="form-label">Ação</label>
@@ -579,13 +618,77 @@ onMounted(() => {
                         <div v-if="!actions.uiview.register" class="modal-listage">
                             <TableList @action:update="actionsData.update" @action:fastdelete="actionsData.remove"
                                 :header="actions.dataheader" :body="actions.datalist"
-                                :actions="['update', 'fastdelete']" :casts="{
+                                @action:accompaniments="(id) => swithToModal(id, accomp, actions, 'risk_accompaniments')"
+                                :actions="['accompaniments', 'update', 'fastdelete']" :casts="{
                                     'risk_action_type': page.selects.risk_actions
                                 }" />
                         </div>
                     </div>
                     <div v-if="!actions.uiview.register" class="modal-footer border-0">
                         <button @click="actionsUi.toggle('register')" type="button"
+                            class="btn btn-action btn-action-primary ms-2">
+                            <i class="bi bi-plus-circle"></i>
+                            <span class="title-btn-action ms-2 d-md-block d-lg-inline">Adicionar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="modalAccompaniments" data-bs-backdrop="static" data-bs-keyboard="false"
+            tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered mx-auto">
+                <div class="modal-content p-0 box">
+                    <div class="modal-header border border-0 p-4">
+                        <h1 class="modal-title">
+                            <i class="bi bi-bookmarks me-2"></i>
+                            Acompanhamentos
+                        </h1>
+                        <button type="button" class="txt-color ms-auto" data-bs-target="#modalActions"
+                            data-bs-toggle="modal" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <div class="text-center mb-3">
+                            <h2 class="txt-color p-0 m-0">{{ accomp.title.primary }}</h2>
+                            <p class="small txt-color-sec p-0 m-0">{{ accomp.title.secondary }}</p>
+                        </div>
+                        <div v-if="accomp.uiview.register">
+                            <form @submit.prevent="() => saveModal(accomp, actions, accompData, 'risk_accompaniments')"
+                                class="row g-3 p-4 pt-0">
+                                <div class="col-sm-12 col-md-4">
+                                    <label for="date_ini" class="form-label">Data Envio Demanda</label>
+                                    <VueDatePicker auto-apply v-model="accomp.data.risk_accomp_date"
+                                        :input-class-name="accomp.rules.valids.risk_accomp_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                        :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                        locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                        calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                                </div>
+                                <div class="col-sm-12 col-md-8">
+                                    <label for="risk_accomp_treatment" class="form-label">Tratamento</label>
+                                    <input type="text" name="risk_accomp_treatment" class="form-control"
+                                        :class="{ 'form-control-alert': accomp.rules.valids.risk_accomp_treatment }"
+                                        id="risk_accomp_treatment" v-model="accomp.data.risk_accomp_treatment"
+                                        placeholder="Responsáveis pela ação">
+                                </div>
+                                <div class="d-flex flex-row-reverse mt-4">
+                                    <button type="submit" class="btn btn-outline-primary">Salvar <i
+                                            class="bi bi-check2-circle"></i></button>
+                                    <button type="button" @click="accompUi.toggle('list')"
+                                        class="btn btn-outline-warning mx-2">Cancelar
+                                        <i class="bi bi-check2-circle"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                        <div v-if="!accomp.uiview.register" class="modal-listage">
+                            <TableList @action:update="accompData.update" @action:fastdelete="accompData.remove"
+                                :header="accomp.dataheader" :body="accomp.datalist"
+                                :actions="['update', 'fastdelete']" />
+                        </div>
+                    </div>
+                    <div v-if="!accomp.uiview.register" class="modal-footer border-0">
+                        <button @click="accompUi.toggle('register')" type="button"
                             class="btn btn-action btn-action-primary ms-2">
                             <i class="bi bi-plus-circle"></i>
                             <span class="title-btn-action ms-2 d-md-block d-lg-inline">Adicionar</span>

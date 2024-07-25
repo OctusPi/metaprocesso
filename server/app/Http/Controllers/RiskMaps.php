@@ -11,6 +11,7 @@ use App\Models\RiskMap;
 use App\Utils\Notify;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
+use App\Utils\Dates;
 
 class RiskMaps extends Controller
 {
@@ -44,15 +45,16 @@ class RiskMaps extends Controller
     public function save(Request $request)
     {
         return $this->baseSave(array_merge($request->all(), [
-            'ip' => $request->ip(),
-            'user' => $request->user()->id,
+            'author' => $request->user()->id,
             'comission_members' => ComissionMember::where('comission', $request->comission)->get()->toArray(),
+            'version' => (RiskMap::count() + 1) . ".0",
+            'date_version' => Dates::nowWithFormat(Dates::PTBR),
         ]));
     }
 
     public function details(Request $request)
     {
-        return $this->baseDetails($request->id, ['process', 'comission']);
+        return $this->baseDetails($request->id, ['process']);
     }
 
     public function selects(Request $request)
