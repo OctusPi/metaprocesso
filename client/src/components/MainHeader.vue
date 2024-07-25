@@ -25,8 +25,14 @@ const description   = ref(props?.header?.description)
             <i class="bi fs-3 me-2 rounded-circle txt-color-base" :class="icon"></i>
             <div>
                 <h1 class="p-0 m-0 txt-color">{{ title }}</h1>
-                <span class="m-0 p-0 small txt-color-sec">{{ description }}</span>
+                <p class="m-0 p-0 small txt-color-sec">{{ description }}</p>
             </div>
         </div>
     </header>
 </template>
+
+<style scoped>
+    .header-main-title p{
+        font-size: 0.8rem;
+    }
+</style>

@@ -8,9 +8,9 @@ import MainHeader from '@/components/MainHeader.vue';
         <MainNav />
         <section class="container-main">
             <MainHeader :header="{
-                icon: 'bi-book-half',
-                title: 'Catálogo Bens, Serviços e Fornecedores',
-                description: 'Gestão de Catálogo Padronizado de Itens'
+                icon: 'bi-view-list',
+                title: 'Dashboard',
+                description: 'Panorama de contratações e estágios de processos.'
             }" />
 
             <div class="box box-main p-0 rounded-4">

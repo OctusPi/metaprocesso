@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 :root {
-  --color-fundo: #ececec;
+  --color-fundo: #eef1f5;
   --color-box: #fcfcfc;
 
   --color-base: #19a6ec;
@@ -11,7 +11,7 @@
   --color-contrast-hover: #F5F9FC;
 
   --color-text: #2e2e2e;
-  --color-text-secondary: #7c7a7a;
+  --color-text-secondary: #636e7e;
 
   --color-code: rgb(223, 238, 255);
   --color-input: #ffffff;
@@ -39,7 +39,7 @@
   --color-warning-dark: #a16704;
   --color-danger-dark: #7e1c29;
 
-  --border-box: 1px solid #dde2e7;
+  --border-box: 1px solid #eeeeee;
 }
 
 .dark:root {
@@ -53,7 +53,7 @@
   --color-base-translucid: #091e29d2;
 
   --color-text: #f0f0f0;
-  --color-text-secondary: #cfcfcf;
+  --color-text-secondary: #b7c9dd;
   --color-wall-load: rgba(35, 35, 35, 0.458);
   --color-code: rgba(38, 74, 116, 0.795);
 
