@@ -16,13 +16,11 @@ class Data {
             return
         }
 
-        const data = { ...this.page.value.data }
+        let data = { ...this.page.value.data }
 
         //overwriting data values
         if (over) {
-            for (let k in over) {
-                data[k] = over[k]
-            }
+            data = Object.assign(data, over)
         }
 
         http.post(`${this.page.value.baseURL}/save`, data, this.emit, () => {
@@ -57,6 +55,7 @@ class Data {
     list = () => {
         http.post(`${this.page.value.baseURL}/list`, this.page.value.search, this.emit, (response) => {
             this.page.value.datalist = response.data ?? []
+            console.log(response.data)
             this.ui.toggle('list')
         })
     }

@@ -428,7 +428,6 @@ onMounted(() => {
                                             locale="pt-br" calendar-class-name="dp-custom-calendar"
                                             calendar-cell-class-name="dp-custom-cell"
                                             menu-class-name="dp-custom-menu" />
-
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <label for="estimated_date" class="form-label">Data Prevista Contratação</label>

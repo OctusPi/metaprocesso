@@ -8,8 +8,10 @@ use App\Models\ComissionMember;
 use App\Models\Common;
 use App\Models\Process;
 use App\Models\RiskMap;
+use App\Utils\Notify;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
+use App\Utils\Dates;
 
 class RiskMaps extends Controller
 {
@@ -27,18 +29,32 @@ class RiskMaps extends Controller
         );
     }
 
+    public function list_processes(Request $request)
+    {
+        if (empty($request->except('comission'))) {
+            return Response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
+        }
+
+        $search = Utils::map_search(['protocol', 'comission', 'description'], $request->all());
+        $betw = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
+
+        $query = Data::list(Process::class, $search, null, ['organ', 'comission'], $betw);
+        return Response()->json($query, 200);
+    }
+
     public function save(Request $request)
     {
-        return $this->baseSave(RiskMap::class, array_merge($request->all(), [
-            'ip' => $request->ip(),
-            'user' => $request->user()->id,
+        return $this->baseSave(array_merge($request->all(), [
+            'author' => $request->user()->id,
             'comission_members' => ComissionMember::where('comission', $request->comission)->get()->toArray(),
+            'version' => (RiskMap::count() + 1) . ".0",
+            'date_version' => Dates::nowWithFormat(Dates::PTBR),
         ]));
     }
 
     public function details(Request $request)
     {
-        return $this->baseDetails(RiskMap::class, $request->id, ['process', 'comission']);
+        return $this->baseDetails($request->id, ['process']);
     }
 
     public function selects(Request $request)
@@ -46,7 +62,10 @@ class RiskMaps extends Controller
         return Response()->json([
             'comissions' => Utils::map_select(Data::list(Comission::class, order: ['name'])),
             'phases' => RiskMap::list_phases(),
+            'risk_impacts' => RiskMap::list_impacts(),
+            'risk_probabilities' => RiskMap::list_probabilities(),
             'risk_actions' => RiskMap::list_actions(),
+            'status_process' => Process::list_status(),
         ], 200);
     }
 }

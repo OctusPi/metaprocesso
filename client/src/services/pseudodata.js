@@ -2,23 +2,25 @@ import forms from './forms'
 import notifys from '@/utils/notifys';
 
 class PseudoData {
-    constructor(page, emit, ui, mountCb) {
-        this.mountCb = mountCb
+    constructor(page, emit, ui, saveCb = () => { }) {
+        this.saveCb = saveCb
         this.page = page
         this.emit = emit
         this.ui = ui
+        this.ptrs = {};
 
         this.list()
     }
 
     save = (over = null) => {
-        const data = Object.assign(this.page.value.data, this.mountCb(this.page.value.data))
-        const validation = forms.checkform(data, this.page.value.rules);
+        const validation = forms.checkform(this.page.value.data, this.page.value.rules);
 
         if (!validation.isvalid) {
             this.emit('callAlert', notifys.warning(validation.message))
             return
         }
+
+        const data = Object.assign(this.page.value.data, this.saveCb(this.page.value.data))
 
         if (over) {
             for (let k in over) {
@@ -29,7 +31,7 @@ class PseudoData {
         if (data.id) {
             const index = this.page.value.datalist.findIndex(
                 ({ id }) => id == data.id)
-                
+
             if (index != -1) {
                 this.page.value.datalist[index] = Object.assign(this.page.value.datalist[index], data)
             }
@@ -38,7 +40,7 @@ class PseudoData {
             return
         }
 
-        const lastEl = this.page.value.datalist[this.page.value.datalist.length - 1]
+        const lastEl = (this.page.value.datalist ?? [])[this.page.value.datalist.length - 1]
         this.page.value.datalist.push({ id: (lastEl?.id ?? 0) + 1, ...this.page.value.data })
 
         this.list()

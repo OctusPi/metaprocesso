@@ -125,6 +125,10 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::get('/{origin}/{protocol}/details/{id}', 'details');
         Route::get('/{origin}/{protocol}/download/{id}', 'download');
     });
+
+    Route::prefix('/riskiness')->controller(Processes::class)->group(function(){
+        Route::post('/list_processes', 'list_processes');
+    });
 });
 
 // fallback 404

@@ -70,15 +70,35 @@ const actions = {
         icon: 'bi-list-ul',
         title: 'Detalhar'
     },
-
+    'damage': {
+        action: (id) => { emit('action', { e: 'action:damage', i: id }) },
+        icon: 'bi-exclamation-triangle',
+        title: 'Danos'
+    },
+    'actions': {
+        action: (id) => { emit('action', { e: 'action:actions', i: id }) },
+        icon: 'bi-list-check',
+        title: 'Ações'
+    },
+    'accompaniments': {
+        action: (id) => { emit('action', { e: 'action:accompaniments', i: id }) },
+        icon: 'bi-check2-all',
+        title: 'Acompanhamentos'
+    },
 }
 
-function enableModal(call){
-    switch(call){
+function enableModal(call) {
+    switch (call) {
         case 'delete':
             return '#modalDelete'
         case 'modaldetails':
             return '#modalDetails'
+        case 'actions':
+            return '#modalActions'
+        case 'damage':
+            return '#modalDamage'
+        case 'accompaniments':
+            return '#modalAccompaniments'
         default:
             return null
     }
@@ -94,8 +114,7 @@ function enableModal(call){
         <ul class="dropdown-menu px-2 py-3">
             <li>
                 <a class="dropdown-item item-action-menu" href="#" v-for="c in calls" :key="actions[c].title"
-                    :data-bs-toggle="enableModal(c) ? 'modal' : null"
-                    :data-bs-target="enableModal(c)"
+                    :data-bs-toggle="enableModal(c) ? 'modal' : null" :data-bs-target="enableModal(c)"
                     @click.prevent="actions[c].action(props.id)">
                     <i class="bi me-2" :class="actions[c].icon"></i>
                     {{ actions[c].title }}
