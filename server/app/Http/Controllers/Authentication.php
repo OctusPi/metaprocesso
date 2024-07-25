@@ -72,7 +72,7 @@ class Authentication extends Controller
         }
 
         try {
-            $token = $user->createToken('recoverpass', ['*'], now()->addHour());
+            $token = $user->createToken('recoverpass', ['pass-recover'], now()->addHour());
             $user->token = $token;
             $user->passchange = true;
 
