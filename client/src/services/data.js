@@ -55,7 +55,6 @@ class Data {
     list = () => {
         http.post(`${this.page.value.baseURL}/list`, this.page.value.search, this.emit, (response) => {
             this.page.value.datalist = response.data ?? []
-            console.log(response.data)
             this.ui.toggle('list')
         })
     }

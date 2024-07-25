@@ -93,7 +93,7 @@ watch(() => props.body, (newValue) => {
 </script>
 
 <template>
-    <p v-if="body.length && props.count" class="small txt-color-sec" :class="{'ps-5':!props.smaller}">
+    <p v-if="props.count" class="small txt-color-sec" :class="{'ps-5':!props.smaller}">
         <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
     </p>
     <div v-if="body.length" class="table-responsive-sm">
@@ -124,16 +124,17 @@ watch(() => props.body, (newValue) => {
             </tbody>
         </table>
     </div>
-    <div v-else class="text-center txt-color-sec">
-        <i class="bi bi-boxes fs-4"></i>
-        <p class="small">Não foram localizados registros...</p>
-    </div>
+    
 </template>
 
 <style scoped>
 th{
     white-space:nowrap;
 }
+
+table td:nth-child(1) {
+    white-space: nowrap;
+  }
 
 .table tr th:first-child {
     padding-left: 50px;

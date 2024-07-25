@@ -1,12 +1,11 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 :root {
-  --color-fundo: #d7e5ee;
-  --color-box: #ffffff;
+  --color-fundo: #ececec;
+  --color-box: #fcfcfc;
 
   --color-base: #19a6ec;
-  --color-base-translucid: #19a6ec25;
+  --color-base-translucid: #dde0e065;
   --color-hover: #058ed3;
   --color-contrast: #14345c;
   --color-contrast-hover: #F5F9FC;
@@ -40,18 +39,18 @@
   --color-warning-dark: #a16704;
   --color-danger-dark: #7e1c29;
 
-  --border-box: 1px solid #cfd9e5;
+  --border-box: 1px solid #dde2e7;
 }
 
 .dark:root {
-  --color-fundo: #000000;
+  --color-fundo: #0a0f16;
   --color-box: #1E293B;
 
   --color-base: #0da5f0;
   --color-hover: #058ed3;
   --color-contrast: #acd1ff;
   --color-contrast-hover: #0091ff29;
-  --color-base-translucid: #0a659225;
+  --color-base-translucid: #091e29d2;
 
   --color-text: #f0f0f0;
   --color-text-secondary: #cfcfcf;
@@ -63,7 +62,7 @@
   --color-input: #000000;
   --color-input-label: #64d4ec;
   --color-input-focus: #2f2f2f;
-  --color-input-border: #e2e2e3;
+  --color-input-border: #303f57;
   --color-input-placeholder: #787878;
   --color-input-disabled: #111720;
 
@@ -100,7 +99,6 @@ body {
   height: 100vh;
   color: var(--color-text);
   background: var(--color-fundo);
-  background-image: url('../imgs/bg.svg');
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

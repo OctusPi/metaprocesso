@@ -618,12 +618,7 @@ onMounted(() => {
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
                                 <div>
-                                    <div v-if="page.data.dfds?.length > 0" class="mb-4 form-neg-box">
-                                        <TableListSelect :count="false" identify="dfds-list"
-                                            :casts="{ 'status': page.selects.dfds_status }" :header="page.dfds.headers"
-                                            :body="page.data.dfds" v-model="page.data.dfds" />
-                                    </div>
-                                    <div class="accordion" id="accordion-dfds">
+                                    <div class="accordion mb-4" id="accordion-dfds">
                                         <div class="accordion-item">
                                             <h2 class="accordion-header" id="accordion-dfds-header">
                                                 <button class="w-100 text-center px-2 py-3" type="button"
@@ -711,6 +706,12 @@ onMounted(() => {
                                             </div>
                                         </div>
                                     </div>
+                                    <div v-if="page.data.dfds?.length > 0" class="form-neg-box">
+                                        <TableListSelect :count="false" identify="dfds-list"
+                                            :casts="{ 'status': page.selects.dfds_status }" :header="page.dfds.headers"
+                                            :body="page.data.dfds" v-model="page.data.dfds" />
+                                    </div>
+                                    
 
                                     <div class="mt-4" v-if="page.data.organ && page.datalist.length < 1">
                                         <div class="text-center txt-color-sec">

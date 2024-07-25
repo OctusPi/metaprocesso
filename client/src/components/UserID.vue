@@ -49,7 +49,7 @@
 <template>
     <div class="dropdown">
         <button class="btn header-main-btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-person-circle"></i>
+            <i class="bi bi-person-circle fs-5"></i>
         </button>
         <ul class="dropdown-menu">
             <li>

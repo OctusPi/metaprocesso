@@ -7,11 +7,15 @@ import MainHeader from '@/components/MainHeader.vue';
     <main class="container-primary">
         <MainNav />
         <section class="container-main">
-            <MainHeader />
+            <MainHeader :header="{
+                icon: 'bi-book-half',
+                title: 'Catálogo Bens, Serviços e Fornecedores',
+                description: 'Gestão de Catálogo Padronizado de Itens'
+            }" />
 
-            <div class="box p-4 mb-4 rounded-4">
-                Dash
+            <div class="box box-main p-0 rounded-4">
+                <h1 class="fs-5 text-center my-5">DashBoard</h1>
             </div>
-        </section>
-    </main>
+            </section>
+            </main>
 </template>

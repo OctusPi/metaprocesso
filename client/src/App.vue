@@ -4,6 +4,7 @@ import { RouterView } from 'vue-router'
 import style from '@/stores/theme';
 import UiAlert from './components/UiAlert.vue';
 import ModalDelete from './components/ModalDelete.vue';
+import CopyRigthUi from './components/CopyRigthUi.vue';
 
 const datalist = ref([])
 const alert    = ref({show: false, data:{type:'success', msg: ''}})
@@ -34,6 +35,8 @@ onMounted(() => {
       @callAlert="(data) => { alert = data}" 
       @callRemove="(data) => { remove = data }" />
   </div>
+
+  <CopyRigthUi />
   
 </template>
 

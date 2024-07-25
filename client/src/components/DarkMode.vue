@@ -24,7 +24,7 @@
         data-bs-custom-class="custom-tooltip"
         data-bs-title="This top tooltip is themed via CSS variables.">
         <button class="btn header-main-btn-icon me-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-palette2"></i>
+            <i class="bi bi-palette2 fs-5"></i>
         </button>
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="#" @click="changeTheme('ligth')">

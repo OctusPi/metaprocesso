@@ -1,10 +1,7 @@
-<script setup>
-
-</script>
 <template>
     <div class="dropdown">
         <button class="btn header-main-btn-icon me-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-bell-fill"></i>
+            <i class="bi bi-bell-fill fs-5"></i>
         </button>
         <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="#">

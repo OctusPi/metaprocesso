@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import Notifications from './Notifications.vue';
+import Notifications from './NotificationsUi.vue';
 import DarkMode from './DarkMode.vue';
 import UserID from './UserID.vue';
 

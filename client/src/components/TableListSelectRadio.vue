@@ -124,6 +124,11 @@ th {
     white-space: nowrap;
 }
 
+table td:nth-child(2) {
+    white-space: nowrap;
+  }
+
+
 .table tr th:first-child {
     padding-left: 50px;
 }

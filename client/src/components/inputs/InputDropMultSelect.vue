@@ -16,7 +16,7 @@ const model = defineModel({ default: [] })
 const valid = ref(props.valid)
 
 function show_selected(){
-	if(model.value.length > 0){
+	if(model.value){
 		return `${(model.value.length).toString().padStart(2, '0')} Itens Selecionados`
 	}
 
