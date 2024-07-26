@@ -500,7 +500,7 @@ onMounted(() => {
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('origem') }"
                                 id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
                                 <div class="row mb-3 g-3">
-                                    <div class="col-sm-12 col-md-4">
+                                    <div class="col-sm-12 col-md-8">
                                         <label for="organ" class="form-label">Orgão</label>
                                         <select name="organ" class="form-control"
                                             :class="{ 'form-control-alert': page.rules.valids.organ }" id="organ"
@@ -618,6 +618,11 @@ onMounted(() => {
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
                                 <div>
+                                    <div v-if="page.data.dfds?.length > 0" class="form-neg-box mb-3">
+                                        <TableListSelect :count="false" identify="dfds-list"
+                                            :casts="{ 'status': page.selects.dfds_status }" :header="page.dfds.headers"
+                                            :body="page.data.dfds" v-model="page.data.dfds" />
+                                    </div>
                                     <div class="accordion mb-4" id="accordion-dfds">
                                         <div class="accordion-item">
                                             <h2 class="accordion-header" id="accordion-dfds-header">
@@ -706,12 +711,6 @@ onMounted(() => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div v-if="page.data.dfds?.length > 0" class="form-neg-box">
-                                        <TableListSelect :count="false" identify="dfds-list"
-                                            :casts="{ 'status': page.selects.dfds_status }" :header="page.dfds.headers"
-                                            :body="page.data.dfds" v-model="page.data.dfds" />
-                                    </div>
-                                    
 
                                     <div class="mt-4" v-if="page.data.organ && page.datalist.length < 1">
                                         <div class="text-center txt-color-sec">
