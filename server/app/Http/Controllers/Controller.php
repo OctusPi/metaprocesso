@@ -57,7 +57,6 @@ class Controller extends BaseController
         if (method_exists($model, 'validateFields') && method_exists($model, 'validateMsg')) {
             $validator = Validator::make($data, $model::validateFields($data['id'] ?? null), $model::validateMsg());
             if ($validator->fails()) {
-                \Log::info($validator->errors());
                 return $validator->errors()->first();
             }
         }
@@ -215,7 +214,7 @@ class Controller extends BaseController
 
             $resp = $client->post($url, [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $api_key,
+                    'Authorization' => "Bearer $api_key",
                     'Content-Type' => 'application/json'
                 ],
                 'json' => $data

@@ -23,11 +23,13 @@ class RiskMap extends Model
         'description',
         'comission_members',
         'riskiness',
+        'accompaniments',
     ];
 
     protected $casts = [
         'comission_members' => Json::class,
         'riskiness' => Json::class,
+        'accompaniments' => Json::class,
     ];
 
     public static function validateFields(?int $id = null): array
@@ -42,6 +44,7 @@ class RiskMap extends Model
             'description' => 'required',
             'comission_members' => 'required',
             'riskiness' => 'required',
+            'accompaniments' => 'required',
         ];
     }
 
@@ -90,8 +93,8 @@ class RiskMap extends Model
     static function list_actions(): array
     {
         return [
-            ['id' => 1, 'title' => 'Ação Preventiva'],
-            ['id' => 2, 'title' => 'Ação de Contingência'],
+            ['id' => 1, 'title' => 'Ação Preventiva', 'code' => 'P'],
+            ['id' => 2, 'title' => 'Ação de Contingência', 'code' => 'C'],
         ];
     }
 

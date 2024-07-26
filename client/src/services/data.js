@@ -18,10 +18,7 @@ class Data {
 
         let data = { ...this.page.value.data }
 
-        //overwriting data values
-        if (over) {
-            data = Object.assign(data, over)
-        }
+        if (over)  data = Object.assign(data, over)
 
         http.post(`${this.page.value.baseURL}/save`, data, this.emit, () => {
             this.list();

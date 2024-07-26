@@ -8,6 +8,7 @@ use App\Models\ComissionMember;
 use App\Models\Common;
 use App\Models\Process;
 use App\Models\RiskMap;
+use App\Models\Unit;
 use App\Utils\Notify;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
@@ -44,12 +45,19 @@ class RiskMaps extends Controller
 
     public function save(Request $request)
     {
-        return $this->baseSave(array_merge($request->all(), [
+        $preload = [
             'author' => $request->user()->id,
             'comission_members' => ComissionMember::where('comission', $request->comission)->get()->toArray(),
-            'version' => (RiskMap::count() + 1) . ".0",
             'date_version' => Dates::nowWithFormat(Dates::PTBR),
-        ]));
+        ];
+
+        if (!$request->id) {
+            $last_item = RiskMap::orderByDesc('created_at')->first();
+            $last_version = floatval($last_item ? $last_item->version : 0);
+            $preload['version'] = sprintf("%.1f", $last_version + 1);
+        }
+
+        return $this->baseSave(array_merge($request->all(), $preload));
     }
 
     public function details(Request $request)
@@ -59,8 +67,28 @@ class RiskMaps extends Controller
 
     public function selects(Request $request)
     {
+        $units = $request->key ? Utils::map_select(Data::list(Unit::class, [
+            [
+                'column' => $request->key,
+                'operator' => '=',
+                'value' => $request->search,
+                'mode' => 'AND'
+            ]
+        ], ['name'])) : Utils::map_select(Data::list(Unit::class));
+
+        $comissions = $request->key ? Utils::map_select(Data::list(Comission::class, [
+            [
+                'column' => $request->key,
+                'operator' => '=',
+                'value' => $request->search,
+                'mode' => 'AND'
+            ]
+        ], ['name'])) : Utils::map_select(Data::list(Comission::class));
+
         return Response()->json([
-            'comissions' => Utils::map_select(Data::list(Comission::class, order: ['name'])),
+            'units' => $units,
+            'comissions' => $comissions,
+            'organs' => Utils::map_select(Data::list(Comission::class, order: ['name'])),
             'phases' => RiskMap::list_phases(),
             'risk_impacts' => RiskMap::list_impacts(),
             'risk_probabilities' => RiskMap::list_probabilities(),

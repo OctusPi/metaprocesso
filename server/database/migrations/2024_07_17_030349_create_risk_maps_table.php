@@ -23,7 +23,7 @@ return new class extends Migration
             $table->text('description');
             $table->json('comission_members');
             $table->json('riskiness');
-            $table->json('accompaniment');
+            $table->json('accompaniments');
         });
     }
 
