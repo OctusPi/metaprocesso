@@ -19,7 +19,7 @@ import TableListStatus from '@/components/TableListStatus.vue';
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
 const page = ref({
-    baseURL: '/process',
+    baseURL: '/processes',
     title: { primary: '', secondary: '' },
     uiview: { register: false, search: false },
     search: {},
