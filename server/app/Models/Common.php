@@ -16,7 +16,7 @@ class Common{
     public const MOD_PRICERECORDS = ['id' => 5, 'module' => 'pricerecords', 'title' => 'Registro de Preços'];
     public const MOD_REFTERM = ['id' => 6, 'module' => 'refterms', 'title' => 'Termos de Referência'];
     public const MOD_RISKINESS = ['id' => 7, 'module' => 'riskiness', 'title' => 'Mapas de Risco'];
-    public const MOD_PROCCESS = ['id' => 8, 'module' => 'process', 'title' => 'Processos'];
+    public const MOD_PROCCESS = ['id' => 8, 'module' => 'processes', 'title' => 'Processos'];
     public const MOD_TRANSMISSION = ['id' => 9, 'module' => 'trasmission', 'title' => 'Publicação e Transmissão'];
     public const MOD_REPORTS = ['id' => 10, 'module' => 'reports', 'title' => 'Relatórios'];
     public const MOD_USERS = ['id' => 11, 'module' => 'users', 'title' => 'Gestão de Usuários'];

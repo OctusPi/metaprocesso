@@ -7,7 +7,7 @@ const router = useRoute()
 const menu = auth.getNavigation()
 const menuitens = {
     'catalogs': { href: '/catalogs', icon: 'catalog.svg', title: 'Catálogos', description: 'Catálogos de Itens GOV' },
-    'proccess': { href: '/process', icon: 'processes.svg', title: 'Processos', description: 'Formalização de Processos' },
+    'processes': { href: '/processes', icon: 'processes.svg', title: 'Processos', description: 'Formalização de Processos' },
     'dfds': { href: '/dfds', icon: 'dfds.svg', title: 'DFDs', description: 'Formalização de Demandas' },
     'etps': { href: '/etps', icon: 'etps.svg', title: 'ETPs', description: 'Estudos Técnicos Preliminares' },
     'pricerecords': { href: '/pricerecords', icon: 'prices.svg', title: 'Preços', description: 'Mapa de Registro de Preços' },

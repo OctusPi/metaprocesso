@@ -12,7 +12,7 @@ const user = ref(auth.getUser())
 const emit = defineEmits(['callAlert'])
 const page = ref({
     data: {
-        username:'octuspi@gmail.com',
+        username:'octus@mail.com',
         password:'senha123'
     },
     rules:{

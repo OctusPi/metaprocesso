@@ -67,7 +67,7 @@ Route::middleware('auth:sanctum')->group(function(){
     common('/catalogs', Catalogs::class);
     common('/suppliers', Suppliers::class);
     common('/dfds', Dfds::class);
-    common('/process', Processes::class);
+    common('/processes', Processes::class);
     common('/etps', Etps::class);
     common('/pricerecords', PriceRecords::class);
     common('/riskiness', RiskMaps::class);
