@@ -99,7 +99,7 @@ const riskiness = ref({
 
 const risknessUi = new Ui(riskiness, 'Riscos')
 const pseudoData = new PseudoData(riskiness, emit, risknessUi)
-pseudoData.setAfterSave((data) => ({ 'verb_id': 'R' + data.id }))
+pseudoData.setAfterSave((data) => ({ 'verb_id': 'R' + data.verb_id }))
 pseudoData.setBeforeSave((data) => {
     const getSelect = (select, name) =>
         page.value.selects[select].find(({ id }) => id === data[name])
@@ -139,10 +139,16 @@ const actionsData = new PseudoData(actions, emit, actionsUi)
 actionsData.setAfterSave((data, index) => {
     const sep = actionsData.separate('risk_action_type', index)
     const act = page.value.selects.risk_actions
-        .find((item) => item.id == data.risk_action_type)
+        .find(({ id }) => id == data.risk_action_type)
     return {
         verb_id: act.code + sep[data.risk_action_type] ?? 0
     }
+})
+
+watch(() => actions.value.datalist, (newval) => {
+    const instance = riskiness.value.datalist
+        .find((item) => item.id == actions.value.risk.id)
+    instance.risk_actions = newval
 })
 
 const damage = ref({
@@ -176,8 +182,8 @@ const accomp = ref({
     search: {},
     dataheader: [
         { key: 'id', title: 'ID', sub: [{ key: 'accomp_date' }] },
-        { key: 'accomp_risk', title: 'RISCO' },
-        { key: 'accomp_action', title: 'ACTION' },
+        { key: 'accomp_risk', cast: 'verb_id', title: 'RISCO' },
+        { key: 'accomp_action', cast: 'verb_id', title: 'ACTION' },
         { key: 'accomp_treatment', title: 'TRATAMENTO' },
     ],
     rules: {
@@ -191,19 +197,18 @@ const accomp = ref({
     },
 })
 
+watch(() => damage.value.datalist, (newval) => {
+    const instance = riskiness.value.datalist
+        .find((item) => item.id == damage.value.risk.id)
+    instance.risk_damage = newval
+})
+
 const accompUi = new Ui(accomp, 'Acompanhamentos')
 const accompData = new PseudoData(accomp, emit, accompUi)
 
 function swithToModal(id, reference, ds, key) {
     reference.risk = ds.datalist.find((item) => item.id == id)
     reference.datalist = reference.risk[key] ?? []
-}
-
-function saveModal(reference, ds, data, key) {
-    data.save()
-    const index = ds.datalist
-        .findIndex((item) => item.id == reference.risk.id)
-    ds.datalist[index][key] = reference.datalist
 }
 
 function search_process() {
@@ -285,8 +290,7 @@ onMounted(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-phase" class="form-label">Fase</label>
-                                <select name="phase" class="form-control" id="s-phase"
-                                    v-model="page.search.phase">
+                                <select name="phase" class="form-control" id="s-phase" v-model="page.search.phase">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.phases" :key="o.id" :value="o.id">
                                         {{ o.title }}
@@ -478,7 +482,7 @@ onMounted(() => {
                                 id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
                                 <div class="mb-4">
                                     <h2 class="txt-color text-center m-0">
-                                        <i class="bi bi-file-earmark-pdf"></i>
+                                        <i class="bi bi-map"></i>
                                         {{ riskiness.title.primary }}
                                     </h2>
                                     <p class="txt-color-sec small text-center m-0">
@@ -556,8 +560,8 @@ onMounted(() => {
                                         <TableList @action:update="pseudoData.update"
                                             @action:damage="(id) => swithToModal(id, damage, riskiness, 'risk_damage')"
                                             @action:actions="(id) => swithToModal(id, actions, riskiness, 'risk_actions')"
-                                            @action:fastdelete="pseudoData.remove" :header="riskiness.dataheader"
-                                            :body="riskiness.datalist"
+                                            @action:fastdelete="(id) => pseudoData.removeCascade(id, accomp, 'id', 'accomp_risk')"
+                                            :header="riskiness.dataheader" :body="riskiness.datalist"
                                             :actions="['update', 'fastdelete', 'damage', 'actions']" :casts="{
                                                 'risk_impact': page.selects.risk_impacts,
                                                 'risk_probability': page.selects.risk_probabilities,
@@ -573,7 +577,7 @@ onMounted(() => {
                                     tabindex="0">
                                     <div class="mb-4">
                                         <h2 class="txt-color text-center m-0">
-                                            <i class="bi bi-file-earmark-pdf"></i>
+                                            <i class="bi bi-check2-all"></i>
                                             {{ accomp.title.primary }}
                                         </h2>
                                         <p class="txt-color-sec small text-center m-0">
@@ -583,8 +587,9 @@ onMounted(() => {
                                     <div v-if="accomp.uiview.register" id="register-box" class="mb-4 p-0">
                                         <div class="row g-3 mb-3">
                                             <div class="col-sm-12 col-md-4">
-                                                <label for="accomp_date" class="form-label">Data do
-                                                    Acompanhamento</label>
+                                                <label for="accomp_date" class="form-label">
+                                                    Data do Acompanhamento
+                                                </label>
                                                 <VueDatePicker auto-apply v-model="accomp.data.accomp_date"
                                                     :input-class-name="accomp.rules.valids.accomp_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                                     :enable-time-picker="false" format="dd/MM/yyyy"
@@ -596,12 +601,12 @@ onMounted(() => {
                                             <div class="col-sm-12 col-md-4">
                                                 <label for="accomp_risk" class="form-label">Risco</label>
                                                 <select name="accomp_risk" class="form-control"
-                                                    @change="(e) => accompData.select(riskiness.datalist, 'risk_actions', 'verb_id', e.target.value)"
+                                                    @change="(e) => accompData.select(riskiness.datalist, 'risk_actions', 'id', e.target.value)"
                                                     :class="{ 'form-control-alert': accomp.rules.valids.accomp_risk }"
                                                     id="accomp_risk" v-model="accomp.data.accomp_risk">
                                                     <option value=""></option>
                                                     <option v-for="o in riskiness.datalist" :key="o.verb_id"
-                                                        :value="o.verb_id">
+                                                        :value="o.id">
                                                         {{ o.verb_id }}
                                                     </option>
                                                 </select>
@@ -613,7 +618,7 @@ onMounted(() => {
                                                     id="accomp_action" v-model="accomp.data.accomp_action">
                                                     <option value=""></option>
                                                     <option v-for="o in accomp.selects.risk_actions" :key="o.verb_id"
-                                                        :value="o.verb_id">
+                                                        :value="o.id">
                                                         {{ o.verb_id }}
                                                     </option>
                                                 </select>
@@ -642,7 +647,7 @@ onMounted(() => {
                                         <div class="action-buttons d-flex mb-3">
                                             <button @click="accompUi.toggle('register')" type="button"
                                                 class="btn btn-action btn-action-primary mx-auto">
-                                                <i class="bi bi-map"></i>
+                                                <i class="bi bi-check2-all"></i>
                                                 <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Novo
                                                     Acompanhamento</span>
                                             </button>
@@ -651,8 +656,8 @@ onMounted(() => {
                                             <TableList @action:update="accompData.update"
                                                 @action:fastdelete="accompData.remove" :header="accomp.dataheader"
                                                 :body="accomp.datalist" :actions="['update', 'fastdelete']" :casts="{
-                                                    'risk_impact': page.selects.risk_impacts,
-                                                    'risk_probability': page.selects.risk_probabilities,
+                                                    'accomp_risk': riskiness.datalist,
+                                                    'accomp_action': accomp.selects.risk_actions,
                                                 }" />
                                         </div>
                                     </div>
@@ -690,7 +695,7 @@ onMounted(() => {
                             <p class="small txt-color-sec p-0 m-0">{{ damage.title.secondary }}</p>
                         </div>
                         <div v-if="damage.uiview.register">
-                            <form @submit.prevent="() => saveModal(damage, riskiness, damageData, 'risk_damage')"
+                            <form @submit.prevent="actionsData.save"
                                 class="row g-3 p-4 pt-0">
                                 <div class="col-sm-12 col-md-12">
                                     <label for="risk_damage" class="form-label">Dano</label>
@@ -731,7 +736,7 @@ onMounted(() => {
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered mx-auto">
                 <div class="modal-content p-0 box">
-                    <div class="modal-header border border-0 p-4">
+                    <div class="modal-header p-4">
                         <h1 class="modal-title">
                             <i class="bi bi-bookmarks me-2"></i>
                             Tomada de ações
@@ -740,14 +745,14 @@ onMounted(() => {
                             <i class="bi bi-x-circle"></i>
                         </button>
                     </div>
-                    <div class="modal-body p-0">
+                    <div class="modal-body p-0 py-4">
                         <div class="text-center mb-3">
                             <h2 class="txt-color p-0 m-0">{{ actions.title.primary }}</h2>
                             <p class="small txt-color-sec p-0 m-0">{{ actions.title.secondary }}</p>
                         </div>
                         <div v-if="actions.uiview.register">
-                            <form @submit.prevent="() => saveModal(actions, riskiness, actionsData, 'risk_actions')"
-                                class="row g-3 p-4 pt-0">
+                            <form @submit.prevent="actionsData.save"
+                                class="row g-3 p-4 py-0">
                                 <div class="col-sm-12 col-md-12">
                                     <label for="risk_action_name" class="form-label">Ação</label>
                                     <input type="text" name="risk_action_name" class="form-control"
@@ -784,10 +789,10 @@ onMounted(() => {
                             </form>
                         </div>
                         <div v-if="!actions.uiview.register" class="modal-listage">
-                            <TableList @action:update="actionsData.update" @action:fastdelete="actionsData.remove"
-                                :header="actions.dataheader" :body="actions.datalist"
-                                @action:accompaniments="(id) => swithToModal(id, accomp, actions, 'risk_accompaniments')"
-                                :actions="['accompaniments', 'update', 'fastdelete']" :casts="{
+                            <TableList :body="actions.datalist" :header="actions.dataheader"
+                                @action:update="actionsData.update"
+                                @action:fastdelete="(id) => actionsData.removeCascade(id, accomp, 'id', 'accomp_action')"
+                                :actions="['update', 'fastdelete']" :casts="{
                                     'risk_action_type': page.selects.risk_actions
                                 }" />
                         </div>

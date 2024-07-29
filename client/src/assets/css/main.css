@@ -330,7 +330,7 @@
   padding: 0;
 }
 
-.modal-content{
+.modal-content, .modal-body, .modal-footer {
   background-color: var(--color-box);
 }
 

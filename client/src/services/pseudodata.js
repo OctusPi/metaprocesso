@@ -23,7 +23,7 @@ class PseudoData {
 
     #remapAfterSave() {
         this.page.value.datalist.forEach((item, i) => {
-            item.id = i + 1
+            item.verb_id = i + 1
             item = Object.assign(item, this.afterSave(item, i))
         })
     }
@@ -80,6 +80,19 @@ class PseudoData {
 
     remove = (id) => {
         this.page.value.datalist = this.page.value.datalist.filter((item) => item.id != id);
+        this.#remapAfterSave()
+        this.list()
+    }
+
+    removeCascade(id, dataset, origin_key, dataset_key) {
+        const item = this.page.value.datalist.find((x) => x.id == id)
+        this.page.value.datalist = this.page.value.datalist.filter((x) => x != item);
+        dataset.datalist = dataset.datalist.filter((x) => {
+            if (x[dataset_key] && item[origin_key]) {
+                return x[dataset_key] != item[origin_key]
+            }
+            return true
+        })
         this.#remapAfterSave()
         this.list()
     }
