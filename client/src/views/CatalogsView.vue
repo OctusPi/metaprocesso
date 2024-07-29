@@ -156,7 +156,6 @@ onMounted(() => {
                     <form class="form-row" @submit.prevent="data.save(page.data.id)">
                         <input type="hidden" name="id" v-model="page.data.id">
                         <div class="row mb-3 g-3">
-
                             <div class="col-sm-12 col-md-4">
                                 <label for="organ" class="form-label">Orgão</label>
                                 <select name="organ" class="form-control"

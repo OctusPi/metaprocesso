@@ -24,7 +24,7 @@ class RiskMaps extends Controller
     public function list(Request $request)
     {
         return $this->baseList(
-            ['process', 'comission', 'date_version', 'phase'],
+            ['comission', 'date_version', 'phase', 'description'],
             ['date_version'],
             ['process', 'comission']
         );

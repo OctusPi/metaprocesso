@@ -68,9 +68,11 @@ class PseudoData {
         this.list()
     }
 
-    update = (id) => {
+    update = (id, instanceCallback = function () {}) => {
         const instance = this.page.value.datalist.find(
             (item) => item.id == id)
+
+        instanceCallback(instance)
 
         this.page.value.data = instance
         this.ui.toggle('update')

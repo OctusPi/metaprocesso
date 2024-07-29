@@ -268,6 +268,46 @@ onMounted(() => {
                     <!--SEARCH BAR-->
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
                         <form @submit.prevent="data.list" class="row g-3">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false"
+                                    format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            </div>
+
+                            <div class="col-sm-12 col-md-4">
+                                <label for="date_s_fin" class="form-label">Data Final</label>
+                                <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
+                                    format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-phase" class="form-label">Fase</label>
+                                <select name="phase" class="form-control" id="s-phase"
+                                    v-model="page.search.phase">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.phases" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="s-comission" class="form-label">Comissão</label>
+                                <select name="comission" class="form-control" id="s-comission"
+                                    v-model="page.search.comission">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <label for="s-description" class="form-label">Descrição</label>
+                                <input type="text" name="description" class="form-control" id="s-description"
+                                    v-model="page.search.description" placeholder="Descrição" />
+                            </div>
                             <div class="d-flex flex-row-reverse mt-4">
                                 <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
                                         class="bi bi-check2-circle"></i></button>
