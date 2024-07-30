@@ -172,6 +172,12 @@ const damage = ref({
 const damageUi = new Ui(damage, 'Danos')
 const damageData = new PseudoData(damage, emit, damageUi)
 
+watch(() => damage.value.datalist, (newval) => {
+    const instance = riskiness.value.datalist
+        .find((item) => item.id == damage.value.risk.id)
+    instance.risk_damage = newval
+})
+
 const accomp = ref({
     datalist: [],
     selects: {},
@@ -195,12 +201,6 @@ const accomp = ref({
         },
         valids: {}
     },
-})
-
-watch(() => damage.value.datalist, (newval) => {
-    const instance = riskiness.value.datalist
-        .find((item) => item.id == damage.value.risk.id)
-    instance.risk_damage = newval
 })
 
 const accompUi = new Ui(accomp, 'Acompanhamentos')
@@ -657,7 +657,7 @@ onMounted(() => {
                                                 @action:fastdelete="accompData.remove" :header="accomp.dataheader"
                                                 :body="accomp.datalist" :actions="['update', 'fastdelete']" :casts="{
                                                     'accomp_risk': riskiness.datalist,
-                                                    'accomp_action': accomp.selects.risk_actions,
+                                                    'accomp_action': (data) => accompData.findInRef(riskiness.datalist, 'risk_actions', 'id', data.accomp_risk)
                                                 }" />
                                         </div>
                                     </div>
@@ -695,8 +695,7 @@ onMounted(() => {
                             <p class="small txt-color-sec p-0 m-0">{{ damage.title.secondary }}</p>
                         </div>
                         <div v-if="damage.uiview.register">
-                            <form @submit.prevent="actionsData.save"
-                                class="row g-3 p-4 pt-0">
+                            <form @submit.prevent="actionsData.save" class="row g-3 p-4 pt-0">
                                 <div class="col-sm-12 col-md-12">
                                     <label for="risk_damage" class="form-label">Dano</label>
                                     <input type="text" name="risk_damage" class="form-control"
@@ -751,8 +750,7 @@ onMounted(() => {
                             <p class="small txt-color-sec p-0 m-0">{{ actions.title.secondary }}</p>
                         </div>
                         <div v-if="actions.uiview.register">
-                            <form @submit.prevent="actionsData.save"
-                                class="row g-3 p-4 py-0">
+                            <form @submit.prevent="actionsData.save" class="row g-3 p-4 py-0">
                                 <div class="col-sm-12 col-md-12">
                                     <label for="risk_action_name" class="form-label">Ação</label>
                                     <input type="text" name="risk_action_name" class="form-control"

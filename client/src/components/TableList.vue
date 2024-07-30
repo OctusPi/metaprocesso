@@ -43,8 +43,8 @@ function orderBy(key) {
     })
 }
 
-function extract_data(data, key){
-    if(data.length){
+function extract_data(data, key) {
+    if (data.length) {
         const extract = []
         data.forEach(a => {
             extract.push(a[key])
@@ -57,10 +57,16 @@ function extract_data(data, key){
 }
 
 function getdata(data, obj, key, cast = null, subject = 'id') {
-    const value = obj ? extract_data(data[obj],key) : data[key] ?? '';
+    const value = obj ? extract_data(data[obj], key) : data[key] ?? '';
 
-    if (cast && props?.casts[key]) {
-        const datacast = (props.casts[key]).find(obj => obj[subject] === value) ?? {}
+    if (cast && props.casts[key]) {
+        let castArr = []
+        if (typeof props.casts[key] === "function") {
+            castArr = props.casts[key](data)
+        } else {
+            castArr = props.casts[key]
+        }
+        const datacast = castArr.find(obj => obj[subject] === value) ?? {}
         return datacast[cast] ?? ''
     }
 
@@ -93,7 +99,7 @@ watch(() => props.body, (newValue) => {
 </script>
 
 <template>
-    <p v-if="props.count" class="small txt-color-sec" :class="{'ps-5':!props.smaller}">
+    <p v-if="props.count" class="small txt-color-sec" :class="{ 'ps-5': !props.smaller }">
         <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
     </p>
     <div v-if="body.length" class="table-responsive-sm">
@@ -113,7 +119,8 @@ watch(() => props.body, (newValue) => {
                         <template v-else>{{ getdata(b, h?.obj, h.key, h?.cast) }}</template>
                         <p v-if="h.sub" class="small txt-color-sec p-0 m-0">
                             <span v-for="s in h.sub" :key="s.key" class="inline-block small">
-                                {{ matchUtils(`${s.title ?? ''} ${getdata(b, s?.obj, s.key, s?.cast)}`, s?.utils) }}
+                                {{ matchUtils(`${s.title ?? ''} ${getdata(b, s?.obj, s.key,
+                                    s?.cast)}`, s?.utils) }}
                             </span>
                         </p>
                     </td>
@@ -124,17 +131,17 @@ watch(() => props.body, (newValue) => {
             </tbody>
         </table>
     </div>
-    
+
 </template>
 
 <style scoped>
-th{
-    white-space:nowrap;
+th {
+    white-space: nowrap;
 }
 
 table td:nth-child(1) {
     white-space: nowrap;
-  }
+}
 
 .table tr th:first-child {
     padding-left: 50px;

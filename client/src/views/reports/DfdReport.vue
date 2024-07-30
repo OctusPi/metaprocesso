@@ -258,47 +258,5 @@ const items = ref({
 </template>
 
 <style scoped>
-* {
-    color: black !important;
-    margin: 0;
-    padding: 0;
-    font-size: 0.8rem;
-}
-
-table {
-    margin-bottom: 10px;
-    width: 100%;
-}
-
-h1,
-h2,
-h3,
-h4 {
-    font-weight: 600;
-}
-
-table,
-th,
-td {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-
-td {
-    padding: 2px 5px;
-}
-
-.h-logo {
-    height: 70px;
-    width: auto;
-    border-radius: 5px;
-}
-
-.table-title {
-    margin-bottom: 5px;
-}
-
-.table-title p {
-    font-size: 0.6rem;
-}
+@import url('../../assets/css/reports.css');
 </style>

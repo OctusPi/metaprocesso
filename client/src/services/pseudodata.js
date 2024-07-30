@@ -28,10 +28,14 @@ class PseudoData {
         })
     }
 
-    select(dataset, key, search_key, search_val) {
+    findInRef(dataset, key, search_key, search_val) {
         const item = dataset.find((item) =>
             item[search_key] ? item[search_key] == search_val : null)
-        this.page.value.selects[key] = item ? item[key] : [] 
+        return item ? item[key] : [] 
+    }
+
+    select(dataset, key, search_key, search_val) {
+        this.page.value.selects[key] = this.findInRef(dataset, key, search_key, search_val)
     }
 
     separate(key, till) {
