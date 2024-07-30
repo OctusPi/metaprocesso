@@ -51,6 +51,16 @@ class RiskMaps extends Controller
             'date_version' => Dates::nowWithFormat(Dates::PTBR),
         ];
 
+        $riskiness = collect(json_decode($request->riskiness));
+        if ($riskiness->isEmpty()) {
+            return Response()->json(Notify::warning("Ao menos um risco deve ser especificado!"), 400);
+        }
+
+        $empty = $riskiness->firstWhere('risk_actions', []);
+        if ($empty) {
+            return Response()->json(Notify::warning("Adicione ao menos uma ação para o risco $empty->verb_id!"), 400);
+        }
+
         if (!$request->id) {
             $last_item = RiskMap::orderByDesc('created_at')->first();
             $last_version = floatval($last_item ? $last_item->version : 0);
