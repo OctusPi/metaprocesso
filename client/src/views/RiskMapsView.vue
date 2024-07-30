@@ -189,7 +189,7 @@ const accomp = ref({
     dataheader: [
         { key: 'id', title: 'ID', sub: [{ key: 'accomp_date' }] },
         { key: 'accomp_risk', cast: 'verb_id', title: 'RISCO' },
-        { key: 'accomp_action', cast: 'verb_id', title: 'ACTION' },
+        { key: 'accomp_action', cast: 'verb_id', title: 'AÇÃO' },
         { key: 'accomp_treatment', title: 'TRATAMENTO' },
     ],
     rules: {
@@ -205,6 +205,10 @@ const accomp = ref({
 
 const accompUi = new Ui(accomp, 'Acompanhamentos')
 const accompData = new PseudoData(accomp, emit, accompUi)
+
+watch(() => accomp.value.data, (newdata) => {
+    accompData.select(riskiness.value.datalist, 'risk_actions', 'id', newdata.accomp_risk)
+})
 
 function swithToModal(id, reference, ds, key) {
     reference.risk = ds.datalist.find((item) => item.id == id)
