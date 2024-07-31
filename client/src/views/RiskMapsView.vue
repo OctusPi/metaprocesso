@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { createApp, onMounted, ref, watch } from 'vue'
 import MainNav from '@/components/MainNav.vue';
 import MainHeader from '@/components/MainHeader.vue';
 import TableList from '@/components/TableList.vue';
@@ -11,6 +11,8 @@ import Tabs from '@/utils/tabs';
 import TableListSelectRadio from '@/components/TableListSelectRadio.vue';
 import http from '@/services/http';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
+import RiskMapReport from './reports/RiskMapReport.vue';
+import exp from "@/services/export";
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -59,17 +61,6 @@ const page = ref({
     },
 })
 
-const tabs = ref([
-    { id: 'process', icon: 'bi-bounding-box', title: 'Processo', status: true },
-    { id: 'infos', icon: 'bi-bounding-box', title: 'Infos', status: false },
-    { id: 'risks', icon: 'bi-journal-bookmark', title: 'Riscos', status: false },
-    { id: 'accompaniments', icon: 'bi-check', title: 'Acompanhamentos', status: false },
-])
-
-const ui = new Ui(page, 'Mapas de Risco')
-const data = new Data(page, emit, ui)
-const tabSwitch = new Tabs(tabs)
-
 const riskiness = ref({
     datalist: [],
     title: { primary: '', secondary: '' },
@@ -97,21 +88,6 @@ const riskiness = ref({
     },
 })
 
-const risknessUi = new Ui(riskiness, 'Riscos')
-const pseudoData = new PseudoData(riskiness, emit, risknessUi)
-pseudoData.setAfterSave((data) => ({ 'verb_id': 'R' + data.verb_id }))
-pseudoData.setBeforeSave((data) => {
-    const getSelect = (select, name) =>
-        page.value.selects[select].find(({ id }) => id === data[name])
-
-    return {
-        risk_actions: data.risk_actions ?? [],
-        risk_damage: data.risk_damage ?? [],
-        risk_level: getSelect('risk_impacts', 'risk_impact').value
-            * getSelect('risk_probabilities', 'risk_probability').value,
-    }
-})
-
 const actions = ref({
     datalist: [],
     risk: {},
@@ -134,23 +110,6 @@ const actions = ref({
     },
 })
 
-const actionsUi = new Ui(actions, 'Ações')
-const actionsData = new PseudoData(actions, emit, actionsUi)
-actionsData.setAfterSave((data, index) => {
-    const sep = actionsData.separate('risk_action_type', index)
-    const act = page.value.selects.risk_actions
-        .find(({ id }) => id == data.risk_action_type)
-    return {
-        verb_id: act.code + sep[data.risk_action_type] ?? 0
-    }
-})
-
-watch(() => actions.value.datalist, (newval) => {
-    const instance = riskiness.value.datalist
-        .find((item) => item.id == actions.value.risk.id)
-    instance.risk_actions = newval
-})
-
 const damage = ref({
     datalist: [],
     risk: {},
@@ -169,15 +128,6 @@ const damage = ref({
     },
 })
 
-const damageUi = new Ui(damage, 'Danos')
-const damageData = new PseudoData(damage, emit, damageUi)
-
-watch(() => damage.value.datalist, (newval) => {
-    const instance = riskiness.value.datalist
-        .find((item) => item.id == damage.value.risk.id)
-    instance.risk_damage = newval
-})
-
 const accomp = ref({
     datalist: [],
     selects: {},
@@ -187,7 +137,7 @@ const accomp = ref({
     data: {},
     search: {},
     dataheader: [
-        { key: 'id', title: 'ID', sub: [{ key: 'accomp_date' }] },
+        { key: 'verb_id', title: 'ID', sub: [{ key: 'accomp_date' }] },
         { key: 'accomp_risk', cast: 'verb_id', title: 'RISCO' },
         { key: 'accomp_action', cast: 'verb_id', title: 'AÇÃO' },
         { key: 'accomp_treatment', title: 'TRATAMENTO' },
@@ -203,11 +153,47 @@ const accomp = ref({
     },
 })
 
+const ui = new Ui(page, 'Mapas de Risco')
+const data = new Data(page, emit, ui)
+
+const risknessUi = new Ui(riskiness, 'Riscos')
+const pseudoData = new PseudoData(riskiness, emit, risknessUi)
+
+const actionsUi = new Ui(actions, 'Ações')
+const actionsData = new PseudoData(actions, emit, actionsUi)
+
+const damageUi = new Ui(damage, 'Danos')
+const damageData = new PseudoData(damage, emit, damageUi)
+
 const accompUi = new Ui(accomp, 'Acompanhamentos')
 const accompData = new PseudoData(accomp, emit, accompUi)
 
-watch(() => accomp.value.data, (newdata) => {
-    accompData.select(riskiness.value.datalist, 'risk_actions', 'id', newdata.accomp_risk)
+// Adding R to verb_id
+pseudoData.setAfterSave((data) => {
+    return { 'verb_id': 'R' + data.verb_id }
+})
+
+// Prebuilding the risk-level for risks
+pseudoData.setBeforeSave((data) => {
+    const getSelect = (select, name) =>
+        page.value.selects[select].find(({ id }) => id === data[name])
+
+    return {
+        risk_actions: data.risk_actions ?? [],
+        risk_damage: data.risk_damage ?? [],
+        risk_level: getSelect('risk_impacts', 'risk_impact').value
+            * getSelect('risk_probabilities', 'risk_probability').value,
+    }
+})
+
+// Dividing by P and C
+actionsData.setAfterSave((data, index) => {
+    const sep = actionsData.separate('risk_action_type', index)
+    const act = page.value.selects.risk_actions
+        .find(({ id }) => id == data.risk_action_type)
+    return {
+        verb_id: act.code + sep[data.risk_action_type] ?? 0
+    }
 })
 
 function swithToModal(id, reference, ds, key) {
@@ -220,6 +206,39 @@ function search_process() {
         page.value.process.data = resp.data ?? []
     })
 }
+
+function export_riskiness(id) {
+    http.get(`${page.value.baseURL}/export/${id}`, emit, (resp) => {
+        const instance = resp.data
+        const containerReport = document.createElement('div')
+        const instanceReport = createApp(RiskMapReport, { riskmap: instance, selects: page.value.selects })
+        instanceReport.mount(containerReport)
+        exp.exportPDF(containerReport, `Mapa_De_Risco-${instance.date_version}-v${instance.version}`)
+    })
+
+}
+
+function copyFromDataset(dsval, key, newval) {
+    const instance = riskiness.value.datalist
+        .find((item) => item.id == dsval.value.risk.id)
+    instance[key] = newval
+}
+
+watch(() => actions.value.datalist, (newval) => {
+    copyFromDataset(actions, 'risk_actions', newval)
+})
+
+watch(() => damage.value.datalist, (newval) => {
+    copyFromDataset(damage, 'risk_damage', newval)
+})
+
+watch(() => accomp.value.data, (newval) => {
+    accompData.select(
+        riskiness.value.datalist,
+        'risk_actions', 'id',
+        newval.accomp_risk
+    )
+})
 
 watch(() => props.datalist, (newdata) => {
     page.value.datalist = newdata
@@ -234,6 +253,15 @@ watch(() => page.value.uiview.register, (newdata) => {
         accomp.value.datalist = page.value.data.accompaniments ?? []
     }
 })
+
+const tabs = ref([
+    { id: 'process', icon: 'bi-bounding-box', title: 'Processo', status: true },
+    { id: 'infos', icon: 'bi-bounding-box', title: 'Infos', status: false },
+    { id: 'risks', icon: 'bi-journal-bookmark', title: 'Riscos', status: false },
+    { id: 'accompaniments', icon: 'bi-check', title: 'Acompanhamentos', status: false },
+])
+
+const tabSwitch = new Tabs(tabs)
 
 onMounted(() => {
     data.selects()
@@ -324,9 +352,9 @@ onMounted(() => {
                     </div>
 
                     <!-- DATA LIST -->
-                    <TableList @action:update="data.update" @action:delete="data.remove" :header="page.dataheader"
-                        :body="page.datalist" :actions="['update', 'delete']"
-                        :casts="{ 'phase': page.selects.phases }" />
+                    <TableList :header="page.dataheader" @action:update="data.update" @action:delete="data.remove"
+                        @action:pdf="export_riskiness" :body="page.datalist"
+                        :actions="['update', 'delete', 'export_pdf']" :casts="{ 'phase': page.selects.phases }" />
                 </div>
 
                 <!--BOX REGISTER-->

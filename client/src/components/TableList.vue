@@ -60,12 +60,9 @@ function getdata(data, obj, key, cast = null, subject = 'id') {
     const value = obj ? extract_data(data[obj], key) : data[key] ?? '';
 
     if (cast && props.casts[key]) {
-        let castArr = []
-        if (typeof props.casts[key] === "function") {
-            castArr = props.casts[key](data)
-        } else {
-            castArr = props.casts[key]
-        }
+        let castArr = typeof props.casts[key] === "function"
+            ? props.casts[key](data)
+            : props.casts[key]
         const datacast = castArr.find(obj => obj[subject] === value) ?? {}
         return datacast[cast] ?? ''
     }

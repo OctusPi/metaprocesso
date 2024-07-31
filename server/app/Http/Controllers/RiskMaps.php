@@ -32,15 +32,33 @@ class RiskMaps extends Controller
 
     public function list_processes(Request $request)
     {
-        if (empty($request->except('comission'))) {
+        if (empty($request->all())) {
             return Response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
         }
 
-        $search = Utils::map_search(['protocol', 'comission', 'description'], $request->all());
+        $search = Utils::map_search(['protocol', 'organ', 'description'], $request->all());
+        $search_obj = Utils::map_search_obj($request->units, 'units', 'id');
         $betw = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
 
-        $query = Data::list(Process::class, $search, null, ['organ', 'comission'], $betw);
+        $query = Data::list(Process::class, $search, ['date_hour_ini'], ['organ', 'comission'], $betw, $search_obj);
         return Response()->json($query, 200);
+
+    }
+
+    public function export(Request $request)
+    {
+        $riskmap = RiskMap::where('id', $request->id)->with([
+            'process',
+            'comission',
+            'comission.organ',
+            'comission.unit',
+        ])->first()->toArray();
+
+        if (!$riskmap) {
+            return Response()->json(Notify::warning('Mapa de Risco não localizado...'), 404);
+        }
+
+        return Response()->json($riskmap, 200);
     }
 
     public function save(Request $request)
@@ -104,6 +122,7 @@ class RiskMaps extends Controller
             'risk_probabilities' => RiskMap::list_probabilities(),
             'risk_actions' => RiskMap::list_actions(),
             'status_process' => Process::list_status(),
+            'responsabilitys' => ComissionMember::list_responsabilities(),
         ], 200);
     }
 }
