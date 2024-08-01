@@ -575,7 +575,7 @@ onMounted(() => {
                                         <button @click="risknessUi.toggle('list')" type="button"
                                             class="btn btn-warning">Cancelar <i class="bi bi-x-circle"></i></button>
                                         <button @click="pseudoData.save()" type="button"
-                                            class="btn btn-primary mx-2">Enviar
+                                            class="btn btn-primary mx-2">Adicionar
                                             <i class="bi bi-check2-circle"></i></button>
                                     </div>
                                 </div>
@@ -670,7 +670,7 @@ onMounted(() => {
                                                 class="btn btn-warning">Cancelar <i class="bi bi-x-circle"></i></button>
                                             <button type="button" class="btn btn-primary mx-2"
                                                 @click="accompData.save()">
-                                                Enviar
+                                                Adicionar
                                                 <i class="bi bi-check2-circle"></i>
                                             </button>
                                         </div>
@@ -689,7 +689,7 @@ onMounted(() => {
                                                 @action:fastdelete="accompData.remove" :header="accomp.dataheader"
                                                 :body="accomp.datalist" :actions="['update', 'fastdelete']" :casts="{
                                                     'accomp_risk': riskiness.datalist,
-                                                    'accomp_action': (data) => accompData.findInRef(riskiness.datalist, 'risk_actions', 'id', data.accomp_risk)
+                                                    'accomp_action': (data) => PseudoData.findInRef(riskiness.datalist, 'risk_actions', 'id', data.accomp_risk)
                                                 }" />
                                         </div>
                                     </div>
@@ -727,7 +727,7 @@ onMounted(() => {
                             <p class="small txt-color-sec p-0 m-0">{{ damage.title.secondary }}</p>
                         </div>
                         <div v-if="damage.uiview.register">
-                            <form @submit.prevent="actionsData.save" class="row g-3 p-4 pt-0">
+                            <form @submit.prevent="damageData.save" class="row g-3 p-4 pt-0">
                                 <div class="col-sm-12 col-md-12">
                                     <label for="risk_damage" class="form-label">Dano</label>
                                     <input type="text" name="risk_damage" class="form-control"
@@ -767,7 +767,7 @@ onMounted(() => {
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-centered mx-auto">
                 <div class="modal-content p-0 box">
-                    <div class="modal-header p-4">
+                    <div class="modal-header border border-0 p-4">
                         <h1 class="modal-title">
                             <i class="bi bi-bookmarks me-2"></i>
                             Tomada de ações
@@ -776,7 +776,7 @@ onMounted(() => {
                             <i class="bi bi-x-circle"></i>
                         </button>
                     </div>
-                    <div class="modal-body p-0 py-4">
+                    <div class="modal-body p-0">
                         <div class="text-center mb-3">
                             <h2 class="txt-color p-0 m-0">{{ actions.title.primary }}</h2>
                             <p class="small txt-color-sec p-0 m-0">{{ actions.title.secondary }}</p>
@@ -809,7 +809,7 @@ onMounted(() => {
                                         v-model="actions.data.risk_action_responsability"
                                         placeholder="Responsáveis pela ação">
                                 </div>
-                                <div class="d-flex flex-row-reverse mt-4">
+                                <div class="d-flex flex-row-reverse my-4">
                                     <button type="submit" class="btn btn-outline-primary">Salvar <i
                                             class="bi bi-check2-circle"></i></button>
                                     <button type="button" @click="actionsUi.toggle('list')"

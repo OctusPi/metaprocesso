@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import utils from '@/utils/utils'
+import TableListReport from './TableListReport.vue';
+import PseudoData from '@/services/pseudodata';
 
 const props = defineProps({
     riskmap: { type: Object, required: true },
@@ -9,6 +11,56 @@ const props = defineProps({
 
 const riskmap = ref(props.riskmap)
 const selects = ref(props.selects)
+
+const riskiness = ref({
+    datalist: riskmap.value.riskiness,
+    title: { primary: '', secondary: '' },
+    uiview: { register: false, search: false },
+    dataheader: [
+        { key: 'verb_id', title: 'ID' },
+        { key: 'risk_name', title: 'RISCO' },
+        { key: 'risk_related', title: 'RELACIONADO AO(À)' },
+        { key: 'risk_probability', cast: 'value', title: 'P' },
+        { key: 'risk_impact', cast: 'value', title: 'I' },
+        { key: 'risk_level', title: 'NÍVEL DE RISCO (P X I)' }
+    ],
+    selects: {},
+    data: {},
+    search: {},
+    rules: {
+        fields: {},
+        valids: {}
+    },
+})
+
+const accomp = ref({
+    datalist: riskmap.value.accompaniments,
+    selects: {},
+    risk: {},
+    uiview: {},
+    title: { primary: '', secondary: '' },
+    data: {},
+    search: {},
+    dataheader: [
+        { key: 'accomp_date', title: 'DATA' },
+        { key: 'accomp_risk', cast: 'verb_id', title: 'RISCO' },
+        { key: 'accomp_action', cast: 'verb_id', title: 'AÇÃO' },
+        { key: 'accomp_treatment', title: 'ACOMPANHAMENTO DAS AÇÕES DE TRATAMENTO' },
+    ],
+    rules: {
+        fields: {},
+        valids: {}
+    },
+})
+
+const PREVENTIVES = 1;
+const CONTINGENCE = 2;
+
+function actions(risk, act) {
+    return risk.risk_actions.filter((item) => {
+        return item.risk_action_type == act
+    })
+}
 
 </script>
 
@@ -30,8 +82,8 @@ const selects = ref(props.selects)
     <main>
         <div class="my-4">
             <h1 class="text-center">
-                MAPA DE RISCOS PARA O PROCESSO ADMINISTRATIVO <br> Nº
-                {{ riskmap.process.protocol ?? '*****' }}
+                MAPA DE RISCOS PARA O PROCESSO ADMINISTRATIVO <br>
+                Nº {{ riskmap.process.protocol ?? '*****' }}
                 {{ riskmap.process.date_hour_ini }} - {{ riskmap.process.ip }}
             </h1>
             <h2 class="text-center">{{ `PCA: ${riskmap.process.year_pca} - Situação: ${utils.getTxt(
@@ -94,10 +146,107 @@ const selects = ref(props.selects)
         </table>
 
         <div class="table-title">
-            <h3>Riscos</h3>
+            <h3>Identificação de Riscos</h3>
             <p>
-                Listagem dos riscos identificados na proposição do dado processo
+                Listagem não exaustiva dos riscos identificados na proposição do processo
             </p>
+        </div>
+        <div class="mb-3">
+            <TableListReport :count="false" :header="riskiness.dataheader" :body="riskiness.datalist" :casts="{
+                risk_impact: selects.risk_impacts,
+                risk_probability: selects.risk_probabilities,
+            }" />
+        </div>
+
+        <div class="table-title">
+            <h3>Riscos e Ações</h3>
+            <p>
+                Listagem dos riscos e de susas ações cabíveis no âmbito do processo
+            </p>
+        </div>
+        <table>
+            <tr v-for="risk in riskiness.datalist" :key="risk.id">
+                <th class="text-center">Risco {{ risk.verb_id }}</th>
+                <td class="colapse">
+                    <table>
+                        <tr>
+                            <th>Risco</th>
+                            <td>{{ risk.risk_name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Probabilidade</th>
+                            <td>{{ utils.getTxt(selects.risk_probabilities, risk.risk_probability) }}</td>
+                        </tr>
+                        <tr>
+                            <th>Impacto</th>
+                            <td>{{ utils.getTxt(selects.risk_impacts, risk.risk_impact) }}</td>
+                        </tr>
+
+                        <!--Danos-->
+                        <tr v-for="damage in risk.risk_damage" :key="damage.id">
+                            <th>Dano {{ damage.verb_id }}</th>
+                            <td>{{ damage.risk_damage }}</td>
+                        </tr>
+                        <tr>
+                            <th>Tratamento</th>
+                            <td>{{ risk.risk_treatment }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="colapse">
+                                <table class="colapse">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Ação Preventiva</th>
+                                            <th>Responsável</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="action in actions(risk, PREVENTIVES)" :key="action.id">
+                                            <td>{{ action.verb_id }}</td>
+                                            <td>{{ action.risk_action_name }}</td>
+                                            <td>{{ action.risk_action_responsability }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="colapse">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Ação de Contingência</th>
+                                            <th>Responsável</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="action in actions(risk, CONTINGENCE)" :key="action.id">
+                                            <td>{{ action.verb_id }}</td>
+                                            <td>{{ action.risk_action_name }}</td>
+                                            <td>{{ action.risk_action_responsability }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <div class="table-title">
+            <h3>Acompanhamentos</h3>
+            <p>
+                Listagem dos acompanhamentos para os riscos e suas ações
+            </p>
+        </div>
+        <div class="mb-3">
+            <TableListReport :count="false" :header="accomp.dataheader" :body="accomp.datalist" :casts="{
+                accomp_risk: riskiness.datalist,
+                accomp_action: (data) => PseudoData.findInRef(riskiness.datalist, 'risk_actions', 'id', data.accomp_risk)
+            }" />
         </div>
 
         <div class="row mt-5">
@@ -116,10 +265,15 @@ const selects = ref(props.selects)
         </div>
 
         <!-- City and Date -->
-        <p class="mt-4 text-center">{{ `${riskmap.comission.organ.postalcity ?? '*****'}, ${riskmap.date_version}` }}</p>
+        <p class="mt-4 text-center">{{ `${riskmap.comission.organ.postalcity ?? '*****'}, ${riskmap.date_version}` }}
+        </p>
     </main>
 </template>
 
 <style scoped>
 @import url('../../assets/css/reports.css');
+.colapse {
+    padding: 0 !important;
+    border: none !important;
+}
 </style>

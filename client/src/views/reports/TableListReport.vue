@@ -12,14 +12,29 @@ const props = defineProps({
     detachStatus: {type: Boolean, default: true},
 })
 
-
 const body = ref(props.body)
 
-function getdata(data, obj, key, cast = null, subject = 'id') {
-    const value = obj ? data[obj][key] : data[key] ?? '';
+function extract_data(data, key) {
+    if (data.length) {
+        const extract = []
+        data.forEach(a => {
+            extract.push(a[key])
+        })
 
-    if (cast && props?.casts[key]) {
-        const datacast = (props.casts[key]).find(obj => obj[subject] === value) ?? {}
+        return extract.toString()
+    }
+
+    return data[key]
+}
+
+function getdata(data, obj, key, cast = null, subject = 'id') {
+    const value = obj ? extract_data(data[obj], key) : data[key] ?? '';
+
+    if (cast && props.casts[key]) {
+        let castArr = typeof props.casts[key] === "function"
+            ? props.casts[key](data)
+            : props.casts[key]
+        const datacast = castArr.find(obj => obj[subject] === value) ?? {}
         return datacast[cast] ?? ''
     }
 
@@ -34,7 +49,7 @@ function getdata(data, obj, key, cast = null, subject = 'id') {
         <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
     </p>
     <div v-if="body.length" class="table-responsive-sm">
-        <table :class="props.smaller ? 'tablesm' : ''">
+        <table class="w-100" :class="props.smaller ? 'tablesm' : ''">
             <thead v-if="props.header">
                 <tr>
                     <th scope="col" v-for="h in props.header" :key="h.key">

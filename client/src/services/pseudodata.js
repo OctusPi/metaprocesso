@@ -13,6 +13,12 @@ class PseudoData {
         this.list()
     }
 
+    static findInRef(dataset, key, search_key, search_val) {
+        const item = dataset.find((item) =>
+            item[search_key] ? item[search_key] == search_val : null)
+        return item ? item[key] : [] 
+    }
+
     setBeforeSave(callback) {
         this.beforeSave = callback
     }
@@ -28,14 +34,8 @@ class PseudoData {
         })
     }
 
-    findInRef(dataset, key, search_key, search_val) {
-        const item = dataset.find((item) =>
-            item[search_key] ? item[search_key] == search_val : null)
-        return item ? item[key] : [] 
-    }
-
     select(dataset, key, search_key, search_val) {
-        this.page.value.selects[key] = this.findInRef(dataset, key, search_key, search_val)
+        this.page.value.selects[key] = PseudoData.findInRef(dataset, key, search_key, search_val)
     }
 
     separate(key, till) {

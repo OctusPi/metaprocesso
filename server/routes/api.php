@@ -59,7 +59,6 @@ Route::middleware('auth:sanctum')->group(function(){
     common('/ordinators', Ordinators::class);
     common('/demandants', Demandants::class);
     common('/comissions', Comissions::class);
-    common('/comissionsmembers', ComissionsMembers::class);
     common('/comissionsends', ComissionsEnds::class);
     common('/programs', Programs::class);
     common('/dotations', Dotations::class);
@@ -86,6 +85,16 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::get('/{catalog}/details/{id}', 'details');
         Route::get('/{catalog}/catalog', 'catalog');
         Route::get('/{catalog}/selects/{key?}/{search?}', 'selects');
+    });
+
+    Route::prefix('/comissionsmembers')->controller(ComissionsMembers::class)->group(function(){
+        Route::get('/{comission}', 'index');
+        Route::post('/{comission}/list', 'list');
+        Route::post('/{comission}/save', 'save');
+        Route::post('/{comission}/destroy', 'delete');
+        Route::get('/{comission}/details/{id}', 'details');
+        Route::get('/{comission}/comission', 'comission');
+        Route::get('/{comission}/selects/{key?}/{search?}', 'selects');
     });
 
     Route::prefix('/catalogsubcategories')->controller(CatalogSubCategoryItems::class)->group(function(){
