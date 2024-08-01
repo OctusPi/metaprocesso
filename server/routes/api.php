@@ -100,7 +100,7 @@ Route::middleware('auth:sanctum')->group(function(){
         Route::post('/items', 'items');
     });
 
-    Route::prefix('/process')->controller(Processes::class)->group(function(){
+    Route::prefix('/processes')->controller(Processes::class)->group(function(){
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
     });
