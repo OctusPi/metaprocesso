@@ -80,7 +80,7 @@
 
 .form-text {
   font-size: 0.7rem;
-
+  color: var(--color-text-secondary);
 }
 
 .alert {
@@ -163,6 +163,7 @@
 .box {
   background-color: var(--color-box);
   border: var(--border-box);
+  border-radius: 12px !important;
 }
 
 .box-main {
@@ -221,14 +222,14 @@
   color: var(--color-base);
 }
 
-.header-main-btn-icon i {
-  font-size: 1.2rem;
-  color: var(--color-text);
+.header-main-btn-icon img {
+  width: 24px;
 }
 
 .dropdown-menu {
+  margin-top: 5px !important;
   padding: 15px;
-  border-radius: 20px;
+  border-radius: 10px;
   border: var(--border-box);
   background-color: var(--color-box);
   box-shadow: -3px 6px 23px -1px var(--shadow--color-shadow);
@@ -257,8 +258,9 @@
 }
 
 .accordion-item {
-  background-color: var(--color-box);
+  background-color: var(--color-fundo);
   border: var(--border-box);
+  border-radius: 10px !important;
 }
 
 .accordion-item label {
@@ -349,6 +351,11 @@
 .box-revisor-content p {
   color: var(--color-text-secondary);
   font-size: 0.9rem;
+}
+
+#search-box{
+  background-color: var(--color-fundo);
+  padding: 15px 0 25px 0;
 }
 
 @media (max-width: 991px) {

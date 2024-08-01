@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('comission')->constrained('comissions');
             $table->string('name');
             $table->integer('responsibility');
+            $table->string('number_doc')->nullable();
             $table->string('document')->nullable();
             $table->string('description')->nullable();
             $table->date('start_term');

@@ -1,6 +1,6 @@
 <?php
 
-use Database\Seeders\DatabaseSeeder;
+use App\Models\Common;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 
@@ -20,21 +20,21 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Artisan::command('make:bigboss', function () {
-    $way = $this->choice('Create a Super User: Enter data manually?', ['no', 'yes'], 'yes');
+    
+        $this->info('Create a super User');
 
-    if($way == 'yes'){
         $data = [];
-
         $data['name']     = $this->ask('Type username:');
         $data['email']    = $this->ask('Type email:');
         $data['password'] = $this->ask('Type password:');
         $data['username'] = $data['email'];
         $data['password'] = Hash::make($data['password']);
-
-        (new DatabaseSeeder())->run($data);
+        $data['profile'] = Common::PRF_ADMIN;
+        $data['modules'] = \App\Models\User::list_modules();
+        $data['status']  = true;
+        
+        \App\Models\User::factory()->create($data);
         $this->info('Sussefully!!!');
-    }else{
-        $this->call('db:seed');
-    }
+    
     
 })->purpose('Create a default super user to access system');

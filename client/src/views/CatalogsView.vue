@@ -26,7 +26,9 @@ const page = ref({
         { key: 'name', title: 'CATÁLOGO' },
         { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
     ],
-    search: {},
+    search: {
+        sent:false
+    },
     selects: {
         organs: [],
         comissions: [],
@@ -67,7 +69,6 @@ watch(() => props.datalist, (newdata) => {
 
 onMounted(() => {
     data.selects()
-    data.list()
 })
 
 </script>
@@ -102,10 +103,6 @@ onMounted(() => {
                             <i class="bi bi-search"></i>
                             <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Localizar</span>
                         </button>
-                        <!-- <button type="button" class="btn btn-action btn-action-primary ms-2">
-                            <i class="bi bi-arrow-up"></i>
-                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Exportar</span>
-                        </button> -->
                     </div>
                 </div>
 
@@ -139,7 +136,7 @@ onMounted(() => {
                             </div>
 
                             <div class="d-flex flex-row-reverse mt-4">
-                                <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
+                                <button type="submit" class="btn btn-outline-primary mx-2">Aplicar Filtro <i
                                         class="bi bi-check2-circle"></i></button>
                             </div>
                         </form>
@@ -147,7 +144,7 @@ onMounted(() => {
 
                     <!-- DATA LIST -->
                     <TableList @action:update="data.update" @action:delete="data.remove" @action:items="selectCatalog"
-                        @action:pdf="export_catalog" :header="page.dataheader" :body="page.datalist"
+                        @action:pdf="export_catalog" :header="page.dataheader" :body="page.datalist" :sent="page.search.sent"
                         :actions="['items', 'update', 'delete', 'export_pdf']" />
                 </div>
 

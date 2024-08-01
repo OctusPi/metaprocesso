@@ -12,7 +12,8 @@ const props = defineProps({
     hshow: { type: Boolean, default: () => true },
     smaller: { type: Boolean, default: () => false },
     count: { type: Boolean, default: () => true },
-    order: { type: Boolean, default: () => true }
+    order: { type: Boolean, default: () => true },
+    sent: {type: Boolean, default:() => true}
 })
 
 const emit = defineEmits([
@@ -96,39 +97,44 @@ watch(() => props.body, (newValue) => {
 </script>
 
 <template>
-    <p v-if="props.count" class="small txt-color-sec" :class="{ 'ps-5': !props.smaller }">
-        <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
-    </p>
-    <div v-if="body.length" class="table-responsive-sm">
-        <table class="table-borderless table-striped table-hover" :class="props.smaller ? 'table tablesm' : 'table'">
-            <thead v-if="props.header && props.hshow">
-                <tr>
-                    <th scope="col" v-for="h in props.header" :key="h.key" @click="orderBy(h.key)">
-                        {{ h.title }} <i v-if="props.order" class="bi bi-arrow-down table-order-icon"></i>
-                    </th>
-                    <th v-if="props.actions" scope="col"></th>
-                </tr>
-            </thead>
-            <tbody v-if="body">
-                <tr v-for="b in body" :key="b.id">
-                    <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle">
-                        <TableListStatus v-if="h.key === 'status'" :data="getdata(b, h?.obj, h.key, h?.cast)" />
-                        <template v-else>{{ getdata(b, h?.obj, h.key, h?.cast) }}</template>
-                        <p v-if="h.sub" class="small txt-color-sec p-0 m-0">
-                            <span v-for="s in h.sub" :key="s.key" class="inline-block small">
-                                {{ matchUtils(`${s.title ?? ''} ${getdata(b, s?.obj, s.key,
-                                    s?.cast)}`, s?.utils) }}
-                            </span>
-                        </p>
-                    </td>
-                    <td v-if="props.actions" class="align-middle">
-                        <ActionNav :id="b.id" :calls="props.actions" @action="propagateEmit" />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div v-if="sent"> 
+        <p v-if="props.count" class="small txt-color-sec" :class="{ 'ps-5': !props.smaller }">
+            <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
+        </p>
+        <div v-if="body.length" class="table-responsive-sm">
+            <table class="table-borderless table-striped table-hover" :class="props.smaller ? 'table tablesm' : 'table'">
+                <thead v-if="props.header && props.hshow">
+                    <tr>
+                        <th scope="col" v-for="h in props.header" :key="h.key" @click="orderBy(h.key)">
+                            {{ h.title }} <i v-if="props.order" class="bi bi-arrow-down table-order-icon"></i>
+                        </th>
+                        <th v-if="props.actions" scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody v-if="body">
+                    <tr v-for="b in body" :key="b.id">
+                        <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle">
+                            <TableListStatus v-if="h.key === 'status'" :data="getdata(b, h?.obj, h.key, h?.cast)" />
+                            <template v-else>{{ getdata(b, h?.obj, h.key, h?.cast) }}</template>
+                            <p v-if="h.sub" class="small txt-color-sec p-0 m-0">
+                                <span v-for="s in h.sub" :key="s.key" class="inline-block small">
+                                    {{ matchUtils(`${s.title ?? ''} ${getdata(b, s?.obj, s.key,
+                                        s?.cast)}`, s?.utils) }}
+                                </span>
+                            </p>
+                        </td>
+                        <td v-if="props.actions" class="align-middle">
+                            <ActionNav :id="b.id" :calls="props.actions" @action="propagateEmit" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-
+    <div v-else class="text-center mt-4">
+        <i class="bi bi-chat-dots fs-3"></i>
+        <p class="p-0 m-0 form-text">Aplique o filtro na opção localizar, para visualizar os dados...</p>
+    </div>
 </template>
 
 <style scoped>

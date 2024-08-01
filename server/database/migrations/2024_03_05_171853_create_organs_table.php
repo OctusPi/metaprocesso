@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('organs', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->longText('logomarca')->nullable();
             $table->string('name');
             $table->string('cnpj', 20)->unique();
             $table->string('phone', 20);

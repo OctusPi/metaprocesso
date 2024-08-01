@@ -325,7 +325,7 @@ onMounted(() => {
                             </div>
 
                             <div class="d-flex flex-row-reverse mt-4">
-                                <button type="submit" class="btn btn-outline-primary mx-2">Aplicar <i
+                                <button type="submit" class="btn btn-outline-primary mx-2">Aplicar Filtro <i
                                         class="bi bi-check2-circle"></i></button>
                             </div>
                         </form>

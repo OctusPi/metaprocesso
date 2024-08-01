@@ -28,7 +28,7 @@ const menuitens = {
 </script>
 
 <template>
-    <nav class="navbar navbar-expand-lg rounded-4">
+    <nav class="navbar navbar-expand-lg">
 
         <div class="navbar-container p-4">
             <div class="nav-header">
@@ -76,6 +76,7 @@ const menuitens = {
     background-color: var(--color-nav);
     --bs-navbar-toggler-border-color: none;
     --bs-navbar-toggler-focus-width: none;
+    border-radius: 12px !important;
 }
 
 .nav-toggle-icon {

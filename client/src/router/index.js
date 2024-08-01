@@ -146,6 +146,24 @@ const router = createRouter({
 			component: () => import('../views/PriceRecordsView.vue')
 		},
 		{
+			path: '/refterms',
+			name: 'refterms',
+			// meta: { auth: true },
+			component: () => import('../views/ReftermsView.vue')
+		},
+		{
+			path: '/trasmission',
+			name: 'trasmission',
+			// meta: { auth: true },
+			component: () => import('../views/TrasmissionView.vue')
+		},
+		{
+			path: '/reports',
+			name: 'reports',
+			// meta: { auth: true },
+			component: () => import('../views/ReportsView.vue')
+		},
+		{
 			path: '/forbidden',
 			name: 'forbidden',
 			component: () => import('../views/ForbiddenView.vue')
