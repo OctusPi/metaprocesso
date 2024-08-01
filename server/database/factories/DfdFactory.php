@@ -14,13 +14,13 @@ class DfdFactory extends Factory
     public function definition(): array
     {
         return [
-            'cod' => fake()->text(20),
+            'protocol' => fake()->text(20),
             'date_ini' => '12/12/2023',
             'category' => 1,
             'obj' => fake()->text(),
             'description' => fake()->text(),
-            'organ_id' => fake()->numberBetween(1, Organ::all()->count()),
-            'unit_id' => fake()->numberBetween(1, Unit::all()->count()),
+            'organ' => Organ::inRandomOrder()->first()->id,
+            'unit' =>  Unit::inRandomOrder()->first()->id,
         ];
     }
 }

@@ -15,8 +15,8 @@ class DotationFactory extends Factory
     {
         return [
             'name' => fake()->word(),
-            'organ_id' => fake()->numberBetween(1, Organ::all()->count()),
-            'unit_id' => fake()->numberBetween(1, Unit::all()->count()),
+            'organ' => Organ::inRandomOrder()->first()->id,
+            'unit' =>  Unit::inRandomOrder()->first()->id,
             'law' => fake()->word(),
             'description' => fake()->paragraph(),
             'status' => 1

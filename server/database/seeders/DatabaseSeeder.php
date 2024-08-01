@@ -4,6 +4,13 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Common;
+use App\Models\Dfd;
+use App\Models\Dotation;
+use App\Models\Organ;
+use App\Models\Program;
+use App\Models\Sector;
+use App\Models\Supplier;
+use App\Models\Unit;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,23 +21,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(?array $data = null): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        if($data){
-            $data['profile'] = Common::PRF_ADMIN;
-            $data['modules'] = \App\Models\User::list_modules();
-            $data['status']  = true;
-            \App\Models\User::factory()->create($data);
-        }else{
-            \App\Models\User::factory()->create([
-                'name' => 'Test User',
-                'email' => 'test@example.com',
-                'username' => 'test@example.com',
-                'password' => Hash::make('senha123'),
-                'profile' => Common::PRF_ADMIN,
-                'modules' => \App\Models\User::list_modules(),
-                'status' => true
-            ]);
-        }
+        Organ::factory(5)->create();
+        Unit::factory(5)->create();
+        Sector::factory(5)->create();
+        Program::factory(5)->create();
+        Dotation::factory(5)->create();
+        Supplier::factory(5)->create();
     }
 }

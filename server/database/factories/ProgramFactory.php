@@ -15,8 +15,8 @@ class ProgramFactory extends Factory
     {
         return [
             'name' => fake()->company(),
-            'organ_id' => fake()->numberBetween(1, Organ::all()->count()),
-            'unit_id' =>  fake()->numberBetween(1, Unit::all()->count()),
+            'organ' => Organ::inRandomOrder()->first()->id,
+            'unit' =>  Unit::inRandomOrder()->first()->id,
             'law' => fake()->text(255),
             'description' => fake()->paragraph(),
             'status' => 1

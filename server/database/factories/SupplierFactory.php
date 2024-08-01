@@ -18,7 +18,9 @@ class SupplierFactory extends Factory
             'cpf' => fake()->numerify('###########'),
             'phone' => fake()->numerify('(##) #########'),
             'email' => fake()->email(),
-            'address' => fake()->address()
+            'address' => fake()->address(),
+            'modality' => 1,
+            'size' => 1,
         ];
     }
 }

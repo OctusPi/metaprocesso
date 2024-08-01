@@ -18,7 +18,7 @@ class UnitFactory extends Factory
     public function definition(): array
     {
         return [
-            'organ_id' => random_int(1, Organ::get()->count()),
+            'organ' => Organ::inRandomOrder()->first()->id,
             'name' => fake()->company(),
             'cnpj' => fake()->numerify('##############'),
             'phone' => fake()->numerify('(##) #########'),
