@@ -63,7 +63,7 @@ function findModelById(item) {
 
 
 watch(() => props.body, (newValue) => {
-    body.value = newValue
+    body.value = utils.reduceArrays(model.value, newValue)
 });
 
 const checkName = props.identify + '_check'
@@ -120,7 +120,7 @@ th {
 
 table td:nth-child(2) {
     white-space: nowrap;
-  }
+}
 
 .table tr th:first-child {
     padding-left: 50px;

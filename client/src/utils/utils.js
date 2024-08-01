@@ -1,4 +1,4 @@
-function load(status = true){
+function load(status = true) {
     const element = document.getElementById('load-wall')
     if (element) {
         status ? element.classList.remove('d-none') : element.classList.add('d-none')
@@ -20,21 +20,21 @@ function randCode(len = 12) {
     return final
 }
 
-function getTxt(objs, key_subject, key_search = 'id', key_txt = 'title'){
-    if(objs){
-        const  f = objs.find(o => o[key_search] == key_subject)
+function getTxt(objs, key_subject, key_search = 'id', key_txt = 'title') {
+    if (objs) {
+        const f = objs.find(o => o[key_search] == key_subject)
         return f ? f[key_txt] : '*****'
     }
 
     return '*****'
-    
+
 }
 
 function truncate(str, len = 100) {
     if (str == null) {
         return null
     }
-    
+
     if (str.length <= len) {
         return str
     }
@@ -48,20 +48,32 @@ function stripHTML(str) {
 }
 
 function dateProtocol(pivot, separator = '') {
-        if (!pivot) {
-            return null
-        }
-        
-        const d = new Date();
+    if (!pivot) {
+        return null
+    }
 
-        const date = (
-            d.getDay().toString().padStart(2, '0')
-            + d.getMonth().toString().padStart(2, '0')
-            + d.getFullYear().toString().padStart(4, '0'))
+    const d = new Date();
 
-        const mili = d.getMilliseconds().toString().padStart(4, '0')
-    
-        return String(pivot).padStart(3, '0') + separator + date + separator + mili
+    const date = (
+        d.getDay().toString().padStart(2, '0')
+        + d.getMonth().toString().padStart(2, '0')
+        + d.getFullYear().toString().padStart(4, '0'))
+
+    const mili = d.getMilliseconds().toString().padStart(4, '0')
+
+    return String(pivot).padStart(3, '0') + separator + date + separator + mili
+}
+
+function reduceArrays(a, b, k = 'id') {
+    const obj = {}
+
+    function _setobj(arr) {
+        if (Array.isArray(arr))
+            arr.forEach((it) =>  obj[it[k]] = it)
+        return _setobj
+    } _setobj(a)(b)
+
+    return Object.values(obj)
 }
 
 export default {
@@ -71,5 +83,6 @@ export default {
     getTxt,
     truncate,
     stripHTML,
-    dateProtocol
+    dateProtocol,
+    reduceArrays
 }
