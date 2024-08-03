@@ -7,9 +7,9 @@ const props = defineProps({
     header: { type: Array },
     body: { type: Array, default: () => [] },
     casts: { type: Object },
-    smaller: {type: Boolean, default:() => false},
-    count:{type: Boolean, default: () => true},
-    detachStatus: {type: Boolean, default: true},
+    smaller: { type: Boolean, default: () => false },
+    count: { type: Boolean, default: () => true },
+    detachStatus: { type: Boolean, default: true },
 })
 
 const body = ref(props.body)
@@ -59,9 +59,10 @@ function getdata(data, obj, key, cast = null, subject = 'id') {
             </thead>
             <tbody v-if="body">
                 <tr v-for="b in body" :key="b.id">
-                    <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle">
-                       <TableListStatus v-if="h.key === 'status' && props.detachStatus" :data="getdata(b, h?.obj, h.key, h?.cast)"  />
-                       <template v-else>{{ getdata(b, h?.obj, h.key, h?.cast) }}</template>
+                    <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle" :class="[h.fclass && h.fclass(b)]">
+                        <TableListStatus v-if="h.key === 'status' && props.detachStatus"
+                            :data="getdata(b, h?.obj, h.key, h?.cast)" />
+                        <span v-else>{{ getdata(b, h?.obj, h.key, h?.cast) }}</span>
                         <p v-if="h.sub" class="small txt-color-sec p-0 m-0">
                             <span v-for="s in h.sub" :key="s.key" class="inline-block small">
                                 {{ utils.truncate(`${s.title ?? ''} ${getdata(b, s?.obj, s.key, s?.cast)}`, 250) }}
@@ -79,10 +80,11 @@ function getdata(data, obj, key, cast = null, subject = 'id') {
 </template>
 
 <style scoped>
-*{
+* {
     font-size: 0.7rem;
     color: black !important;
 }
+
 table,
 th,
 td {
@@ -96,4 +98,15 @@ td {
     text-align: left !important;
 }
 
+.green {
+    background-color: rgb(98, 255, 98);
+}
+
+.yellow {
+    background-color: rgb(255, 255, 125);
+}
+
+.red {
+    background-color: rgb(255, 126, 126);
+}
 </style>
