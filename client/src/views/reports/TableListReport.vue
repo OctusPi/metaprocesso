@@ -49,7 +49,7 @@ function getdata(data, obj, key, cast = null, subject = 'id') {
         <i class="bi bi-grip-vertical"></i> {{ (body.length).toString().padStart(2, '0') }} Registros Localizados
     </p>
     <div v-if="body.length" class="table-responsive-sm">
-        <table class="w-100" :class="props.smaller ? 'tablesm' : ''">
+        <table class="w-100">
             <thead v-if="props.header">
                 <tr>
                     <th scope="col" v-for="h in props.header" :key="h.key">
@@ -88,7 +88,7 @@ th,
 td {
     border: 1px solid black;
     border-collapse: collapse;
-    border-radius: 0;
+    border-radius: none;
 }
 
 td {

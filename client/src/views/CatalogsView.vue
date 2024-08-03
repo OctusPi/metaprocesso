@@ -69,6 +69,7 @@ watch(() => props.datalist, (newdata) => {
 
 onMounted(() => {
     data.selects()
+    data.list()
 })
 
 </script>

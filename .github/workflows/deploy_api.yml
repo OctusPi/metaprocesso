@@ -1,0 +1,31 @@
+name: Deploy Api
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Deploy Api
+      uses: easingthemes/ssh-deploy@main
+      with:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        ARGS: "-rlgoDzvc -i --exclude '.env'"
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST}}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        SOURCE: "server/"
+        TARGET: ${{ secrets.REMOTE_TARGET }}
+
+    - name: Build Application
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.REMOTE_HOST}}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}

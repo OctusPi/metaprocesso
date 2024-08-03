@@ -6,23 +6,16 @@ import auth from '@/stores/auth';
 const router = useRoute()
 const menu = auth.getNavigation()
 const menuitens = {
+    'management': { href: '/management', icon: 'manager.svg', title: 'Gestão', description: 'Dados Administrativos e Estruturais' },
     'catalogs': { href: '/catalogs', icon: 'catalog.svg', title: 'Catálogos', description: 'Catálogos de Itens GOV' },
-    'processes': { href: '/processes', icon: 'processes.svg', title: 'Processos', description: 'Formalização de Processos' },
     'dfds': { href: '/dfds', icon: 'dfds.svg', title: 'DFDs', description: 'Formalização de Demandas' },
+    'processes': { href: '/processes', icon: 'processes.svg', title: 'Processos', description: 'Formalização de Processos' },
     'etps': { href: '/etps', icon: 'etps.svg', title: 'ETPs', description: 'Estudos Técnicos Preliminares' },
     'pricerecords': { href: '/pricerecords', icon: 'prices.svg', title: 'Preços', description: 'Mapa de Registro de Preços' },
     'riskiness': { href: '/riskiness', icon: 'map.svg', title: 'Mapa de Riscos', description: 'Mapa de Riscos' },
     'refterms': { href: '/refterms', icon: 'terms.svg', title: 'Termos', description: 'Termos de Referência' },
     'trasmission': { href: '/trasmission', icon: 'share.svg', title: 'Publicar', description: 'Publicação e Transmissão' },
-    'reports': { href: '/reports', icon: 'reports.svg', title: 'Relatórios', description: 'Relatórios de Acompanhamento e Planejamento' },
-    'management': { href: '/management', icon: 'manager.svg', title: 'Gestão', description: 'Dados Administrativos e Estruturais' }
-
-    // 'purchases': {href: '/purchases', icon:'bi-basket-fill', title:'Compras', description:'Ordens de Compras de Contratos'},
-    // 'ocurrencys': {href: '/ocurrencys', icon:'bi-exclamation-diamond-fill', title:'Ocorrências', description:'Livro de Ocorrências de Fornecimento'},
-    // 'constructions': {href: '/constructions', icon:'bi-building-fill-gear', title:'Obras', description:'Fiscalização e Acompanhamento de Obras'},
-    // 'lightings': {href: '/lightings', icon:'bi-lightning-charge-fill', title:'Iluminação', description:'Fiscalização Iluminação Pública'},
-    // 'trashcollect': {href: '/trashcollect', icon:'bi-truck-front-fill', title:'Coleta e Limpeza', description:'Coleta e Limpeza de Lixo'},
-    // 'sanctions': {href: '/sanctions', icon:'bi-x-octagon-fill', title:'Sanções', description:'Processos de Sançao e Penalização'},
+    'reports': { href: '/reports', icon: 'reports.svg', title: 'Relatórios', description: 'Relatórios de Acompanhamento e Planejamento' }
 }
 
 </script>
