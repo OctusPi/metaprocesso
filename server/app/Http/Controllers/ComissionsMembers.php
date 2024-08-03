@@ -33,9 +33,9 @@ class ComissionsMembers extends Controller
             }
 
             return $this->baseSave(array_merge($values, [
-                ['organ']     => $comission->organ,
-                ['unit']      => $comission->unit,
-                ['comission'] => $comission->id
+                'organ'     => $comission->organ,
+                'unit'      => $comission->unit,
+                'comission' => $comission->id
             ]));
         }
 

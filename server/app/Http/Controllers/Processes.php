@@ -18,6 +18,7 @@ use App\Models\Ordinator;
 use Illuminate\Http\Request;
 use App\Models\ComissionMember;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class Processes extends Controller
 {
@@ -47,21 +48,22 @@ class Processes extends Controller
     public function save(Request $request)
     {
         $comission = Comission::find($request->comission);
-        if (empty($comission->comissionmembers)) {
+        $comissionmembers = ComissionMember::where('comission', $request->comission)->get();
+        if (empty($comissionmembers)) {
             return Response()->json(Notify::warning("A comissão não possui nenhum membro!"), 403);
         }
 
         $premodel = new Process($request->all());
         $premodel->author = $request->user()->id;
         $premodel->ip = $request->ip();
-        $premodel->comission_members = $comission->comissionmembers;
-        $premodel->comission_address = $comission->unit()->value('address');
+        $premodel->comission_members = $comissionmembers;
+        $premodel->comission_address = $comission->address;
 
         $dfds = $this->setDfdStatus($premodel->status, collect($premodel->dfds));
 
         $premodel->dfds = $dfds->toArray();
         $premodel->ordinators = $dfds->pluck('ordinator');
-
+        Log::info($premodel->toArray());
         return $this->baseSave($premodel->toArray());
     }
 
