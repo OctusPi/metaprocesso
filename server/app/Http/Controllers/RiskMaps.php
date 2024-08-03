@@ -6,6 +6,7 @@ use App\Middleware\Data;
 use App\Models\Comission;
 use App\Models\ComissionMember;
 use App\Models\Common;
+use App\Models\Organ;
 use App\Models\Process;
 use App\Models\RiskMap;
 use App\Models\Unit;
@@ -116,7 +117,7 @@ class RiskMaps extends Controller
         return Response()->json([
             'units' => $units,
             'comissions' => $comissions,
-            'organs' => Utils::map_select(Data::list(Comission::class, order: ['name'])),
+            'organs' => Utils::map_select(Data::list(Organ::class, order: ['name'])),
             'phases' => RiskMap::list_phases(),
             'risk_impacts' => RiskMap::list_impacts(),
             'risk_probabilities' => RiskMap::list_probabilities(),

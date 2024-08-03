@@ -22,7 +22,17 @@ const riskiness = ref({
         { key: 'risk_related', title: 'RELACIONADO AO(À)' },
         { key: 'risk_probability', cast: 'value', title: 'P' },
         { key: 'risk_impact', cast: 'value', title: 'I' },
-        { key: 'risk_level', title: 'NÍVEL DE RISCO (P X I)' }
+        { key: 'risk_level', title: 'NÍVEL DE RISCO (P X I)', fclass: (body) => {
+            if (body.risk_level <= 50) {
+                return 'green'
+            }
+            if (body.risk_level <= 100) {
+                return 'yellow'
+            }
+            if (body.risk_level <= 225) {
+                return 'red'
+            }
+        } }
     ],
     selects: {},
     data: {},
@@ -168,7 +178,7 @@ function actions(risk, act) {
             <tr v-for="risk in riskiness.datalist" :key="risk.id">
                 <th class="text-center">Risco {{ risk.verb_id }}</th>
                 <td class="colapse">
-                    <table>
+                    <table class="noborder">
                         <tr>
                             <th>Risco</th>
                             <td>{{ risk.risk_name }}</td>
@@ -191,14 +201,14 @@ function actions(risk, act) {
                             <th>Tratamento</th>
                             <td>{{ risk.risk_treatment }}</td>
                         </tr>
-                        <tr>
+                        <tr v-if="actions(risk, PREVENTIVES).length > 0">
                             <td colspan="2" class="colapse">
-                                <table class="colapse">
+                                <table class="nomargin">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Ação Preventiva</th>
-                                            <th>Responsável</th>
+                                            <th style="width: 80%;">Ação Preventiva</th>
+                                            <th style="width: 20%;">Responsável</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -211,14 +221,14 @@ function actions(risk, act) {
                                 </table>
                             </td>
                         </tr>
-                        <tr>
+                        <tr v-if="actions(risk, CONTINGENCE).length > 0">
                             <td colspan="2" class="colapse">
-                                <table>
+                                <table class="nomargin">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Ação de Contingência</th>
-                                            <th>Responsável</th>
+                                            <th style="width: 80%;">Ação de Contingência</th>
+                                            <th style="width: 20%;">Responsável</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -273,7 +283,23 @@ function actions(risk, act) {
 <style scoped>
 @import url('../../assets/css/reports.css');
 .colapse {
-    padding: 0 !important;
-    border: none !important;
+    padding: 0;
+    border: none;
+}
+.nomargin {
+    margin: 0;
+}
+.noborder {
+    padding: 0;
+    margin: 0;
+    border-collapse: collapse;
+}
+
+th {
+    background-color: #ddd;
+}
+
+.green {
+    background-color: green;
 }
 </style>
