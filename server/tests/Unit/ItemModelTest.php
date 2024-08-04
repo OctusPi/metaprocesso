@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Models\Item;
+use App\Models\CatalogItem as Item;
 use Illuminate\Database\QueryException;
 use Tests\TestCase;
 
