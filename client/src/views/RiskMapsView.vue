@@ -1,18 +1,18 @@
 <script setup>
 import { createApp, onMounted, ref, watch } from 'vue'
-import MainNav from '@/components/MainNav.vue';
-import MainHeader from '@/components/MainHeader.vue';
-import TableList from '@/components/TableList.vue';
+import Tabs from '@/utils/tabs';
 import Ui from '@/utils/ui';
 import Data from '@/services/data';
 import PseudoData from '@/services/pseudodata';
-import TabNav from '@/components/TabNav.vue';
-import Tabs from '@/utils/tabs';
-import TableListSelectRadio from '@/components/TableListSelectRadio.vue';
 import http from '@/services/http';
-import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
-import RiskMapReport from './reports/RiskMapReport.vue';
 import exp from "@/services/export";
+import TabNav from '@/components/TabNav.vue';
+import MainNav from '@/components/MainNav.vue';
+import MainHeader from '@/components/MainHeader.vue';
+import TableList from '@/components/TableList.vue';
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
+import TableListSelectRadio from '@/components/TableListSelectRadio.vue';
+import RiskMapReport from '@/views/reports/RiskMapReport.vue';
 
 const emit = defineEmits(['callAlert', 'callRemove'])
 const props = defineProps({ datalist: { type: Array, default: () => [] } })
@@ -367,16 +367,11 @@ onMounted(() => {
                         <input type="hidden" name="id" v-model="page.data.id">
 
                         <TabNav :tab-instance="tabSwitch" identify="process-nav" />
+
                         <div class="tab-content" id="dfdTabContent">
 
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('process') }"
                                 id="origin-tab-pane" role="tabpanel" aria-labelledby="origin-tab" tabindex="0">
-
-                                <div v-if="page.data.process" class="mb-4 form-neg-box">
-                                    <TableList :header="page.process.headers" :body="[page.data.process]"
-                                        :casts="{ 'status': page.selects.status_process }" :count="false"
-                                        :order="false" />
-                                </div>
 
                                 <div class="accordion mb-3" id="accordionSearchProcess">
                                     <div class="accordion-item">
@@ -465,51 +460,46 @@ onMounted(() => {
                                 </div>
                             </div>
 
-                            <div class="tab-content" id="dfdTabContent">
-                                <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('infos') }"
-                                    id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab"
-                                    tabindex="0">
-                                    <div class="row mb-3 g-3">
-                                        <div class="col-sm-12 col-md-8">
-                                            <label for="comission" class="form-label">Comissão</label>
-                                            <select name="comission" class="form-control"
-                                                :class="{ 'form-control-alert': page.rules.valids.comission }"
-                                                id="comission" v-model="page.data.comission">
-                                                <option value=""></option>
-                                                <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
-                                                    {{ o.title }}
-                                                </option>
-                                            </select>
-                                            <div class="form-text txt-color-sec">
-                                                Ao selecionar a comissão/equipe de planejamento seus
-                                                integrantes serão vinculados ao documento
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-4">
-                                            <label for="phase" class="form-label">Fase</label>
-                                            <select name="phase" class="form-control" :class="{
-                                                'form-control-alert': page.rules.valids.phase
-                                            }" id="phase" v-model="page.data.phase">
-                                                <option value=""></option>
-                                                <option v-for="o in page.selects.phases" :key="o.id" :value="o.id">
-                                                    {{ o.title }}
-                                                </option>
-                                            </select>
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('infos') }"
+                                id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
+                                <div class="row mb-3 g-3">
+                                    <div class="col-sm-12 col-md-8">
+                                        <label for="comission" class="form-label">Comissão</label>
+                                        <select name="comission" class="form-control"
+                                            :class="{ 'form-control-alert': page.rules.valids.comission }"
+                                            id="comission" v-model="page.data.comission">
+                                            <option value=""></option>
+                                            <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
+                                                {{ o.title }}
+                                            </option>
+                                        </select>
+                                        <div class="form-text txt-color-sec">
+                                            Ao selecionar a comissão/equipe de planejamento seus
+                                            integrantes serão vinculados ao documento
                                         </div>
                                     </div>
-                                    <div class="row mb-3 g-3">
-                                        <div class="col-sm-12">
-                                            <label class="form-label" for="description">Descrição do mapeamento</label>
-                                            <textarea name="description" class="form-control" rows="4" :class="{
-                                                'form-control-alert': page.rules.valids.description
-                                            }" id="description" v-model="page.data.description"></textarea>
-                                        </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="phase" class="form-label">Fase</label>
+                                        <select name="phase" class="form-control" :class="{
+                                            'form-control-alert': page.rules.valids.phase
+                                        }" id="phase" v-model="page.data.phase">
+                                            <option value=""></option>
+                                            <option v-for="o in page.selects.phases" :key="o.id" :value="o.id">
+                                                {{ o.title }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3 g-3">
+                                    <div class="col-sm-12">
+                                        <label class="form-label" for="description">Descrição do mapeamento</label>
+                                        <textarea name="description" class="form-control" rows="4" :class="{
+                                            'form-control-alert': page.rules.valids.description
+                                        }" id="description" v-model="page.data.description"></textarea>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="tab-content" id="dfdTabContent">
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('risks') }"
                                 id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
                                 <div class="mb-4">
@@ -588,7 +578,7 @@ onMounted(() => {
                                                 Risco</span>
                                         </button>
                                     </div>
-                                    <div class="inside-box mb-4 form-neg-box">
+                                    <div class="mb-4 form-neg-box">
                                         <TableList @action:update="pseudoData.update"
                                             @action:damage="(id) => swithToModal(id, damage, riskiness, 'risk_damage')"
                                             @action:actions="(id) => swithToModal(id, actions, riskiness, 'risk_actions')"
@@ -602,100 +592,94 @@ onMounted(() => {
                                 </div>
                             </div>
 
-                            <div class="tab-content" id="dfdTabContent">
-                                <div class="tab-pane fade"
-                                    :class="{ 'show active': tabSwitch.activate_tab('accompaniments') }"
-                                    id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab"
-                                    tabindex="0">
-                                    <div class="mb-4">
-                                        <h2 class="txt-color text-center m-0">
+                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('accompaniments') }"
+                                id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
+                                <div class="mb-4">
+                                    <h2 class="txt-color text-center m-0">
+                                        <i class="bi bi-check2-all"></i>
+                                        {{ accomp.title.primary }}
+                                    </h2>
+                                    <p class="txt-color-sec small text-center m-0">
+                                        {{ accomp.title.secondary }}
+                                    </p>
+                                </div>
+                                <div v-if="accomp.uiview.register" id="register-box" class="mb-4 p-0">
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="accomp_date" class="form-label">
+                                                Data do Acompanhamento
+                                            </label>
+                                            <VueDatePicker auto-apply v-model="accomp.data.accomp_date"
+                                                :input-class-name="accomp.rules.valids.accomp_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                                :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                                locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                                calendar-cell-class-name="dp-custom-cell"
+                                                menu-class-name="dp-custom-menu" />
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="accomp_risk" class="form-label">Risco</label>
+                                            <select name="accomp_risk" class="form-control"
+                                                @change="(e) => accompData.select(riskiness.datalist, 'risk_actions', 'id', e.target.value)"
+                                                :class="{ 'form-control-alert': accomp.rules.valids.accomp_risk }"
+                                                id="accomp_risk" v-model="accomp.data.accomp_risk">
+                                                <option value=""></option>
+                                                <option v-for="o in riskiness.datalist" :key="o.verb_id" :value="o.id">
+                                                    {{ o.verb_id }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4">
+                                            <label for="accomp_action" class="form-label">Ação</label>
+                                            <select name="accomp_action" class="form-control"
+                                                :class="{ 'form-control-alert': accomp.rules.valids.accomp_action }"
+                                                id="accomp_action" v-model="accomp.data.accomp_action">
+                                                <option value=""></option>
+                                                <option v-for="o in accomp.selects.risk_actions" :key="o.verb_id"
+                                                    :value="o.id">
+                                                    {{ o.verb_id }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-sm-12 col-md-12">
+                                            <label for="accomp_treatment" class="form-label">Tratamento</label>
+                                            <input type="text" name="accomp_treatment" class="form-control"
+                                                :class="{ 'form-control-alert': accomp.rules.valids.accomp_treatment }"
+                                                id="accomp_treatment" v-model="accomp.data.accomp_treatment"
+                                                placeholder="Tratamento do risco">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex flex-row-reverse justify-content-center mt-4">
+                                        <button @click="accompUi.toggle('list')" type="button"
+                                            class="btn btn-warning">Cancelar <i class="bi bi-x-circle"></i></button>
+                                        <button type="button" class="btn btn-primary mx-2" @click="accompData.save()">
+                                            Adicionar
+                                            <i class="bi bi-check2-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div v-if="!accomp.uiview.register">
+                                    <div class="action-buttons d-flex mb-3">
+                                        <button @click="accompUi.toggle('register')" type="button"
+                                            class="btn btn-action btn-action-primary mx-auto">
                                             <i class="bi bi-check2-all"></i>
-                                            {{ accomp.title.primary }}
-                                        </h2>
-                                        <p class="txt-color-sec small text-center m-0">
-                                            {{ accomp.title.secondary }}
-                                        </p>
+                                            <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Novo
+                                                Acompanhamento</span>
+                                        </button>
                                     </div>
-                                    <div v-if="accomp.uiview.register" id="register-box" class="mb-4 p-0">
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-sm-12 col-md-4">
-                                                <label for="accomp_date" class="form-label">
-                                                    Data do Acompanhamento
-                                                </label>
-                                                <VueDatePicker auto-apply v-model="accomp.data.accomp_date"
-                                                    :input-class-name="accomp.rules.valids.accomp_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                                    :enable-time-picker="false" format="dd/MM/yyyy"
-                                                    model-type="dd/MM/yyyy" locale="pt-br"
-                                                    calendar-class-name="dp-custom-calendar"
-                                                    calendar-cell-class-name="dp-custom-cell"
-                                                    menu-class-name="dp-custom-menu" />
-                                            </div>
-                                            <div class="col-sm-12 col-md-4">
-                                                <label for="accomp_risk" class="form-label">Risco</label>
-                                                <select name="accomp_risk" class="form-control"
-                                                    @change="(e) => accompData.select(riskiness.datalist, 'risk_actions', 'id', e.target.value)"
-                                                    :class="{ 'form-control-alert': accomp.rules.valids.accomp_risk }"
-                                                    id="accomp_risk" v-model="accomp.data.accomp_risk">
-                                                    <option value=""></option>
-                                                    <option v-for="o in riskiness.datalist" :key="o.verb_id"
-                                                        :value="o.id">
-                                                        {{ o.verb_id }}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                            <div class="col-sm-12 col-md-4">
-                                                <label for="accomp_action" class="form-label">Ação</label>
-                                                <select name="accomp_action" class="form-control"
-                                                    :class="{ 'form-control-alert': accomp.rules.valids.accomp_action }"
-                                                    id="accomp_action" v-model="accomp.data.accomp_action">
-                                                    <option value=""></option>
-                                                    <option v-for="o in accomp.selects.risk_actions" :key="o.verb_id"
-                                                        :value="o.id">
-                                                        {{ o.verb_id }}
-                                                    </option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="row g-3 mb-3">
-                                            <div class="col-sm-12 col-md-12">
-                                                <label for="accomp_treatment" class="form-label">Tratamento</label>
-                                                <input type="text" name="accomp_treatment" class="form-control"
-                                                    :class="{ 'form-control-alert': accomp.rules.valids.accomp_treatment }"
-                                                    id="accomp_treatment" v-model="accomp.data.accomp_treatment"
-                                                    placeholder="Tratamento do risco">
-                                            </div>
-                                        </div>
-                                        <div class="d-flex flex-row-reverse justify-content-center mt-4">
-                                            <button @click="accompUi.toggle('list')" type="button"
-                                                class="btn btn-warning">Cancelar <i class="bi bi-x-circle"></i></button>
-                                            <button type="button" class="btn btn-primary mx-2"
-                                                @click="accompData.save()">
-                                                Adicionar
-                                                <i class="bi bi-check2-circle"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div v-if="!accomp.uiview.register">
-                                        <div class="action-buttons d-flex mb-3">
-                                            <button @click="accompUi.toggle('register')" type="button"
-                                                class="btn btn-action btn-action-primary mx-auto">
-                                                <i class="bi bi-check2-all"></i>
-                                                <span class="title-btn-action ms-2 d-none d-md-block d-lg-inline">Novo
-                                                    Acompanhamento</span>
-                                            </button>
-                                        </div>
-                                        <div class="inside-box mb-4 form-neg-box">
-                                            <TableList @action:update="accompData.update"
-                                                @action:fastdelete="accompData.remove" :header="accomp.dataheader"
-                                                :body="accomp.datalist" :actions="['update', 'fastdelete']" :casts="{
-                                                    'accomp_risk': riskiness.datalist,
-                                                    'accomp_action': (data) => PseudoData.findInRef(riskiness.datalist, 'risk_actions', 'id', data.accomp_risk)
-                                                }" />
-                                        </div>
+                                    <div class="mb-4 form-neg-box">
+                                        <TableList @action:update="accompData.update"
+                                            @action:fastdelete="accompData.remove" :header="accomp.dataheader"
+                                            :body="accomp.datalist" :actions="['update', 'fastdelete']" :casts="{
+                                                'accomp_risk': riskiness.datalist,
+                                                'accomp_action': (data) => PseudoData.findInRef(riskiness.datalist, 'risk_actions', 'id', data.accomp_risk)
+                                            }" />
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                         <div class="d-flex flex-row-reverse mt-4">
                             <button @click="ui.toggle('list')" type="button" class="btn btn-outline-warning">Cancelar <i
                                     class="bi bi-x-circle"></i></button>
