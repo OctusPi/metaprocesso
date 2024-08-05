@@ -734,7 +734,7 @@ onMounted(() => {
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <h4>Data e Hora de Abertura</h4>
-                                                <p>{{ page.data.date_hour_ini }}</p>
+                                                <p>{{ page.data.date_hour_ini ?? '*****' }}</p>
                                             </div>
                                             <div class="col-md-3">
                                                 <h4>Valor Inicial</h4>

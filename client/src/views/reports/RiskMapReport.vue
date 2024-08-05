@@ -18,11 +18,11 @@ const riskiness = ref({
     uiview: { register: false, search: false },
     dataheader: [
         { key: 'verb_id', title: 'ID' },
-        { key: 'risk_name', title: 'RISCO' },
-        { key: 'risk_related', title: 'RELACIONADO AO(À)' },
+        { key: 'risk_name', title: 'Risco' },
+        { key: 'risk_related', title: 'Relacionado ao(à)' },
         { key: 'risk_probability', cast: 'value', title: 'P' },
         { key: 'risk_impact', cast: 'value', title: 'I' },
-        { key: 'risk_level', title: 'NÍVEL DE RISCO (P X I)', fclass: (body) => {
+        { key: 'risk_level', title: 'Nível de Risco (P X I)', fclass: (body) => {
             if (body.risk_level <= 50) {
                 return 'green'
             }
@@ -52,10 +52,10 @@ const accomp = ref({
     data: {},
     search: {},
     dataheader: [
-        { key: 'accomp_date', title: 'DATA' },
-        { key: 'accomp_risk', cast: 'verb_id', title: 'RISCO' },
-        { key: 'accomp_action', cast: 'verb_id', title: 'AÇÃO' },
-        { key: 'accomp_treatment', title: 'ACOMPANHAMENTO DAS AÇÕES DE TRATAMENTO' },
+        { key: 'accomp_date', title: 'Data' },
+        { key: 'accomp_risk', cast: 'verb_id', title: 'Risco' },
+        { key: 'accomp_action', cast: 'verb_id', title: 'Ação' },
+        { key: 'accomp_treatment', title: 'Acompanhamento das Ações de Tratamento' },
     ],
     rules: {
         fields: {},
@@ -180,15 +180,15 @@ function actions(risk, act) {
                 <td class="colapse">
                     <table class="noborder">
                         <tr>
-                            <th>Risco</th>
+                            <th style="width: 20%;">Risco</th>
                             <td>{{ risk.risk_name }}</td>
                         </tr>
                         <tr>
-                            <th>Probabilidade</th>
+                            <th style="width: 20%;">Probabilidade</th>
                             <td>{{ utils.getTxt(selects.risk_probabilities, risk.risk_probability) }}</td>
                         </tr>
                         <tr>
-                            <th>Impacto</th>
+                            <th style="width: 20%;">Impacto</th>
                             <td>{{ utils.getTxt(selects.risk_impacts, risk.risk_impact) }}</td>
                         </tr>
 
@@ -293,10 +293,6 @@ function actions(risk, act) {
     padding: 0;
     margin: 0;
     border-collapse: collapse;
-}
-
-th {
-    background-color: #ddd;
 }
 
 </style>

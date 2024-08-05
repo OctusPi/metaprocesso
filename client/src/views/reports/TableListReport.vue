@@ -80,21 +80,5 @@ function getdata(data, obj, key, cast = null, subject = 'id') {
 </template>
 
 <style scoped>
-* {
-    font-size: 0.7rem;
-    color: black !important;
-}
-
-table,
-th,
-td {
-    border: 1px solid black;
-    border-collapse: collapse;
-    border-radius: none;
-}
-
-td {
-    padding: 2px 5px;
-    text-align: left !important;
-}
+@import url('../../assets/css/reports.css');
 </style>
