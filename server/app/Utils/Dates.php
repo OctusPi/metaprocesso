@@ -11,6 +11,7 @@ class Dates
     const UTC_TIME = "Y-m-d H:i:s";
     const PTBR = "d/m/Y";
     const PTBR_TIME = "d/m/Y H:i:s";
+    const PTBR_DATEH = "d/m/Y H:i";
     const TZ = "Y-m-d\TH:i:s.000000\Z";
 
     /**

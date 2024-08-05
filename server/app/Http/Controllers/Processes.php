@@ -47,23 +47,20 @@ class Processes extends Controller
 
     public function save(Request $request)
     {
-        $comission = Comission::find($request->comission);
+        $comission = Comission::with('organ')->find($request->comission)->toArray();
         $comissionmembers = ComissionMember::where('comission', $request->comission)->get();
-        if (empty($comissionmembers)) {
-            return Response()->json(Notify::warning("A comissão não possui nenhum membro!"), 403);
-        }
 
         $premodel = new Process($request->all());
         $premodel->author = $request->user()->id;
         $premodel->ip = $request->ip();
         $premodel->comission_members = $comissionmembers;
-        $premodel->comission_address = $comission->address;
+        $premodel->comission_address = $comission['organ']['address'];
 
         $dfds = $this->setDfdStatus($premodel->status, collect($premodel->dfds));
 
         $premodel->dfds = $dfds->toArray();
         $premodel->ordinators = $dfds->pluck('ordinator');
-        Log::info($premodel->toArray());
+
         return $this->baseSave($premodel->toArray());
     }
 

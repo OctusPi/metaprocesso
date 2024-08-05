@@ -104,8 +104,8 @@ class Process extends Model
     public function dateHourIni(): Attribute
     {
         return Attribute::make(
-            get: fn(?string $value) => Dates::convert($value, Dates::UTC_TIME, Dates::PTBR_TIME),
-            set: fn(?string $value) => Dates::convert($value, Dates::PTBR_TIME, Dates::UTC_TIME)
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC_TIME, Dates::PTBR_DATEH),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR_DATEH, Dates::UTC_TIME)
         );
     }
 

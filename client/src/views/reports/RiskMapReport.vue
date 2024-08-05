@@ -299,7 +299,18 @@ th {
     background-color: #ddd;
 }
 
+</style>
+
+<style>
 .green {
-    background-color: green;
+    background-color: rgb(98, 255, 98);
+}
+
+.yellow {
+    background-color: rgb(255, 255, 125);
+}
+
+.red {
+    background-color: rgb(255, 126, 126);
 }
 </style>
