@@ -18,7 +18,6 @@ use App\Models\Ordinator;
 use Illuminate\Http\Request;
 use App\Models\ComissionMember;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class Processes extends Controller
 {
@@ -67,7 +66,7 @@ class Processes extends Controller
     public function list(Request $request)
     {
         return $this->baseList(
-            ['organ', 'comission', 'protocol', 'date_hour_ini', 'type', 'modality', 'status', 'object'],
+            ['organ', 'units', 'protocol', 'date_hour_ini', 'status', 'description'],
             ['date_hour_ini'],
             ['organ', 'comission']
         );

@@ -30,8 +30,9 @@ class Utils
             };
         }
 
+
         foreach ($subject as $key => $value) {
-            if (in_array($key, $search) && !empty($value) && $value !== '[]') {
+            if (in_array($key, $search) && isset($value) && $value !== '[]') {
                 $map[] = ['column' => $key, 'operator' => map_operator($value), 'value' => map_value($value), 'mode' => $mode];
             }
         }

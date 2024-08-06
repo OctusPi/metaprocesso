@@ -247,6 +247,7 @@ watch(() => props.datalist, (newdata) => {
 watch(() => page.value.uiview.register, (newdata) => {
     if (newdata) {
         riskiness.value.datalist = []
+        page.value.process.data = []
     }
     if (newdata && page.value.data.id) {
         riskiness.value.datalist = page.value.data.riskiness ?? []
@@ -306,13 +307,21 @@ onMounted(() => {
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
                         <form @submit.prevent="data.list" class="row g-3">
                             <div class="col-sm-12 col-md-4">
+                                <label for="s-organ" class="form-label">Órgão</label>
+                                <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
                                 <label for="date_s_ini" class="form-label">Data Inicial</label>
                                 <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false"
                                     format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
                                     locale="pt-br" calendar-class-name="dp-custom-calendar"
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
-
                             <div class="col-sm-12 col-md-4">
                                 <label for="date_s_fin" class="form-label">Data Final</label>
                                 <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
@@ -329,20 +338,96 @@ onMounted(() => {
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="s-organ" class="form-label">Órgão</label>
-                                <select name="organ" class="form-control" id="s-organ"
-                                    v-model="page.search.organ">
-                                    <option value=""></option>
-                                    <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">
-                                        {{ o.title }}
-                                    </option>
-                                </select>
-                            </div>
                             <div class="col-sm-12 col-md-8">
                                 <label for="s-description" class="form-label">Descrição</label>
                                 <input type="text" name="description" class="form-control" id="s-description"
                                     v-model="page.search.description" placeholder="Descrição" />
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="accordion" id="s-accordionSearchProcess">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="s-accordionSearchProcessHeadId">
+                                            <button class="w-100 text-center px-2 py-3" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#s-accordionSearchColapseId"
+                                                aria-expanded="true" aria-controls="s-accordionSearchColapseId">
+                                                <h2 class="txt-color text-center m-0">
+                                                    <i class="bi bi-journal-bookmark me-1"></i>
+                                                    Localizar Processo
+                                                </h2>
+                                                <p class="validation small text-center m-0 txt-color-sec">
+                                                    Aplique os filtros abaixo para localizar os Processos
+                                                </p>
+                                            </button>
+                                        </h2>
+                                        <div id="s-accordionSearchColapseId" class="accordion-collapse collapse"
+                                            aria-labelledby="accordionSearchProcessHeadId"
+                                            data-bs-parent="#accordionSearchProcess">
+                                            <div class="accordion-body p-0 m-0">
+                                                <div class="row g-3 p-4">
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                                        <VueDatePicker auto-apply v-model="page.process.search.date_i"
+                                                            :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            model-type="yyyy-MM-dd"
+                                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                                            calendar-class-name="dp-custom-calendar"
+                                                            calendar-cell-class-name="dp-custom-cell"
+                                                            menu-class-name="dp-custom-menu" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="date_s_fin" class="form-label">Data Final</label>
+                                                        <VueDatePicker auto-apply v-model="page.process.search.date_f"
+                                                            :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            model-type="yyyy-MM-dd"
+                                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                                            calendar-class-name="dp-custom-calendar"
+                                                            calendar-cell-class-name="dp-custom-cell"
+                                                            menu-class-name="dp-custom-menu" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-protocol" class="form-label">Protocolo</label>
+                                                        <input type="text" name="protocol" class="form-control"
+                                                            id="s-protocol" v-model="page.process.search.protocol"
+                                                            placeholder="Número do Protocolo do Processo" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-organ" class="form-label">Orgão</label>
+                                                        <select name="organ" class="form-control" id="s-organ"
+                                                            v-model="page.process.search.organ"
+                                                            @change="data.selects('organ', page.process.search.organ)">
+                                                            <option value=""></option>
+                                                            <option v-for="o in page.selects.organs" :key="o.id"
+                                                                :value="o.id">
+                                                                {{ o.title }}
+                                                            </option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-unit" class="form-label">Unidades</label>
+                                                        <InputDropMultSelect v-model="page.process.search.units"
+                                                            :options="page.selects.units" identify="p_units" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-description" class="form-label">Objeto</label>
+                                                        <input type="text" name="description" class="form-control"
+                                                            id="s-description" v-model="page.process.search.description"
+                                                            placeholder="Pesquise por partes do Objeto do Processo" />
+                                                    </div>
+                                                    <div class="mt-4">
+                                                        <button @click="search_process" type="button"
+                                                            class="btn btn-primary">
+                                                            <i class="bi bi-search"></i> Localizar Processos
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <TableListSelectRadio v-model="page.search.process" identify="process"
+                                                    :header="page.process.headers" :body="page.process.data"
+                                                    :casts="{ status: page.selects.status_process }" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="d-flex flex-row-reverse mt-4">
                                 <button type="submit" class="btn btn-outline-primary mx-2">Aplicar Filtro <i
@@ -383,13 +468,12 @@ onMounted(() => {
                                                     <i class="bi bi-journal-bookmark me-1"></i>
                                                     Localizar Processo
                                                 </h2>
-                                                <p class="validation small text-center m-0"
-                                                    :class="[!page.data.process ? 'text-danger' : 'txt-color-sec']">
+                                                <p class="validation small text-center m-0 txt-color-sec">
                                                     Aplique os filtros abaixo para localizar os Processos
                                                 </p>
                                             </button>
                                         </h2>
-                                        <div id="accordionSearchColapseId" class="accordion-collapse collapse"
+                                        <div id="accordionSearchColapseId" class="accordion-collapse collapse show"
                                             aria-labelledby="accordionSearchProcessHeadId"
                                             data-bs-parent="#accordionSearchProcess">
                                             <div class="accordion-body p-0 m-0">

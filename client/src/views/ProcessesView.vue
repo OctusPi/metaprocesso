@@ -414,11 +414,6 @@ onMounted(() => {
                 <div v-if="!page.uiview.register" id="list-box" class="inside-box mb-4">
                     <div v-if="page.uiview.search" id="search-box" class="px-4 px-md-5 mb-5">
                         <form @submit.prevent="data.list" class="row g-3">
-                            <div class="col-sm-12 col-md-12">
-                                <label for="s-protocol" class="form-label">Protocolo</label>
-                                <input type="text" name="protocol" class="form-control" id="s-protocol"
-                                    v-model="page.search.protocol" placeholder="Pesquise por partes do protocolo">
-                            </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-organ" class="form-label">Orgão</label>
                                 <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ"
@@ -429,15 +424,15 @@ onMounted(() => {
                                     </option>
                                 </select>
                             </div>
+                            <div class="col-sm-12 col-md-8">
+                                <label for="s-unit" class="form-label">Unidades</label>
+                                <InputDropMultSelect :valid="page.rules.valids.units" v-model="page.search.units"
+                                    :options="page.selects.units" identify="units" />
+                            </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-comission" class="form-label">Comissão</label>
-                                <select name="comission" class="form-control" id="s-comission"
-                                    v-model="page.search.comission">
-                                    <option value=""></option>
-                                    <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
-                                        {{ o.title }}
-                                    </option>
-                                </select>
+                                <label for="s-protocol" class="form-label">Protocolo</label>
+                                <input type="text" name="protocol" class="form-control" id="s-protocol"
+                                    v-model="page.search.protocol" placeholder="Pesquise por partes do protocolo">
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="s-date_hour_ini" class="form-label">Data de Abertura</label>
@@ -448,32 +443,17 @@ onMounted(() => {
                                     menu-class-name="dp-custom-menu" />
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-statu" class="form-label">Situação</label>
-                                <select name="statu" class="form-control" id="s-statu" v-model="page.search.statu">
+                                <label for="s-status" class="form-label">Situação</label>
+                                <select name="status" class="form-control" id="s-status" v-model="page.search.status">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
                                         {{ o.title }}
                                     </option>
                                 </select>
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="s-modality" class="form-label">Modalidade</label>
-                                <select name="modality" class="form-control" id="s-modality"
-                                    v-model="page.search.modality">
-                                    <option value=""></option>
-                                    <option v-for="o in page.selects.modalities" :key="o.id" :value="o.id">
-                                        {{ o.title }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="s-type" class="form-label">Tipo</label>
-                                <select name="type" class="form-control" id="s-type" v-model="page.search.type">
-                                    <option value=""></option>
-                                    <option v-for="o in page.selects.types" :key="o.id" :value="o.id">
-                                        {{ o.title }}
-                                    </option>
-                                </select>
+                            </div><div class="col-sm-12 col-md-12">
+                                <label for="s-object" class="form-label">Objeto</label>
+                                <input type="text" name="object" class="form-control" id="s-object"
+                                    v-model="page.search.object" placeholder="Pesquise por partes do objeto">
                             </div>
 
                             <div class="d-flex flex-row-reverse mt-4">
@@ -618,11 +598,6 @@ onMounted(() => {
                             <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('dfds') }"
                                 id="dfds-tab-pane" role="tabpanel" aria-labelledby="dfds-tab" tabindex="0">
                                 <div>
-                                    <div v-if="page.data.dfds?.length > 0" class="form-neg-box mb-3">
-                                        <TableListSelect :count="false" identify="dfds-list"
-                                            :casts="{ 'status': page.selects.dfds_status }" :header="page.dfds.headers"
-                                            :body="page.data.dfds" v-model="page.data.dfds" />
-                                    </div>
                                     <div class="accordion mb-4" id="accordion-dfds">
                                         <div class="accordion-item">
                                             <h2 class="accordion-header" id="accordion-dfds-header">
@@ -644,6 +619,7 @@ onMounted(() => {
                                                 </button>
                                             </h2>
                                             <div id="accordion-dfds-collapse" class="accordion-collapse collapse"
+                                                :class="[(page.data.organ && page.data.units) && 'show']"
                                                 aria-labelledby="accordion-dfds-header"
                                                 data-bs-parent="#accordion-dfds">
                                                 <div class="accordion-body p-0">
