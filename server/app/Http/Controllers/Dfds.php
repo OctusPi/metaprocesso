@@ -18,7 +18,6 @@ use App\Models\Ordinator;
 use App\Models\CatalogItem;
 use Illuminate\Http\Request;
 use App\Models\ComissionMember;
-use Illuminate\Support\Facades\Log;
 
 class Dfds extends Controller
 {

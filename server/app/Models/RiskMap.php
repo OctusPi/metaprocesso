@@ -16,6 +16,8 @@ class RiskMap extends Model
     protected $fillable = [
         'process',
         'comission',
+        'organ',
+        'unit',
         'author',
         'date_version',
         'version',
@@ -37,6 +39,8 @@ class RiskMap extends Model
         return [
             'process' => 'required',
             'comission' => 'required',
+            'organ' => 'required',
+            'unit' => 'required',
             'author' => 'required',
             'date_version' => 'required',
             'version' => 'required',
@@ -66,9 +70,9 @@ class RiskMap extends Model
     static function list_phases(): array
     {
         return [
-            ['id' => 1, 'title' => '(PCTIC) Planejamento da Contratação'],
-            ['id' => 2, 'title' => '(SFTIC) Seleção de Fornecedores'],
-            ['id' => 3, 'title' => '(GCTIC) Gestão do Contrato'],
+            ['id' => 1, 'title' => 'Planejamento da Contratação (PCTIC)', 'code' => 'PCTIC'],
+            ['id' => 2, 'title' => 'Seleção de Fornecedores (SFTIC)', 'code' => 'SFTIC'],
+            ['id' => 3, 'title' => 'Gestão do Contrato (GCTIC)', 'code' => 'GCTIC'],
         ];
     }
 
@@ -111,5 +115,15 @@ class RiskMap extends Model
     public function author(): HasOne
     {
         return $this->hasOne(User::class, 'id', 'author');
+    }
+
+    public function organ(): HasOne
+    {
+        return $this->hasOne(Organ::class, 'id', 'organ');
+    }
+
+    public function unit(): HasOne
+    {
+        return $this->hasOne(Unit::class, 'id', 'unit');
     }
 }
