@@ -6,7 +6,17 @@ import auth from '@/stores/auth';
 const router = useRoute()
 const menu = auth.getNavigation()
 const menuitens = {
-    'management': { href: '/management', icon: 'manager.svg', title: 'Gestão', description: 'Dados Administrativos e Estruturais' },
+    'management': { href: '/management', icon: 'manage.svg', title: 'Gestão', description: 'Dados Administrativos e Estruturais', sub:{
+        'organs': {href: '/organs', icon:'organ.svg', title:'Orgãos', description:'Dados do Orgão'},
+        'units': {href: '/units', icon:'units.svg', title:'Unidades', description:'Gestão de Unidades / Secretarias'},
+        'sectors': {href: '/sectors', icon:'sectors.svg', title:'Setores', description:'Gestão de Setores'},
+        'ordinators': {href: '/ordinators', icon:'ordinators.svg', title:'Ordenadores', description:'Gestão de Ordenadores'},
+        'demandants': {href: '/demandants', icon:'demandants.svg', title:'Demandantes', description:'Gestão de Demandantes'},
+        'comissions': {href: '/comissions', icon:'comissions.svg', title:'Comissões', description:'Gestão de Comissões'},
+        'programs': {href: '/programs', icon:'programs.svg', title:'Programas', description:'Gestão de Programas'},
+        'dotations': {href: '/dotations', icon:'dotations.svg', title:'Dotações', description:'Gestão de Dotações'},
+        'users': {href: '/users', icon:'users.svg', title:'Usuarios', description:'Gestão de Usuarios'},
+     } },
     'catalogs': { href: '/catalogs', icon: 'catalog.svg', title: 'Catálogos', description: 'Catálogos de Itens GOV' },
     'dfds': { href: '/dfds', icon: 'dfds.svg', title: 'DFDs', description: 'Formalização de Demandas' },
     'processes': { href: '/processes', icon: 'processes.svg', title: 'Processos', description: 'Formalização de Processos' },
@@ -39,14 +49,35 @@ const menuitens = {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav" v-if="menu != null && Object.keys(menu).length > 0">
                     <li v-for="(i, j) in menuitens" :key="j" class="nav-item">
-                        <RouterLink v-if="menu.find(m => m.module == j)" :to="i.href" class="nav-link nav-link-item"
-                            :class="{ 'active-nav': router.name === i.href.replace('/', '') }">
-                            <img :src="`/assets/icons/${i.icon}`" :alt="i.title" class="nav-icon">
-                            <div class="nav-link-body">
-                                <span class="nav-link-title">{{ i.title }}</span>
-                                <span class="nav-link-description">{{ i.description }}</span>
+                        <template v-if="i.sub">
+                            <div class="dropdown" v-if="menu.find(m => m.module == j)">
+                                <button class="nav-link nav-link-item" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img :src="`/assets/icons/${i.icon}`" :alt="i.title" class="nav-icon">
+                                    <div class="nav-link-body">
+                                        <span class="nav-link-title">{{ i.title }}</span>
+                                        <span class="nav-link-description">{{ i.description }}</span>
+                                    </div>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li v-for="(h, l) in i.sub" :key="l" class="my-1">
+                                        <RouterLink class="dropdown-item d-flex align-items-center" :to="h.href">
+                                            <img :src="`/assets/icons/${h.icon}`" :alt="h.title" class="sub-nav-icon me-2">
+                                            <span class="sub-nav-title">{{ h.title }}</span>
+                                        </RouterLink>
+                                    </li>
+                                </ul>
                             </div>
-                        </RouterLink>
+                        </template>
+                        <template v-else>
+                            <RouterLink v-if="menu.find(m => m.module == j)" :to="i.href" class="nav-link nav-link-item"
+                                :class="{ 'active-nav': router.name === i.href.replace('/', '') }">
+                                <img :src="`/assets/icons/${i.icon}`" :alt="i.title" class="nav-icon">
+                                <div class="nav-link-body">
+                                    <span class="nav-link-title">{{ i.title }}</span>
+                                    <span class="nav-link-description">{{ i.description }}</span>
+                                </div>
+                            </RouterLink>
+                        </template>
                     </li>
                 </ul>
             </div>
@@ -60,7 +91,6 @@ const menuitens = {
     height: calc(100% - 48px);
     top: 24px;
     width: 130px;
-    overflow: auto;
     padding: 0;
     position: fixed;
     align-items: start;
@@ -121,13 +151,41 @@ const menuitens = {
 }
 
 .active-nav {
-    color: var(--color-base)
+    color: var(--color-base);
+}
+
+.show {
+    color: var(--color-base) !important;
 }
 
 .nav-icon {
     width: 32px;
     margin-bottom: 5px;
 }
+
+.sub-nav-icon{
+    width: 18px;
+}
+
+.sub-nav-title{
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+@media (max-height: 879px){
+    .nav-link{
+        margin: 0 !important;
+        padding: 0 !important;
+        padding-bottom: 8px !important;
+    }
+    .nav-icon {
+        width: 18px;
+        margin-bottom: 0px;
+    }
+}
+
+
+
 
 @media (max-width: 991px) {
     .navbar {
@@ -155,7 +213,7 @@ const menuitens = {
     .nav-link-item {
         display: flex;
         text-align: start;
-        margin: 10px;
+        margin: 10px !important;
     }
 
     .nav-link-item span {
