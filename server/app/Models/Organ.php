@@ -96,14 +96,19 @@ class Organ extends Model
         return $this->belongsTo(Process::class);
     }
 
-    public function pricerecord():BelongsTo
+    public function pricerecord(): BelongsTo
     {
         return $this->belongsTo(PriceRecord::class);
     }
 
-    public function proposal():BelongsTo
+    public function proposal(): BelongsTo
     {
         return $this->belongsTo(Proposal::class);
+    }
+
+    public function riskmap(): BelongsTo
+    {
+        return $this->belongsTo(RiskMap::class);
     }
 
     public static function validateFields(?int $id = null): array

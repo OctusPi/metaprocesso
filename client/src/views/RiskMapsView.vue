@@ -25,9 +25,9 @@ const page = ref({
     datalist: props.datalist,
     dataheader: [
         { key: 'version', title: 'VERSÃO E DATA', sub: [{ key: 'date_version' }] },
-        { key: 'name', obj: 'comission', title: 'COMISSÃO', sub: [{ key: 'address' }] },
+        { key: 'name', obj: 'comission', title: 'ORIGEM', sub: [{ obj: 'organ', key: 'name' }] },
         { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] },
-        { key: 'phase', cast: 'title', title: 'FASE' }
+        { key: 'phase', cast: 'code', title: 'FASE' }
     ],
     selects: {
         organs: [],
@@ -330,11 +330,11 @@ onMounted(() => {
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="s-comission" class="form-label">Comissão</label>
-                                <select name="comission" class="form-control" id="s-comission"
-                                    v-model="page.search.comission">
+                                <label for="s-organ" class="form-label">Órgão</label>
+                                <select name="organ" class="form-control" id="s-organ"
+                                    v-model="page.search.organ">
                                     <option value=""></option>
-                                    <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
+                                    <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">
                                         {{ o.title }}
                                     </option>
                                 </select>
@@ -592,7 +592,8 @@ onMounted(() => {
                                 </div>
                             </div>
 
-                            <div class="tab-pane fade" :class="{ 'show active': tabSwitch.activate_tab('accompaniments') }"
+                            <div class="tab-pane fade"
+                                :class="{ 'show active': tabSwitch.activate_tab('accompaniments') }"
                                 id="processes-tab-pane" role="tabpanel" aria-labelledby="processes-tab" tabindex="0">
                                 <div class="mb-4">
                                     <h2 class="txt-color text-center m-0">

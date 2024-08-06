@@ -67,6 +67,11 @@ class Unit extends Model
         return $this->belongsTo(Sector::class);
     }
 
+    public function riskmap(): BelongsTo
+    {
+        return $this->belongsTo(RiskMap::class);
+    }
+
     public static function validateFields(?int $id = null): array
     {
         return [

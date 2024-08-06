@@ -47,3 +47,11 @@ th, td {
 .table-title p {
     font-size: .8em;
 }
+
+.missing {
+    font-size: .8em;
+}
+
+.missing i {
+    font-size: 1em;
+}

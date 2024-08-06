@@ -25,9 +25,9 @@ class RiskMaps extends Controller
     public function list(Request $request)
     {
         return $this->baseList(
-            ['comission', 'date_version', 'phase', 'description'],
+            ['organ', 'date_version', 'phase', 'description', 'process'],
             ['date_version'],
-            ['process', 'comission']
+            ['process', 'comission', 'organ']
         );
     }
 
@@ -51,8 +51,8 @@ class RiskMaps extends Controller
         $riskmap = RiskMap::where('id', $request->id)->with([
             'process',
             'comission',
-            'comission.organ',
-            'comission.unit',
+            'organ',
+            'unit',
         ])->first()->toArray();
 
         if (!$riskmap) {
@@ -64,9 +64,17 @@ class RiskMaps extends Controller
 
     public function save(Request $request)
     {
+        $comission = Comission::find($request->comission);
+
+        if (!$comission) {
+            return Response()->json(Notify::warning("Comissão não existe!"), 404);
+        }
+
         $preload = [
             'author' => $request->user()->id,
-            'comission_members' => ComissionMember::where('comission', $request->comission)->get()->toArray(),
+            'organ' => $comission->organ,
+            'unit' => $comission->unit,
+            'comission_members' => $comission->comissionmembers->toArray(),
             'date_version' => Dates::nowWithFormat(Dates::PTBR),
         ];
 

@@ -10,6 +10,7 @@ const props = defineProps({
     smaller: { type: Boolean, default: () => false },
     count: { type: Boolean, default: () => true },
     detachStatus: { type: Boolean, default: true },
+    errmsg: { type: String, default: 'Não foram localizados registros' },
 })
 
 const body = ref(props.body)
@@ -59,7 +60,8 @@ function getdata(data, obj, key, cast = null, subject = 'id') {
             </thead>
             <tbody v-if="body">
                 <tr v-for="b in body" :key="b.id">
-                    <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle" :class="[h.fclass && h.fclass(b)]">
+                    <td v-for="h in props.header" :key="`${b.id}-${h.key}`" class="align-middle"
+                        :class="[h.fclass && h.fclass(b)]">
                         <TableListStatus v-if="h.key === 'status' && props.detachStatus"
                             :data="getdata(b, h?.obj, h.key, h?.cast)" />
                         <span v-else>{{ getdata(b, h?.obj, h.key, h?.cast) }}</span>
@@ -73,9 +75,11 @@ function getdata(data, obj, key, cast = null, subject = 'id') {
             </tbody>
         </table>
     </div>
-    <div v-else class="text-center txt-color-sec">
-        <i class="bi bi-boxes fs-4"></i>
-        <p class="small">Não foram localizados registros...</p>
+    <div v-else>
+        <p class="d-flex align-items-center missing">
+            <i class="bi bi-info-circle me-1"></i>
+            {{ props.errmsg }}
+        </p>
     </div>
 </template>
 

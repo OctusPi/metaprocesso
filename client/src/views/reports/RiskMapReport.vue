@@ -78,13 +78,13 @@ function actions(risk, act) {
     <header>
         <div class="d-flex align-items-center">
             <div class="ct-logo me-2">
-                <img :src="riskmap.comission.organ.logomarca" class="h-logo">
+                <img :src="riskmap.organ.logomarca" class="h-logo">
             </div>
             <div class="h-info">
-                <h1>{{ riskmap.comission.organ.name }}</h1>
-                <p>{{ riskmap.comission.unit.name }}</p>
-                <p>{{ riskmap.comission.unit.address }}</p>
-                <p>{{ riskmap.comission.unit.phone }} {{ riskmap.comission.unit.email }}</p>
+                <h1>{{ riskmap.organ.name }}</h1>
+                <p>{{ riskmap.unit.name }}</p>
+                <p>{{ riskmap.unit.address }}</p>
+                <p>{{ riskmap.unit.phone }} {{ riskmap.unit.email }}</p>
             </div>
         </div>
     </header>
@@ -112,22 +112,21 @@ function actions(risk, act) {
             <tr>
                 <td colspan="3">
                     <h3>Orgão</h3>
-                    <p>{{ riskmap.comission.organ.name ?? '*****' }}</p>
-                    <p>{{ riskmap.comission.organ.cnpj ?? '*****' }}</p>
+                    <p>{{ riskmap.organ.name ?? '*****' }}</p>
+                    <p>{{ riskmap.organ.cnpj ?? '*****' }}</p>
                 </td>
             </tr>
             <tr>
                 <td colspan="3">
                     <h3>Unidade</h3>
-                    <p>{{ riskmap.comission.unit.name ?? '*****' }}</p>
-                    <p>{{ riskmap.comission.unit.cnpj ?? '*****' }}</p>
+                    <p>{{ riskmap.unit.name ?? '*****' }}</p>
+                    <p>{{ riskmap.unit.cnpj ?? '*****' }}</p>
                 </td>
             </tr>
             <tr>
                 <td colspan="3">
-                    <h3>Comissão Responsável</h3>
+                    <h3>Comissão/Equipe de Planejamento</h3>
                     <p>{{ riskmap.comission.name ?? '*****' }}</p>
-                    <p>{{ riskmap.comission.cnpj ?? '*****' }}</p>
                 </td>
             </tr>
             <tr>
@@ -256,7 +255,7 @@ function actions(risk, act) {
             <TableListReport :count="false" :header="accomp.dataheader" :body="accomp.datalist" :casts="{
                 accomp_risk: riskiness.datalist,
                 accomp_action: (data) => PseudoData.findInRef(riskiness.datalist, 'risk_actions', 'id', data.accomp_risk)
-            }" />
+            }" errmsg="O Mapa de Risco não possui acompanhamentos" />
         </div>
 
         <div class="row mt-5">
@@ -275,7 +274,7 @@ function actions(risk, act) {
         </div>
 
         <!-- City and Date -->
-        <p class="mt-4 text-center">{{ `${riskmap.comission.organ.postalcity ?? '*****'}, ${riskmap.date_version}` }}
+        <p class="mt-4 text-center">{{ `${riskmap.organ.postalcity ?? '*****'}, ${riskmap.date_version}` }}
         </p>
     </main>
 </template>
