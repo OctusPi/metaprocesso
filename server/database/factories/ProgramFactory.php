@@ -20,7 +20,7 @@ class ProgramFactory extends Factory
             'unit' =>  Unit::inRandomOrder()->first()->id,
             'name' => fake()->company(),
             'law' => fake()->text(255),
-            'description' => fake()->paragraph(),
+            'description' => fake()->text(100),
         ];
     }
 }

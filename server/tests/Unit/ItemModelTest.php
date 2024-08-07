@@ -13,7 +13,7 @@ class ItemModelTest extends TestCase
         $item = (new Item())->fill([
             'cod' => fake()->text(50),
             'name' => fake()->word(),
-            'description' => fake()->paragraph(),
+            'description' => fake()->text(100),
             'unit_id' => fake()->word(),
             'volume' => fake()->text(50)
         ]);

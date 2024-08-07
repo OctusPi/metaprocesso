@@ -28,7 +28,7 @@ class DotationModelTest extends TestCase
             'organ_id' => $this->organ->id,
             'unit_id' => $this->unit->id,
             'law' => fake()->word(),
-            'description' => fake()->paragraph(),
+            'description' => fake()->text(100),
             'status' => 1
         ]);
 
@@ -59,7 +59,7 @@ class DotationModelTest extends TestCase
             'organ_id' => 0,
             'unit_id' => $this->unit->id,
             'law' => fake()->word(),
-            'description' => fake()->paragraph(),
+            'description' => fake()->text(100),
             'status' => 1
         ]);
 

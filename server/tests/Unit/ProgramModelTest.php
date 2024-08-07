@@ -28,7 +28,7 @@ class ProgramModelTest extends TestCase
             'organ_id' => $this->organ->id,
             'unit_id' => $this->unit->id,
             'law' => fake()->text(),
-            'description' => fake()->paragraph(),
+            'description' => fake()->text(100),
             'status' => 1
         ]);
 
@@ -59,7 +59,7 @@ class ProgramModelTest extends TestCase
             'organ_id' => 0,
             'unit_id' => $this->unit->id,
             'law' => fake()->text(255),
-            'description' => fake()->paragraph(),
+            'description' => fake()->text(100),
             'status' => 1
         ]);
 

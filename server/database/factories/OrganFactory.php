@@ -20,7 +20,7 @@ class OrganFactory extends Factory
             'email' => fake()->email(),
             'address' => fake()->address(),
             'postalcode' => fake()->numerify('#####-###'),
-            'postalcity' => fake()->numberBetween(0, 3),
+            'postalcity' => fake()->city(),
         ];
     }
 }

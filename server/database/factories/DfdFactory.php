@@ -33,7 +33,7 @@ class DfdFactory extends Factory
             'date_ini' => fake()->date('d/m/Y'),
             'estimated_date'=>fake()->date('d/m/Y'),
             'description'=>fake()->text(100),
-            'justification'=>fake()->paragraph(),
+            'justification'=>fake()->text(100),
             'year_pca' => fake()->year(),
             'estimated_value' => fake()->randomNumber(5),
             'acquisition_type' => fake()->randomElement(Dfd::list_acquisitions())['id'],

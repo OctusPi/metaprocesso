@@ -29,22 +29,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(?array $data = null): void
     {
-        User::factory(20)->create();
-        Organ::factory(30)->create();
-        Unit::factory(200)->create();
-        Sector::factory(150)->create();
-        Program::factory(100)->create();
-        Dotation::factory(100)->create();
-        Supplier::factory(100)->create();
-        Demandant::factory(100)->create();
-        Ordinator::factory(100)->create();
-        Comission::factory(100)->create();
-        ComissionMember::factory(300)->create();
-        Catalog::factory(50)->create();
-        CatalogSubCategoryItem::factory(50)->create();
-        CatalogItem::factory(200)->create();
-        Dfd::factory(100)->create();
-        DfdItem::factory(1000)->create();
+        // User::factory(20)->create();
+        // Organ::factory(30)->create();
+        // Unit::factory(200)->create();
+        // Sector::factory(150)->create();
+        // Program::factory(100)->create();
+        // Dotation::factory(100)->create();
+        // Supplier::factory(100)->create();
+        // Demandant::factory(100)->create();
+        // Ordinator::factory(100)->create();
+        // Comission::factory(100)->create();
+        // ComissionMember::factory(300)->create();
+        // Catalog::factory(50)->create();
+        // CatalogSubCategoryItem::factory(50)->create();
+        // CatalogItem::factory(200)->create();
+        // Dfd::factory(100)->create();
+        // DfdItem::factory(1000)->create();
         Process::factory(10)->create();
     }
 }
