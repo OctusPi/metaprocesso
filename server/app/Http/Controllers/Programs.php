@@ -36,7 +36,7 @@ class Programs extends Controller
         return Response()->json([
             'organs' => Utils::map_select(Data::list(Organ::class, order:['name'])),
             'units'  => $units,
-            'status' => [['id'=>0, 'title'=>'Inativo'], ['id'=>1, 'title'=>'Ativo']],
+            'status' => Program::list_status(),
         ], 200);
     }
 }

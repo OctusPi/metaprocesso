@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Organ;
+use App\Models\Program;
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -14,12 +15,12 @@ class ProgramFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->company(),
+            'status' => fake()->randomElement(Program::list_status())['id'],
             'organ' => Organ::inRandomOrder()->first()->id,
             'unit' =>  Unit::inRandomOrder()->first()->id,
+            'name' => fake()->company(),
             'law' => fake()->text(255),
             'description' => fake()->paragraph(),
-            'status' => 1
         ];
     }
 }

@@ -21,7 +21,7 @@ class Organs extends Controller
     public function selects(Request $request)
     {
         return Response()->json([
-            'status' => [['id' => 0, 'title' => 'Inativo'], ['id' => 1, 'title' => 'Ativo']]
+            'status' => Organ::list_status()
         ], 200);
     }
 }

@@ -22,6 +22,14 @@ class Program extends Model
         'status',
     ];
 
+    public static function list_status(): array
+    {
+        return [
+            ['id' => 0, 'title' => 'Inativo'],
+            ['id' => 1, 'title' => 'Ativo']
+        ];
+    }
+
     public function organ(): HasOne
     {
         return $this->hasOne(Organ::class, 'id', 'organ');
@@ -32,22 +40,22 @@ class Program extends Model
         return $this->hasOne(Unit::class, 'id', 'unit');
     }
 
-    public function dfditem():BelongsTo
+    public function dfditem(): BelongsTo
     {
         return $this->belongsTo(DfdItem::class);
     }
 
-    public static function validateFields(?int $id = null):array
+    public static function validateFields(?int $id = null): array
     {
         return [
-            'name'     => 'required',
+            'name' => 'required',
             'organ' => 'required',
-            'unit'  => 'required',
-            'status'   => 'required'
+            'unit' => 'required',
+            'status' => 'required'
         ];
     }
 
-    public static function validateMsg():array
+    public static function validateMsg(): array
     {
         return [
             'required' => 'Campo obrigatório não informado!'

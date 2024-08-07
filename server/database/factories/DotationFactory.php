@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Dotation;
 use App\Models\Organ;
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -14,12 +15,12 @@ class DotationFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
+            'status' => fake()->randomElement(Dotation::list_status())['id'],
             'organ' => Organ::inRandomOrder()->first()->id,
-            'unit' =>  Unit::inRandomOrder()->first()->id,
-            'law' => fake()->word(),
+            'unit' => Unit::inRandomOrder()->first()->id,
             'description' => fake()->paragraph(),
-            'status' => 1
+            'name' => fake()->company(),
+            'law' => fake()->word(),
         ];
     }
 }

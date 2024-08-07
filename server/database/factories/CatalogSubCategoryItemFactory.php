@@ -15,7 +15,7 @@ class CatalogSubCategoryItemFactory extends Factory
     {
         return [
             'organ' => Organ::inRandomOrder()->first()->id,
-            'name' => fake()->word()
+            'name' => fake()->name(),
         ];
     }
 }

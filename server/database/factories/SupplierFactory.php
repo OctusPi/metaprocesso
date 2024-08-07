@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Supplier;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -13,14 +14,14 @@ class SupplierFactory extends Factory
     {
         return [
             'name' => fake()->company(),
-            'cnpj' => fake()->numerify('##############'),
+            'cnpj' => fake()->numerify('##.###.###/####-##'),
             'agent' => fake()->name(),
-            'cpf' => fake()->numerify('###########'),
+            'cpf' => fake()->numerify('###.###.###-##'),
             'phone' => fake()->numerify('(##) #########'),
             'email' => fake()->email(),
             'address' => fake()->address(),
-            'modality' => 1,
-            'size' => 1,
+            'modality' => fake()->randomElement(Supplier::list_modalitys())['id'],
+            'size' => fake()->randomElement(Supplier::list_sizes())['id'],
         ];
     }
 }

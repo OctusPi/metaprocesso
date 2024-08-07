@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 
+use App\Models\CatalogItem;
 use App\Models\Organ;
 use App\Models\Catalog;
 use App\Models\CatalogSubCategoryItem;
@@ -16,18 +17,18 @@ class CatalogItemFactory extends Factory
     public function definition(): array
     {
         return [
+            'origin' => fake()->randomElement(CatalogItem::list_origins())['id'],
+            'type' => fake()->randomElement(CatalogItem::list_types())['id'],
+            'category' => fake()->randomElement(CatalogItem::list_categories())['id'],
+            'status' => fake()->randomElement(CatalogItem::list_status())['id'],
+            'subcategory' => CatalogSubCategoryItem::inRandomOrder()->first()->id,
             'organ' => Organ::inRandomOrder()->first()->id,
             'catalog' => Catalog::inRandomOrder()->first()->id,
-            'code' => fake()->word(),
-            'name' => fake()->word(),
             'description' => fake()->text(100),
-            'und'=>fake()->word(),
-            'volume'=>fake()->word(),
-            'origin'=>fake()->numberBetween(1,2),
-            'type'=>fake()->numberBetween(1,3),
-            'category'=>fake()->numberBetween(1,4),
-            'subcategory' => CatalogSubCategoryItem::inRandomOrder()->first()->id,
-            'status' => 1
+            'code' => fake()->text(12),
+            'name' => fake()->company(),
+            'und' => fake()->word(),
+            'volume' => fake()->word(),
         ];
     }
 }

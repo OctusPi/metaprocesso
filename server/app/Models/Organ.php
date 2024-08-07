@@ -26,6 +26,14 @@ class Organ extends Model
         'logomarca'
     ];
 
+    public static function list_status(): array
+    {
+        return [
+            ['id' => 0, 'title' => 'Inativo'],
+            ['id' => 1, 'title' => 'Ativo']
+        ];
+    }
+
     public function dfd(): BelongsTo
     {
         return $this->belongsTo(Dfd::class);

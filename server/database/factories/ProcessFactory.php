@@ -2,13 +2,10 @@
 
 namespace Database\Factories;
 
-
-use App\Models\Unit;
+use App\Models\Process;
 use App\Models\User;
 use App\Models\Organ;
 use App\Models\Comission;
-use App\Models\Demandant;
-use App\Models\Ordinator;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,22 +16,22 @@ class ProcessFactory extends Factory
     public function definition(): array
     {
         return [
-            'protocol'=> (string)fake()->randomNumber(5),
-            'ip' => fake()->numerify('########'),
-            'date_hour_ini' => date('d/m/Y H:i:s'),
-            'year_pca' => '2024',
-            'type' => fake()->numberBetween(1,3),
-            'modality' => fake()->numberBetween(1,3),
+            'type' => fake()->randomElement(Process::list_types())['id'],
+            'modality' => fake()->randomElement(Process::list_modalitys())['id'],
+            'status' => fake()->randomElement(Process::list_status())['id'],
             'organ' => Organ::inRandomOrder()->first()->id,
+            'comission' => Comission::inRandomOrder()->first()->id,
+            'author' => User::inRandomOrder()->first()->id,
+            'protocol'=> fake()->numerify('###-########-####'),
+            'ip' => fake()->numerify('###.###.###.###'),
+            'comission_address' => fake()->address(),
+            'date_hour_ini' => date('d/m/Y H:i'),
+            'description'=>fake()->text(100),
+            'year_pca' => '2024',
             'units' => [],
             'ordinators' => [],
-            'comission' => Comission::inRandomOrder()->first()->id,
             'comission_members' => [],
-            'comission_address' => fake()->address(),
-            'description'=>fake()->text(100),
-            'status' => 1,
             'dfds' => [],
-            'author' => User::inRandomOrder()->first()->id
         ];
     }
 }

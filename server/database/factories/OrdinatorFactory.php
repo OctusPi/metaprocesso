@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Ordinator;
 use App\Models\Organ;
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -14,12 +15,12 @@ class OrdinatorFactory extends Factory
     public function definition(): array
     {
         return [
+            'status' => fake()->randomElement(Ordinator::list_status())['id'],
             'organ' => Organ::inRandomOrder()->first()->id,
-            'unit' =>  Unit::inRandomOrder()->first()->id,
-            'name' => fake()->name(),
-            'cpf' => fake()->numerify('###########'),
+            'unit' => Unit::inRandomOrder()->first()->id,
+            'cpf' => fake()->numerify('###.###.###-##'),
             'start_term' => fake()->date('d/m/Y'),
-            'status' => 1
+            'name' => fake()->name(),
         ];
     }
 }
