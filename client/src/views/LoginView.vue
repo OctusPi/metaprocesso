@@ -6,7 +6,7 @@ import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
 
 const sysapp = inject('sysapp')
-const user = ref(auth.getUser())
+const user = ref(auth.get_user())
 
 
 const emit = defineEmits(['callAlert'])
@@ -33,9 +33,7 @@ function login(){
     }
 
     http.post('/auth', page.value.data, emit, (response) => {
-        auth.setToken(response.data.token)
         auth.setUser(response.data.user)
-        auth.setNavigation(response.data.navigation)
         if(response.status === 200){
             window.location = "/home"
         }
@@ -64,12 +62,12 @@ onMounted(() => {
 </script>
 
 <template>
-    <main class="container-back-box d-flex justify-content-center align-items-center">
-        <div class="box p-5 rounded-4 shadow-sm container-box">
-            <header class="d-lg-flex align-items-center text-center text-lg-start mb-4">
-                <img src="../assets/imgs/logo.svg" class="logomarca-box mb-3 mb-lg-0">
+    <main class="main-single-box d-flex justify-content-center align-items-center">
+        <div class="single-box p-5">
+            <header class="text-center mb-4">
+                <img src="../assets/imgs/logo.svg" class="logomarca-box mb-3">
                 <div>
-                    <h1 class="m-0 p-0 ms-0 ms-lg-2 sistem-title-box">{{ sysapp.name }}</h1>
+                    <h1 class="m-0 p-0 ms-0 ms-lg-2 txt-color">{{ sysapp.name }}</h1>
                     <p class="p-0 m-0 text-color-sec small ms-0 ms-lg-2">{{ sysapp.desc }}</p>
                 </div>
             </header>
@@ -103,7 +101,10 @@ onMounted(() => {
                 </div>
 
                 <div class="mb-4">
-                    <button type="submit" class="btn btn-outline-primary w-100">Entrar <i class="bi bi-check2-circle"></i></button>
+                    <button type="submit" class="btn btn-action-primary w-100 d-flex align-items-center justify-content-center">
+                        Entrar
+                        <ion-icon name="enter-outline" class="fs-6 ms-1"></ion-icon>
+                    </button>
                 </div>
                 
 

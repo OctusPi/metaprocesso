@@ -2,15 +2,43 @@ import forms from './forms'
 import notifys from '@/utils/notifys';
 
 class PseudoData {
-    constructor(page, emit, ui) {
+    constructor(page, emit) {
         this.beforeSave = function () { }
         this.afterSave = function () { }
         this.page = page
         this.emit = emit
-        this.ui = ui
         this.ptrs = {};
-
         this.list()
+    }
+
+    ui = (mode = null) => {
+        switch (mode) {
+            case 'register':
+                this.page.value.ui.search = false
+                this.page.value.ui.prepare = false
+                this.page.value.ui.register = !this.page.value.ui.register
+                this.page.value.data = {}
+                break;
+            case 'update':
+                this.page.value.ui.search = false
+                this.page.value.ui.register = !this.page.value.ui.register
+                this.page.value.ui.prepare = false
+                break;
+            case 'search':
+                this.page.value.ui.search = !this.page.value.ui.search
+                this.page.value.ui.register = false
+                this.page.value.ui.prepare = false
+                break;
+            case 'prepare':
+                this.page.value.ui.prepare = !this.page.value.ui.prepare
+                this.page.value.ui.register = false
+                this.page.value.ui.search = false
+                break;
+            default:
+                this.page.value.ui.register = false
+                this.page.value.ui.prepare = false
+                break;
+        }
     }
 
     static findInRef(dataset, key, search_key, search_val) {
@@ -79,7 +107,7 @@ class PseudoData {
         instanceCallback(instance)
 
         this.page.value.data = instance
-        this.ui.toggle('update')
+        this.ui('update')
     }
 
     remove = (id) => {
@@ -102,7 +130,7 @@ class PseudoData {
     }
 
     list = () => {
-        this.ui.toggle('list')
+        this.ui('list')
     }
 }
 

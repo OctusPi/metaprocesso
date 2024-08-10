@@ -109,7 +109,7 @@ function destroy (url, data, emit, resp= null, back = null){
 }
 
 function success(response){
-    return response?.status === 200 || response?.status === 201 || response?.status === 202
+    return response?.status >= 200 && response?.status < 300
 }
 
 export default {

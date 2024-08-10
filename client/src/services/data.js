@@ -3,10 +3,39 @@ import forms from './forms'
 import notifys from '@/utils/notifys';
 class Data {
 
-    constructor(page, emit, ui) {
+    constructor(page, emit) {
         this.page = page
         this.emit = emit
-        this.ui = ui
+    }
+
+    ui = (mode = null) => {
+        switch (mode) {
+            case 'register':
+                this.page.value.ui.search = false
+                this.page.value.ui.prepare = false
+                this.page.value.ui.register = !this.page.value.ui.register
+                this.page.value.data = {}
+                break;
+            case 'update':
+                this.page.value.ui.search = false
+                this.page.value.ui.register = !this.page.value.ui.register
+                this.page.value.ui.prepare = false
+                break;
+            case 'search':
+                this.page.value.ui.search = !this.page.value.ui.search
+                this.page.value.ui.register = false
+                this.page.value.ui.prepare = false
+                break;
+            case 'prepare':
+                this.page.value.ui.prepare = !this.page.value.ui.prepare
+                this.page.value.ui.register = false
+                this.page.value.ui.search = false
+                break;
+            default:
+                this.page.value.ui.register = false
+                this.page.value.ui.prepare = false
+                break;
+        }
     }
 
     save = (over = null) => {
@@ -29,7 +58,7 @@ class Data {
 
         http.get(`${this.page.value.baseURL}/details/${id}`, this.emit, (response) => {
             this.page.value.data = response.data
-            this.ui.toggle('update')
+            this.ui('update')
         })
     }
 
@@ -53,7 +82,7 @@ class Data {
         this.page.value.search.sent = true
         http.post(`${this.page.value.baseURL}/list`, this.page.value.search, this.emit, (response) => {
             this.page.value.datalist = response.data ?? []
-            this.ui.toggle('list')
+            this.ui('list')
         })
     }
 

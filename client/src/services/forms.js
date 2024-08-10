@@ -99,5 +99,4 @@ function checkform(data, rules){
 export default {
     builddata,
     checkform
-
 }
