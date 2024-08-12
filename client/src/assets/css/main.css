@@ -8,6 +8,20 @@
   background-color: var(--color-background-soft);
 }
 
+.wall{
+  background-color: var(--color-wall);
+  z-index: 3000;
+  transition: 0.5s;
+}
+
+.d-block{
+  transition: 0.5s;
+}
+
+.d-none{
+  transition: 0.5s;
+}
+
 .main {
   position: absolute;
   width: calc(100% - 280px);
@@ -104,6 +118,16 @@
 
 .form-control::placeholder {
   color: var(--color-input-placeholder);
+}
+
+.form-control-alert {
+  color: var(--color-danger-txt);
+  background-color: var(--color-danger);
+  transition: 0.4s;
+}
+
+.form-control-alert::placeholder {
+  color: var(--color-danger-hover);
 }
 
 .btn{

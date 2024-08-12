@@ -9,10 +9,30 @@ const router = createRouter({
       component: () => import('@/views/LoginView.vue')
     },
     {
+      path: '/recover',
+      name: 'recover',
+      component: () => import('@/views/RecoverView.vue')
+    },
+    {
+      path: '/renew/:token',
+      name: 'renew',
+      component: () => import('@/views/RenewView.vue')
+    },
+    {
       path: '/home',
       name: 'home',
       component: () => import('@/views/HomeView.vue')
-    }
+    },
+		{
+			path: '/forbidden',
+			name: 'forbidden',
+			component: () => import('../views/ForbiddenView.vue')
+		},
+		{
+			path: '/:pathMatch(.*)*',
+			name: 'notfound',
+			component: () => import('../views/NotFoundView.vue')
+		}
   ]
 })
 

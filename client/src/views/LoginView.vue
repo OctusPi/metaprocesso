@@ -73,7 +73,7 @@ onMounted(() => {
             </header>
 
             <div v-if="user" class="text-center">
-                <i class="bi bi-person-circle icon-user"></i>
+                <ion-icon name="person-circle-outline" class="fs-2"></ion-icon>
                 <h2 class="mt-4">{{ user.name }}</h2>
                 <p class="small txt-color-sec p-0 m-0">Perfil: {{ user.profile }}</p>
                 <p class="small txt-color-sec p-0 m-0">Ultimo Acesso: {{ user.last_login }}</p>
@@ -117,9 +117,3 @@ onMounted(() => {
         </div>
     </main>
 </template>
-
-<style>
-    .icon-user{
-        font-size: 3rem;
-    }
-</style>
