@@ -130,6 +130,10 @@
   color: var(--color-danger-hover);
 }
 
+.form-control-alert:focus::placeholder {
+  color: var(--color-input-placeholder);
+}
+
 .btn{
   padding: 10px 15px;
   text-align: center;

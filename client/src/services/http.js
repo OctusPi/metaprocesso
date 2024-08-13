@@ -29,6 +29,10 @@ function defresp(resp, emit){
 
     const data = resp?.data ?? {}
 
+    if (data == 'unauthenticated' || data == 'unauthorized') {
+        window.location = '/'
+    }
+
     //call redirect
     if(data.redirect){
         window.location = data.redirect

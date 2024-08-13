@@ -19,6 +19,14 @@ const router = createRouter({
       component: () => import('@/views/RenewView.vue')
     },
     {
+      path: '/selectorgan',
+      name: 'selectorgan',
+      meta: {
+        auth:true
+      },
+      component: () => import('@/views/SelectOrganView.vue')
+    },
+    {
       path: '/home',
       name: 'home',
       component: () => import('@/views/HomeView.vue')

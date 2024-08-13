@@ -48,9 +48,15 @@ watch(() => props.alert, (newValue) => {
         background-color: var(--color-background-soft);
     }
 
+    .efect-down *{
+        display: none;
+    }
+
     .efect-down{
         opacity: 0;
-        transition: 0.5s;
+        height: 0;
+        width: 0;
+        transition: 0.1s;
     }
 
     .alert-success {
