@@ -1,0 +1,50 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('etps', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->foreignId('process')->constrained('processes');
+            $table->foreignId('organ')->constrained('organs');
+            $table->foreignId('comission')->constrained('comissions');
+            $table->foreignId('user')->constrained('users');
+            $table->string('protocol')->unique();
+            $table->string('ip')->nullable();
+            $table->date('emission');
+            $table->integer('status');
+            $table->text('object_description');
+            $table->string('object_classification');
+            $table->text('necessity');
+            $table->text('contract_forecast');
+            $table->text('contract_requirements');
+            $table->text('market_survey');
+            $table->text('contract_calculus_memories');
+            $table->string('contract_expected_price');
+            $table->text('solution_full_description');
+            $table->text('solution_parcel_justification');
+            $table->text('correlated_contracts');
+            $table->text('contract_alignment');
+            $table->text('expected_results');
+            $table->text('contract_previous_actions');
+            $table->text('ambiental_impacts');
+            $table->integer('viability_declaration');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('etps');
+    }
+};
