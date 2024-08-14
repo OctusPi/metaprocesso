@@ -28,7 +28,9 @@ watch(() => props.alert, (newValue) => {
 <template>
     <div class="wall w-100 vh-100 position-fixed top-0 start-0" :class="alert.show ? 'd-block' : 'd-none'">
         <div class="position-absolute top-50 start-50 translate-middle box-alert p-4 text-center shadow-sm" :class="{'efect-down' : efect} ">
-            <ion-icon :name="alerts[alert.data.type]?.icon" class="fs-1 p-0 m-0" :class="alerts[alert.data.type]?.style"></ion-icon>
+            <span :class="alerts[alert.data.type]?.style">
+                <ion-icon :name="alerts[alert.data.type]?.icon" class="fs-1 p-0 m-0"></ion-icon>
+            </span>
             <h2 class="p-0 m-0 mb-3 mt-1" :class="alerts[alert.data.type]?.style">{{ alerts[alert.data.type]?.title }}</h2>
             <p class="p-0 m-0 small">{{ alerts[alert.data.type]?.msg }}</p>
             <p class="p-0 m-0 small">{{ alert?.data.msg }}</p>

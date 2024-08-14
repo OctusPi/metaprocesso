@@ -33,7 +33,7 @@ function login(){
     }
 
     http.post('/auth', page.value.data, emit, (response) => {
-        auth.setUser(response.data.user)
+        auth.set_user(response.data.user)
         if(response.status === 200){
             window.location = "/selectorgan"
         }

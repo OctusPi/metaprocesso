@@ -23,7 +23,6 @@ function clear(){
 }
 
 export default {
-  auth_user,
   set_user,
   get_user,
   clear
