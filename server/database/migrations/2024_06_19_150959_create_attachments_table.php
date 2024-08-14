@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('attachments', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->foreignId('organ')->constrained('organs');
             $table->integer('origin');
             $table->string('protocol');
             $table->integer('type');

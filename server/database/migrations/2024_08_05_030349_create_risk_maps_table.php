@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('process')->constrained('processes');
             $table->foreignId('comission')->constrained('comissions');
             $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('unit')->constrained('units');
             $table->date('date_version');
             $table->string('version', 10);
             $table->integer('phase');

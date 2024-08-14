@@ -17,11 +17,10 @@ class RiskMap extends Model
     protected $table = 'risk_maps';
 
     protected $fillable = [
-         'id',
+        'id',
         'process',
         'comission',
         'organ',
-        'unit',
         'author',
         'date_version',
         'version',

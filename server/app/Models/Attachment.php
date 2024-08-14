@@ -14,6 +14,7 @@ class Attachment extends Model
     protected $table = 'attachments';
     protected $fillable = [
         'id',
+        'organ',
         'origin',
         'protocol',
         'type',
