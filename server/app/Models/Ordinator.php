@@ -19,6 +19,7 @@ class Ordinator extends Model
     protected $table = 'ordinators';
 
     protected $fillable = [
+        'id',
         'organ',
         'unit',
         'name',
@@ -30,19 +31,28 @@ class Ordinator extends Model
         'status',
     ];
 
-    public function organ(): HasOne
+    public function rules():array
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return [
+            'organ' => 'required',
+            'unit' => 'required',
+            'name' => 'required',
+            'cpf' => [
+                'required',
+                Rule::unique('ordinators', 'cpf')->where(function ($query) {
+                    return $query->where('unit', $this->unit);
+            })->ignore($this->id)],
+            'start_term' => 'required',
+            'status'     => 'required',
+        ];
     }
 
-    public function unit(): HasOne
+    public function messages():array
     {
-        return $this->hasOne(Unit::class, 'id', 'unit');
-    }
-
-    public function dfd():BelongsTo
-    {
-        return $this->belongsTo(Dfd::class);
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'unique'   => 'Ordenador já registrado no sistema para essa unidade!'
+        ];
     }
 
     public function startTerm(): Attribute
@@ -61,31 +71,26 @@ class Ordinator extends Model
         );
     }
 
-    public static function validateFields(?int $id = null):array
-    {
-        return [
-            'organ'      => 'required',
-            'unit'       => 'required',
-            'name'       => 'required',
-            'cpf'        => ['required', Rule::unique('ordinators')->ignore($id)],
-            'start_term' => 'required',
-            'status'     => 'required',
-        ];
-    }
-
-    public static function validateMsg():array
-    {
-        return [
-            'required' => 'Campo obrigatório não informado!',
-            'unique'   => 'Ordenador já registrado no sistema!'
-        ];
-    }
-
     public static function list_status(): array
     {
         return [
             ['id'=>0,'title'=> 'Desligado'],
             ['id'=>1,'title'=> 'Ativo']
         ];
+    }
+
+    public function organ(): HasOne
+    {
+        return $this->hasOne(Organ::class, 'id', 'organ');
+    }
+
+    public function unit(): HasOne
+    {
+        return $this->hasOne(Unit::class, 'id', 'unit');
+    }
+
+    public function dfd():BelongsTo
+    {
+        return $this->belongsTo(Dfd::class);
     }
 }

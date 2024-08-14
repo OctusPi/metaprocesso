@@ -46,6 +46,7 @@ class Dfd extends Model
     protected $table = 'dfds';
 
     protected $fillable = [
+        'id',
         'protocol',
         'ip',
         'organ',
@@ -74,39 +75,40 @@ class Dfd extends Model
         'comission_members' => Json::class
     ];
 
-    public function organ(): HasOne
+    public function rules():array
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return [
+            'ip' => 'required',
+            'protocol' => [
+                'required',
+                Rule::unique('dfds', 'protocol')->where(function ($query) {
+                    return $query->where('unit', $this->unit);
+            })->ignore($this->id)],
+            'organ'     => 'required',
+            'unit'      => 'required',
+            'demandant' => 'required',
+            'ordinator' => 'required',
+            'comission' => 'required',
+            'priority'  => 'required',
+            'date_ini'  => 'required',
+            'year_pca'  => 'required',
+            'comission_members' => 'required',
+            'acquisition_type'  => 'required',
+            'suggested_hiring'  => 'required',
+            'description'       => 'required',
+            'justification'     => 'required',
+            'estimated_value'   => 'required',
+            'estimated_date'    => 'required'
+        ];
     }
 
-    public function unit(): HasOne
+    public function messages():array
     {
-        return $this->hasOne(Unit::class, 'id', 'unit');
-    }
-
-    public function demandant(): HasOne
-    {
-        return $this->hasOne(Demandant::class, 'id', 'demandant');
-    }
-
-    public function ordinator(): HasOne
-    {
-        return $this->hasOne(Ordinator::class, 'id', 'ordinator');
-    }
-
-    public function comission(): HasOne
-    {
-        return $this->hasOne(Comission::class, 'id', 'comission');
-    }
-
-    public function author(): HasOne
-    {
-        return $this->hasOne(User::class, 'id', 'author');
-    }
-
-    public function dfditem():BelongsTo
-    {
-        return $this->belongsTo(DfdItem::class);
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'email'    => 'Informe um email válido!',
+            'unique'   => 'Protocolo já existente no sistema!'
+        ];
     }
 
     public function dateIni(): Attribute
@@ -139,38 +141,6 @@ class Dfd extends Model
             get: fn($value) => boolval($value),
             set: fn($value) => boolval($value)
         );
-    }
-
-    public static function validateFields(?int $id = null):array
-    {
-        return [
-            'ip'        => 'required',
-            'protocol'  => ['required', Rule::unique('dfds')->ignore($id)],
-            'organ'     => 'required',
-            'unit'      => 'required',
-            'demandant' => 'required',
-            'ordinator' => 'required',
-            'comission' => 'required',
-            'priority'  => 'required',
-            'date_ini'  => 'required',
-            'year_pca'  => 'required',
-            'comission_members' => 'required',
-            'acquisition_type'  => 'required',
-            'suggested_hiring'  => 'required',
-            'description'       => 'required',
-            'justification'     => 'required',
-            'estimated_value'   => 'required',
-            'estimated_date'    => 'required'
-        ];
-    }
-
-    public static function validateMsg():array
-    {
-        return [
-            'required' => 'Campo obrigatório não informado!',
-            'email'    => 'Informe um email válido!',
-            'unique'   => 'Orgão já registrado no sistema!'
-        ];
     }
 
     public static function list_priority(): array
@@ -247,5 +217,40 @@ class Dfd extends Model
             ['id' => self::STATUS_BLOQUEADO, 'title' => 'Bloqueado'],
             ['id' => self::STATUS_PROCESSADO, 'title' => 'Processado']
         ];
+    }
+
+    public function organ(): HasOne
+    {
+        return $this->hasOne(Organ::class, 'id', 'organ');
+    }
+
+    public function unit(): HasOne
+    {
+        return $this->hasOne(Unit::class, 'id', 'unit');
+    }
+
+    public function demandant(): HasOne
+    {
+        return $this->hasOne(Demandant::class, 'id', 'demandant');
+    }
+
+    public function ordinator(): HasOne
+    {
+        return $this->hasOne(Ordinator::class, 'id', 'ordinator');
+    }
+
+    public function comission(): HasOne
+    {
+        return $this->hasOne(Comission::class, 'id', 'comission');
+    }
+
+    public function author(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'author');
+    }
+
+    public function dfditem():BelongsTo
+    {
+        return $this->belongsTo(DfdItem::class);
     }
 }

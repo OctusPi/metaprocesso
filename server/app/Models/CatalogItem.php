@@ -54,7 +54,7 @@ class CatalogItem extends Model
         'status',
     ];
 
-    public function rules(?int $id = null):array
+    public function rules():array
     {
         return [
             'organ'       => 'required',

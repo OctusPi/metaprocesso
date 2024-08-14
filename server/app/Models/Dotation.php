@@ -14,6 +14,7 @@ class Dotation extends Model
     protected $table = 'dotations';
 
     protected $fillable = [
+        'id',
         'name',
         'organ',
         'unit',
@@ -21,6 +22,23 @@ class Dotation extends Model
         'description',
         'status',
     ];
+
+    public function rules(): array
+    {
+        return [
+            'name' => 'required',
+            'organ' => 'required',
+            'unit' => 'required',
+            'status' => 'required'
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!'
+        ];
+    }
 
     public static function list_status(): array
     {
@@ -45,20 +63,5 @@ class Dotation extends Model
         return $this->belongsTo(DfdItem::class);
     }
 
-    public static function validateFields(?int $id = null): array
-    {
-        return [
-            'name' => 'required',
-            'organ' => 'required',
-            'unit' => 'required',
-            'status' => 'required'
-        ];
-    }
 
-    public static function validateMsg(): array
-    {
-        return [
-            'required' => 'Campo obrigatório não informado!'
-        ];
-    }
 }

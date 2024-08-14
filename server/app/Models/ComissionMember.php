@@ -15,6 +15,7 @@ class ComissionMember extends Model
     protected $table = 'comissions_members';
 
     protected $fillable = [
+        'id',
         'organ',
         'unit',
         'comission',
@@ -27,6 +28,23 @@ class ComissionMember extends Model
         'status',
         'number_doc'
     ];
+
+    public function rules(): array
+    {
+        return [
+            'name' => 'required',
+            'responsibility' => 'required',
+            'start_term' => 'required',
+            'status' => 'required',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+        ];
+    }
 
     public function startTerm(): Attribute
     {
@@ -42,23 +60,6 @@ class ComissionMember extends Model
             get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
             set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
         );
-    }
-
-    public static function validateFields(?int $id = null): array
-    {
-        return [
-            'name' => 'required',
-            'responsibility' => 'required',
-            'start_term' => 'required',
-            'status' => 'required',
-        ];
-    }
-
-    public static function validateMsg(): array
-    {
-        return [
-            'required' => 'Campo obrigatório não informado!',
-        ];
     }
 
     public function organ(): HasOne

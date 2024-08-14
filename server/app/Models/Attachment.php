@@ -20,7 +20,7 @@ class Attachment extends Model
         'file',
     ];
 
-    public function rules(?int $id = null): array
+    public function rules(): array
     {
         return [
             'origin' => 'required',

@@ -11,9 +11,13 @@ class Program extends Model
 {
     use HasFactory;
 
+    const S_INACTIVE = 0;
+    const S_ACTIVE = 1;
+
     protected $table = 'programs';
 
     protected $fillable = [
+        'id',
         'organ',
         'unit',
         'name',
@@ -22,11 +26,28 @@ class Program extends Model
         'status',
     ];
 
+    public function rules(): array
+    {
+        return [
+            'name' => 'required',
+            'organ' => 'required',
+            'unit' => 'required',
+            'status' => 'required'
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!'
+        ];
+    }
+
     public static function list_status(): array
     {
         return [
-            ['id' => 0, 'title' => 'Inativo'],
-            ['id' => 1, 'title' => 'Ativo']
+            ['id' => self::S_INACTIVE, 'title' => 'Inativo'],
+            ['id' => self::S_ACTIVE, 'title' => 'Ativo']
         ];
     }
 
@@ -45,20 +66,5 @@ class Program extends Model
         return $this->belongsTo(DfdItem::class);
     }
 
-    public static function validateFields(?int $id = null): array
-    {
-        return [
-            'name' => 'required',
-            'organ' => 'required',
-            'unit' => 'required',
-            'status' => 'required'
-        ];
-    }
 
-    public static function validateMsg(): array
-    {
-        return [
-            'required' => 'Campo obrigatório não informado!'
-        ];
-    }
 }

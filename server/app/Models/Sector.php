@@ -14,11 +14,28 @@ class Sector extends Model
     protected $table = 'sectors';
 
     protected $fillable = [
+        'id',
         'organ',
         'unit',
         'name',
         'description'
     ];
+
+    public function rules():array
+    {
+        return [
+            'name'  => 'required',
+            'organ' => 'required',
+            'unit'  => 'required'
+        ];
+    }
+
+    public function messages():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!'
+        ];
+    }
 
     public function organ(): HasOne
     {
@@ -33,21 +50,5 @@ class Sector extends Model
     public function demandant():BelongsTo
     {
         return $this->belongsTo(Demandant::class);
-    }
-
-    public static function validateFields(?int $id = null):array
-    {
-        return [
-            'name'     => 'required',
-            'organ' => 'required',
-            'unit'  => 'required'
-        ];
-    }
-
-    public static function validateMsg():array
-    {
-        return [
-            'required' => 'Campo obrigatório não informado!'
-        ];
     }
 }

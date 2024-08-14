@@ -11,6 +11,9 @@ class Organ extends Model
 {
     use HasFactory;
 
+    const S_INACTIVE = 0;
+    const S_ACTIVE = 1;
+
     protected $table = 'organs';
 
     protected $fillable = [
@@ -26,11 +29,34 @@ class Organ extends Model
         'logomarca'
     ];
 
+    public function rules(): array
+    {
+        return [
+            'name' => 'required',
+            'cnpj' => ['required', Rule::unique('organs', 'cnpj')->ignore($this->id)],
+            'phone' => 'required',
+            'email' => 'required|email',
+            'address' => 'required',
+            'postalcity' => 'required',
+            'postalcode' => 'required',
+            'status' => 'required'
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'email' => 'Informe um email válido!',
+            'unique' => 'Orgão já registrado no sistema!'
+        ];
+    }
+
     public static function list_status(): array
     {
         return [
-            ['id' => 0, 'title' => 'Inativo'],
-            ['id' => 1, 'title' => 'Ativo']
+            ['id' => self::S_INACTIVE, 'title' => 'Inativo'],
+            ['id' => self::S_ACTIVE, 'title' => 'Ativo']
         ];
     }
 
@@ -118,28 +144,4 @@ class Organ extends Model
     {
         return $this->belongsTo(RiskMap::class);
     }
-
-    public static function validateFields(?int $id = null): array
-    {
-        return [
-            'name' => 'required',
-            'cnpj' => ['required', Rule::unique('organs', 'cnpj')->ignore($id)],
-            'phone' => 'required',
-            'email' => 'required|email',
-            'address' => 'required',
-            'postalcity' => 'required',
-            'postalcode' => 'required',
-            'status' => 'required'
-        ];
-    }
-
-    public static function validateMsg(): array
-    {
-        return [
-            'required' => 'Campo obrigatório não informado!',
-            'email' => 'Informe um email válido!',
-            'unique' => 'Orgão já registrado no sistema!'
-        ];
-    }
-
 }

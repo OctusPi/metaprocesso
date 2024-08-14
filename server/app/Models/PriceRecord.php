@@ -2,31 +2,67 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PriceRecord extends Model
 {
     use HasFactory;
 
+    const S_START = 1;
+    const S_PENDING = 2;
+    const S_FINISHED = 3;
+
     protected $table = 'price_records';
 
     protected $fillable = [
+        'id',
         'protocol',
         'ip',
         'date_ini',
         'date_fin',
         'process',
         'organ',
-        'units',
         'comission',
         'comission_members',
         'suppliers',
         'author',
         'status'
     ];
+
+    public function rules():array
+    {
+        return [
+            'protocol'  => 'required',
+            'ip'        => 'required',
+            'date_ini'  => 'required',
+            'process'   => ['required', Rule::unique('price_records', 'process')->ignore($this->id)],
+            'organ'     => 'required',
+            'comission' => 'required',
+            'author'    => 'required',
+            'status'    => 'required',
+        ];
+    }
+
+    public function messages():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'unique'   => 'Registro de preco já iniciada para o processo...'
+        ];
+    }
+
+    public static function list_status():array
+    {
+        return [
+            ['id' => self::S_START, 'title' => 'Iniciada'],
+            ['id' => self::S_PENDING, 'title' => 'Pendente'],
+            ['id' => self::S_FINISHED, 'title' => 'Finalizada']
+        ];
+    }
 
     public function organ(): HasOne
     {
@@ -51,14 +87,5 @@ class PriceRecord extends Model
     public function proposal():BelongsTo
     {
         return $this->belongsTo(Proposal::class);
-    }
-
-    public static function list_status():array
-    {
-        return [
-            ['id' => 1, 'title' => 'Iniciada'],
-            ['id' => 2, 'title' => 'Pendente'],
-            ['id' => 3, 'title' => 'Finalizada']
-        ];
     }
 }

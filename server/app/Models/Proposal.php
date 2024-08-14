@@ -2,17 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Proposal extends Model
 {
     use HasFactory;
 
-    public string $table = 'price_records_proposals';
+    const S_START = 1;
+    const S_PENDING = 2;
+    const S_FINISHED = 3;
+
+    const M_MAIL = 1;
+    const M_MANUAL = 2;
+    const M_SITES = 3;
+    const M_BANK = 4;
+
+    protected $table = 'price_records_proposals';
 
     protected $fillable = [
+        'id',
         'protocol',
         'ip',
         'date_ini',
@@ -25,6 +36,54 @@ class Proposal extends Model
         'items',
         'status'
     ];
+
+    public function rules():array
+    {
+        return [
+            'protocol' => 'required',
+            'ip' => 'required',
+            'date_ini' => 'required',
+            'hour_ini' => 'required',
+            'organ' => 'required',
+            'process' => 'required',
+            'price_record' => 'required',
+            'modality' => 'required',
+            'supplier' => [
+                'required',
+                Rule::unique('price_records_proposals', 'supplier')->where(function ($query) {
+                    return $query->where('price_record', $this->price_record);
+            })->ignore($this->id)],
+            'items' => 'required',
+            'status'    => 'required',
+        ];
+    }
+
+    public function messages():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'unique'   => 'Fornecedor já tem proposta ativa para essa coleta...'
+        ];
+    }
+
+    public static function list_modalitys():array
+    {
+        return [
+            ['id' => self::M_MAIL, 'title' => 'Solicitação por E-mail'],
+            ['id' => self::M_MANUAL, 'title' => 'Inserção Manual'],
+            ['id' => self::M_SITES, 'title' => 'Sites de Varejo'],
+            ['id' => self::M_BANK, 'title' => 'Banco de Preços Gov'],
+        ];
+    }
+
+    public static function list_status():array
+    {
+        return [
+            ['id' => self::S_START, 'title' => 'Iniciada'],
+            ['id' => self::S_PENDING, 'title' => 'Pendente'],
+            ['id' => self::S_FINISHED, 'title' => 'Finalizada']
+        ];
+    }
 
     public function organ(): HasOne
     {
@@ -39,24 +98,5 @@ class Proposal extends Model
     public function pricerecord():HasOne
     {
         return $this->hasOne(PriceRecord::class, 'id', 'price_record');
-    }
-
-    public static function list_modalitys():array
-    {
-        return [
-            ['id' => 1, 'title' => 'Solicitação por E-mail'],
-            ['id' => 2, 'title' => 'Inserção Manual'],
-            ['id' => 3, 'title' => 'Sites de Varejo'],
-            ['id' => 4, 'title' => 'Banco de Preços Gov'],
-        ];
-    }
-
-    public static function list_status():array
-    {
-        return [
-            ['id' => 1, 'title' => 'Iniciada'],
-            ['id' => 2, 'title' => 'Pendente'],
-            ['id' => 3, 'title' => 'Finalizada']
-        ];
     }
 }

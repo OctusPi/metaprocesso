@@ -17,6 +17,7 @@ class Demandant extends Model
     protected $table = 'demandants';
 
     protected $fillable = [
+        'id',
         'organ',
         'unit',
         'sector',
@@ -29,7 +30,53 @@ class Demandant extends Model
         'status'
     ];
 
-    
+    public function rules():array
+    {
+        return [
+            'organ' => 'required',
+            'unit' => 'required',
+            'name' => 'required',
+            'cpf' => [
+                'required',
+                Rule::unique('demandants', 'cpf')->where(function ($query) {
+                    return $query->where('unit', $this->unit);
+            })->ignore($this->id)],
+            'start_term' => 'required',
+            'status'     => 'required',
+        ];
+    }
+
+    public function messages():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'unique'   => 'Demandante já registrado no sistema para essa unidade!'
+        ];
+    }
+
+    public function startTerm(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
+    }
+
+    public function endTerm(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
+    }
+
+    public static function list_status(): array
+    {
+        return [
+            ['id'=>0,'title'=> 'Desligado'],
+            ['id'=>1,'title'=> 'Ativo']
+        ];
+    }
 
     public function organ(): HasOne
     {
@@ -49,49 +96,5 @@ class Demandant extends Model
     public function dfd():BelongsTo
     {
         return $this->belongsTo(Dfd::class);
-    }
-
-    public function startTerm(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
-            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
-        );
-    }
-
-    public function endTerm(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
-            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
-        );
-    }
-
-    public static function validateFields(?int $id = null):array
-    {
-        return [
-            'organ'   => 'required',
-            'unit'    => 'required',
-            'name'       => 'required',
-            'cpf'        => ['required', Rule::unique('demandants')->ignore($id)],
-            'start_term' => 'required',
-            'status'     => 'required',
-        ];
-    }
-
-    public static function validateMsg():array
-    {
-        return [
-            'required' => 'Campo obrigatório não informado!',
-            'unique'   => 'Demandante já registrado no sistema!'
-        ];
-    }
-
-    public static function list_status(): array
-    {
-        return [
-            ['id'=>0,'title'=> 'Desligado'],
-            ['id'=>1,'title'=> 'Ativo']
-        ];
     }
 }

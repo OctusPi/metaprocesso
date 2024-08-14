@@ -15,6 +15,7 @@ class ComissionEnd extends Model
     protected $table = 'comissions_ends';
 
     protected $fillable = [
+        'id',
         'organ',
         'unit',
         'comission',
@@ -23,15 +24,9 @@ class ComissionEnd extends Model
         'end_term',
     ];
 
-    public function endTerm(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
-            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
-        );
-    }
 
-    public static function validateFields(?int $id = null): array
+
+    public static function rules(): array
     {
         return [
             'organ' => 'required',
@@ -41,11 +36,19 @@ class ComissionEnd extends Model
         ];
     }
 
-    public static function validateMsg(): array
+    public function messages(): array
     {
         return [
             'required' => 'Campo obrigatório não informado!',
         ];
+    }
+
+    public function endTerm(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
     }
 
     public function organ(): HasOne

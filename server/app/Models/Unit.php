@@ -14,6 +14,7 @@ class Unit extends Model
     protected $table = 'units';
 
     protected $fillable = [
+        'id',
         'organ',
         'name',
         'cnpj',
@@ -21,6 +22,22 @@ class Unit extends Model
         'email',
         'address',
     ];
+
+    public function rules(): array
+    {
+        return [
+            'organ' => 'required',
+            'name'  => 'required',
+            'cnpj'  => 'required'
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!'
+        ];
+    }
 
     public function organ(): HasOne
     {
@@ -70,21 +87,5 @@ class Unit extends Model
     public function riskmap(): BelongsTo
     {
         return $this->belongsTo(RiskMap::class);
-    }
-
-    public static function validateFields(?int $id = null): array
-    {
-        return [
-            'organ' => 'required',
-            'name' => 'required',
-            'cnpj' => 'required'
-        ];
-    }
-
-    public static function validateMsg(): array
-    {
-        return [
-            'required' => 'Campo obrigatório não informado!'
-        ];
     }
 }

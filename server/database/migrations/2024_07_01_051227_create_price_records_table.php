@@ -20,7 +20,6 @@ return new class extends Migration
             $table->date('date_fin')->nullable();
             $table->foreignId('process')->constrained('processes');
             $table->foreignId('organ')->constrained('organs');
-            $table->json('units')->nullable();
             $table->foreignId('comission')->constrained('comissions');
             $table->json('comission_members')->nullable();
             $table->json('suppliers')->nullable();

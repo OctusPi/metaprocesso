@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Utils\Dates;
 use App\Casts\Json;
+use Illuminate\Validation\Rule;
 
 class Process extends Model
 {
@@ -45,6 +46,7 @@ class Process extends Model
     protected $table = 'processes';
 
     protected $fillable = [
+        'id',
         'protocol',
         'ip',
         'date_hour_ini',
@@ -72,10 +74,15 @@ class Process extends Model
         'comission_members' => Json::class,
     ];
 
-    public static function validateFields(?int $id = null): array
+    public function rules(): array
     {
         return [
-            'protocol' => 'required',
+            'protocol' => [
+                'required',
+                Rule::unique('processes', 'protocol')->where(function ($query) {
+                    return $query->where('organ', $this->organ);
+                })->ignore($this->id)
+            ],
             'ip' => 'required',
             'date_hour_ini' => 'required',
             'year_pca' => 'required',
@@ -94,10 +101,11 @@ class Process extends Model
         ];
     }
 
-    public static function validateMsg(): array
+    public function messages(): array
     {
         return [
-            'required' => 'Campo obrigatório não informado!'
+            'required' => 'Campo obrigatório não informado!',
+            'unique' => 'Proccess já existente com o protocolo informado...'
         ];
     }
 

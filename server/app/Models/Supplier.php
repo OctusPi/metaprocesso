@@ -12,6 +12,7 @@ class Supplier extends Model
     protected $table = 'suppliers';
 
     protected $fillable = [
+        'id',
         'name',
         'cnpj',
         'agent',
@@ -23,7 +24,7 @@ class Supplier extends Model
         'size',
     ];
 
-    public static function validateFields(?int $id = null): array
+    public function rules(): array
     {
         return [
             'name' => 'required',
@@ -35,7 +36,7 @@ class Supplier extends Model
         ];
     }
 
-    public static function validateMsg(): array
+    public function messages(): array
     {
         return [
             'required' => 'Campo obrigatório não informado!'
@@ -45,19 +46,19 @@ class Supplier extends Model
     public static function list_modalitys(): array
     {
         return [
-            ['id' => 0, 'title' => 'Microempreendedor Individual (MEI)'],
-            ['id' => 1, 'title' => 'Microempresa (ME)'],
-            ['id' => 2, 'title' => 'Empresa de Pequeno Porte (EPP)'],
-            ['id' => 3, 'title' => 'Empresa de Grande Porte (EGP)'],
+            ['id' => 1, 'title' => 'Microempreendedor Individual (MEI)'],
+            ['id' => 2, 'title' => 'Microempresa (ME)'],
+            ['id' => 3, 'title' => 'Empresa de Pequeno Porte (EPP)'],
+            ['id' => 4, 'title' => 'Empresa de Grande Porte (EGP)'],
         ];
     }
 
     public static function list_sizes(): array
     {
         return [
-            ['id' => 0, 'title' => 'Porte 1'],
-            ['id' => 1, 'title' => 'Porte 2'],
-            ['id' => 2, 'title' => 'Porte 3'],
+            ['id' => 1, 'title' => 'Porte 1'],
+            ['id' => 2, 'title' => 'Porte 2'],
+            ['id' => 3, 'title' => 'Porte 3'],
         ];
     }
 }

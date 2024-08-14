@@ -8,12 +8,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use \App\Casts\Json;
 use App\Utils\Dates;
+use Illuminate\Validation\Rule;
 
 class RiskMap extends Model
 {
     use HasFactory;
 
+    protected $table = 'risk_maps';
+
     protected $fillable = [
+         'id',
         'process',
         'comission',
         'organ',
@@ -34,10 +38,10 @@ class RiskMap extends Model
         'accompaniments' => Json::class,
     ];
 
-    public static function validateFields(?int $id = null): array
+    public function rules(): array
     {
         return [
-            'process' => 'required',
+            'process' => ['required', Rule::unique('risk_maps', 'process')->ignore($this->id)],
             'comission' => 'required',
             'organ' => 'required',
             'unit' => 'required',
@@ -52,10 +56,11 @@ class RiskMap extends Model
         ];
     }
 
-    public static function validateMsg(): array
+    public function messages(): array
     {
         return [
-            'required' => 'Campo obrigatório não informado!'
+            'required' => 'Campo obrigatório não informado!',
+            'unique' => 'Já existe um mapa de risco vinculado ao processo...'
         ];
     }
 

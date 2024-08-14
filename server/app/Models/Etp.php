@@ -16,6 +16,7 @@ class Etp extends Model
     protected $table = 'etps';
 
     protected $fillable = [
+        'id',
         'ip',
         'protocol',
         'emission',
@@ -42,31 +43,15 @@ class Etp extends Model
         'viability_declaration',
     ];
 
-    public function process(): HasOne
-    {
-        return $this->hasOne(Process::class, 'id', 'process');
-    }
-
-    public function organ(): HasOne
-    {
-        return $this->hasOne(Organ::class, 'id', 'organ');
-    }
-
-    public function comission(): HasOne
-    {
-        return $this->hasOne(Comission::class, 'id', 'comission');
-    }
-
-    public function user(): HasOne
-    {
-        return $this->hasOne(User::class, 'id', 'user');
-    }
-
-    public static function validateFields(?int $id = null): array
+    public function rules(): array
     {
         return [
-            'process' => 'required',
-            'protocol' => ['required', Rule::unique('etps')->ignore($id)],
+            'process' => ['required', Rule::unique('etps', 'process')->ignore($this->id)],
+            'protocol' => [
+                'required',
+                Rule::unique('etps', 'protocol')->where(function ($query) {
+                    return $query->where('organ', $this->organ);
+            })->ignore($this->id)],
             'ip' => 'required',
             'organ' => 'required',
             'comission' => 'required',
@@ -90,7 +75,7 @@ class Etp extends Model
         ];
     }
 
-    public static function validateMsg(): array
+    public function messages(): array
     {
         return [
             'required' => 'Campo obrigatório não informado!',
@@ -115,5 +100,25 @@ class Etp extends Model
             get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
             set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
         );
+    }
+
+    public function process(): HasOne
+    {
+        return $this->hasOne(Process::class, 'id', 'process');
+    }
+
+    public function organ(): HasOne
+    {
+        return $this->hasOne(Organ::class, 'id', 'organ');
+    }
+
+    public function comission(): HasOne
+    {
+        return $this->hasOne(Comission::class, 'id', 'comission');
+    }
+
+    public function user(): HasOne
+    {
+        return $this->hasOne(User::class, 'id', 'user');
     }
 }

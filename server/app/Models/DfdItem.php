@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DfdItem extends Model
 {
@@ -13,12 +14,34 @@ class DfdItem extends Model
     protected $table = 'dfds_items';
 
     protected $fillable = [
+        'id',
         'dfd',
         'item',
         'quantity',
         'program',
         'dotation',
     ];
+
+    public function rules():array
+    {
+        return [
+            'dfd' => 'required',
+            'quantity' => 'required',
+            'item' => [
+                'required',
+                Rule::unique('dfds_items', 'item')->where(function ($query) {
+                    return $query->where('dfd', $this->dfd);
+            })->ignore($this->id)],
+        ];
+    }
+
+    public function messages():array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'unique'   => 'Item já registrado no DFD!'
+        ];
+    }
 
     public function dfd():HasOne
     {

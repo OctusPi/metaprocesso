@@ -23,7 +23,7 @@ class Catalog extends Model
         'description'
     ];
 
-    public function rules(?int $id = null):array
+    public function rules():array
     {
         return [
             'name'      => 'required',

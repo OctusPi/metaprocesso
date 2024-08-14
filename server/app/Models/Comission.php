@@ -44,23 +44,7 @@ class Comission extends Model
         'status'
     ];
 
-    public function startTerm(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
-            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
-        );
-    }
-
-    public function endTerm(): Attribute
-    {
-        return Attribute::make(
-            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
-            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
-        );
-    }
-
-    public function rules(?int $id = null): array
+    public function rules(): array
     {
         return [
             'organ' => 'required',
@@ -77,6 +61,22 @@ class Comission extends Model
         return [
             'required' => 'Campo obrigatório não informado!',
         ];
+    }
+
+    public function startTerm(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
+    }
+
+    public function endTerm(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
     }
 
     public static function list_types(): array
