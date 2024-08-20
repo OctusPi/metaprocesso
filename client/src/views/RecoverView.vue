@@ -44,7 +44,10 @@ function recover(){
 
             <form class="row g-3" @submit.prevent="recover">
                 <div class="mb-2">
-                    <label for="username" class="form-label">E-mail</label>
+                    <label for="username" class="form-label d-flex justify-content-between">
+                        E-mail
+                        <RouterLink to="/" class="box-link">Ir para login</RouterLink>
+                    </label>
                     <input type="email" name="username" class="form-control" :class="{'form-control-alert' : page.rules.valids.username}"
                     id="username" placeholder="usuário@example.com" v-model="page.data.username">
                 </div>

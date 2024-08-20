@@ -11,7 +11,7 @@
   --vt-c-black-mute: #282828;
   --vt-c-black-soft-hover: #212E48;
 
-  --vt-c-indigo: #1e1e2d;
+  --vt-c-indigo: #222238;
 
   --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
   --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
@@ -20,7 +20,7 @@
 
   --vt-c-text-light-1: var(--vt-c-indigo);
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-light-3: rgba(60, 60, 60, 0.66);
+  --vt-c-text-light-3: rgba(90, 90, 90, 0.66);
 
   --vt-c-text-dark-1: var(--vt-c-white);
   --vt-c-text-dark-2: #6d6d80;
@@ -44,6 +44,7 @@
 
   --color-base: #0094e8;
   --color-base-hover: #008BD9;
+  --color-base-trans-hover: #068cda11;
 
   --color-success: #02dea7;
   --color-success-hover: #49bc9a;

@@ -75,6 +75,16 @@
   bottom: 0;
 }
 
+.header-main-btn-icon{
+  color: var(--color-input-txt);
+  padding: 8px 10px 5px 10px !important;
+}
+
+.header-main-btn-icon:hover{
+  background-color: var(--color-base-trans-hover);
+  color: var(--color-base);
+}
+
 .app-title{
   color: var(--color-text);
   font-weight: normal;
@@ -96,6 +106,10 @@
 
 .txt-color{
   color: var(--color-text);
+}
+
+.txt-color-sec{
+  color: var(--color-text-sec);
 }
 
 .form-control {
@@ -155,6 +169,24 @@
 .btn-action-primary:hover{
   background-color: var(--color-base-hover);
   color: white;
+}
+
+.dropdown-menu{
+  background-color: var(--color-background-soft);
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+}
+
+.dropdown-item{
+  font-size: 0.8rem;
+  color: var(--color-text) !important;
+  border-radius: 10px;
+}
+
+.dropdown-item:hover{
+  background-color: var(--color-base-trans-hover);
+  color: var(--color-base) !important;
 }
 
 @media(max-width:760px) {

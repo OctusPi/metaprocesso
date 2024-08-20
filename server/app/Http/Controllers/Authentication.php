@@ -140,4 +140,22 @@ class Authentication extends Controller
             ? response()->json(['token_valid' => true], 200)
             : response()->json(Notify::info('Login expirado, realize o login novamente...'), 401);
     }
+
+    public function auth_organ(Request $request)
+    {
+        $check = $this->check($request);
+
+        if($check->status() != 200){
+            return $check;
+        }
+
+        $user = $request->user();
+
+        if(!is_null($user) && ($user->profile == User::PRF_ADMIN || in_array($request->organ, array_column($user->organs, 'id')))){
+            return response()->json(Notify::success('Acesso autorizado...'), 200);
+        }
+
+        return response()->json(Notify::warning('Acesso não autorizado para o Orgão selecionado...'), 401);
+
+    }
 }

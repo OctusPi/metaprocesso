@@ -1,9 +1,10 @@
 import { ref } from 'vue'
 
-const theme = ref(localStorage.getItem('theme'))
+const key_store = 'theme'+import.meta.env.VITE_APP_KEY
+const theme = ref(localStorage.getItem(key_store))
 
 function set_theme(themeValue){
-  localStorage.setItem('theme', themeValue)
+  localStorage.setItem(key_store, themeValue)
   theme.value = themeValue
 }
 
@@ -17,7 +18,7 @@ function apply_theme() {
 }
 
 function clear(){
-  localStorage.removeItem('theme')
+  localStorage.removeItem(key_store)
 }
 
 export default {

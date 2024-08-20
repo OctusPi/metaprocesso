@@ -32,8 +32,7 @@ watch(() => props.alert, (newValue) => {
                 <ion-icon :name="alerts[alert.data.type]?.icon" class="fs-1 p-0 m-0"></ion-icon>
             </span>
             <h2 class="p-0 m-0 mb-3 mt-1" :class="alerts[alert.data.type]?.style">{{ alerts[alert.data.type]?.title }}</h2>
-            <p class="p-0 m-0 small">{{ alerts[alert.data.type]?.msg }}</p>
-            <p class="p-0 m-0 small">{{ alert?.data.msg }}</p>
+            <p class="p-0 m-0 small">{{ alerts[alert.data.type]?.msg }} {{ alert?.data.msg }}</p>
 
             <button @click="close_alert" type="button" class="btn btn-alert shadow-sm mx-auto mt-4" :class="alerts[alert.data.type]?.btn">
                 <ion-icon name="chevron-down-outline" class="fs-2"></ion-icon>

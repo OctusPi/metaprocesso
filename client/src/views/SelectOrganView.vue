@@ -1,22 +1,23 @@
 <script setup>
-import { inject, ref } from 'vue';
+import { inject, onMounted, ref } from 'vue';
 import http from '@/services/http';
+import auth from '@/stores/auth';
+import organ from '@/stores/organ';
 import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
 
-const sysapp = inject('sysapp')
 const emit = defineEmits(['callAlert'])
+
+const sysapp = inject('sysapp')
+const user   = auth.get_user()
+
 const page = ref({
-    data: {
-        username:'',
-    },
+    data: {},
     selects: {
-        organs:[]
+        organs:user?.organs ?? []
     },
     rules:{
-        fields: {
-            organ:'required',
-        },
+        fields: {},
         valids:{}
     }
 })
@@ -28,8 +29,24 @@ function apply_select(){
         return
     }
 
-    http.post('/auth/recover', page.value.data, emit)
+    http.post('/auth/auth_organ', page.value.data, emit, () => {
+        organ.set_organ(page.value.data.organ)
+        window.location = '/home'
+    })
 }
+
+onMounted(() => {
+    if (user === null) {
+        window.location = '/'
+    }
+
+    if (user?.profile !== "Administrador") {
+        page.value.rules.fields = {
+            organ:'required'
+        }
+    }
+})
+
 </script>
 
 <template>

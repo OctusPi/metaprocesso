@@ -7,7 +7,12 @@ use App\Http\Controllers\Authentication;
 Route::prefix('/auth')->controller(Authentication::class)->group(function(){
     Route::post('', 'login');
     Route::post('/recover', 'recover');
-    Route::post('/renew', 'renew');
-    Route::get('/check', 'check');
-    Route::get('/auth_organ', 'auth_organ');
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('/auth')->controller(Authentication::class)->group(function(){
+        Route::post('/renew', 'renew');
+        Route::get('/check', 'check');
+        Route::post('/auth_organ', 'auth_organ');
+    });
 });
