@@ -49,7 +49,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="dropdown">
+    <div class="dropdown" v-if="user">
         <button class="btn header-main-btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <ion-icon name="person-outline" class="fs-5"></ion-icon>
         </button>

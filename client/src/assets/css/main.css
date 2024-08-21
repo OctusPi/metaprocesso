@@ -1,6 +1,9 @@
 @import 'b%/bootstrap.min.css';
 @import './base.css';
 
+*{
+  font-family: 'Inter', 'Roboto', Arial, Helvetica, sans-serif;
+}
 
 .page {
   width: 100%;
@@ -41,7 +44,7 @@
 }
 
 .logomarca-box{
-  width: 48px;
+  width: 44px;
 }
 
 .main-nav {
@@ -96,7 +99,8 @@
 
 .nav-items {
   height: calc(100vh - 100px);
-  margin-top: 20px;
+  margin-top: 40px;
+  margin-left: 20px;
   overflow: auto;
   -ms-overflow-style: none;
   /* IE and Edge */
@@ -187,6 +191,26 @@
 .dropdown-item:hover{
   background-color: var(--color-base-trans-hover);
   color: var(--color-base) !important;
+}
+
+.accordion, 
+.accordion-item, 
+.accordion-body, 
+.accordion-header, 
+.accordion-button {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background-color: transparent !important;
+}
+
+.accordion-button {
+    color: inherit !important;
+    box-shadow: none !important;
+}
+
+.accordion-button::after {
+    display: none !important;
 }
 
 @media(max-width:760px) {
