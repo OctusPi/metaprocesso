@@ -8,6 +8,10 @@ function set_organ(organValue){
   organ.value = organValue
 }
 
+function get_organ(){
+  return organ.value ?? null
+}
+
 function clear(){
   localStorage.removeItem(key_store)
 }
@@ -15,5 +19,6 @@ function clear(){
 export default {
   organ:organ.value,
   set_organ,
+  get_organ,
   clear
 }
