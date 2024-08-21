@@ -31,6 +31,12 @@ const router = createRouter({
       name: 'home',
       component: () => import('@/views/HomeView.vue')
     },
+    {
+			path: '/organs',
+			name: 'organs',
+			meta: { auth: true },
+			component: () => import('../views/OrgansView.vue')
+		},
 		{
 			path: '/forbidden',
 			name: 'forbidden',
