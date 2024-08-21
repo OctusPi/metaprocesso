@@ -29,13 +29,21 @@ const menuitens = {
     trasmission: { href: '/trasmission', icon: 'navigate', title: 'Publicar', description: 'Publicação e Transmissão' },
     reports: { href: '/reports', icon: 'stats-chart', title: 'Relatórios', description: 'Relatórios de Acompanhamento e Planejamento' },
 };
+
+function close_menu() {
+    const menu = document.getElementById('nav-primary')
+    if (menu) {
+        menu.style.display = 'none'
+    }
+}
 </script>
 
 <template>
-    <nav class="main-nav p-4">
+    <nav class="main-nav p-4" id="nav-primary">
         <div class="app-title d-flex align-items-center ms-2">
             <img src="@/assets/imgs/logo.svg" alt="logomarca" />
             <h1 class="fs-5 p-0 m-0 ms-2">Metaprocesso</h1>
+            <ion-icon name="chevron-back-outline" class="fs-6 hide-menu ms-2" @click="close_menu"></ion-icon>
         </div>
         <div class="nav-items">
             <ul class="navbar-nav" v-if="menu && Object.keys(menu).length">
@@ -77,6 +85,15 @@ const menuitens = {
 </template>
 
 <style scoped>
+.hide-menu{
+    display: none;
+    cursor: pointer;
+}
+
+.hide-menu:hover{
+    color: var(--color-base);
+}
+
 .items {
     margin-bottom: 25px;
 }
@@ -93,9 +110,9 @@ const menuitens = {
 
 .navmain-item {
     font-family: 'Inter', 'Roboto', Arial, Helvetica, sans-serif !important;
-    color: var(--color-text-sec) !important;
+    color: var(--color-input-txt) !important;
     font-weight: 500 !important;
-    font-size: 0.95rem !important;
+    font-size: 0.90rem !important;
     display: flex;
     align-items: center;
 }
@@ -106,6 +123,15 @@ const menuitens = {
 
 .navmain-icon {
     margin-right: 12px;
-    font-size: 1.14rem !important;
+    font-size: 1.1rem !important;
+}
+
+@media(max-width:760px){
+    .main-nav{
+        box-shadow: 2px 3px 30px 20px #31313113;
+    }
+    .hide-menu{
+    display: block;
+}
 }
 </style>

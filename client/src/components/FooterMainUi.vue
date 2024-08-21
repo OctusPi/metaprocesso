@@ -12,8 +12,14 @@ const sysapp = inject('sysapp')
 </template>
 
 <style scoped>
-    .main-footer{
-        font-size: 0.8rem;
-        text-align: end;
+.main-footer {
+    font-size: 0.8rem;
+    text-align: end;
+}
+
+@media(max-width:760px) {
+    .main-footer {
+        text-align: center;
     }
+}
 </style>

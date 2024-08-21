@@ -40,7 +40,7 @@ function remove() {
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content box">
-                <div class="modal-header border border-0">
+                <div class="modal-header border-0">
                     <h5 class="modal-title text-danger"><i class="bi bi-exclamation-octagon-fill me-2"></i> Confimação
                         de Exclusão</h5>
                     <button type="button" class="txt-color ms-auto" data-bs-dismiss="modal" aria-label="Close"><i
@@ -57,7 +57,7 @@ function remove() {
                             :class="{ 'form-control-alert': pass.is_out }" id="conf-password" v-model="pass.userpass">
                     </div>
                 </div>
-                <div class="modal-footer border border-0">
+                <div class="modal-footer border-0">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"><i
                             class="bi bi-x-circle me-2"></i> Cancelar</button>
                     <button @click="remove" type="button" class="btn btn-outline-danger"
