@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Middlewares\Data;
-use App\Models\Ordinator;
+use App\Models\Comission;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Notify;
@@ -11,18 +11,18 @@ use App\Utils\Uploads;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 
-class Ordinators extends Controller
+class Comissions extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Ordinator::class, User::MOD_ORDINATORS['module']);
+        parent::__construct(Comission::class, User::MOD_COMISSIONS['module']);
     }
 
     public function list(Request $request)
     {
         return $this->base_list(
             $request,
-            ['unit', 'name', 'status'],
+            ['name', 'type', 'description'],
             ['name'],
             ['organ', 'unit'],
             organ: true
@@ -33,7 +33,7 @@ class Ordinators extends Controller
     {
         $upload = new Uploads($request, ['document' => ['nullable' => true]]);
 
-        if ($request->id && $request->hasFile('document')) {
+        if($request->id && $request->hasFile('document')) {
             $instance = $this->model::find($request->id);
             $upload->remove($instance->document);
         }
@@ -41,12 +41,33 @@ class Ordinators extends Controller
         return $this->base_save($request, $upload->mergeUploads([]));
     }
 
+    public function details(Request $request)
+    {
+        if ($request->query('display') == 1) {
+
+            $instance = Comission::with(['organ', 'unit'])->find($request->id);
+
+            if (!$instance) {
+                return Response()->json(Notify::warning('Registro não localizado!'), 404);
+            }
+
+            $displayMode = array_merge($instance->toArray(), [
+                'type' => Comission::get_type($instance->type),
+                'status' => Comission::get_status($instance->status),
+            ]);
+
+            return Response()->json($displayMode, 200);
+        }
+
+        return $this->base_details($request);
+    }
+
     public function download(Request $request)
     {
-        $ordinator = Ordinator::find($request->id);
+        $comission = Comission::find($request->id);
 
-        if ($ordinator && $ordinator->document) {
-            return response()->download(storage_path("uploads/{$ordinator->document}"), "{$ordinator->name}.pdf");
+        if ($comission && $comission->document) {
+            return response()->download(storage_path("uploads/$comission->document"), "$comission->name.pdf");
         }
 
         return response()->json(Notify::warning('Arquivo Indisponível'));
@@ -65,7 +86,8 @@ class Ordinators extends Controller
 
         return Response()->json([
             'units' => $units,
-            'status' => Ordinator::list_status(),
+            'types' => Comission::list_types(),
+            'status' => Comission::list_status()
         ], 200);
     }
 }

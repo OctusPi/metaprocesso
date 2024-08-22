@@ -47,7 +47,7 @@ onMounted(() => {
                     <div>
                         <h2>Setores</h2>
                         <p>
-                            Listagem dos setores atrelados ao do
+                            Listagem dos setores atrelados ao
                             <span class="txt-color">{{ organ.get_organ()?.name }}</span>
                         </p>
                     </div>

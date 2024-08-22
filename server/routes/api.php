@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Comissions;
+use App\Http\Controllers\ComissionsEnds;
 use App\Http\Controllers\Demandants;
 use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\Sectors;
@@ -42,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
     common('/users', Users::class);
     common('/ordinators', Ordinators::class);
     common('/demandants', Demandants::class);
+    common('/comissions', Comissions::class);
+    common('/endedcomissions', ComissionsEnds::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {

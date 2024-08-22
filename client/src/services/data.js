@@ -40,7 +40,7 @@ class Data {
         }
     }
 
-    save = (over = null) => {
+    save = (over = null, onSave = () => {}) => {
         const validation = forms.checkform(
             this.page.data,
             {
@@ -60,6 +60,7 @@ class Data {
 
         http.post(`${this.page.url}/save`, data, this.emit, () => {
             this.list();
+            onSave()
         })
     }
 

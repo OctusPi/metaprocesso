@@ -35,7 +35,7 @@ watch(() => props.valid, (newVal) => {
                 <div class="d-flex no-wrap align-items-center gap-2 overflow-hidden">
                     <ion-icon v-if="model" name="cloud-done-outline" class="upload-icon fs-5" />
                     <ion-icon v-else name="cloud-upload-outline" class="upload-icon fs-5" />
-                    {{ name ? name : `Selecionar Arquivo` }}
+                    {{ (name && name != "null") ? name : `Selecionar Arquivo` }}
                 </div>
                 <input :id="props.identify" type="file" name="document" class="d-none" @change="handleFile"
                     accept="application/pdf">

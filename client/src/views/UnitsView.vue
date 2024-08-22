@@ -8,6 +8,7 @@ import Actions from '@/services/actions';
 import masks from '@/utils/masks';
 import organ from '@/stores/organ';
 import { onMounted } from 'vue';
+import { watch } from 'vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -30,6 +31,10 @@ const [page, pageData] = Layout.new(emit, {
         email: 'required|email',
         address: 'required',
     }
+})
+
+watch(() => props.datalist, (newdata) => {
+    page.value.datalist = newdata
 })
 
 onMounted(() => {

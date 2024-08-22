@@ -29,14 +29,12 @@ class Sectors extends Controller
 
     public function selects(Request $request)
     {
-        $units = Utils::map_select(Data::find(Unit::class, [
-            [
-                'column' => 'organ',
-                'operator' => '=',
-                'mode' => 'AND',
-                'value' => $request->header('X-Custom-Header-Organ'),
-            ]
-        ], ['name']));
+        $units = Utils::map_select(Data::find(Unit::class, [[
+            'column' => 'organ',
+            'operator' => '=',
+            'mode' => 'AND',
+            'value' => $request->header('X-Custom-Header-Organ'),
+        ]], ['name']));
 
         return Response()->json([
             'units' => $units,

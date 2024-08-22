@@ -65,7 +65,7 @@ export default class Mounts {
     static Status() {
         const badges = {
             'tls-yellow': 'Rascunho|Inativo|Baixa|Deserto|Fracassado',
-            'tls-blue': 'Enviado|Aberto|Ativo',
+            'tls-blue': 'Enviado|Aberto|Ativo|Ativa',
             'tls-orange': 'Pendente|Média|Adiado|Revogado',
             'tls-red': 'Bloqueado|Alta|Anulado|Cancelado',
             'tls-grey': 'Processado|Ativo|Ativa|Finalizado'

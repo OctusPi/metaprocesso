@@ -6,7 +6,7 @@ import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import Mounts from '@/services/mounts';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
@@ -31,6 +31,10 @@ const [page, pageData] = Layout.new(emit, {
         profile: 'required',
         modules: 'required',
     }
+})
+
+watch(() => props.datalist, (newdata) => {
+    page.value.datalist = newdata
 })
 
 onMounted(() => {

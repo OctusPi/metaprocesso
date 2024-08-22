@@ -7,7 +7,7 @@ import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import Mounts from '@/services/mounts';
 import masks from '@/utils/masks';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -34,6 +34,10 @@ const [page, pageData] = Layout.new(emit, {
         postalcode: 'required',
         status: 'required'
     }
+})
+
+watch(() => props.datalist, (newdata) => {
+    page.value.datalist = newdata
 })
 
 onMounted(() => {

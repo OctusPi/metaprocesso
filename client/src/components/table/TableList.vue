@@ -13,8 +13,8 @@ const props = defineProps({
     count: { type: Boolean, default: true },
 })
 
-const _body = ref(props.body)
-const _header = ref(props.header)
+const userBody = ref(props.body)
+const userHeader = ref(props.header)
 
 function multiplexer(instance, key) {
     if (key.includes(".")) {
@@ -35,22 +35,22 @@ function multiplexer(instance, key) {
 function orderBy(e, key) {
     if (e.target.dataset.asc) {
         e.target.removeAttribute("data-asc")
-        _body.value.sort((a, b) => {
+        userBody.value.sort((a, b) => {
             return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
         })
     } else {
         e.target.dataset.asc = true
-        _body.value.sort((a, b) => {
+        userBody.value.sort((a, b) => {
             return a[key] < b[key] ? 1 : a[key] > b[key] ? -1 : 0
         })
     }
 }
 
 function applyMounters(instance, header) {
-    const _instance = { ...instance, _virtual: {} }
+    const mountedInstance = { ...instance, _virtual: {} }
 
     Object.keys(props.virtual).forEach(key => {
-        _instance._virtual[key] = props.virtual[key](instance)
+        mountedInstance._virtual[key] = props.virtual[key](instance)
     })
 
     return header.map((attr) => {
@@ -60,7 +60,7 @@ function applyMounters(instance, header) {
 
         if (props.mounts && props.mounts[attr.key]) {
             return props.mounts[attr.key].reduce((initial, current) => {
-                const { value, classes } = current(initial.value, _instance)
+                const { value, classes } = current(initial.value, mountedInstance)
 
                 initial.classes = [
                     ...initial.classes,
@@ -72,10 +72,10 @@ function applyMounters(instance, header) {
                 }
 
                 return initial
-            }, { value: multiplexer(_instance, attr.key), classes: [] })
+            }, { value: multiplexer(mountedInstance, attr.key), classes: [] })
         }
 
-        return { value: multiplexer(_instance, attr.key), classes: [] }
+        return { value: multiplexer(mountedInstance, attr.key), classes: [] }
     })
 }
 
@@ -86,7 +86,7 @@ function checkInput(e) {
 }
 
 watch(() => props.body, (newval) => {
-    _body.value = newval
+    userBody.value = newval
 })
 
 </script>
@@ -111,21 +111,21 @@ watch(() => props.body, (newval) => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(instance, i) in _body" :key="i" @click="(e) => $slots.select && checkInput(e)"
+                    <tr v-for="(instance, i) in userBody" :key="i" @click="(e) => $slots.select && checkInput(e)"
                         :class="[$slots.select && 'cursor-pointer']">
                         <td v-if="$slots.select" class="align-middle">
                             <slot :instance="instance" name="select"></slot>
                         </td>
-                        <td v-for="(mounted, j) in applyMounters(instance, _header)" :key="j" class="align-middle">
+                        <td v-for="(mounted, j) in applyMounters(instance, userHeader)" :key="j" class="align-middle">
                             <div>
-                                <div v-if="_header[j].key" class="small txt-color-sec" :class="mounted.classes">
-                                    {{ mounted.value ?? '-' }}
+                                <div v-if="userHeader[j].key" class="small txt-color-sec" :class="mounted.classes">
+                                    {{ mounted.value ?? (userHeader[j].err || '-') }}
                                 </div>
                             </div>
                             <div>
-                                <span v-for="(submounted, k) in applyMounters(instance, _header[j].sub ?? [])" :key="k"
+                                <span v-for="(submounted, k) in applyMounters(instance, userHeader[j].sub ?? [])" :key="k"
                                     class="inline-block small me-1" :class="submounted.classes">
-                                    {{ submounted.value ?? '-' }}
+                                    {{ submounted.value ?? (userHeader[j].sub[k].err || '-') }}
                                 </span>
                             </div>
                         </td>

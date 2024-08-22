@@ -56,6 +56,12 @@ const router = createRouter({
       component: () => import('../views/DemandantsView.vue')
     },
     {
+      path: '/comissions',
+      name: 'comissions',
+      meta: { auth: true },
+      component: () => import('../views/ComissionsView.vue')
+    },
+    {
       path: '/sectors',
       name: 'sectors',
       meta: { auth: true },

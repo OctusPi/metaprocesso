@@ -6,7 +6,7 @@ import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import organ from '@/stores/organ';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 import Mounts from '@/services/mounts';
 import masks from '@/utils/masks';
 import FileInput from '@/components/inputs/FileInput.vue';
@@ -31,6 +31,10 @@ const [page, pageData] = Layout.new(emit, {
         status: 'required',
         start_term: 'required',
     }
+})
+
+watch(() => props.datalist, (newdata) => {
+    page.value.datalist = newdata
 })
 
 onMounted(() => {
