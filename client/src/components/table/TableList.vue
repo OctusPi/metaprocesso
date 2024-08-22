@@ -118,7 +118,7 @@ watch(() => props.body, (newval) => {
                         </td>
                         <td v-for="(mounted, j) in applyMounters(instance, _header)" :key="j" class="align-middle">
                             <div>
-                                <div class="small txt-color-sec" :class="mounted.classes">
+                                <div v-if="_header[j].key" class="small txt-color-sec" :class="mounted.classes">
                                     {{ mounted.value ?? '-' }}
                                 </div>
                             </div>
