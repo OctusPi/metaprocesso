@@ -22,7 +22,7 @@ const router = createRouter({
       path: '/selectorgan',
       name: 'selectorgan',
       meta: {
-        auth:true
+        auth: true
       },
       component: () => import('@/views/SelectOrganView.vue')
     },
@@ -32,33 +32,39 @@ const router = createRouter({
       component: () => import('@/views/HomeView.vue')
     },
     {
-			path: '/organs',
-			name: 'organs',
-			meta: { auth: true },
-			component: () => import('../views/OrgansView.vue')
-		},
+      path: '/users',
+      name: 'users',
+      meta: { auth: true },
+      component: () => import('../views/UsersView.vue')
+    },
     {
-			path: '/units',
-			name: 'units',
-			meta: { auth: true },
-			component: () => import('../views/UnitsView.vue')
-		},
+      path: '/organs',
+      name: 'organs',
+      meta: { auth: true },
+      component: () => import('../views/OrgansView.vue')
+    },
     {
-			path: '/sectors',
-			name: 'sectors',
-			meta: { auth: true },
-			component: () => import('../views/SectorsView.vue')
-		},
-		{
-			path: '/forbidden',
-			name: 'forbidden',
-			component: () => import('../views/ForbiddenView.vue')
-		},
-		{
-			path: '/:pathMatch(.*)*',
-			name: 'notfound',
-			component: () => import('../views/NotFoundView.vue')
-		}
+      path: '/units',
+      name: 'units',
+      meta: { auth: true },
+      component: () => import('../views/UnitsView.vue')
+    },
+    {
+      path: '/sectors',
+      name: 'sectors',
+      meta: { auth: true },
+      component: () => import('../views/SectorsView.vue')
+    },
+    {
+      path: '/forbidden',
+      name: 'forbidden',
+      component: () => import('../views/ForbiddenView.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'notfound',
+      component: () => import('../views/NotFoundView.vue')
+    }
   ]
 })
 

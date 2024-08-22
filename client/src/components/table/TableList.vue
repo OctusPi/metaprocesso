@@ -198,6 +198,18 @@ table td:nth-child(1) {
     white-space: nowrap;
 }
 
+tbody tr:last-child {
+    border-radius: 15px;
+}
+
+tbody tr:last-child td:last-child {
+    border-radius: 0 0 15px;
+}
+
+tbody tr:last-child td:first-child {
+    border-radius: 0 0 0 15px;
+}
+
 .table tr th:first-child {
     padding-left: 50px;
 }

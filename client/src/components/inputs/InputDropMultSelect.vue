@@ -78,7 +78,7 @@ onMounted(() => {
 .div-drop {
 	border: 2px solid var(--cl-border);
 	border-radius: 8px;
-	background-color: var(--bg-input);
+	background-color: var(--color-input);
 	padding: 10px 14px;
 	color: var(--cl-txt);
 	font-weight: 500;

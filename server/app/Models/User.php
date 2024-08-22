@@ -91,19 +91,27 @@ class User extends Authenticatable
     public function rules(): array
     {
         return [
-            'name'    => 'required',
-            'email'   => ['required', 'email', Rule::unique('users', 'email')->ignore($this->id)],
+            'name' => 'required',
+            'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($this->id)],
             'profile' => 'required',
-            'status'  => 'required'
+            'status' => 'required'
+        ];
+    }
+
+    public static function list_status(): array
+    {
+        return [
+            ['id' => 0, 'title' => 'Inativo'],
+            ['id' => 1, 'title' => 'Ativo']
         ];
     }
 
     public static function messages(): array
     {
         return [
-            'required'  => 'Campo obrigatório não informado!',
-            'email'     => 'Informe um email válido!',
-            'unique'    => 'Usuário já registrado no sistema!'
+            'required' => 'Campo obrigatório não informado!',
+            'email' => 'Informe um email válido!',
+            'unique' => 'Usuário já registrado no sistema!'
         ];
     }
 
@@ -159,12 +167,12 @@ class User extends Authenticatable
         return $this->belongsTo(Process::class);
     }
 
-    public function pricerecord():BelongsTo
+    public function pricerecord(): BelongsTo
     {
         return $this->belongsTo(PriceRecord::class);
     }
 
-    public function riskmap():BelongsTo
+    public function riskmap(): BelongsTo
     {
         return $this->belongsTo(RiskMap::class);
     }

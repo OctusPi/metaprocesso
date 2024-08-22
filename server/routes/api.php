@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Sectors;
 use App\Http\Controllers\Units;
+use App\Http\Controllers\Users;
 use App\Utils\Notify;
 use App\Http\Controllers\Organs;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     common('/organs', Organs::class);
     common('/units', Units::class);
     common('/sectors', Sectors::class);
+    common('/users', Users::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
