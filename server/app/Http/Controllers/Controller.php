@@ -47,16 +47,16 @@ abstract class Controller
 
     private function check_auth(Request $request)
     {
-        if($this->index($request)->status() != 200) {
+        if ($this->index($request)->status() != 200) {
             die();
         }
     }
 
-    public function validate(?array $data = []):?string
+    public function validate(?array $data = []): ?string
     {
-        if(method_exists($this->model, 'rules') && method_exists($this->model, 'messages')) {
+        if (method_exists($this->model, 'rules') && method_exists($this->model, 'messages')) {
             $validator = Validator::make($data, $this->model->rules(), $this->model->messages());
-            if($validator->fails()){
+            if ($validator->fails()) {
                 return $validator->errors()->first();
             }
         }
@@ -68,16 +68,21 @@ abstract class Controller
     {
         $this->check_auth($request);
 
-        $dataModel = array_merge($request->all(), $overrite);
+        $dataModel = array_merge(
+            $request->all(),
+            $overrite,
+            ['organ' => $request->header('X-Custom-Header-Organ')],
+        );
+        
         $this->model->fill($dataModel);
-        $validate  = $this->validate($dataModel);
+        $validate = $this->validate($dataModel);
 
-        if(!is_null($validate)){
+        if (!is_null($validate)) {
             return response()->json(Notify::warning($validate), 401);
         }
 
         try {
-            if($request->id){
+            if ($request->id) {
                 $this->model = $this->model->find($request->id);
                 $this->model->fill($dataModel);
             }
@@ -92,26 +97,49 @@ abstract class Controller
 
     }
 
-    public final function base_details(Request $request, ?array $with = []){
+    public final function base_details(Request $request, ?array $with = [])
+    {
         $this->check_auth($request);
 
         $query = $this->model->where('id', $request->id)->with($with)->first();
 
-        if(!is_null($query)){
-            return response()->json($query->toArray(),200);
+        if (!is_null($query)) {
+            return response()->json($query->toArray(), 200);
         }
 
-        return response()->json(Notify::warning('Registro não localizado'),404);
+        return response()->json(Notify::warning('Registro não localizado'), 404);
 
     }
 
-    public final function base_list(Request $request, array $search, ?array $order = null, ?array $with = null, ?array $between = null)
-    {
+    public final function base_list(
+        Request $request,
+        array $search,
+        ?array $order = null,
+        ?array $with = null,
+        ?array $between = null,
+        ?bool $organ = false
+    ) {
         $this->check_auth($request);
 
         try {
-            $search = Utils::map_search($search, array_merge($request->route()->parameters(), $request->all()));
-            $query  = Data::find($this->model::class, $search, $order, $with, $between);
+            $search = Utils::map_search(
+                $search,
+                array_merge(
+                    $request->route()->parameters(),
+                    $request->all()
+                ),
+            );
+
+            if ($organ) {
+                $search[] = [
+                    'column' => 'organ',
+                    'operator' => '=',
+                    'mode' => 'AND',
+                    'value' => $request->header('X-Custom-Header-Organ')
+                ];
+            }
+
+            $query = Data::find($this->model::class, $search, $order, $with, $between);
             return response()->json($query, 200);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
@@ -119,28 +147,30 @@ abstract class Controller
         }
     }
 
-    public final function base_delete(Request $request){
+    public final function base_delete(Request $request)
+    {
         $this->check_auth($request);
 
-        if(!password_verify($request->password, $request->user()->getAttribute('password'))){
+        if (!password_verify($request->password, $request->user()->getAttribute('password'))) {
             return response()->json(Notify::warning('Senha de confirmação incorresta!'), 401);
         }
 
         try {
             $this->model->where('id', $request->id)->delete();
-            return response()->json(Notify::success('Registro apagado com sucesso...'),200);
+            return response()->json(Notify::success('Registro apagado com sucesso...'), 200);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return response()->json(Notify::error('Registro não pode ser apagado, pois é referenciado em outro contexto...'), 500);
         }
     }
 
-    public final function fast_delete(Request $request){
+    public final function fast_delete(Request $request)
+    {
         $this->check_auth($request);
 
         try {
             $this->model->where('id', $request->id)->delete();
-            return response()->json(Notify::success('Registro apagado com sucesso...'),200);
+            return response()->json(Notify::success('Registro apagado com sucesso...'), 200);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
             return response()->json(Notify::error('Registro não pode ser apagado, pois é referenciado em outro contexto...'), 500);
