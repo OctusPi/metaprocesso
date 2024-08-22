@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Sectors;
 use App\Http\Controllers\Units;
 use App\Utils\Notify;
 use App\Http\Controllers\Organs;
@@ -34,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // commons
     common('/organs', Organs::class);
     common('/units', Units::class);
+    common('/sectors', Sectors::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {

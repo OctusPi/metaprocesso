@@ -17,7 +17,7 @@ class Units extends Controller
     {
         return $this->base_list(
             $request,
-            ['name', 'cnpj', 'postalcity'],
+            ['name', 'cnpj', 'address'],
             ['name'],
             ['organ'],
             organ: true

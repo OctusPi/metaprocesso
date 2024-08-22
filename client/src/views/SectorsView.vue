@@ -5,7 +5,6 @@ import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
-import masks from '@/utils/masks';
 import organ from '@/stores/organ';
 import { onMounted } from 'vue';
 
@@ -16,19 +15,16 @@ const props = defineProps({
 })
 
 const [page, pageData] = Layout.new(emit, {
-    url: '/units',
+    url: '/sectors',
     datalist: props.datalist,
     header: [
-        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cnpj' }] },
-        { key: 'phone', title: 'CONTATO', sub: [{ key: 'email' }] },
-        { title: 'VINCULO', sub: [{ key: 'address' }] }
+        { key: 'name', title: 'IDENTIFICAÇÃO' },
+        { key: 'unit.name', title: 'VÍNCULO' },
+        { key: 'description', title: 'DESCRIÇÃO' },
     ],
     rules: {
         name: 'required',
-        cnpj: 'required',
-        phone: 'required',
-        email: 'required|email',
-        address: 'required',
+        unit: 'required'
     }
 })
 
@@ -49,8 +45,8 @@ onMounted(() => {
             <section v-if="!page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Unidades</h2>
-                        <p>Listagem das Unidades Atreladas ao órgão <span class="txt-color">{{ organ.organ }}</span></p>
+                        <h2>Setores</h2>
+                        <p>Listagem das Setores Atreladas às unidades do órgão <span class="txt-color">{{ organ.organ }}</span></p>
                     </div>
                     <div class="d-flex gap-2">
                         <button @click="pageData.ui('register')" class="btn btn-action-primary">
@@ -69,17 +65,21 @@ onMounted(() => {
                         <div class="col-sm-12 col-md-4">
                             <label for="s-name" class="form-label">Nome</label>
                             <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                placeholder="Pesquise por partes do nome da unidade">
+                                placeholder="Pesquise por partes do nome do setor">
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-cnpj" class="form-label">CNPJ</label>
-                            <input type="cnpj" name="cnpj" class="form-control" id="s-cnpj" v-model="page.search.cnpj"
-                                placeholder="000.000.00/0000-00" v-maska:[masks.maskcnpj]>
+                            <label for="s-unit" class="form-label">Unidade</label>
+                            <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit">
+                                <option value=""></option>
+                                <option v-for="o in page.selects.units" :key="o.id" :value="o.id">
+                                    {{ o.title }}
+                                </option>
+                            </select>
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-address" class="form-label">Endereço</label>
-                            <input type="address" name="address" class="form-control" id="s-address"
-                                v-model="page.search.address" placeholder="Cidade, Rua, No.">
+                            <label for="s-description" class="form-label">Nome</label>
+                            <input type="text" name="description" class="form-control" id="s-description"
+                                v-model="page.search.description" placeholder="Pesquise por partes da descrição">
                         </div>
                         <div class="d-flex flex-row-reverse mt-4">
                             <button type="submit" class="btn btn-action-primary">
@@ -101,8 +101,8 @@ onMounted(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registro de Unidades</h2>
-                        <p>Registrar uma unidade para o Órgão selecionado</p>
+                        <h2>Registrar Setor</h2>
+                        <p>Registrar um setor atrelado a uma unidade</p>
                     </div>
                     <div class="d-flex gap-2">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
@@ -119,32 +119,24 @@ onMounted(() => {
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control"
                                     :class="{ 'form-control-alert': page.valids.name }" id="name"
-                                    placeholder="Nome Secretaria, Departamento, Unidade" v-model="page.data.name">
+                                    placeholder="Nome de identificação do Setor" v-model="page.data.name">
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="cnpj" class="form-label">CNPJ</label>
-                                <input type="text" name="cnpj" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.cnpj }" id="cnpj"
-                                    placeholder="00.000.000/0000-00" v-model="page.data.cnpj" v-maska:[masks.maskcnpj]>
+                                <label for="unit" class="form-label">Unidade</label>
+                                <select name="unit" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.unit }" id="unit"
+                                    v-model="page.data.unit">
+                                    <option value=""></option>
+                                    <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
+                                        {{ s.title }}
+                                    </option>
+                                </select>
                             </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="phone" class="form-label">Telefone</label>
-                                <input type="text" name="phone" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.phone }" id="phone"
-                                    placeholder="(00)9.0000-0000" v-model="page.data.phone" v-maska:[masks.maskphone]>
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="email" class="form-label">E-mail</label>
-                                <input type="email" name="email" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.email }" id="email"
-                                    placeholder="unidade@example.com" v-model="page.data.email">
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="address" class="form-label">Endereço</label>
-                                <input type="text" name="address" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.address }" id="address"
-                                    placeholder="Logradouro, número - bairro (Rua do Amor, 110 - Centro)"
-                                    v-model="page.data.address">
+                            <div class="col-sm-12">
+                                <label for="description" class="form-label">Descrição</label>
+                                <input type="text" name="description" class="form-control" id="description"
+                                    placeholder="Tipo de Setor: Escola Municipal, UBS, Setor Administrativo"
+                                    v-model="page.data.description">
                             </div>
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">

@@ -69,11 +69,11 @@ abstract class Controller
         $this->check_auth($request);
 
         $dataModel = array_merge(
+            ['organ' => $request->header('X-Custom-Header-Organ')],
             $request->all(),
             $overrite,
-            ['organ' => $request->header('X-Custom-Header-Organ')],
         );
-        
+
         $this->model->fill($dataModel);
         $validate = $this->validate($dataModel);
 
