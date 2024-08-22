@@ -116,7 +116,6 @@ abstract class Controller
         }
 
         return response()->json(Notify::warning('Registro não localizado'), 404);
-
     }
 
     public final function base_list(

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('organ')->constrained('organs');
             $table->foreignId('unit')->constrained('units');
             $table->foreignId('comission')->constrained('comissions');
-            $table->longText('document')->nullable();
+            $table->string('document')->nullable();
             $table->string('description')->nullable();
             $table->date('end_term');
         });

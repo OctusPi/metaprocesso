@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -139,7 +140,12 @@ class Uploads
     public function remove(?string $filename = null): void
     {
         if(!is_null($filename)) {
-            unlink(storage_path(self::UPLOAD_PATH) .'\\'. $filename);
+            try {
+                unlink(storage_path(self::UPLOAD_PATH) .'/'. $filename);
+            } catch (Exception $e) {
+                Log::info($e);
+                return;
+            }
         }
     }
 }

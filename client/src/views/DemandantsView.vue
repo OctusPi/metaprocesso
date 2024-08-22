@@ -9,7 +9,6 @@ import organ from '@/stores/organ';
 import { onMounted } from 'vue';
 import Mounts from '@/services/mounts';
 import masks from '@/utils/masks';
-import FileInput from '@/components/inputs/FileInput.vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -18,18 +17,20 @@ const props = defineProps({
 })
 
 const [page, pageData] = Layout.new(emit, {
-    url: '/ordinators',
+    url: '/demandants',
     datalist: props.datalist,
     header: [
         { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cpf' }] },
-        { obj: 'unit', key: 'name', title: 'VINCULO', sub: [{ obj: 'organ', key: 'name' }] },
+        { key: 'unit.name', title: 'VINCULO' },
         { key: 'status', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term' }] },
     ],
     rules: {
         name: 'required',
         cpf: 'required',
+        organ: 'required',
+        unit: 'required',
         status: 'required',
-        start_term: 'required',
+        start_term: 'required'
     }
 })
 
@@ -50,9 +51,9 @@ onMounted(() => {
             <section v-if="!page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Ordenadores</h2>
+                        <h2>Demandantes</h2>
                         <p>
-                            Listagem dos ordenadores relacionados ao
+                            Listagem dos demandantes atrelados ao do
                             <span class="txt-color">{{ organ.get_organ()?.name }}</span>
                         </p>
                     </div>
@@ -73,11 +74,12 @@ onMounted(() => {
                         <div class="col-sm-12 col-md-4">
                             <label for="s-name" class="form-label">Nome</label>
                             <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                placeholder="Pesquise por partes do nome do setor">
+                                placeholder="Pesquise por partes do nome do demandante">
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-unit" class="form-label">Unidade</label>
-                            <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit">
+                            <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit"
+                                @change="pageData.selects('unit', page.search.unit)">
                                 <option value=""></option>
                                 <option v-for="o in page.selects.units" :key="o.id" :value="o.id">
                                     {{ o.title }}
@@ -85,10 +87,10 @@ onMounted(() => {
                             </select>
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-status" class="form-label">Status</label>
-                            <select name="status" class="form-control" id="s-status" v-model="page.search.status">
+                            <label for="s-sector" class="form-label">Setor</label>
+                            <select name="sector" class="form-control" id="s-sector" v-model="page.search.sector">
                                 <option value=""></option>
-                                <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
+                                <option v-for="o in page.selects.sectors" :key="o.id" :value="o.id">
                                     {{ o.title }}
                                 </option>
                             </select>
@@ -105,7 +107,6 @@ onMounted(() => {
                     <TableList :header="page.header" :body="page.datalist" :actions="[
                         Actions.Edit(pageData.update),
                         Actions.Delete(pageData.remove),
-                        Actions.Dowload((id) => pageData.download(id, 'Amparo')),
                     ]" :mounts="{
                         status: [Mounts.Cast(page.selects.status), Mounts.Status()]
                     }" />
@@ -116,8 +117,8 @@ onMounted(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registrar Setor</h2>
-                        <p>Registrar um setor atrelado a uma unidade</p>
+                        <h2>Registrar Demandante</h2>
+                        <p>Registro de demandantes no sistema</p>
                     </div>
                     <div class="d-flex gap-2">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
@@ -143,8 +144,15 @@ onMounted(() => {
                                     placeholder="000.000.000-00" v-maska:[masks.maskcpf] v-model="page.data.cpf">
                             </div>
                             <div class="col-sm-12 col-md-4">
+                                <label for="registration" class="form-label">Matrícula</label>
+                                <input type="text" name="registration" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.registration }" id="registration"
+                                    placeholder="Número da Matrícula Servidor" v-model="page.data.registration">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
                                 <label for="unit" class="form-label">Unidade</label>
                                 <select name="unit" class="form-control"
+                                    @change="layout.data.selects('unit', page.data.unit)"
                                     :class="{ 'form-control-alert': page.valids.unit }" id="unit"
                                     v-model="page.data.unit">
                                     <option value=""></option>
@@ -154,24 +162,16 @@ onMounted(() => {
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="registration" class="form-label">Matrícula</label>
-                                <input type="text" name="registration" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.registration }" id="registration"
-                                    placeholder="Número da Matrícula Servidor" v-model="page.data.registration">
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="status" class="form-label">Status</label>
-                                <select name="status" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.status }" id="status"
-                                    v-model="page.data.status">
+                                <label for="sector" class="form-label">Setor</label>
+                                <select name="sector" class="form-control" id="sector" v-model="page.data.sector">
                                     <option value=""></option>
-                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">
+                                    <option v-for="s in page.selects.sectors" :value="s.id" :key="s.id">
                                         {{ s.title }}
                                     </option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="start_term" class="form-label">Início Pleito</label>
+                                <label for="start_term" class="form-label">Início Cargo</label>
                                 <VueDatePicker auto-apply v-model="page.data.start_term"
                                     :input-class-name="page.valids.start_term ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                     :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
@@ -179,7 +179,7 @@ onMounted(() => {
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="end_term" class="form-label">Término Pleito</label>
+                                <label for="end_term" class="form-label">Fim Cargo</label>
                                 <VueDatePicker auto-apply v-model="page.data.end_term"
                                     :input-class-name="page.valids.end_term ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                     :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
@@ -187,8 +187,14 @@ onMounted(() => {
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <FileInput label="Documento" identify="document" v-model="page.data.document"
-                                    :valid="page.valids.document" />
+                                <label for="status" class="form-label">Status</label>
+                                <select name="status" class="form-control" id="status"
+                                    :class="{ 'form-control-alert': page.valids.status }" v-model="page.data.status">
+                                    <option value=""></option>
+                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">
+                                        {{ s.title }}
+                                    </option>
+                                </select>
                             </div>
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">

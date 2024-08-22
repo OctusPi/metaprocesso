@@ -6,6 +6,8 @@ use App\Http\Middlewares\Data;
 use App\Models\Ordinator;
 use App\Models\Unit;
 use App\Models\User;
+use App\Utils\Notify;
+use App\Utils\Uploads;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 
@@ -27,6 +29,18 @@ class Ordinators extends Controller
         );
     }
 
+    public function save(Request $request)
+    {
+        $upload = new Uploads($request, ['document' => ['nullable' => true]]);
+
+        if($request->id && $request->hasFile('document')) {
+            $instance = $this->model::find($request->id);
+            $upload->remove($instance->document);
+        }
+
+        return $this->base_save($request, $upload->mergeUploads([]));
+    }
+
     public function selects(Request $request)
     {
         $units = Utils::map_select(Data::find(Unit::class, [
@@ -42,5 +56,16 @@ class Ordinators extends Controller
             'units' => $units,
             'status' => Ordinator::list_status(),
         ], 200);
+    }
+
+    public function download(Request $request)
+    {
+        $ordinator = Ordinator::find($request->id);
+
+        if($ordinator && $ordinator->document){
+            return response()->download(storage_path("uploads/{$ordinator->document}"), "{$ordinator->name}.pdf");
+        }
+
+        return response()->json(Notify::warning('Arquivo Indisponível'));
     }
 }
