@@ -1,7 +1,6 @@
 <?php
 
 use App\Utils\Notify;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Organs;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Authentication;

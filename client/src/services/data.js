@@ -11,53 +11,61 @@ class Data {
     ui = (mode = null) => {
         switch (mode) {
             case 'register':
-                this.page.value.ui.search = false
-                this.page.value.ui.prepare = false
-                this.page.value.ui.register = !this.page.value.ui.register
-                this.page.value.data = {}
+                this.page.ui.search = false
+                this.page.ui.prepare = false
+                this.page.ui.register = !this.page.ui.register
+                this.page.valids = {}
+                this.page.data = {}
                 break;
             case 'update':
-                this.page.value.ui.search = false
-                this.page.value.ui.register = !this.page.value.ui.register
-                this.page.value.ui.prepare = false
+                this.page.ui.search = false
+                this.page.ui.register = !this.page.ui.register
+                this.page.ui.prepare = false
+                this.page.valids = {}
                 break;
             case 'search':
-                this.page.value.ui.search = !this.page.value.ui.search
-                this.page.value.ui.register = false
-                this.page.value.ui.prepare = false
+                this.page.ui.search = !this.page.ui.search
+                this.page.ui.register = false
+                this.page.ui.prepare = false
                 break;
             case 'prepare':
-                this.page.value.ui.prepare = !this.page.value.ui.prepare
-                this.page.value.ui.register = false
-                this.page.value.ui.search = false
+                this.page.ui.prepare = !this.page.ui.prepare
+                this.page.ui.register = false
+                this.page.ui.search = false
                 break;
             default:
-                this.page.value.ui.register = false
-                this.page.value.ui.prepare = false
+                this.page.ui.register = false
+                this.page.ui.prepare = false
                 break;
         }
     }
 
     save = (over = null) => {
-        const validation = forms.checkform(this.page.value.data, this.page.value.rules);
+        const validation = forms.checkform(
+            this.page.data,
+            {
+                fields: this.page.rules,
+                valids: this.page.valids,
+            }
+        );
+
         if (!validation.isvalid) {
             this.emit('callAlert', notifys.warning(validation.message))
             return
         }
 
-        let data = { ...this.page.value.data }
+        let data = { ...this.page.data }
 
         if (over)  data = Object.assign(data, over)
 
-        http.post(`${this.page.value.baseURL}/save`, data, this.emit, () => {
+        http.post(`${this.page.url}/save`, data, this.emit, () => {
             this.list();
         })
     }
 
     update = (id) => {
-
-        http.get(`${this.page.value.baseURL}/details/${id}`, this.emit, (response) => {
-            this.page.value.data = response.data
+        http.get(`${this.page.url}/details/${id}`, this.emit, (response) => {
+            this.page.data = response.data
             this.ui('update')
         })
     }
@@ -65,13 +73,13 @@ class Data {
     remove = (id) => {
         this.emit('callRemove', {
             id: id,
-            url: this.page.value.baseURL,
-            search: this.page.value.search,
+            url: this.page.url,
+            search: this.page.search,
         })
     }
 
     fastremove = (id) => {
-        http.destroy(`${this.page.value.baseURL}/fastdestroy`, { id }, this.emit, (resp) => {
+        http.destroy(`${this.page.url}/fastdestroy`, { id }, this.emit, (resp) => {
             if (http.success(resp)) {
                 this.list()
             }
@@ -79,24 +87,24 @@ class Data {
     }
 
     list = () => {
-        this.page.value.search.sent = true
-        http.post(`${this.page.value.baseURL}/list`, this.page.value.search, this.emit, (response) => {
-            this.page.value.datalist = response.data ?? []
+        this.page.search.sent = true
+        http.post(`${this.page.url}/list`, this.page.search, this.emit, (response) => {
+            this.page.datalist = response.data ?? []
             this.ui('list')
         })
     }
 
     selects = (key = null, search = null) => {
 
-        const urlselect = (key && search) ? `${this.page.value.baseURL}/selects/${key}/${search}` : `${this.page.value.baseURL}/selects`
+        const urlselect = (key && search) ? `${this.page.url}/selects/${key}/${search}` : `${this.page.url}/selects`
 
         http.get(urlselect, this.emit, (response) => {
-            this.page.value.selects = response.data
+            this.page.selects = response.data
         })
     }
 
     download = (id, name = 'Documento') => {
-        http.download(`${this.page.value.baseURL}/download/${id}`, this.emit, (response) => {
+        http.download(`${this.page.url}/download/${id}`, this.emit, (response) => {
             if (response.headers['content-type'] !== 'application/pdf') {
                 this.emit('callAlert', notifys.warning('Arquivo Indisponível'))
                 return
@@ -113,7 +121,7 @@ class Data {
 
     listForSearch = (...preseted) => {
         let isFilled = false
-        for (let [key, value] of Object.entries(this.page.value.search)) {
+        for (let [key, value] of Object.entries(this.page.search)) {
             if (value && !preseted.includes(key)) {
                 this.list()
                 isFilled = true
@@ -122,6 +130,17 @@ class Data {
         }
         if (!isFilled) {
             this.emit('callAlert', notifys.warning('Preencha ao menos um campo para continuar'))
+        }
+    }
+
+    upload = (event, field) => {
+        const file = event.target.files[0]
+        if (file) {
+            const reader = new FileReader()
+            reader.readAsDataURL(file)
+            reader.onloadend = () => {
+                this.page.data[field] = reader.result
+            }
         }
     }
 }

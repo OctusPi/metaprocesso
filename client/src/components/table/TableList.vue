@@ -1,0 +1,252 @@
+<script setup>
+import { ref, watch } from "vue"
+
+const props = defineProps({
+    body: { type: Array, default: () => [] },
+    header: { type: Array, default: () => [] },
+    virtual: { type: Object, default: () => ({}) },
+    actions: { type: Array },
+    mounts: { type: Object },
+    smaller: { type: Boolean },
+    sent: { type: Boolean, default: true },
+    order: { type: Boolean, default: true },
+    count: { type: Boolean, default: true },
+})
+
+const _body = ref(props.body)
+const _header = ref(props.header)
+
+function multiplexer(instance, key) {
+    if (key.includes(".")) {
+        let value = instance
+        key.split(".").forEach((subk) => {
+            if (Array.isArray(value)) {
+                value = value.map((item) => item[subk]).join(',')
+            } else {
+                value = value[subk] ?? {}
+            }
+        })
+        return value
+    }
+
+    return instance[key]
+}
+
+function orderBy(e, key) {
+    if (e.target.dataset.asc) {
+        e.target.removeAttribute("data-asc")
+        _body.value.sort((a, b) => {
+            return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
+        })
+    } else {
+        e.target.dataset.asc = true
+        _body.value.sort((a, b) => {
+            return a[key] < b[key] ? 1 : a[key] > b[key] ? -1 : 0
+        })
+    }
+}
+
+function applyMounters(instance, header) {
+    const _instance = { ...instance, _virtual: {} }
+
+    Object.keys(props.virtual).forEach(key => {
+        _instance._virtual[key] = props.virtual[key](instance)
+    })
+
+    return header.map((attr) => {
+        if (!attr.key) {
+            return { value: null, classes: [] }
+        }
+
+        if (props.mounts && props.mounts[attr.key]) {
+            return props.mounts[attr.key].reduce((initial, current) => {
+                const { value, classes } = current(initial.value, _instance)
+
+                initial.classes = [
+                    ...initial.classes,
+                    ...classes
+                ]
+
+                if (value != null) {
+                    initial.value = value
+                }
+
+                return initial
+            }, { value: multiplexer(_instance, attr.key), classes: [] })
+        }
+
+        return { value: multiplexer(_instance, attr.key), classes: [] }
+    })
+}
+
+function checkInput(e) {
+    if (e.target.tagName != 'INPUT') {
+        e.currentTarget.querySelector('input').click()
+    }
+}
+
+watch(() => props.body, (newval) => {
+    _body.value = newval
+})
+
+</script>
+
+<template>
+    <div v-if="sent" class="tablelist">
+        <div v-if="body.length" class="table-responsive-sm">
+            <table class="table-borderless table-striped table-hover"
+                :class="[props.smaller ? 'table tablesm' : 'table']">
+                <thead>
+                    <tr>
+                        <th v-if="$slots.select"></th>
+                        <th v-for="(item, i) in props.header" :key="i"
+                            @click="(e) => props.order && orderBy(e, item.key)">
+                            <div class="d-flex align-items-center gap-1">
+                                {{ item.title }}
+                                <ion-icon v-if="props.order" name="swap-vertical-outline"
+                                    class="table-order-icon fs-6"></ion-icon>
+                            </div>
+                        </th>
+                        <th v-if="props.actions && !$slots.select"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(instance, i) in _body" :key="i" @click="(e) => $slots.select && checkInput(e)"
+                        :class="[$slots.select && 'cursor-pointer']">
+                        <td v-if="$slots.select" class="align-middle">
+                            <slot :instance="instance" name="select"></slot>
+                        </td>
+                        <td v-for="(mounted, j) in applyMounters(instance, _header)" :key="j" class="align-middle">
+                            <div>
+                                <div v-if="mounted.value" class="small txt-color-sec" :class="mounted.classes">
+                                    {{ mounted.value }}
+                                </div>
+                            </div>
+                            <div>
+                                <span v-for="(submounted, k) in applyMounters(instance, _header[j].sub ?? [])" :key="k"
+                                    class="inline-block small me-1" :class="submounted.classes">
+                                    {{ submounted.value ?? '-' }}
+                                </span>
+                            </div>
+                        </td>
+                        <td v-if="props.actions && !props.selectable" class="align-middle">
+                            <div class="dropdown">
+                                <button class="btn btn-sm txt-color" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                    <ion-icon name="ellipsis-vertical-outline" class="fs-6" />
+                                </button>
+                                <ul class="dropdown-menu px-2 py-3">
+                                    <li>
+                                        <a v-for="(item, j) in props.actions" :key="j"
+                                            class="dropdown-item item-action-menu" href="#"
+                                            @click.prevent="item.action && item.action(instance.id)"
+                                            :data-bs-target="item.modal" :data-bs-toggle="item.modal ? 'modal' : null">
+                                            <ion-icon :name="item.icon" class="me-2" />
+                                            {{ item.title }}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div v-else class="text-center mt-4">
+        <i class="bi bi-chat-dots fs-3"></i>
+        <p class="p-0 m-0 form-text">Aplique o filtro na opção localizar, para visualizar os dados...</p>
+    </div>
+</template>
+
+<style scoped>
+.tablelist {
+    background-color: var(--color-background-soft);
+    border-radius: 15px;
+}
+
+thead th {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+th {
+    white-space: nowrap;
+}
+
+.table-order-icon {
+    pointer-events: none;
+}
+
+th:hover .table-order-icon {
+    color: var(--color-text-secondary);
+}
+
+[data-asc] .table-order-icon {
+    color: var(--color-base);
+}
+
+[data-asc]:hover .table-order-icon {
+    color: var(--color-base);
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+table td:nth-child(1) {
+    white-space: nowrap;
+}
+
+.table tr th:first-child {
+    padding-left: 50px;
+}
+
+.table tr td:first-child {
+    padding-left: 50px;
+}
+
+.table tr td:last-child {
+    padding-right: 4cap;
+    text-align: end;
+}
+
+.table,
+.table th,
+.table td {
+    background-color: transparent !important;
+    color: var(--color-text);
+}
+
+.table th {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: small;
+}
+
+.table-order-icon {
+    font-size: 0.8rem;
+}
+
+.table th:hover i .tablesm tr td {
+    font-size: 0.85rem !important;
+}
+
+.tablesm tr td:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    padding-left: 10px !important;
+}
+
+.tablesm tr td:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding-right: 10px !important;
+    text-align: end;
+}
+
+.selectable {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+</style>

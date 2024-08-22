@@ -57,10 +57,12 @@
   --color-danger: #fecccc;
   --color-danger-hover: #e56a6a;
   --color-danger-txt: #682828;
+  --color-danger-tls: rgba(255, 69, 44, 0.15);
 
   --color-input: #f0f0f0;
   --color-input-txt: #4B5675;
   --color-input-focus: #e6e7ee;
+  --color-input-active: #dadbe1;
   --color-input-placeholder: #99A1B7;
 
   --color-wall: #e6e7ee8f;
@@ -86,6 +88,7 @@
   --color-input: #1b1b29;
   --color-input-txt: #8a8c9d;
   --color-input-focus: #2b2b40;
+  --color-input-active: #35354f;
   --color-input-placeholder: #515179;
 
   --color-success: #72fcd2;

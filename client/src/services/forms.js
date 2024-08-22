@@ -63,7 +63,6 @@ function checkrule (rule, value){
 }
 
 function checkform(data, rules){
-
     if(rules){
 
         const checks = []
@@ -71,7 +70,6 @@ function checkform(data, rules){
         const fields = rules.fields
 
         for (let field in fields) {
-
             const irules = fields[field].split('|')
             irules.forEach(r => {
                 const check = checkrule(r, data[field])

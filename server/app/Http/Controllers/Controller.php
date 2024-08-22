@@ -54,7 +54,7 @@ abstract class Controller
 
     public function validate(?array $data = []):?string
     {
-        if(method_exists($this->model, 'rules') && method_exists( $this->model, 'messages')) {
+        if(method_exists($this->model, 'rules') && method_exists($this->model, 'messages')) {
             $validator = Validator::make($data, $this->model->rules(), $this->model->messages());
             if($validator->fails()){
                 return $validator->errors()->first();
