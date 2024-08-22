@@ -50,7 +50,10 @@ onMounted(() => {
                 <div role="heading" class="inside-title mb-4">
                     <div>
                         <h2>Unidades</h2>
-                        <p>Listagem das Unidades Atreladas ao órgão <span class="txt-color">{{ organ.organ }}</span></p>
+                        <p>
+                            Listagem das Unidades Atreladas ao
+                            <span class="txt-color">{{ organ.get_organ()?.name }}</span>
+                        </p>
                     </div>
                     <div class="d-flex gap-2">
                         <button @click="pageData.ui('register')" class="btn btn-action-primary">
