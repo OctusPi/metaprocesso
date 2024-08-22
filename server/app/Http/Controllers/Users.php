@@ -63,21 +63,21 @@ class Users extends Controller
         $profiles = [];
 
         foreach (User::list_profiles() as $key => $value) {
-            if($key >= $request->user()->profile){
+            if ($key >= $request->user()->profile) {
                 $profiles[] = ['id' => $key, 'title' => $value];
             }
         }
 
         try {
             return Response()->json([
-                'profiles'  => $profiles,
-                'organs'    => Utils::map_select(Data::find(Organ::class, order:['name'])),
-                'units'     => Utils::map_select(Data::find(Unit::class, order:['name'])),
-                'sectors'   => Utils::map_select(Data::find(Sector::class, order:['name'])),
-                'status'    => User::list_status(),
-                'modules'   => $request->user()->profile != User::PRF_ADMIN
-                            ? $request->user()->modules
-                            : User::list_modules(),
+                'profiles' => $profiles,
+                'organs' => Utils::map_select(Data::find(Organ::class, order: ['name'])),
+                'units' => Utils::map_select(Data::find(Unit::class, order: ['name'])),
+                'sectors' => Utils::map_select(Data::find(Sector::class, order: ['name'])),
+                'status' => User::list_status(),
+                'modules' => $request->user()->profile != User::PRF_ADMIN
+                    ? $request->user()->modules
+                    : User::list_modules(),
             ], 200);
         } catch (Exception $th) {
             Log::info($th->getMessage());

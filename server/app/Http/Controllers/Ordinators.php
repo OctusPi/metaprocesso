@@ -3,24 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Middlewares\Data;
-use App\Models\Sector;
+use App\Models\Ordinator;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 
-class Sectors extends Controller
+class Ordinators extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Sector::class, User::MOD_SECTORS['module']);
+        parent::__construct(Ordinator::class, User::MOD_ORDINATORS['module']);
     }
 
     public function list(Request $request)
     {
         return $this->base_list(
             $request,
-            ['unit', 'name', 'description'],
+            ['unit', 'name', 'status'],
             ['name'],
             ['organ', 'unit'],
             organ: true
@@ -40,6 +40,7 @@ class Sectors extends Controller
 
         return Response()->json([
             'units' => $units,
+            'status' => Ordinator::list_status(),
         ], 200);
     }
 }

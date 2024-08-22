@@ -56,6 +56,12 @@ const router = createRouter({
       component: () => import('../views/SectorsView.vue')
     },
     {
+      path: '/ordinators',
+      name: 'ordinators',
+      meta: { auth: true },
+      component: () => import('../views/OrdinatorsView.vue')
+    },
+    {
       path: '/forbidden',
       name: 'forbidden',
       component: () => import('../views/ForbiddenView.vue')

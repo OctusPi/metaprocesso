@@ -95,6 +95,8 @@ abstract class Controller
 
             $this->model->save();
 
+            Log::info($this->model);
+
             return response()->json(Notify::success('Dados salvos com sucesso...'), 200);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());

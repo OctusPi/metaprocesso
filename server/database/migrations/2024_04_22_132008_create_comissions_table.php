@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('unit')->constrained('units');
             $table->string('name');
             $table->integer('type');
-            $table->string('document')->nullable();
+            $table->longText('document')->nullable();
             $table->string('description')->nullable();
             $table->date('start_term');
             $table->date('end_term')->nullable();

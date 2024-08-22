@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\Sectors;
 use App\Http\Controllers\Units;
 use App\Http\Controllers\Users;
@@ -38,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     common('/units', Units::class);
     common('/sectors', Sectors::class);
     common('/users', Users::class);
+    common('/ordinators', Ordinators::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {

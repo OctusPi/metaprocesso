@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('cpf', 20);
             $table->string('registration',20)->nullable();
-            $table->string('document')->nullable();
+            $table->longText('document')->nullable();
             $table->date('start_term');
             $table->date('end_term')->nullable();
             $table->boolean('status')->default(true);

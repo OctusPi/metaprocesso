@@ -7,6 +7,9 @@ import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import organ from '@/stores/organ';
 import { onMounted } from 'vue';
+import Mounts from '@/services/mounts';
+import masks from '@/utils/masks';
+import FileInput from '@/components/inputs/FileInput.vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -15,16 +18,18 @@ const props = defineProps({
 })
 
 const [page, pageData] = Layout.new(emit, {
-    url: '/sectors',
+    url: '/ordinators',
     datalist: props.datalist,
     header: [
-        { key: 'name', title: 'IDENTIFICAÇÃO' },
-        { key: 'unit.name', title: 'VÍNCULO' },
-        { key: 'description', title: 'DESCRIÇÃO' },
+        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cpf' }] },
+        { obj: 'unit', key: 'name', title: 'VINCULO', sub: [{ obj: 'organ', key: 'name' }] },
+        { key: 'status', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term' }] },
     ],
     rules: {
         name: 'required',
-        unit: 'required'
+        cpf: 'required',
+        status: 'required',
+        start_term: 'required',
     }
 })
 
@@ -45,9 +50,9 @@ onMounted(() => {
             <section v-if="!page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Setores</h2>
+                        <h2>Ordenadores</h2>
                         <p>
-                            Listagem dos setores atrelados ao do
+                            Listagem dos ordenadores relacionados ao
                             <span class="txt-color">{{ organ.get_organ()?.name }}</span>
                         </p>
                     </div>
@@ -80,9 +85,13 @@ onMounted(() => {
                             </select>
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-description" class="form-label">Nome</label>
-                            <input type="text" name="description" class="form-control" id="s-description"
-                                v-model="page.search.description" placeholder="Pesquise por partes da descrição">
+                            <label for="s-status" class="form-label">Status</label>
+                            <select name="status" class="form-control" id="s-status" v-model="page.search.status">
+                                <option value=""></option>
+                                <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
+                                    {{ o.title }}
+                                </option>
+                            </select>
                         </div>
                         <div class="d-flex flex-row-reverse mt-4">
                             <button type="submit" class="btn btn-action-primary">
@@ -96,7 +105,9 @@ onMounted(() => {
                     <TableList :header="page.header" :body="page.datalist" :actions="[
                         Actions.Edit(pageData.update),
                         Actions.Delete(pageData.remove),
-                    ]" />
+                    ]" :mounts="{
+                        status: [Mounts.Cast(page.selects.status), Mounts.Status()]
+                    }" />
                 </div>
             </section>
 
@@ -105,7 +116,7 @@ onMounted(() => {
                 <div role="heading" class="inside-title mb-4">
                     <div>
                         <h2>Registrar Setor</h2>
-                        <p>Registro dos setores do sistema</p>
+                        <p>Registrar um setor atrelado a uma unidade</p>
                     </div>
                     <div class="d-flex gap-2">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
@@ -122,7 +133,13 @@ onMounted(() => {
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control"
                                     :class="{ 'form-control-alert': page.valids.name }" id="name"
-                                    placeholder="Nome de identificação do Setor" v-model="page.data.name">
+                                    placeholder="Nome do Ordenador" v-model="page.data.name">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="cpf" class="form-label">CPF</label>
+                                <input type="text" name="cpf" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.cpf }" id="cpf"
+                                    placeholder="000.000.000-00" v-maska:[masks.maskcpf] v-model="page.data.cpf">
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="unit" class="form-label">Unidade</label>
@@ -135,11 +152,42 @@ onMounted(() => {
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-sm-12">
-                                <label for="description" class="form-label">Descrição</label>
-                                <input type="text" name="description" class="form-control" id="description"
-                                    placeholder="Tipo de Setor: Escola Municipal, UBS, Setor Administrativo"
-                                    v-model="page.data.description">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="registration" class="form-label">Matrícula</label>
+                                <input type="text" name="registration" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.registration }" id="registration"
+                                    placeholder="Número da Matrícula Servidor" v-model="page.data.registration">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="status" class="form-label">Status</label>
+                                <select name="status" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.status }" id="status"
+                                    v-model="page.data.status">
+                                    <option value=""></option>
+                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">
+                                        {{ s.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="start_term" class="form-label">Início Pleito</label>
+                                <VueDatePicker auto-apply v-model="page.data.start_term"
+                                    :input-class-name="page.valids.start_term ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="end_term" class="form-label">Término Pleito</label>
+                                <VueDatePicker auto-apply v-model="page.data.end_term"
+                                    :input-class-name="page.valids.end_term ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <FileInput :download-name="page.data.name" label="Documento" identify="document"
+                                    v-model="page.data.document" :valid="page.valids.document" />
                             </div>
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">

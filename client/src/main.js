@@ -1,5 +1,6 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min'
 import '@vuepic/vue-datepicker/dist/main.css'
+import './assets/css/datepicker.css'
 import './assets/css/main.css'
 
 import { createApp } from 'vue'
