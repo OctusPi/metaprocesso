@@ -54,7 +54,7 @@ class Data
         $user = Auth::user();
 
         if (!is_null($user)) {
-            if ($user->profile == User::PRF_ADMIN || (!is_null($user->organs) && !is_null($user->units))) {
+            if ($user->profile == User::PRF_ADMIN || !is_null($user->organs)) {
                 $query = $model::query();
 
                 $paramsAnd = self::paramsAND($params);
@@ -174,16 +174,11 @@ class Data
 
     private static function paramsGenericOrgan($user): array
     {
-        $params = [];
-        $idsOrgan = array_column($user->organs, "id");
+        $idOrgan = array_column($user->organs, "id");
 
-        if (!is_null($idsOrgan)) {
-            foreach ($idsOrgan as $id) {
-                $params[] = (object) ['column' => 'organ', 'operator' => '=', 'value' => $id];
-            }
-        }
-
-        return $params;
+        return [
+            ['column' => 'organ', 'operator' => '=', 'value' => $idOrgan]
+        ];
     }
 
     private static function paramsGenericUnit($user): array

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Utils\Utils;
 use App\Utils\Notify;
 use Illuminate\Http\Request;
@@ -40,6 +41,11 @@ abstract class Controller
             if ($this->access_check == null || !$user->tokenCan($this->access_check)) {
                 return response()->json(Notify::error("Acesso não autorizado..."), 403);
             }
+
+            if($user->profile != User::PRF_ADMIN && !in_array($request->header('X-Custom-Header-Organ'), array_column($user->organs, 'id'))){
+                return response()->json(Notify::error("Acesso não autorizado ao Órgão."), 403);
+            }
+
         }
 
         return response()->json('success');
