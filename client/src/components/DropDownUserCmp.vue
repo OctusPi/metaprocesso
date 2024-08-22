@@ -4,7 +4,7 @@ import auth from '@/stores/auth';
 import storgan from '@/stores/organ';
 
 const user  = auth.get_user()
-const organ = (user?.organs ?? []).find(obj => obj.id === storgan.organ)
+const organ = storgan.get_organ()
 const timesession = ref('60:00')
 
 function isLoggedIn() {
