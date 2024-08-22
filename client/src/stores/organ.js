@@ -4,12 +4,17 @@ const key_store = 'organ'+import.meta.env.VITE_APP_KEY
 const organ = ref(localStorage.getItem(key_store))
 
 function set_organ(organValue){
-  localStorage.setItem(key_store, organValue)
-  organ.value = organValue
+  const str_value = JSON.stringify(organValue)
+  localStorage.setItem(key_store, str_value)
 }
 
 function get_organ(){
-  return organ.value ?? null
+  try {
+    return JSON.parse(organ.value);
+  } catch (e) {
+    console.log('Fail parse string to JSON')
+    return null
+  }
 }
 
 function clear(){

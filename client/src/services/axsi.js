@@ -15,7 +15,7 @@ const axiosInstanceAuth = axios.create({
         'Accept': 'application/json',
         'Content-Type':'multipart/form-data',
         'Authorization': 'Bearer ' + auth.get_user()?.token,
-        'X-Custom-Header-Organ': organ.get_organ()
+        'X-Custom-Header-Organ': organ.get_organ()?.id
     }
 })
 

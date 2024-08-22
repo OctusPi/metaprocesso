@@ -30,7 +30,7 @@ function apply_select(){
     }
 
     http.post('/auth/auth_organ', page.value.data, emit, () => {
-        organ.set_organ(page.value.data.organ)
+        organ.set_organ(page.value.selects.organs.find(o => o.id === page.value.data.organ))
         window.location = '/home'
     })
 }

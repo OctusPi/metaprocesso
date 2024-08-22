@@ -79,8 +79,15 @@ onMounted(() => {
                 <p class="small txt-color-sec p-0 m-0">Ultimo Acesso: {{ user.last_login }}</p>
 
                 <div class="d-flex justify-content-between mt-4">
-                    <button type="button" class="btn btn-sm btn-outline-warning" @click="logout"><i class="bi bi-door-open me-2"></i> Sair do Sistema</button>
-                    <RouterLink to="/dashboard" class="btn btn-sm btn-outline-primary"> <i class="bi bi-house-gear me-2"></i>Partiu!</RouterLink>
+                    <button type="button" class="btn btn-sm btn-warning" @click="logout">
+                        <ion-icon name="log-out-outline" class="fs-6 me-1"></ion-icon>
+                        <span></span>
+                        Sair do Sistema
+                    </button>
+                    <RouterLink to="/home" class="btn btn-sm btn-primary">
+                        <ion-icon name="log-in-outline" class="fs-6 me-1"></ion-icon>
+                        Partiu!
+                    </RouterLink>
                 </div>
             </div>
 
