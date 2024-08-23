@@ -76,43 +76,41 @@ class Data
                     });
                 }
 
-                if ($user->profile != User::PRF_ADMIN) {
-                    $mods = match ($model) {
+                $mods = match ($model) {
 
-                        Attachment::class,
-                        Catalog::class,
-                        CatalogItem::class,
-                        CatalogSubCategoryItem::class,
-                        Etp::class,
-                        PriceRecord::class,
-                        Process::class,
-                        RiskMap::class => self::paramsGenericOrgan($user),
+                    Attachment::class,
+                    Catalog::class,
+                    CatalogItem::class,
+                    CatalogSubCategoryItem::class,
+                    Etp::class,
+                    PriceRecord::class,
+                    Process::class,
+                    RiskMap::class => self::paramsGenericOrgan(),
 
-                        Comission::class,
-                        ComissionMember::class,
-                        ComissionEnd::class,
-                        Demandant::class,
-                        Dfd::class,
-                        Dotation::class,
-                        Ordinator::class,
-                        Sector::class => self::paramsGeneric($user),
+                    Comission::class,
+                    ComissionMember::class,
+                    ComissionEnd::class,
+                    Demandant::class,
+                    Dfd::class,
+                    Dotation::class,
+                    Ordinator::class,
+                    Sector::class => self::paramsGeneric($user),
 
-                        Organ::class => self::paramsOrgan($user),
+                    Organ::class => self::paramsOrgan(),
 
-                        Unit::class => self::paramsUnit($user),
+                    Unit::class => array_merge(self::paramsGenericOrgan(), self::paramsUnit($user)),
 
-                        User::class => self::paramsUser($user),
+                    User::class => self::paramsUser($user),
 
-                        default => null
-                    };
+                    default => null
+                };
 
-                    if (!is_null($mods)) {
-                        $query->where(function ($query) use ($mods) {
-                            foreach ($mods as $mod) {
-                                $query->where($mod->column, $mod->operator, $mod->value);
-                            }
-                        });
-                    }
+                if (!is_null($mods)) {
+                    $query->where(function ($query) use ($mods) {
+                        foreach ($mods as $mod) {
+                            $query->where($mod->column, $mod->operator, $mod->value);
+                        }
+                    });
                 }
 
                 //apply between
@@ -139,16 +137,10 @@ class Data
         return null;
     }
 
-    private static function paramsOrgan($user): array
+    private static function paramsOrgan(): array
     {
-        $params = [];
-
-        if($user->profile != User::PRF_ADMIN){
-            $id = request()->header('X-Custom-Header-Organ');
-            $params[] = (object) ['column' => 'id', 'operator' => '=', 'value' => $id];
-        }
-
-        return $params;
+        $id = request()->header('X-Custom-Header-Organ');
+        return  [(object) ['column' => 'id', 'operator' => '=', 'value' => $id]];
     }
 
     private static function paramsUnit($user): array
@@ -170,16 +162,10 @@ class Data
         return [(object) ['column' => 'organs', 'operator' => '=', 'value' => json_encode($user->organs)]];
     }
 
-    private static function paramsGenericOrgan($user): array
+    private static function paramsGenericOrgan(): array
     {
-        $params = [];
-
-        if($user->profile != User::PRF_ADMIN){
-            $id = request()->header('X-Custom-Header-Organ');
-            $params[] = (object) ['column' => 'organ', 'operator' => '=', 'value' => $id];
-        }
-
-        return $params;
+        $id = request()->header('X-Custom-Header-Organ');
+        return  [(object) ['column' => 'organ', 'operator' => '=', 'value' => $id]];
     }
 
     private static function paramsGenericUnit($user): array
@@ -187,7 +173,7 @@ class Data
         $params = [];
         $idsUnit = array_column($user->units, "id");
 
-        if (!is_null($idsUnit) && $user->profile != User::PRF_GESTOR) {
+        if (!is_null($idsUnit) && $user->profile > User::PRF_GESTOR) {
             foreach ($idsUnit as $id) {
                 $params[] = (object) ['column' => 'unit', 'operator' => '=', 'value' => $id];
             }
@@ -198,7 +184,7 @@ class Data
 
     private static function paramsGeneric($user): array
     {
-        return array_merge(self::paramsGenericOrgan($user), self::paramsGenericUnit($user));
+        return array_merge(self::paramsGenericOrgan(), self::paramsGenericUnit($user));
     }
 
     private static function paramsAND(?array $params): array
