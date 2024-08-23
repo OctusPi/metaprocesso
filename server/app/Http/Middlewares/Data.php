@@ -148,10 +148,16 @@ class Data
         $params = [];
         $idsUnit = array_column($user->units, "id");
 
-        if (!is_null($idsUnit) && $user->profile != User::PRF_GESTOR) {
-            foreach ($idsUnit as $id) {
-                $params[] = (object) ['column' => 'id', 'operator' => '=', 'value' => $id];
+        if($user->profile > User::PRF_GESTOR){
+
+            if(!is_null($idsUnit)){
+                foreach ($idsUnit as $id) {
+                    $params[] = (object) ['column' => 'id', 'operator' => '=', 'value' => $id];
+                }
+            }else{
+                $params[] = (object) ['column' => 'id', 'operator' => '=', 'value' => null];
             }
+
         }
 
         return $params;
@@ -173,10 +179,16 @@ class Data
         $params = [];
         $idsUnit = array_column($user->units, "id");
 
-        if (!is_null($idsUnit) && $user->profile > User::PRF_GESTOR) {
-            foreach ($idsUnit as $id) {
-                $params[] = (object) ['column' => 'unit', 'operator' => '=', 'value' => $id];
+        if($user->profile > User::PRF_GESTOR){
+
+            if(!is_null($idsUnit)){
+                foreach ($idsUnit as $id) {
+                    $params[] = (object) ['column' => 'unit', 'operator' => '=', 'value' => $id];
+                }
+            }else{
+                $params[] = (object) ['column' => 'unit', 'operator' => '=', 'value' => null];
             }
+
         }
 
         return $params;
