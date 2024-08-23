@@ -71,8 +71,8 @@
 }
 
 .main-section {
-  min-height: calc(100vh - 148px);
-  margin: 91px auto 40px auto;
+  min-height: calc(100vh - 150px);
+  margin: 95px auto 40px auto;
   background-color: var(--color-background);
   border-radius: 30px;
   display: flex;
