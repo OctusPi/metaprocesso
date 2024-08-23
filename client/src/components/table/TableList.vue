@@ -93,7 +93,7 @@ watch(() => props.body, (newval) => {
 
 <template>
     <div v-if="sent" class="tablelist">
-        <div v-if="body.length" class="table-responsive-md pb-2">
+        <div v-if="body.length" class="table-responsive-md">
             <table class="table-borderless table-striped table-hover"
                 :class="[props.smaller ? 'table tablesm' : 'table']">
                 <thead>
