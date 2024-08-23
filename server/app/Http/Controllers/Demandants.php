@@ -30,15 +30,6 @@ class Demandants extends Controller
 
     public function selects(Request $request)
     {
-        $units = Utils::map_select(Data::find(Unit::class, [
-            [
-                'column' => 'organ',
-                'operator' => '=',
-                'mode' => 'AND',
-                'value' => $request->header('X-Custom-Header-Organ'),
-            ]
-        ], ['name']));
-
         $sectors = $request->key == 'unit' ? Utils::map_select(Data::find(Sector::class, [
             [
                 'column' => 'unit',
@@ -49,8 +40,8 @@ class Demandants extends Controller
         ], ['name'])) : Utils::map_select(Data::find(Sector::class, order: ['name']));
 
         return Response()->json([
-            'units' => $units,
             'sectors' => $sectors,
+            'units' => Utils::map_select(Data::find(Unit::class, order: ['name'])),
             'status' => Demandant::list_status(),
         ], 200);
     }

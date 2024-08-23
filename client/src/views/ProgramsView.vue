@@ -5,9 +5,9 @@ import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
+import organ from '@/stores/organ';
+import { onMounted } from 'vue';
 import Mounts from '@/services/mounts';
-import { onMounted, watch } from 'vue';
-import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -16,25 +16,18 @@ const props = defineProps({
 })
 
 const [page, pageData] = Layout.new(emit, {
-    url: '/users',
+    url: '/programs',
     datalist: props.datalist,
     header: [
-        { key: 'name', title: 'NOME' },
-        { key: 'email', title: 'E-MAIL' },
-        { key: 'profile', title: 'PERFIL', sub: [{ key: 'passchange', title: 'Senha' }] },
-        { key: 'status', title: 'STATUS', sub: [{ key: 'lastlogin', title: 'Ultimo Acesso:' }] }
+        { key: 'name', title: 'PROGRAMA', sub: [{ key: 'unit.name' }] },
+        { key: 'law', title: 'DESCRIÇÃO', sub: [{ key: 'description' }] },
+        { key: 'status', title: 'STATUS' }
     ],
     rules: {
         name: 'required',
-        email: 'required|email',
-        status: 'required',
-        profile: 'required',
-        modules: 'required',
+        unit: 'required',
+        status: 'required'
     }
-})
-
-watch(() => props.datalist, (newdata) => {
-    page.value.datalist = newdata
 })
 
 onMounted(() => {
@@ -54,8 +47,11 @@ onMounted(() => {
             <section v-if="!page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Usuários</h2>
-                        <p>Listagem dos usuários do sistema</p>
+                        <h2>Programas</h2>
+                        <p>
+                            Listagem dos programas atrelados ao
+                            <span class="txt-color">{{ organ.get_organ()?.name }}</span>
+                        </p>
                     </div>
                     <div class="d-flex gap-2">
                         <button @click="pageData.ui('register')" class="btn btn-action-primary">
@@ -73,23 +69,22 @@ onMounted(() => {
                     <form @submit.prevent="pageData.list" class="row g-3">
                         <div class="col-sm-12 col-md-4">
                             <label for="s-name" class="form-label">Nome</label>
-                            <input type="text" name="name" class="form-control" id="s-name"
-                                v-model="page.search.name" placeholder="Pesquise por partes do nome do usuário">
+                            <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
+                                placeholder="Pesquise por partes do nome do setor">
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-email" class="form-label">E-mail</label>
-                            <input type="email" name="email" class="form-control" id="s-email"
-                                v-model="page.search.email" placeholder="user@mail.com">
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-profile" class="form-label">Perfil</label>
-                            <select name="profile" class="form-control" id="s-profile"
-                                v-model="page.search.profile">
-                                <option></option>
-                                <option v-for="s in page.selects.profiles" :value="s.id" :key="s.id">
-                                    {{ s.title }}
+                            <label for="s-unit" class="form-label">Unidade</label>
+                            <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit">
+                                <option value=""></option>
+                                <option v-for="o in page.selects.units" :key="o.id" :value="o.id">
+                                    {{ o.title }}
                                 </option>
                             </select>
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <label for="s-law" class="form-label">Lei</label>
+                            <input type="text" name="law" class="form-control" id="s-law" v-model="page.search.law"
+                                placeholder="Pesquise por partes da lei">
                         </div>
                         <div class="d-flex flex-row-reverse mt-4">
                             <button type="submit" class="btn btn-action-primary">
@@ -105,8 +100,7 @@ onMounted(() => {
                         Actions.Delete(pageData.remove),
                     ]" :mounts="{
                         status: [Mounts.Cast(page.selects.status), Mounts.Status()],
-                        profile: [Mounts.Cast(page.selects.profiles)],
-                        passchange: [Mounts.Cast([{ id: 0, title: 'Ativa' }, { id: 1, title: 'Mudança de Senha' }])],
+                        description: [Mounts.Cast(page.selects.status), Mounts.Truncate()],
                     }" />
                 </div>
             </section>
@@ -115,8 +109,8 @@ onMounted(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registrar Usuário</h2>
-                        <p>Registro dos usuários do sistema</p>
+                        <h2>Registrar Programa</h2>
+                        <p>Registro dos programas do sistema</p>
                     </div>
                     <div class="d-flex gap-2">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
@@ -129,28 +123,28 @@ onMounted(() => {
                     <form class="form-row" @submit.prevent="pageData.save()">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
                             <input type="hidden" name="id" v-model="page.id">
-                            <div class="col-sm-12">
-                                <label for="name" class="form-label">Nome</label>
+                            <div class="col-sm-12 col-md-8">
+                                <label for="name" class="form-label">Programa</label>
                                 <input type="text" name="name" class="form-control"
                                     :class="{ 'form-control-alert': page.valids.name }" id="name"
-                                    placeholder="Sr. Snake" v-model="page.data.name">
+                                    placeholder="Nome de identificação do Programa" v-model="page.data.name">
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="email" class="form-label">E-mail</label>
-                                <input type="email" name="email" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.email }" id="email"
-                                    placeholder="user@example.com" v-model="page.data.email">
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="profile" class="form-label">Perfil</label>
-                                <select name="profile" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.profile }" id="profile"
-                                    v-model="page.data.profile">
+                                <label for="unit" class="form-label">Unidade</label>
+                                <select name="unit" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.unit }" id="unit"
+                                    v-model="page.data.unit">
                                     <option value=""></option>
-                                    <option v-for="s in page.selects.profiles" :value="s.id" :key="s.id">
+                                    <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
                                         {{ s.title }}
                                     </option>
                                 </select>
+                            </div>
+
+                            <div class="col-sm-12 col-md-8">
+                                <label for="law" class="form-label">Lei de Criação</label>
+                                <input type="text" name="law" class="form-control" id="law"
+                                    placeholder="Número ou Link da Lei de Criação do Programa" v-model="page.data.law">
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="status" class="form-label">Status</label>
@@ -164,24 +158,9 @@ onMounted(() => {
                                 </select>
                             </div>
                             <div class="col-sm-12">
-                                <label for="modules" class="form-label">Modulos</label>
-                                <InputDropMultSelect v-model="page.data.modules" :options="page.selects.modules"
-                                    identify="modules" />
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="organs" class="form-label">Orgãos</label>
-                                <InputDropMultSelect v-model="page.data.organs" :options="page.selects.organs"
-                                    identify="organs" />
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="units" class="form-label">Unidades</label>
-                                <InputDropMultSelect v-model="page.data.units" :options="page.selects.units"
-                                    identify="units" />
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="sectors" class="form-label">Setores</label>
-                                <InputDropMultSelect v-model="page.data.sectors" :options="page.selects.sectors"
-                                    identify="sectors" />
+                                <label for="description" class="form-label">Descrição</label>
+                                <input type="text" name="description" class="form-control" id="description"
+                                    placeholder="Breve resumo do objetivo do programa" v-model="page.data.description">
                             </div>
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
@@ -202,6 +181,5 @@ onMounted(() => {
         </main>
     </div>
 </template>
-
 
 <style scoped></style>

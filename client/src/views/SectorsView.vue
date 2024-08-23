@@ -6,7 +6,7 @@ import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import organ from '@/stores/organ';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -26,6 +26,10 @@ const [page, pageData] = Layout.new(emit, {
         name: 'required',
         unit: 'required'
     }
+})
+
+watch(() => props.datalist, (newdata) => {
+    page.value.datalist = newdata
 })
 
 onMounted(() => {
@@ -80,7 +84,7 @@ onMounted(() => {
                             </select>
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-description" class="form-label">Nome</label>
+                            <label for="s-description" class="form-label">Descrição</label>
                             <input type="text" name="description" class="form-control" id="s-description"
                                 v-model="page.search.description" placeholder="Pesquise por partes da descrição">
                         </div>

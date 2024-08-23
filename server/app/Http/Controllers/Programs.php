@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Http\Middlewares\Data;
-use App\Models\Sector;
+use App\Models\Program;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 
-class Sectors extends Controller
+class Programs extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Sector::class, User::MOD_SECTORS['module']);
+        parent::__construct(Program::class, User::MOD_PROGRAMS['module']);
     }
 
     public function list(Request $request)
@@ -31,6 +31,7 @@ class Sectors extends Controller
     {
         return Response()->json([
             'units' => Utils::map_select(Data::find(Unit::class, order: ['name'])),
+            'status' => Program::list_status(),
         ], 200);
     }
 }

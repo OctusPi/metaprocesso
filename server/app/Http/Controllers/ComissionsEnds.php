@@ -44,7 +44,7 @@ class ComissionsEnds extends Controller
 
         $upload = new Uploads($request, ['document' => ['nullable' => true]]);
 
-        if($request->id && $request->hasFile('document')) {
+        if ($request->id && $request->hasFile('document')) {
             $instance = $this->model::find($request->id);
             $upload->remove($instance->document);
         }
@@ -71,17 +71,8 @@ class ComissionsEnds extends Controller
 
     public function selects(Request $request)
     {
-        $units = Utils::map_select(Data::find(Unit::class, [
-            [
-                'column' => 'organ',
-                'operator' => '=',
-                'mode' => 'AND',
-                'value' => $request->header('X-Custom-Header-Organ'),
-            ]
-        ], ['name']));
-
         return Response()->json([
-            'units' => $units,
+            'units' => Utils::map_select(Data::find(Unit::class, order: ['name'])),
         ], 200);
     }
 }

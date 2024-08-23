@@ -74,6 +74,24 @@ const router = createRouter({
       component: () => import('../views/OrdinatorsView.vue')
     },
     {
+      path: '/programs',
+      name: 'programs',
+      meta: { auth: true },
+      component: () => import('../views/ProgramsView.vue')
+    },
+    {
+      path: '/dotations',
+      name: 'dotations',
+      meta: { auth: true },
+      component: () => import('../views/DotationsView.vue')
+    },
+    {
+      path: '/comissionmembers/:id(\\d+)',
+      name: 'comissionmembers',
+      meta: { auth: true },
+      component: () => import('../views/ComissionMembers.vue')
+    },
+    {
       path: '/forbidden',
       name: 'forbidden',
       component: () => import('../views/ForbiddenView.vue')

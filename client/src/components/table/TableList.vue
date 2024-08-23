@@ -123,8 +123,9 @@ watch(() => props.body, (newval) => {
                                 </div>
                             </div>
                             <div>
-                                <span v-for="(submounted, k) in applyMounters(instance, userHeader[j].sub ?? [])" :key="k"
-                                    class="inline-block small me-1" :class="submounted.classes">
+                                <span v-for="(submounted, k) in applyMounters(instance, userHeader[j].sub ?? [])"
+                                    :key="k" class="inline-block small me-1" :class="submounted.classes">
+                                    {{ userHeader[j].sub[k].title }}
                                     {{ submounted.value ?? (userHeader[j].sub[k].err || '-') }}
                                 </span>
                             </div>

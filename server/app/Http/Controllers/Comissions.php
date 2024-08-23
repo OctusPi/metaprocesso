@@ -33,7 +33,7 @@ class Comissions extends Controller
     {
         $upload = new Uploads($request, ['document' => ['nullable' => true]]);
 
-        if($request->id && $request->hasFile('document')) {
+        if ($request->id && $request->hasFile('document')) {
             $instance = $this->model::find($request->id);
             $upload->remove($instance->document);
         }
@@ -44,19 +44,7 @@ class Comissions extends Controller
     public function details(Request $request)
     {
         if ($request->query('display') == 1) {
-
-            $instance = Comission::with(['organ', 'unit'])->find($request->id);
-
-            if (!$instance) {
-                return Response()->json(Notify::warning('Registro não localizado!'), 404);
-            }
-
-            $displayMode = array_merge($instance->toArray(), [
-                'type' => Comission::get_type($instance->type),
-                'status' => Comission::get_status($instance->status),
-            ]);
-
-            return Response()->json($displayMode, 200);
+            return Data::findOne(Comission::class, ['id' => $request->id], with: ['organ', 'unit']);
         }
 
         return $this->base_details($request);
@@ -75,17 +63,8 @@ class Comissions extends Controller
 
     public function selects(Request $request)
     {
-        $units = Utils::map_select(Data::find(Unit::class, [
-            [
-                'column' => 'organ',
-                'operator' => '=',
-                'mode' => 'AND',
-                'value' => $request->header('X-Custom-Header-Organ'),
-            ]
-        ], ['name']));
-
         return Response()->json([
-            'units' => $units,
+            'units' => Utils::map_select(Data::find(Unit::class, order: ['name'])),
             'types' => Comission::list_types(),
             'status' => Comission::list_status()
         ], 200);

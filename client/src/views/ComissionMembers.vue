@@ -5,16 +5,12 @@ import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
-import organ from '@/stores/organ';
-import { onMounted, watch } from 'vue';
 import Mounts from '@/services/mounts';
-import { useRouter } from 'vue-router';
 import http from '@/services/http';
-import utils from '@/utils/utils';
-import masks from '@/utils/masks';
+import { useRoute, useRouter } from 'vue-router';
+import { onMounted } from 'vue';
+import { watch } from 'vue';
 import FileInput from '@/components/inputs/FileInput.vue';
-
-const router = useRouter();
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -22,46 +18,31 @@ const props = defineProps({
     datalist: { type: Array, default: () => [] }
 })
 
+const router = useRouter()
+const route = useRoute()
+
 const [page, pageData] = Layout.new(emit, {
-    url: '/comissions',
+    url: `/comissionmembers/${route.params.id}`,
     datalist: props.datalist,
+    comission: {},
     header: [
-        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'type' }] },
-        { key: 'unit.name', title: 'VINCULO' },
-        { key: 'status', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term', err: 'Presente' }] },
+        { key: 'name', title: 'NOME' },
+        { key: 'responsibility', title: 'RESPONSABILIDADE', sub: [{ key: 'status' }] },
+        { key: 'start_term', title: 'INÍCIO PLEITO' },
+        { key: 'start_term', title: 'TÉRMINO PLEITO' }
     ],
     rules: {
         name: 'required',
-        unit: 'required',
-        type: 'required',
+        responsibility: 'required',
+        start_term: 'required',
         status: 'required',
-        start_term: 'required'
-    }
-})
-
-const [extinct, extinctData] = Layout.new(emit, {
-    url: '/endedcomissions',
-    rules: {
-        end_term: 'required',
-        description: 'required',
-        organ: 'required',
-        unit: 'required',
-        comission: 'required',
     },
 })
 
-function extinction(id) {
-    http.get(`/comissions/details/${id}`, emit, (response) => {
-        extinct.data.comission = response.data.id
-        extinct.data.organ = response.data.organ
-        extinct.data.unit = response.data.unit
-        extinct.data.end_term = utils.dateNow()
-        pageData.ui('prepare')
+function fetchComission() {
+    http.get(`/comissions/details/${route.params.id}?display=1`, emit, (res) => {
+        page.comission = res.data
     })
-}
-
-function members(id) {
-    router.replace({ name: 'comissionmembers', params: { id } })
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -69,6 +50,7 @@ watch(() => props.datalist, (newdata) => {
 })
 
 onMounted(() => {
+    fetchComission()
     pageData.selects()
     pageData.list()
 })
@@ -82,13 +64,13 @@ onMounted(() => {
             <HeaderMainUi />
 
             <!-- List -->
-            <section v-if="!page.ui.register && !page.ui.prepare" class="main-section container-fluid p-4">
+            <section v-if="!page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Comissões</h2>
+                        <h2>Membros</h2>
                         <p>
-                            Listagem das comissões atreladas ao
-                            <span class="txt-color">{{ organ.get_organ()?.name }}</span>
+                            Membros atrelados à comissão
+                            <span class="txt-color">{{ page.comission.name ?? '-' }}</span>
                         </p>
                     </div>
                     <div class="d-flex gap-2">
@@ -99,6 +81,10 @@ onMounted(() => {
                         <button @click="pageData.ui('search')" class="btn btn-action-secondary">
                             <ion-icon name="search" class="fs-5"></ion-icon>
                             Pesquisar
+                        </button>
+                        <button @click="router.replace({ name: 'comissions' })" class="btn btn-action-secondary">
+                            <ion-icon name="arrow-back" class="fs-5"></ion-icon>
+                            Voltar
                         </button>
                     </div>
                 </div>
@@ -111,14 +97,23 @@ onMounted(() => {
                                 placeholder="Pesquise por partes do nome do setor">
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-name" class="form-label">Nome</label>
-                            <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                placeholder="Pesquise por partes do nome do setor">
+                            <label for="s-responsibility" class="form-label">Responsabilidade</label>
+                            <select name="responsibility" class="form-control" id="s-responsibility"
+                                v-model="page.search.responsibility">
+                                <option value=""></option>
+                                <option v-for="o in page.selects.responsibilities" :key="o.id" :value="o.id">
+                                    {{ o.title }}
+                                </option>
+                            </select>
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-name" class="form-label">Nome</label>
-                            <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                placeholder="Pesquise por partes do nome do setor">
+                            <label for="s-status" class="form-label">Status</label>
+                            <select name="status" class="form-control" id="s-status" v-model="page.search.status">
+                                <option value=""></option>
+                                <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
+                                    {{ o.title }}
+                                </option>
+                            </select>
                         </div>
                         <div class="d-flex flex-row-reverse mt-4">
                             <button type="submit" class="btn btn-action-primary">
@@ -132,12 +127,10 @@ onMounted(() => {
                     <TableList :header="page.header" :body="page.datalist" :actions="[
                         Actions.Edit(pageData.update),
                         Actions.Delete(pageData.remove),
-                        Actions.Dowload((id) => pageData.download(id, 'Comissão')),
-                        Actions.Create('calendar-clear-outline', 'Extinguir', extinction),
-                        Actions.Create('people-outline', 'Membros', members),
+                        Actions.Dowload((id) => pageData.download(id, 'Amparo')),
                     ]" :mounts="{
                         status: [Mounts.Cast(page.selects.status), Mounts.Status()],
-                        type: [Mounts.Cast(page.selects.status)]
+                        responsibility: [Mounts.Cast(page.selects.responsibilities)],
                     }" />
                 </div>
             </section>
@@ -146,8 +139,8 @@ onMounted(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registrar Comissão</h2>
-                        <p>Registro das comissões do sistema</p>
+                        <h2>Registrar Dotação</h2>
+                        <p>Registro das dotações do sistema</p>
                     </div>
                     <div class="d-flex gap-2">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
@@ -157,29 +150,14 @@ onMounted(() => {
                     </div>
                 </div>
                 <div role="form" class="container p-0">
-                    <form class="form-row" @submit.prevent="pageData.save">
+                    <form class="form-row" @submit.prevent="pageData.save()">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
                             <input type="hidden" name="id" v-model="page.id">
                             <div class="col-sm-12">
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control"
                                     :class="{ 'form-control-alert': page.valids.name }" id="name"
-                                    placeholder="Nome de Identificação da Comissão" v-model="page.data.name">
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="unit" class="form-label">Unidade</label>
-                                <select name="unit" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.unit }" id="unit"
-                                    v-model="page.data.unit">
-                                    <option value=""></option>
-                                    <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
-                                        {{ s.title }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-sm-12 col-md-8">
-                                <FileInput label="Documento" identify="document" v-model="page.data.document"
-                                    :valid="extinct.valids.document" />
+                                    placeholder="Nome do Membro" v-model="page.data.name">
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="start_term" class="form-label">Início Pleito</label>
@@ -190,7 +168,7 @@ onMounted(() => {
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="end_term" class="form-label">Início Pleito</label>
+                                <label for="end_term" class="form-label">Término Pleito</label>
                                 <VueDatePicker auto-apply v-model="page.data.end_term"
                                     :input-class-name="page.valids.end_term ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                     :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
@@ -203,22 +181,33 @@ onMounted(() => {
                                     :class="{ 'form-control-alert': page.valids.status }" id="status"
                                     v-model="page.data.status">
                                     <option value=""></option>
-                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">
-                                        {{ s.title }}
+                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{ s.title
+                                        }}
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-sm-12">
-                                <label for="type" class="form-label">Tipo de Comissão</label>
-                                <select name="type" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.type }" id="type"
-                                    v-model="page.data.type">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="responsibility" class="form-label">Responsabilidade</label>
+                                <select name="responsibility" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.responsibility }" id="responsibility"
+                                    v-model="page.data.responsibility">
                                     <option value=""></option>
-                                    <option v-for="s in page.selects.types" :value="s.id" :key="s.id">
-                                        {{ s.title }}
+                                    <option v-for="s in page.selects.responsibilities" :value="s.id" :key="s.id">
+                                        {{
+                                            s.title }}
                                     </option>
                                 </select>
                             </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="number_doc" class="form-label">Número Portaria</label>
+                                <input type="text" name="number_doc" class="form-control" id="number_doc"
+                                    placeholder="00000" v-model="page.data.number_doc">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <FileInput label="Anexar Amparo Legal" identify="document" v-model="page.data.document"
+                                    :valid="page.valids.document" />
+                            </div>
+
                             <div class="col-sm-12">
                                 <label for="description" class="form-label">Descrição das Atividades</label>
                                 <textarea name="description" class="form-control" id="description"
@@ -231,62 +220,6 @@ onMounted(() => {
                                 Registrar
                             </button>
                             <button @click="pageData.ui('register')" class="btn btn-action-secondary">
-                                <ion-icon name="close-outline" class="fs-5"></ion-icon>
-                                Cancelar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <section v-if="page.ui.prepare" class="main-section container-fluid p-4">
-                <div role="heading" class="inside-title mb-4">
-                    <div>
-                        <h2>Comissões</h2>
-                        <p>
-                            Listagem das comissões atreladas ao
-                            <span class="txt-color">{{ organ.get_organ()?.name }}</span>
-                        </p>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button @click="pageData.ui('register')" class="btn btn-action-primary">
-                            <ion-icon name="add" class="fs-5"></ion-icon>
-                            Adicionar
-                        </button>
-                        <button @click="pageData.ui('search')" class="btn btn-action-secondary">
-                            <ion-icon name="search" class="fs-5"></ion-icon>
-                            Pesquisar
-                        </button>
-                    </div>
-                </div>
-                <div role="form" class="container p-0">
-                    <form class="form-row" @submit.prevent="() => { extinctData.save(null, pageData.list) }">
-                        <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-
-                            <div class="col-sm-12 col-md-4">
-                                <label for="end_term" class="form-label">Data de Extinção</label>
-                                <input type="text" name="end_term" class="form-control" id="end_term"
-                                    :class="{ 'form-control-alert': extinct.valids.end_term }" placeholder="dd/mm/aaaa"
-                                    v-maska:[masks.maskdate] v-model="extinct.data.end_term">
-                            </div>
-                            <div class="col-sm-12 col-md-8">
-                                <FileInput label="Documento" identify="document" v-model="extinct.data.document"
-                                    :valid="extinct.valids.document" />
-                            </div>
-                            <div class="col-sm-12">
-                                <label for="description" class="form-label">Descrição da Extinção</label>
-                                <textarea name="description" class="form-control" id="description"
-                                    :class="{ 'form-control-alert': extinct.valids.description }"
-                                    v-model="extinct.data.description"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="d-flex flex-row-reverse gap-2 mt-4">
-                            <button type="submit" class="btn btn-action-primary">
-                                <ion-icon name="calendar-clear-outline" class="fs-5"></ion-icon>
-                                Extinguir
-                            </button>
-                            <button @click="pageData.ui('prepare')" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>
                                 Cancelar
                             </button>

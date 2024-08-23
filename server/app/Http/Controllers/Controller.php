@@ -109,9 +109,9 @@ abstract class Controller
     {
         $this->check_auth($request);
 
-        $query = $this->model->where('id', $request->id)->with($with)->first();
+        $query = $this->model->with($with)->find($request->id);
 
-        if (!is_null($query)) {
+        if ($query) {
             return response()->json($query->toArray(), 200);
         }
 
@@ -124,21 +124,21 @@ abstract class Controller
         ?array $order = null,
         ?array $with = null,
         ?array $between = null,
-        ?bool $organ = false
+        ?bool $organ = false,
     ) {
         $this->check_auth($request);
 
         try {
-            $search = Utils::map_search(
+            $mapped = Utils::map_search(
                 $search,
                 array_merge(
                     $request->route()->parameters(),
-                    $request->all()
+                    $request->all(),
                 ),
             );
 
             if ($organ) {
-                $search[] = [
+                $mapped[] = [
                     'column' => 'organ',
                     'operator' => '=',
                     'mode' => 'AND',
@@ -146,7 +146,8 @@ abstract class Controller
                 ];
             }
 
-            $query = Data::find($this->model::class, $search, $order, $with, $between);
+            $query = Data::find($this->model::class, $mapped, $order, $with, $between);
+
             return response()->json($query, 200);
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
