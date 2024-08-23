@@ -142,12 +142,10 @@ class Data
     private static function paramsOrgan($user): array
     {
         $params = [];
-        $ids = array_column($user->organs, "id");
 
-        if (!is_null($ids)) {
-            foreach ($ids as $id) {
-                $params[] = (object) ['column' => 'id', 'operator' => '=', 'value' => $id];
-            }
+        if($user->profile != User::PRF_ADMIN){
+            $id = request()->header('X-Custom-Header-Organ');
+            $params[] = (object) ['column' => 'id', 'operator' => '=', 'value' => $id];
         }
 
         return $params;
@@ -158,7 +156,7 @@ class Data
         $params = [];
         $idsUnit = array_column($user->units, "id");
 
-        if (!is_null($idsUnit)) {
+        if (!is_null($idsUnit) && $user->profile != User::PRF_GESTOR) {
             foreach ($idsUnit as $id) {
                 $params[] = (object) ['column' => 'id', 'operator' => '=', 'value' => $id];
             }
@@ -174,11 +172,14 @@ class Data
 
     private static function paramsGenericOrgan($user): array
     {
-        $idOrgan = array_column($user->organs, "id");
+        $params = [];
 
-        return [
-            ['column' => 'organ', 'operator' => '=', 'value' => $idOrgan]
-        ];
+        if($user->profile != User::PRF_ADMIN){
+            $id = request()->header('X-Custom-Header-Organ');
+            $params[] = (object) ['column' => 'organ', 'operator' => '=', 'value' => $id];
+        }
+
+        return $params;
     }
 
     private static function paramsGenericUnit($user): array
@@ -186,7 +187,7 @@ class Data
         $params = [];
         $idsUnit = array_column($user->units, "id");
 
-        if (!is_null($idsUnit)) {
+        if (!is_null($idsUnit) && $user->profile != User::PRF_GESTOR) {
             foreach ($idsUnit as $id) {
                 $params[] = (object) ['column' => 'unit', 'operator' => '=', 'value' => $id];
             }
