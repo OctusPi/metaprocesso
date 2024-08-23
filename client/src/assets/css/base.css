@@ -55,8 +55,8 @@
   --color-warning-txt: #a28314;
 
   --color-danger: #fecccc;
-  --color-danger-hover: #e56a6a;
-  --color-danger-txt: #682828;
+  --color-danger-hover: #f17e7e;
+  --color-danger-txt: #3b3b3b;
   --color-danger-tls: rgba(255, 69, 44, 0.15);
 
   --color-input: #f0f0f0;
@@ -101,7 +101,7 @@
 
   --color-danger: #f8abab;
   --color-danger-hover: #d25959;
-  --color-danger-txt: #682828;
+  --color-danger-txt: #ffdcdc;
 
   --color-wall: #0d0d169c;
 }
