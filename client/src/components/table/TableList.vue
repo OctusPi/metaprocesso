@@ -93,7 +93,7 @@ watch(() => props.body, (newval) => {
 
 <template>
     <div v-if="sent" class="tablelist">
-        <div v-if="body.length" class="table-responsive-sm">
+        <div v-if="body.length" class="table-responsive-md pb-2">
             <table class="table-borderless table-striped table-hover"
                 :class="[props.smaller ? 'table tablesm' : 'table']">
                 <thead>
@@ -152,10 +152,15 @@ watch(() => props.body, (newval) => {
                 </tbody>
             </table>
         </div>
+
+        <div v-else class="text-center p-4">
+            <ion-icon name="cube-outline" class="fs-4"></ion-icon>
+            <p class="p-0 m-0">Não foram localizados registros...</p>
+        </div>
     </div>
-    <div v-else class="text-center mt-4">
-        <i class="bi bi-chat-dots fs-3"></i>
-        <p class="p-0 m-0 form-text">Aplique o filtro na opção localizar, para visualizar os dados...</p>
+    <div v-else class="text-center p-4">
+        <ion-icon name="chatbox-ellipses-outline" class="fs-3"></ion-icon>
+        <p class="p-0 m-0">Aplique o filtro na opção localizar, para visualizar os dados...</p>
     </div>
 </template>
 
