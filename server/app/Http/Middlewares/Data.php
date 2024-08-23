@@ -146,9 +146,9 @@ class Data
     private static function paramsUnit($user): array
     {
         $params = [];
-        $idsUnit = array_column($user->units, "id");
 
         if($user->profile > User::PRF_GESTOR){
+            $idsUnit = array_column($user->units ?? [], "id");
 
             if(!is_null($idsUnit)){
                 foreach ($idsUnit as $id) {
@@ -165,6 +165,10 @@ class Data
 
     private static function paramsUser($user): array
     {
+        if($user->profile === User::PRF_ADMIN){
+            return [];
+        }
+
         return [(object) ['column' => 'organs', 'operator' => '=', 'value' => json_encode($user->organs)]];
     }
 
@@ -177,10 +181,10 @@ class Data
     private static function paramsGenericUnit($user): array
     {
         $params = [];
-        $idsUnit = array_column($user->units, "id");
 
         if($user->profile > User::PRF_GESTOR){
 
+            $idsUnit = array_column($user->units ?? [], "id");
             if(!is_null($idsUnit)){
                 foreach ($idsUnit as $id) {
                     $params[] = (object) ['column' => 'unit', 'operator' => '=', 'value' => $id];
