@@ -1,17 +1,15 @@
 <script setup>
-import { createApp, onMounted, watch } from 'vue';
+import { onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
-import http from '@/services/http';
-import exp from '@/services/export';
+import organ from '@/stores/organ';
+
 
 import NavMainUi from '@/components/NavMainUi.vue';
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
-import CatalogReport from './reports/CatalogReport.vue';
 import TableList from '@/components/table/TableList.vue';
-
 
 const router = useRouter()
 const emit = defineEmits(['callAlert', 'callUpdate'])
@@ -20,7 +18,7 @@ const props = defineProps({
 })
 
 const [page, pageData] = Layout.new(emit, {
-    url: '/catalogs',
+    url: '/catalogsitems',
     datalist: props.datalist,
     header: [
         { key: 'name', title: 'CATÁLOGO' },
@@ -36,18 +34,7 @@ const [page, pageData] = Layout.new(emit, {
     }
 })
 
-function export_catalog(id) {
-    http.get(`${page.url}/export/${id}`, emit, (resp) => {
-        const containerReport = document.createElement('div')
-        const instanceReport = createApp(CatalogReport, { catalog: resp.data, selects: page.selects })
-        instanceReport.mount(containerReport)
-        exp.exportPDF(containerReport, `CATÁLOGO-${resp.data.name}`)
-    })
-}
 
-function catalog(id) {
-    router.replace({ name: 'catalogitems', params: { id } })
-}
 
 watch(() => props.datalist, (newdata) => {
     page.datalist = newdata
@@ -72,10 +59,10 @@ onMounted(() => {
             <section v-if="!page.ui.register && !page.ui.prepare" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Catálogos</h2>
+                        <h2>Catálogo </h2>
                         <p>
                             Listagem dos catálogos de itens atrelados ao
-                            <span class="txt-color">{{ page.organ_name }}</span>
+                            <span class="txt-color">{{ organ.get_organ()?.name }}</span>
                         </p>
                     </div>
                     <div class="d-flex gap-2">
@@ -123,10 +110,8 @@ onMounted(() => {
 
                 <div role="list" class="container p-0">
                     <TableList :header="page.header" :body="page.datalist" :actions="[
-                        Actions.Create('cube-outline', 'Itens', catalog),
                         Actions.Edit(pageData.update),
-                        Actions.Delete(pageData.remove),
-                        Actions.Export('document-text-outline', export_catalog),
+                        Actions.Delete(pageData.remove)
                     ]" />
                 </div>
             </section>

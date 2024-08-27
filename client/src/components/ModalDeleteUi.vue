@@ -28,7 +28,6 @@ function remove() {
     http.destroy(`${props.params.url}/destroy`, data, emit, (resp) => {
         if (http.success(resp)) {
             http.post(`${props.params.url}/list`, props.params.search, emit, (resp) => {
-                console.log(resp.data)
                 emit('callUpdate', resp.data)
             })
         }
