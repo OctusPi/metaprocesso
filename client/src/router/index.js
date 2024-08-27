@@ -122,16 +122,17 @@ const router = createRouter({
   ]
 })
 
-
 router.beforeEach(async (to) => {
 	if (to.meta?.auth) {
 		utils.load(true)
 		try {
 			const isAuthenticated = await auth.is_authenticated(to.path)
-			if (!isAuthenticated) {
+      if (!isAuthenticated) {
+        console.log('executou success')
 				return '/'
 			}
-		} catch (e) {
+    } catch (e) {
+      console.log('nao executou success', e)
       return e.response?.status === 403
         ? '/forbidden' : e.response?.status === 404
         ? '/notfound' : '/'

@@ -30,7 +30,7 @@ async function is_authenticated(path){
     headers:{
       'Accept': 'application/json',
       'Authorization': 'Bearer ' + get_user()?.token,
-      'X-Custom-Header-Organ': organ.getOrgan()?.id
+      'X-Custom-Header-Organ': organ.get_organ()?.id
     }
   })
 
