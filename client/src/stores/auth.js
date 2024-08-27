@@ -25,17 +25,15 @@ function clear(){
 }
 
 async function is_authenticated(path){
-
   const {data} = await axios.get(import.meta.env.VITE_URL_API+path, {
     headers:{
       'Accept': 'application/json',
       'Authorization': 'Bearer ' + get_user()?.token,
-      'X-Custom-Header-Organ': organ.getOrgan()?.id
+      'X-Custom-Header-Organ': organ.get_organ()?.id
     }
   })
 
   return data;
-  
 }
 
 export default {
