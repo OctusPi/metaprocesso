@@ -101,7 +101,7 @@ const router = createRouter({
       path: '/catalogitems/:id(\\d+)',
       name: 'catalogitems',
       meta: { auth: true },
-      component: () => import('../views/CatalogItems.vue')
+      component: () => import('../views/CatalogItemsView.vue')
     },
     {
       path: '/comissionmembers/:id(\\d+)',
