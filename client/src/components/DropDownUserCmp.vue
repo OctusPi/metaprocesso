@@ -14,7 +14,6 @@ function isLoggedIn() {
 }
 
 function logout() {
-
     auth.clear()
     window.location = "/"
 }

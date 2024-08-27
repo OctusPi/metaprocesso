@@ -8,7 +8,6 @@ import notifys from '@/utils/notifys';
 const sysapp = inject('sysapp')
 const user = ref(auth.get_user())
 
-
 const emit = defineEmits(['callAlert'])
 const page = ref({
     data: {
@@ -79,15 +78,14 @@ onMounted(() => {
                 <p class="small txt-color-sec p-0 m-0">Ultimo Acesso: {{ user.last_login }}</p>
 
                 <div class="d-flex justify-content-between mt-4">
-                    <button type="button" class="btn btn-sm btn-warning" @click="logout">
-                        <ion-icon name="log-out-outline" class="fs-6 me-1"></ion-icon>
-                        <span></span>
-                        Sair do Sistema
-                    </button>
                     <RouterLink to="/home" class="btn btn-sm btn-primary">
                         <ion-icon name="log-in-outline" class="fs-6 me-1"></ion-icon>
-                        Partiu!
+                        <span>Partiu!</span>
                     </RouterLink>
+                    <button type="button" class="btn btn-sm btn-warning" @click="logout">
+                        <span>Sair...</span>
+                        <ion-icon name="log-out-outline" class="fs-6 ms-1"></ion-icon>
+                    </button>
                 </div>
             </div>
 
