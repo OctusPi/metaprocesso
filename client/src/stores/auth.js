@@ -25,7 +25,6 @@ function clear(){
 }
 
 async function is_authenticated(path){
-
   const {data} = await axios.get(import.meta.env.VITE_URL_API+path, {
     headers:{
       'Accept': 'application/json',
@@ -35,7 +34,6 @@ async function is_authenticated(path){
   })
 
   return data;
-  
 }
 
 export default {

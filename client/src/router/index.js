@@ -123,7 +123,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-	if (to.meta?.auth) {
+	if (to.name != 'selectorgan' && to.meta?.auth) {
 		utils.load(true)
 		try {
 			const isAuthenticated = await auth.is_authenticated(to.path)
