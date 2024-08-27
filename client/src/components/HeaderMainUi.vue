@@ -3,6 +3,7 @@ import DropDownCalendarCmp from './DropDownCalendarCmp.vue';
 import DropDownNotifyCmp from './DropDownNotifyCmp.vue';
 import DropDownThemeCmp from './DropDownThemeCmp.vue';
 import DropDownUserCmp from './DropDownUserCmp.vue';
+import InputFastAccess from './inputs/InputFastAccess.vue'
 
 function open_menu() {
     const menu = document.getElementById('nav-primary')
@@ -22,7 +23,7 @@ function open_menu() {
                 <ion-icon name="chevron-forward-outline" class="fs-6"></ion-icon>
             </div>
             <div class="search-bar flex-grow-1 me-2">
-                <input class="form-control" placeholder="Acesso Rápido">
+                <InputFastAccess />
             </div>
             <div class="user-actions d-flex">
                 <DropDownNotifyCmp />
