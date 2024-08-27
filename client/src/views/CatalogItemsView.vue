@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
-import organ from '@/stores/organ';
+import http from '@/services/http'
 
 
 import NavMainUi from '@/components/NavMainUi.vue';
@@ -11,15 +11,16 @@ import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import TableList from '@/components/table/TableList.vue';
 
-const router = useRouter()
+const router = useRoute()
 const emit = defineEmits(['callAlert', 'callUpdate'])
 const props = defineProps({
     datalist: { type: Array, default: () => [] }
 })
 
 const [page, pageData] = Layout.new(emit, {
-    url: '/catalogsitems',
+    url: '/catalogitems',
     datalist: props.datalist,
+    catalog:{},
     header: [
         { key: 'name', title: 'CATÁLOGO' },
         { key: 'comission.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
@@ -34,15 +35,20 @@ const [page, pageData] = Layout.new(emit, {
     }
 })
 
-
+function catalogDetails() {
+    http.get(`${page.url}/catalog/${router.params?.id}`, emit, (resp) => {
+        console.log(resp.data)
+    })
+}
 
 watch(() => props.datalist, (newdata) => {
     page.datalist = newdata
 })
 
 onMounted(() => {
-    pageData.selects()
-    pageData.list()
+    catalogDetails()
+    // pageData.selects()
+    // pageData.list()
 })
 
 </script>
@@ -62,7 +68,7 @@ onMounted(() => {
                         <h2>Catálogo </h2>
                         <p>
                             Listagem dos catálogos de itens atrelados ao
-                            <span class="txt-color">{{ organ.get_organ()?.name }}</span>
+                            <span class="txt-color">{{ page.organ_name }}</span>
                         </p>
                     </div>
                     <div class="d-flex gap-2">
