@@ -16,7 +16,7 @@ const props = defineProps({
 })
 
 const [page, pageData] = Layout.new(emit, {
-    url: '/programs',
+    url: '/dotations',
     datalist: props.datalist,
     header: [
         { key: 'name', title: 'PROGRAMA', sub: [{ key: 'unit.name' }] },
@@ -31,7 +31,7 @@ const [page, pageData] = Layout.new(emit, {
 })
 
 watch(() => props.datalist, (newdata) => {
-    page.value.datalist = newdata
+    page.datalist = newdata
 })
 
 onMounted(() => {

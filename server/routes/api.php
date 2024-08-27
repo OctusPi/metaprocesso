@@ -6,6 +6,7 @@ use App\Http\Controllers\ComissionMembers;
 use App\Http\Controllers\Comissions;
 use App\Http\Controllers\ComissionsEnds;
 use App\Http\Controllers\Demandants;
+use App\Http\Controllers\Dotations;
 use App\Http\Controllers\Home;
 use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\Programs;
@@ -55,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
     common('/comissions', Comissions::class);
     common('/endedcomissions', ComissionsEnds::class);
     common('/programs', Programs::class);
+    common('/dotations', Dotations::class);
     common('/comissionmembers/{comission}', ComissionMembers::class);
     common('/dfds', Dfds::class);
     common('/catalogitems/{catalog}', CatalogItems::class);

@@ -46,7 +46,7 @@ function fetchComission() {
 }
 
 watch(() => props.datalist, (newdata) => {
-    page.value.datalist = newdata
+    page.datalist = newdata
 })
 
 onMounted(() => {

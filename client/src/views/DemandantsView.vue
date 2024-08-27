@@ -36,7 +36,7 @@ const [page, pageData] = Layout.new(emit, {
 })
 
 watch(() => props.datalist, (newdata) => {
-    page.value.datalist = newdata
+    page.datalist = newdata
 })
 
 onMounted(() => {
