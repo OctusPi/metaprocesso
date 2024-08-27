@@ -23,14 +23,12 @@ const router = createRouter({
     {
       path: '/selectorgan',
       name: 'selectorgan',
-      meta: {
-        auth: true
-      },
       component: () => import('@/views/SelectOrganView.vue')
     },
     {
       path: '/home',
       name: 'home',
+      meta: { auth: true },
       component: () => import('@/views/HomeView.vue')
     },
     {
