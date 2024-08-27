@@ -295,8 +295,8 @@ onMounted(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registrar Dotação</h2>
-                        <p>Registro das dotações do sistema</p>
+                        <h2>Registrar DFD</h2>
+                        <p>Registro das DFDs do sistema</p>
                     </div>
                     <div class="d-flex gap-2">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
