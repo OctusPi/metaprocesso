@@ -29,7 +29,7 @@ function defresp(resp, emit){
 
     const data = resp?.data ?? {}
 
-    if (data == 'unauthenticated' || data == 'unauthorized') {
+    if (resp.status > 208 && (data?.message === 'Unauthenticated.' || data?.message === 'Unauthorized.')) {
         window.location = '/'
     }
 

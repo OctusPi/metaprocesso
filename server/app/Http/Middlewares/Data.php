@@ -97,7 +97,7 @@ class Data
 
                     Organ::class => self::paramsOrgan(),
 
-                    Unit::class => array_merge(self::paramsGenericOrgan(), self::paramsUnit($user)),
+                    Unit::class =>  self::paramsUnit($user),
 
                     User::class => self::paramsUser($user),
 
@@ -107,7 +107,7 @@ class Data
                 if (!is_null($mods)) {
                     $query->where(function ($query) use ($mods) {
                         foreach ($mods as $mod) {
-                            $query->where($mod->column, $mod->operator, $mod->value);
+                            $query->orWhere($mod->column, $mod->operator, $mod->value);
                         }
                     });
                 }

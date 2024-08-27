@@ -16,6 +16,11 @@ onMounted(() => {
 </script>
 
 <template>
+
+    <div id="load-wall" class="load-wall d-none">
+    <img id="load-img" class="load-img" src="./assets/imgs/load.svg">
+  </div>
+
     <AlertUi :alert="alert" />
 
     <RouterView 

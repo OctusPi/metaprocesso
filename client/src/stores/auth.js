@@ -1,4 +1,6 @@
 import { ref } from 'vue'
+import axios from 'axios'
+import organ from './organ'
 
 const key_store = 'user'+import.meta.env.VITE_APP_KEY
 const auth_user = ref(localStorage.getItem(key_store))
@@ -22,8 +24,23 @@ function clear(){
   localStorage.removeItem(key_store)
 }
 
+async function is_authenticated(path){
+
+  const {data} = await axios.get(import.meta.env.VITE_URL_API+path, {
+    headers:{
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + get_user()?.token,
+      'X-Custom-Header-Organ': organ.getOrgan()?.id
+    }
+  })
+
+  return data;
+  
+}
+
 export default {
   set_user,
   get_user,
-  clear
+  clear,
+  is_authenticated
 }
