@@ -35,6 +35,7 @@ function common(string $prefix, string $controller)
 // open
 Route::prefix('/auth')->controller(Authentication::class)->group(function () {
     Route::post('', 'login');
+    Route::get('/check', 'check');
     Route::post('/recover', 'recover');
 });
 
@@ -60,7 +61,6 @@ Route::middleware('auth:sanctum')->group(function () {
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
         Route::post('/renew', 'renew');
-        Route::get('/check', 'check');
         Route::post('/auth_organ', 'auth_organ');
     });
 

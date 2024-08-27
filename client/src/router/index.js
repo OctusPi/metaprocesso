@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import auth from '@/stores/auth'
+import utils from '@/utils/utils'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -114,6 +116,25 @@ const router = createRouter({
       component: () => import('../views/NotFoundView.vue')
     }
   ]
+})
+
+
+router.beforeEach(async (to) => {
+	if (to.meta?.auth) {
+		utils.load(true)
+		try {
+			const isAuthenticated = await auth.is_authenticated(to.path)
+			if (!isAuthenticated) {
+				return '/'
+			}
+		} catch (e) {
+      return e.response?.status === 403
+        ? '/forbidden' : e.response?.status === 404
+        ? '/notfound' : '/'
+		}finally{
+			utils.load(false)
+		}
+	}
 })
 
 export default router
