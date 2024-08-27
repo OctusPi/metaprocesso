@@ -20,6 +20,7 @@ const menuitens = {
         },
     },
     catalogs: { href: '/catalogs', icon: 'bookmarks', title: 'Catálogos', description: 'Catálogos de Itens GOV' },
+    suppliers: { href: '/suppliers', icon: 'storefront', title: 'Fornecedores', description: 'Catálogos de Fornecedores' },
     dfds: { href: '/dfds', icon: 'document-attach', title: 'DFDs', description: 'Formalização de Demandas' },
     processes: { href: '/processes', icon: 'document-text', title: 'Processos', description: 'Formalização de Processos' },
     etps: { href: '/etps', icon: 'documents', title: 'ETPs', description: 'Estudos Técnicos Preliminares' },
@@ -47,17 +48,20 @@ function close_menu() {
         </div>
         <div class="nav-items">
             <ul class="navbar-nav" v-if="menu && Object.keys(menu).length">
-                <li v-for="(item, key) in menuitens" :key="key" class="items">
-                    <template v-if="item.sub">
-                        <div class="accordion" :id="`accordion_${key}`">
+                <template v-for="(item, key) in menuitens" :key="key">
+                    <li v-if="menu.find(m => m.module === key)" class="items">
+                        <div v-if="item.sub" class="accordion" :id="`accordion_${key}`">
                             <div class="accordion-item">
                                 <h2 class="accordion-header">
-                                    <button class="accordion-button navmain-item" type="button" data-bs-toggle="collapse" :data-bs-target="`#collapseOne_${key}`" aria-expanded="true" :aria-controls="`collapseOne_${key}`">
+                                    <button class="accordion-button navmain-item" type="button"
+                                        data-bs-toggle="collapse" :data-bs-target="`#collapseOne_${key}`"
+                                        aria-expanded="true" :aria-controls="`collapseOne_${key}`">
                                         <ion-icon :name="item.icon" class="navmain-icon"></ion-icon>
                                         <span class="navmain-title">{{ item.title }}</span>
                                     </button>
                                 </h2>
-                                <div :id="`collapseOne_${key}`" class="accordion-collapse collapse" :data-bs-parent="`#accordion_${key}`">
+                                <div :id="`collapseOne_${key}`" class="accordion-collapse collapse"
+                                    :data-bs-parent="`#accordion_${key}`">
                                     <div class="accordion-body">
                                         <ul class="accordion-submenu">
                                             <li v-for="(subItem, subKey) in item.sub" :key="subKey" class="subitems">
@@ -71,26 +75,27 @@ function close_menu() {
                                 </div>
                             </div>
                         </div>
-                    </template>
-                    <template v-else>
-                        <RouterLink v-if="menu.find(m => m.module === key)" :to="item.href" class="navmain-item" :class="{ 'active-nav': router.name === item.href.replace('/', '') }">
+
+                        <RouterLink v-else :to="item.href" class="navmain-item"
+                            :class="{ 'active-nav': router.name === item.href.replace('/', '') }">
                             <ion-icon :name="item.icon" class="navmain-icon"></ion-icon>
                             <span class="navmain-title">{{ item.title }}</span>
                         </RouterLink>
-                    </template>
-                </li>
+                    </li>
+                </template>
             </ul>
         </div>
     </nav>
 </template>
 
+
 <style scoped>
-.hide-menu{
+.hide-menu {
     display: none;
     cursor: pointer;
 }
 
-.hide-menu:hover{
+.hide-menu:hover {
     color: var(--color-base);
 }
 
@@ -126,12 +131,13 @@ function close_menu() {
     font-size: 1.1rem !important;
 }
 
-@media(max-width:760px){
-    .main-nav{
+@media(max-width:760px) {
+    .main-nav {
         box-shadow: 2px 3px 30px 20px #31313113;
     }
-    .hide-menu{
-    display: block;
-}
+
+    .hide-menu {
+        display: block;
+    }
 }
 </style>

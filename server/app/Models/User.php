@@ -26,24 +26,25 @@ class User extends Authenticatable
     public const MOD_INI = ['id' => 0, 'module' => 'dashboard', 'title' => 'Acesso Inicial'];
     public const MOD_MANAGEMENT = ['id' => 1, 'module' => 'management', 'title' => 'Gestão Administrativa'];
     public const MOD_CATALOGS = ['id' => 2, 'module' => 'catalogs', 'title' => 'Catálogos'];
-    public const MOD_DFDS = ['id' => 3, 'module' => 'dfds', 'title' => 'DFDs'];
-    public const MOD_ETPS = ['id' => 4, 'module' => 'etps', 'title' => 'ETPs'];
-    public const MOD_PRICERECORDS = ['id' => 5, 'module' => 'pricerecords', 'title' => 'Registro de Preços'];
-    public const MOD_REFTERM = ['id' => 6, 'module' => 'refterms', 'title' => 'Termos de Referência'];
-    public const MOD_RISKINESS = ['id' => 7, 'module' => 'riskiness', 'title' => 'Mapas de Risco'];
-    public const MOD_PROCCESS = ['id' => 8, 'module' => 'processes', 'title' => 'Processos'];
-    public const MOD_TRANSMISSION = ['id' => 9, 'module' => 'trasmission', 'title' => 'Publicação e Transmissão'];
-    public const MOD_REPORTS = ['id' => 10, 'module' => 'reports', 'title' => 'Relatórios'];
-    public const MOD_USERS = ['id' => 11, 'module' => 'users', 'title' => 'Gestão de Usuários'];
-    public const MOD_ORGANS = ['id' => 12, 'module' => 'organs', 'title' => 'Gestão de Orgãos'];
-    public const MOD_UNITS = ['id' => 13, 'module' => 'units', 'title' => 'Gestão de Unidades'];
-    public const MOD_SECTORS = ['id' => 14, 'module' => 'sectors', 'title' => 'Gestão de Setores'];
-    public const MOD_ORDINATORS = ['id' => 15, 'module' => 'ordinators', 'title' => 'Gestão de Ordenadores'];
-    public const MOD_DEMANDANTS = ['id' => 16, 'module' => 'demandants', 'title' => 'Gestão de Demandantes'];
-    public const MOD_COMISSIONS = ['id' => 17, 'module' => 'comissions', 'title' => 'Gestão de Comissões'];
-    public const MOD_PROGRAMS = ['id' => 18, 'module' => 'programs', 'title' => 'Gestão de Programas'];
-    public const MOD_DOTATIONS = ['id' => 19, 'module' => 'dotations', 'title' => 'Gestão de Dotações'];
-    public const MOD_ATTACHMENT = ['id' => 20, 'module' => 'attachment', 'title' => 'Controle de Anexos'];
+    public const MOD_SUPPLIERS = ['id' => 3, 'module' => 'suppliers', 'title' => 'Fornecedores'];
+    public const MOD_DFDS = ['id' => 4, 'module' => 'dfds', 'title' => 'DFDs'];
+    public const MOD_ETPS = ['id' => 5, 'module' => 'etps', 'title' => 'ETPs'];
+    public const MOD_PRICERECORDS = ['id' => 6, 'module' => 'pricerecords', 'title' => 'Registro de Preços'];
+    public const MOD_REFTERM = ['id' => 7, 'module' => 'refterms', 'title' => 'Termos de Referência'];
+    public const MOD_RISKINESS = ['id' => 8, 'module' => 'riskiness', 'title' => 'Mapas de Risco'];
+    public const MOD_PROCCESS = ['id' => 9, 'module' => 'processes', 'title' => 'Processos'];
+    public const MOD_TRANSMISSION = ['id' => 10, 'module' => 'trasmission', 'title' => 'Publicação e Transmissão'];
+    public const MOD_REPORTS = ['id' => 11, 'module' => 'reports', 'title' => 'Relatórios'];
+    public const MOD_USERS = ['id' => 12, 'module' => 'users', 'title' => 'Gestão de Usuários'];
+    public const MOD_ORGANS = ['id' => 13, 'module' => 'organs', 'title' => 'Gestão de Orgãos'];
+    public const MOD_UNITS = ['id' => 14, 'module' => 'units', 'title' => 'Gestão de Unidades'];
+    public const MOD_SECTORS = ['id' => 15, 'module' => 'sectors', 'title' => 'Gestão de Setores'];
+    public const MOD_ORDINATORS = ['id' => 16, 'module' => 'ordinators', 'title' => 'Gestão de Ordenadores'];
+    public const MOD_DEMANDANTS = ['id' => 17, 'module' => 'demandants', 'title' => 'Gestão de Demandantes'];
+    public const MOD_COMISSIONS = ['id' => 18, 'module' => 'comissions', 'title' => 'Gestão de Comissões'];
+    public const MOD_PROGRAMS = ['id' => 19, 'module' => 'programs', 'title' => 'Gestão de Programas'];
+    public const MOD_DOTATIONS = ['id' => 20, 'module' => 'dotations', 'title' => 'Gestão de Dotações'];
+    public const MOD_ATTACHMENT = ['id' => 21, 'module' => 'attachment', 'title' => 'Controle de Anexos'];
 
     protected $table = 'users';
 
@@ -141,6 +142,7 @@ class User extends Authenticatable
             self::MOD_PROGRAMS,
             self::MOD_DOTATIONS,
             self::MOD_CATALOGS,
+            self::MOD_SUPPLIERS,
             self::MOD_DFDS,
             self::MOD_ETPS,
             self::MOD_PRICERECORDS,

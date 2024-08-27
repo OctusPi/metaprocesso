@@ -28,6 +28,7 @@ Clone o repositório do projeto:
     php artisan key:generate
     php artisan migrate
     php artisan db:seed
+    php artisan make:bigboss
    ```
 
 2. Inicie o servidor de desenvolvimento do Laravel:

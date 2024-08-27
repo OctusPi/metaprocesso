@@ -863,14 +863,15 @@ onMounted(() => {
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
                                 Registrar
                             </button>
-                            <button @click="pageData.ui('register')" class="btn btn-action-secondary">
-                                <ion-icon name="close-outline" class="fs-5"></ion-icon>
-                                Cancelar
-                            </button>
+                            
                             <button @click="pageData.save({ status: 1 })" type="button"
                                 class="btn btn-action-secondary">
                                 <ion-icon name="document-text-outline" class="fs-5"></ion-icon>
                                 Rascunho
+                            </button>
+                            <button @click="pageData.ui('register')" class="btn btn-action-secondary">
+                                <ion-icon name="close-outline" class="fs-5"></ion-icon>
+                                Cancelar
                             </button>
                             <button @click="tabs.next()" type="button" class="btn btn-action-secondary me-auto">
                                 <ion-icon name="arrow-forward" class="fs-5"></ion-icon>

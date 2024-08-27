@@ -58,7 +58,7 @@ onMounted(() => {
                     <ion-icon name="person-outline" class="me-3 fs-5"></ion-icon>
                     <span>
                         <span class="d-block p-0 m-0">Usuário</span>
-                        <span class="d-block p-0 m-0 fw-bolder">{{ user.name }}</span>
+                        <span class="d-block p-0 m-0 fw-bolder">{{ user.name.split(' ')[0] }}</span>
                     </span>
                 </a>
             </li>
@@ -72,7 +72,7 @@ onMounted(() => {
                 </a>
             </li>
             <li>
-                <a class="dropdown-item d-flex align-items-center" href="#">
+                <a class="dropdown-item d-flex align-items-center" href="/selectorgan">
                     <ion-icon name="business-outline" class="me-3 fs-5"></ion-icon>
                     <span>
                         <span class="d-block p-0 m-0">Orgão</span>

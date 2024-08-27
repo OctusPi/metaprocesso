@@ -13,6 +13,7 @@ const menuitens = [
     { href: '/dotations', icon: 'diamond', title: 'Dotações', description: 'Gestão de Dotações' },
     { href: '/users', icon: 'person-circle', title: 'Usuarios', description: 'Gestão de Usuarios' },
     { href: '/catalogs', icon: 'bookmarks', title: 'Catálogos', description: 'Catálogos de Itens GOV' },
+    { href: '/suppliers', icon: 'storefront', title: 'Fornecedores', description: 'Catálogos de Fornecedores' },
     { href: '/dfds', icon: 'document-attach', title: 'DFDs', description: 'Formalização de Demandas' },
     { href: '/processes', icon: 'document-text', title: 'Processos', description: 'Formalização de Processos' },
     { href: '/etps', icon: 'documents', title: 'ETPs', description: 'Estudos Técnicos Preliminares' },
