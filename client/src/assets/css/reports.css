@@ -1,0 +1,57 @@
+* {
+    color: black !important;
+    margin: 0;
+    padding: 0;
+    font-size: .85rem;
+}
+
+table {
+    margin-bottom: 10px;
+    width: 100%;
+    font-size: .75em;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-weight: 600;
+}
+
+table,
+th,
+td {
+    border-collapse: collapse;
+    border: 1px solid #000;
+}
+
+th {
+    font-weight: 500;
+    background-color: #e5e5e5;
+}
+
+th, td {
+    padding: 1px 4px;
+}
+
+.h-logo {
+    height: 70px;
+    width: auto;
+    border-radius: 5px;
+}
+
+.table-title {
+    margin-bottom: 5px;
+}
+
+.table-title p {
+    font-size: .8em;
+}
+
+.missing {
+    font-size: .8em;
+}
+
+.missing i {
+    font-size: 1em;
+}

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CatalogItems;
 use App\Http\Controllers\ComissionMembers;
 use App\Http\Controllers\Comissions;
 use App\Http\Controllers\ComissionsEnds;
@@ -9,9 +10,10 @@ use App\Http\Controllers\Programs;
 use App\Http\Controllers\Sectors;
 use App\Http\Controllers\Units;
 use App\Http\Controllers\Users;
-use App\Utils\Notify;
 use App\Http\Controllers\Organs;
+use App\Http\Controllers\Dfds;
 use Illuminate\Support\Facades\Route;
+use App\Utils\Notify;
 use App\Http\Controllers\Authentication;
 
 function common(string $prefix, string $controller)
@@ -50,12 +52,23 @@ Route::middleware('auth:sanctum')->group(function () {
     common('/endedcomissions', ComissionsEnds::class);
     common('/programs', Programs::class);
     common('/comissionmembers/{comission}', ComissionMembers::class);
+    common('/dfds', Dfds::class);
+    common('/catalogitems/{catalog}', CatalogItems::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
         Route::post('/renew', 'renew');
         Route::get('/check', 'check');
         Route::post('/auth_organ', 'auth_organ');
+    });
+
+    Route::prefix('/dfds')->controller(Dfds::class)->group(function(){
+        Route::post('/items', 'items');
+        Route::post('/generate', 'generate');
+    });
+
+    Route::prefix('/catalogitems/{catalog}')->controller(CatalogItems::class)->group(function(){
+        Route::get('/catalog', 'catalog');
     });
 });
 

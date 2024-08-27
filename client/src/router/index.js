@@ -86,6 +86,12 @@ const router = createRouter({
       component: () => import('../views/DotationsView.vue')
     },
     {
+      path: '/dfds',
+      name: 'dfds',
+      meta: { auth: true },
+      component: () => import('../views/DfdsView.vue')
+    },
+    {
       path: '/comissionmembers/:id(\\d+)',
       name: 'comissionmembers',
       meta: { auth: true },

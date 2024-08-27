@@ -165,6 +165,11 @@
   transition: 0.5s;
 }
 
+.form-check-label {
+  color: var(--color-input-txt);
+  font-size: .8em;
+}
+
 .form-control::placeholder {
   color: var(--color-input-placeholder);
 }
@@ -185,6 +190,10 @@
 
 .form-file::-webkit-file-upload-button {
   visibility: hidden;
+}
+
+.txt-very-small {
+  font-size: .7em !important;
 }
 
 .btn {

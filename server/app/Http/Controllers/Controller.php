@@ -42,7 +42,7 @@ abstract class Controller
                 return response()->json(Notify::error("Acesso não autorizado..."), 403);
             }
 
-            if($user->profile != User::PRF_ADMIN && !in_array($request->header('X-Custom-Header-Organ'), array_column($user->organs, 'id'))){
+            if ($user->profile != User::PRF_ADMIN && !in_array($request->header('X-Custom-Header-Organ'), array_column($user->organs, 'id'))) {
                 return response()->json(Notify::error("Acesso não autorizado ao Órgão."), 403);
             }
 
@@ -70,7 +70,7 @@ abstract class Controller
         return null;
     }
 
-    public final function base_save(Request $request, array $overrite = [])
+    public final function getter_save(Request $request, array $overrite = [])
     {
         $this->check_auth($request);
 
@@ -84,7 +84,7 @@ abstract class Controller
         $validate = $this->validate($dataModel);
 
         if (!is_null($validate)) {
-            return response()->json(Notify::warning($validate), 401);
+            return (object) ['instance' => null, 'error' => $validate];
         }
 
         try {
@@ -95,14 +95,22 @@ abstract class Controller
 
             $this->model->save();
 
-            Log::info($this->model);
-
-            return response()->json(Notify::success('Dados salvos com sucesso...'), 200);
+            return (object) ['instance' => $this->model, 'error' => null];
         } catch (\Throwable $th) {
             Log::error($th->getMessage());
-            return response()->json(Notify::error('Falha ao gravar dados...'), 500);
+            return (object) ['instance' => null, 'error' => 'Falha ao gravar dados...'];
+        }
+    }
+
+    public final function base_save(Request $request, array $overrite = [])
+    {
+        $save = $this->getter_save($request, $overrite);
+
+        if (is_null($save->instance)) {
+            return response()->json(Notify::error($save->error), 500);
         }
 
+        return response()->json(Notify::success('Dados salvos com sucesso...'), 200);
     }
 
     public final function base_details(Request $request, ?array $with = [])
