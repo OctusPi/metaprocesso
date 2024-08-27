@@ -1,23 +1,21 @@
 <script setup>
 import { createApp, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import TableList from '@/components/table/TableList.vue';
-import NavMainUi from '@/components/NavMainUi.vue';
-import HeaderMainUi from '@/components/HeaderMainUi.vue';
-import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import organ from '@/stores/organ';
-import masks from '@/utils/masks';
-import FileInput from '@/components/inputs/FileInput.vue';
 import http from '@/services/http';
-import CatalogReport from './reports/CatalogReport.vue';
 import exp from '@/services/export';
 
-const router = useRouter();
+import NavMainUi from '@/components/NavMainUi.vue';
+import HeaderMainUi from '@/components/HeaderMainUi.vue';
+import FooterMainUi from '@/components/FooterMainUi.vue';
+import CatalogReport from './reports/CatalogReport.vue';
+import TableList from '@/components/table/TableList.vue';
 
+
+const router = useRouter()
 const emit = defineEmits(['callAlert', 'callUpdate'])
-
 const props = defineProps({
     datalist: { type: Array, default: () => [] }
 })
@@ -26,8 +24,8 @@ const [page, pageData] = Layout.new(emit, {
     url: '/catalogs',
     datalist: props.datalist,
     header: [
-        { key: 'comission.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
         { key: 'name', title: 'CATÁLOGO' },
+        { key: 'comission.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
         { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
     ],
     search: {
@@ -35,7 +33,6 @@ const [page, pageData] = Layout.new(emit, {
     },
     rules: {
         name: 'required',
-        organ: 'required',
         comission: 'required'
     }
 })
@@ -54,7 +51,7 @@ function catalog(id) {
 }
 
 watch(() => props.datalist, (newdata) => {
-    page.value.datalist = newdata
+    page.datalist = newdata
 })
 
 onMounted(() => {
@@ -66,7 +63,9 @@ onMounted(() => {
 
 <template>
     <div class="page">
+
         <NavMainUi />
+
         <main class="main">
             <HeaderMainUi />
 
@@ -91,6 +90,7 @@ onMounted(() => {
                         </button>
                     </div>
                 </div>
+
                 <!-- Search -->
                 <div v-if="page.ui.search" role="search" class="content container p-4 mb-4">
                     <form @submit.prevent="pageData.list" class="row g-3">
@@ -121,6 +121,7 @@ onMounted(() => {
                         </div>
                     </form>
                 </div>
+
                 <div role="list" class="container p-0">
                     <TableList :header="page.header" :body="page.datalist" :actions="[
                         Actions.Edit(pageData.update),
@@ -148,8 +149,14 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <form class="form-row" @submit.prevent="pageData.save">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-                            <input type="hidden" name="id" v-model="page.id">
-                            <div class="col-sm-12 col-md-8">
+                
+                            <div class="col-sm-12 col-md-6">
+                                <label for="name" class="form-label">Catálogo</label>
+                                <input type="text" name="name" class="form-control" id="name"
+                                    :class="{ 'form-control-alert': page.valids.name }"
+                                    placeholder="Identificação do Catálogo" v-model="page.data.name">
+                            </div>
+                            <div class="col-sm-12 col-md-6">
                                 <label for="comission" class="form-label">Comissão</label>
                                 <select name="comission" class="form-control"
                                     :class="{ 'form-control-alert': page.valids.comission }" id="comission"
@@ -160,11 +167,7 @@ onMounted(() => {
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="name" class="form-label">Catálogo</label>
-                                <input type="text" name="name" class="form-control" id="name"
-                                    placeholder="Identificação do Catálogo" v-model="page.data.name">
-                            </div>
+                            
                             <div class="col-sm-12 col-md-12">
                                 <label for="description" class="form-label">Descrição</label>
                                 <input type="text" name="description" class="form-control" id="description"
@@ -186,65 +189,11 @@ onMounted(() => {
                 </div>
             </section>
 
-            <section v-if="page.ui.prepare" class="main-section container-fluid p-4">
-                <div role="heading" class="inside-title mb-4">
-                    <div>
-                        <h2>Catálogos</h2>
-                        <p>
-                            Listagem das comissões atreladas ao
-                            <span class="txt-color">{{ organ.get_organ()?.name }}</span>
-                        </p>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button @click="pageData.ui('register')" class="btn btn-action-primary">
-                            <ion-icon name="add" class="fs-5"></ion-icon>
-                            Adicionar
-                        </button>
-                        <button @click="pageData.ui('search')" class="btn btn-action-secondary">
-                            <ion-icon name="search" class="fs-5"></ion-icon>
-                            Pesquisar
-                        </button>
-                    </div>
-                </div>
-                <div role="form" class="container p-0">
-                    <form class="form-row" @submit.prevent="() => { extinctData.save(null, pageData.list) }">
-                        <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-
-                            <div class="col-sm-12 col-md-4">
-                                <label for="end_term" class="form-label">Data de Extinção</label>
-                                <input type="text" name="end_term" class="form-control" id="end_term"
-                                    :class="{ 'form-control-alert': extinct.valids.end_term }" placeholder="dd/mm/aaaa"
-                                    v-maska:[masks.maskdate] v-model="extinct.data.end_term">
-                            </div>
-                            <div class="col-sm-12 col-md-8">
-                                <FileInput label="Documento" identify="document" v-model="extinct.data.document"
-                                    :valid="extinct.valids.document" />
-                            </div>
-                            <div class="col-sm-12">
-                                <label for="description" class="form-label">Descrição da Extinção</label>
-                                <textarea name="description" class="form-control" id="description"
-                                    :class="{ 'form-control-alert': extinct.valids.description }"
-                                    v-model="extinct.data.description"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="d-flex flex-row-reverse gap-2 mt-4">
-                            <button type="submit" class="btn btn-action-primary">
-                                <ion-icon name="calendar-clear-outline" class="fs-5"></ion-icon>
-                                Extinguir
-                            </button>
-                            <button @click="pageData.ui('prepare')" class="btn btn-action-secondary">
-                                <ion-icon name="close-outline" class="fs-5"></ion-icon>
-                                Cancelar
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
             <FooterMainUi />
         </main>
     </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>
