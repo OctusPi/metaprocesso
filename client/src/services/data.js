@@ -64,25 +64,28 @@ class Data {
         })
     }
 
-    update = (id) => {
+    update = (id, onUpdate = () => {}) => {
         http.get(`${this.page.url}/details/${id}`, this.emit, (response) => {
             this.page.data = response.data
+            onUpdate()
             this.ui('update')
         })
     }
 
-    remove = (id) => {
+    remove = (id, onRemove = () => {}) => {
         this.emit('callRemove', {
             id: id,
             url: this.page.url,
             search: this.page.search,
         })
+        onRemove()
     }
 
-    fastremove = (id) => {
+    fastremove = (id, onRemove = () => {}) => {
         http.destroy(`${this.page.url}/fastdestroy`, { id }, this.emit, (resp) => {
             if (http.success(resp)) {
                 this.list()
+                onRemove()
             }
         })
     }
@@ -96,9 +99,7 @@ class Data {
     }
 
     selects = (key = null, search = null) => {
-
         const urlselect = (key && search) ? `${this.page.url}/selects/${key}/${search}` : `${this.page.url}/selects`
-
         http.get(urlselect, this.emit, (response) => {
             this.page.selects = response.data
         })

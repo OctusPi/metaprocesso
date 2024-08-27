@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CatalogItems;
 use App\Http\Controllers\Catalogs;
+use App\Http\Controllers\CatalogSubCategories;
 use App\Http\Controllers\ComissionMembers;
 use App\Http\Controllers\Comissions;
 use App\Http\Controllers\ComissionsEnds;
@@ -59,8 +60,8 @@ Route::middleware('auth:sanctum')->group(function () {
     common('/dotations', Dotations::class);
     common('/comissionmembers/{comission}', ComissionMembers::class);
     common('/dfds', Dfds::class);
-    common('/catalogitems/{catalog}', CatalogItems::class);
     common('/catalogs', Catalogs::class);
+    common('/catalogitems/{catalog}', CatalogItems::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
@@ -75,6 +76,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('/catalogitems/{catalog}')->controller(CatalogItems::class)->group(function(){
         Route::get('/catalog', 'catalog');
+    });
+
+    Route::prefix('/catalogsubcategories')->controller(CatalogSubCategories::class)->group(function(){
+        Route::post('/{organ}/list', 'list');
+        Route::post('/{organ}/save', 'save');
+        Route::post('/{organ}/fastdestroy', 'fast_delete');
+        Route::get('/{organ}/details/{id}', 'details');
     });
 });
 

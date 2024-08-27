@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Utils\Notify;
 use App\Utils\Utils;
 use App\Models\Catalog;
 use App\Http\Middlewares\Data;
@@ -19,14 +20,24 @@ class CatalogItems extends Controller
 
     public function list(Request $request)
     {
-
         return $this->base_list(
             $request,
-            ['name', 'description', 'status', 'type', 'category', 'subcategory', 'catalog'],
+            ['catalog', 'name', 'description', 'status', 'type', 'category', 'subcategory'],
             ['name'],
             ['subcategory'],
             organ: true
         );
+    }
+
+    public function save(Request $request)
+    {
+        $catalog = Catalog::find($request->catalog);
+
+        if ($catalog) {
+            return $this->base_save($request, ['catalog' => $catalog->id]);
+        }
+
+        return response()->json(Notify::warning("Catálogo não localizado!"), 404);
     }
 
     public function catalog(Request $request)

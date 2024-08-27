@@ -78,7 +78,7 @@ onMounted(() => {
                             <span class="txt-color">{{ page.organ_name }}</span>
                         </p>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-primary">
                             <ion-icon name="add" class="fs-5"></ion-icon>
                             Adicionar
@@ -135,10 +135,10 @@ onMounted(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registrar Comissão</h2>
-                        <p>Registro das comissões do sistema</p>
+                        <h2>Registrar Catálogo</h2>
+                        <p>Registro dos catálogos do sistema</p>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
                             <ion-icon name="arrow-back" class="fs-5"></ion-icon>
                             Voltar
@@ -148,7 +148,7 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <form class="form-row" @submit.prevent="pageData.save">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-                
+                            <input type="hidden" name="id" v-model="page.id">
                             <div class="col-sm-12 col-md-6">
                                 <label for="name" class="form-label">Catálogo</label>
                                 <input type="text" name="name" class="form-control" id="name"
@@ -166,7 +166,7 @@ onMounted(() => {
                                     </option>
                                 </select>
                             </div>
-                            
+
                             <div class="col-sm-12 col-md-12">
                                 <label for="description" class="form-label">Descrição</label>
                                 <input type="text" name="description" class="form-control" id="description"
@@ -193,6 +193,4 @@ onMounted(() => {
     </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

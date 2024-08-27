@@ -361,3 +361,8 @@
 .tls-grey {
   background-color: rgba(177, 177, 177, 0.35);
 }
+
+.modal-listage {
+  max-height: 500px;
+  overflow: scroll;
+}

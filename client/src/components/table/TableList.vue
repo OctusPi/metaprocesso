@@ -11,6 +11,7 @@ const props = defineProps({
     sent: { type: Boolean, default: true },
     order: { type: Boolean, default: true },
     count: { type: Boolean, default: true },
+    secondary: { type: Boolean, default: false },
 })
 
 const userBody = ref(props.body)
@@ -92,7 +93,7 @@ watch(() => props.body, (newval) => {
 </script>
 
 <template>
-    <div v-if="sent" class="tablelist">
+    <div v-if="sent" :class="[props.secondary ? 'tablelist-sec' : 'tablelist']">
         <div v-if="body.length" class="table-responsive-md">
             <table class="table-borderless table-striped table-hover"
                 :class="[props.smaller ? 'table tablesm' : 'table']">
@@ -131,8 +132,8 @@ watch(() => props.body, (newval) => {
                             </div>
                         </td>
                         <td v-if="props.actions && !props.selectable" class="align-middle">
-                            <div class="dropdown">
-                                <button class="btn btn-sm txt-color" type="button" data-bs-toggle="dropdown"
+                            <div class="dropdown d-flex">
+                                <button class="btn btn-sm txt-color ms-auto" type="button" data-bs-toggle="dropdown"
                                     aria-expanded="false">
                                     <ion-icon name="ellipsis-vertical-outline" class="fs-6" />
                                 </button>
@@ -168,6 +169,11 @@ watch(() => props.body, (newval) => {
 <style scoped>
 .tablelist {
     background-color: var(--color-background-soft);
+    border-radius: 15px;
+}
+
+.tablelist-sec {
+    background-color: var(--color-background);
     border-radius: 15px;
 }
 

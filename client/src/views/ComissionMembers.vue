@@ -73,7 +73,7 @@ onMounted(() => {
                             <span class="txt-color">{{ page.comission.name ?? '-' }}</span>
                         </p>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-primary">
                             <ion-icon name="add" class="fs-5"></ion-icon>
                             Adicionar
@@ -142,7 +142,7 @@ onMounted(() => {
                         <h2>Registrar Comissão</h2>
                         <p>Registro das dotações do sistema</p>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
                             <ion-icon name="arrow-back" class="fs-5"></ion-icon>
                             Voltar

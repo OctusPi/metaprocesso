@@ -5,7 +5,6 @@ import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
-import organ from '@/stores/organ';
 import { onMounted, watch } from 'vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
@@ -52,10 +51,10 @@ onMounted(() => {
                         <h2>Setores</h2>
                         <p>
                             Listagem dos setores atrelados ao
-                            <span class="txt-color">{{ organ.get_organ()?.name }}</span>
+                            <span class="txt-color">{{ page.organ_name }}</span>
                         </p>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-primary">
                             <ion-icon name="add" class="fs-5"></ion-icon>
                             Adicionar
@@ -111,7 +110,7 @@ onMounted(() => {
                         <h2>Registrar Setor</h2>
                         <p>Registro dos setores do sistema</p>
                     </div>
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
                             <ion-icon name="arrow-back" class="fs-5"></ion-icon>
                             Voltar

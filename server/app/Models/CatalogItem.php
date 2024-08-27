@@ -54,23 +54,23 @@ class CatalogItem extends Model
         'status',
     ];
 
-    public function rules():array
+    public function rules(): array
     {
         return [
-            'organ'       => 'required',
-            'catalog'     => 'required',
-            'code'           => 'required',
-            'name'           => 'required',
-            'description'    => 'required',
-            'und'            => 'required',
-            'origin'         => 'required',
-            'type'           => 'required',
-            'category'       => 'required',
-            'status'         => 'required',
+            'organ' => 'required',
+            'catalog' => 'required',
+            'code' => 'required',
+            'name' => 'required',
+            'description' => 'required',
+            'und' => 'required',
+            'origin' => 'required',
+            'type' => 'required',
+            'category' => 'required',
+            'status' => 'required',
         ];
     }
 
-    public static function messages():array
+    public static function messages(): array
     {
         return [
             'required' => 'Campo obrigatório não informado!'
@@ -138,7 +138,7 @@ class CatalogItem extends Model
         return $this->hasOne(CatalogSubCategoryItem::class, 'id', 'subcategory');
     }
 
-    public function dfditem():BelongsTo
+    public function dfditem(): BelongsTo
     {
         return $this->belongsTo(DfdItem::class);
     }
