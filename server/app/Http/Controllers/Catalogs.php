@@ -22,7 +22,7 @@ class Catalogs extends Controller
     {
         return $this->base_list(
             $request,
-            ['organ', 'comission', 'name'],
+            ['comission', 'name', 'description'],
             ['name'],
             ['organ', 'comission'],
             organ: true

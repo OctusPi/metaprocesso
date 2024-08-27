@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CatalogItems;
+use App\Http\Controllers\Catalogs;
 use App\Http\Controllers\ComissionMembers;
 use App\Http\Controllers\Comissions;
 use App\Http\Controllers\ComissionsEnds;
@@ -54,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     common('/comissionmembers/{comission}', ComissionMembers::class);
     common('/dfds', Dfds::class);
     common('/catalogitems/{catalog}', CatalogItems::class);
+    common('/catalogs', Catalogs::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {

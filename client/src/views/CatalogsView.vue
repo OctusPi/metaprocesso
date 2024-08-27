@@ -1,4 +1,6 @@
 <script setup>
+import { createApp, onMounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import TableList from '@/components/table/TableList.vue';
 import NavMainUi from '@/components/NavMainUi.vue';
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
@@ -6,13 +8,11 @@ import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import organ from '@/stores/organ';
-import { onMounted, watch } from 'vue';
-import Mounts from '@/services/mounts';
-import { useRouter } from 'vue-router';
-import http from '@/services/http';
-import utils from '@/utils/utils';
 import masks from '@/utils/masks';
 import FileInput from '@/components/inputs/FileInput.vue';
+import http from '@/services/http';
+import CatalogReport from './reports/CatalogReport.vue';
+import exp from '@/services/export';
 
 const router = useRouter();
 
@@ -23,45 +23,34 @@ const props = defineProps({
 })
 
 const [page, pageData] = Layout.new(emit, {
-    url: '/comissions',
+    url: '/catalogs',
     datalist: props.datalist,
     header: [
-        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'type' }] },
-        { key: 'unit.name', title: 'VINCULO' },
-        { key: 'status', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term', err: 'Presente' }] },
+        { key: 'comission.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
+        { key: 'name', title: 'CATÁLOGO' },
+        { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] }
     ],
+    search: {
+        sent: false
+    },
     rules: {
         name: 'required',
-        unit: 'required',
-        type: 'required',
-        status: 'required',
-        start_term: 'required'
+        organ: 'required',
+        comission: 'required'
     }
 })
 
-const [extinct, extinctData] = Layout.new(emit, {
-    url: '/endedcomissions',
-    rules: {
-        end_term: 'required',
-        description: 'required',
-        organ: 'required',
-        unit: 'required',
-        comission: 'required',
-    },
-})
-
-function extinction(id) {
-    http.get(`/comissions/details/${id}`, emit, (response) => {
-        extinct.data.comission = response.data.id
-        extinct.data.organ = response.data.organ
-        extinct.data.unit = response.data.unit
-        extinct.data.end_term = utils.dateNow()
-        pageData.ui('prepare')
+function export_catalog(id) {
+    http.get(`${page.url}/export/${id}`, emit, (resp) => {
+        const containerReport = document.createElement('div')
+        const instanceReport = createApp(CatalogReport, { catalog: resp.data, selects: page.selects })
+        instanceReport.mount(containerReport)
+        exp.exportPDF(containerReport, `CATÁLOGO-${resp.data.name}`)
     })
 }
 
-function members(id) {
-    router.replace({ name: 'comissionmembers', params: { id } })
+function catalog(id) {
+    router.replace({ name: 'catalogitems', params: { id } })
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -85,9 +74,9 @@ onMounted(() => {
             <section v-if="!page.ui.register && !page.ui.prepare" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Comissões</h2>
+                        <h2>Catálogos</h2>
                         <p>
-                            Listagem das comissões atreladas ao
+                            Listagem dos catálogos de itens atrelados ao
                             <span class="txt-color">{{ organ.get_organ()?.name }}</span>
                         </p>
                     </div>
@@ -106,18 +95,18 @@ onMounted(() => {
                 <div v-if="page.ui.search" role="search" class="content container p-4 mb-4">
                     <form @submit.prevent="pageData.list" class="row g-3">
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-name" class="form-label">Nome</label>
-                            <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                                placeholder="Pesquise por partes do nome da comissão">
-                        </div>
-                        <div class="col-sm-12 col-md-4">
-                            <label for="s-name" class="form-label">Tipo</label>
-                            <select name="type" class="form-control" id="type" v-model="page.search.type">
+                            <label for="s-name" class="form-label">Comissão</label>
+                            <select name="type" class="form-control" id="type" v-model="page.search.comission">
                                 <option value=""></option>
-                                <option v-for="s in page.selects.types" :value="s.id" :key="s.id">
+                                <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
                                     {{ s.title }}
                                 </option>
                             </select>
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <label for="s-name" class="form-label">Nome</label>
+                            <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
+                                placeholder="Pesquise por partes do nome da comissão">
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-description" class="form-label">Descrição</label>
@@ -136,13 +125,9 @@ onMounted(() => {
                     <TableList :header="page.header" :body="page.datalist" :actions="[
                         Actions.Edit(pageData.update),
                         Actions.Delete(pageData.remove),
-                        Actions.Dowload((id) => pageData.download(id, 'Comissão')),
-                        Actions.Create('calendar-clear-outline', 'Extinguir', extinction),
-                        Actions.Create('people-outline', 'Membros', members),
-                    ]" :mounts="{
-                        status: [Mounts.Cast(page.selects.status), Mounts.Status()],
-                        type: [Mounts.Cast(page.selects.status)]
-                    }" />
+                        Actions.Export('document-text-outline', export_catalog),
+                        Actions.Create('cube-outline', 'Itens', catalog),
+                    ]" />
                 </div>
             </section>
 
@@ -164,69 +149,27 @@ onMounted(() => {
                     <form class="form-row" @submit.prevent="pageData.save">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
                             <input type="hidden" name="id" v-model="page.id">
-                            <div class="col-sm-12">
-                                <label for="name" class="form-label">Nome</label>
-                                <input type="text" name="name" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.name }" id="name"
-                                    placeholder="Nome de Identificação da Comissão" v-model="page.data.name">
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="unit" class="form-label">Unidade</label>
-                                <select name="unit" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.unit }" id="unit"
-                                    v-model="page.data.unit">
-                                    <option value=""></option>
-                                    <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
-                                        {{ s.title }}
-                                    </option>
-                                </select>
-                            </div>
                             <div class="col-sm-12 col-md-8">
-                                <FileInput label="Documento" identify="document" v-model="page.data.document"
-                                    :valid="extinct.valids.document" />
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="start_term" class="form-label">Início Pleito</label>
-                                <VueDatePicker auto-apply v-model="page.data.start_term"
-                                    :input-class-name="page.valids.start_term ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
-                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="end_term" class="form-label">Início Pleito</label>
-                                <VueDatePicker auto-apply v-model="page.data.end_term"
-                                    :input-class-name="page.valids.end_term ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
-                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="status" class="form-label">Status</label>
-                                <select name="status" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.status }" id="status"
-                                    v-model="page.data.status">
+                                <label for="comission" class="form-label">Comissão</label>
+                                <select name="comission" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.comission }" id="comission"
+                                    v-model="page.data.comission">
                                     <option value=""></option>
-                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">
+                                    <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
                                         {{ s.title }}
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-sm-12">
-                                <label for="type" class="form-label">Tipo de Comissão</label>
-                                <select name="type" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.type }" id="type"
-                                    v-model="page.data.type">
-                                    <option value=""></option>
-                                    <option v-for="s in page.selects.types" :value="s.id" :key="s.id">
-                                        {{ s.title }}
-                                    </option>
-                                </select>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="name" class="form-label">Catálogo</label>
+                                <input type="text" name="name" class="form-control" id="name"
+                                    placeholder="Identificação do Catálogo" v-model="page.data.name">
                             </div>
-                            <div class="col-sm-12">
-                                <label for="description" class="form-label">Descrição das Atividades</label>
-                                <textarea name="description" class="form-control" id="description"
-                                    v-model="page.data.description"></textarea>
+                            <div class="col-sm-12 col-md-12">
+                                <label for="description" class="form-label">Descrição</label>
+                                <input type="text" name="description" class="form-control" id="description"
+                                    placeholder="Breve resumo do descrito sobre o catálogo"
+                                    v-model="page.data.description">
                             </div>
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
@@ -246,7 +189,7 @@ onMounted(() => {
             <section v-if="page.ui.prepare" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Comissões</h2>
+                        <h2>Catálogos</h2>
                         <p>
                             Listagem das comissões atreladas ao
                             <span class="txt-color">{{ organ.get_organ()?.name }}</span>

@@ -139,7 +139,7 @@ onMounted(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registrar Dotação</h2>
+                        <h2>Registrar Comissão</h2>
                         <p>Registro das dotações do sistema</p>
                     </div>
                     <div class="d-flex gap-2">
@@ -181,8 +181,8 @@ onMounted(() => {
                                     :class="{ 'form-control-alert': page.valids.status }" id="status"
                                     v-model="page.data.status">
                                     <option value=""></option>
-                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{ s.title
-                                        }}
+                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">
+                                        {{ s.title }}
                                     </option>
                                 </select>
                             </div>
@@ -193,8 +193,7 @@ onMounted(() => {
                                     v-model="page.data.responsibility">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.responsibilities" :value="s.id" :key="s.id">
-                                        {{
-                                            s.title }}
+                                        {{ s.title }}
                                     </option>
                                 </select>
                             </div>

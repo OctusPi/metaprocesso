@@ -34,7 +34,7 @@ const [page, pageData] = Layout.new(emit, {
         { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
         { key: 'demandant.name', title: 'DEMANDANTE' },
         { key: 'ordinator.name', title: 'ORDENADOR' },
-        { key: 'unit.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
+        { key: 'unit.name', title: 'ORIGEM' },
         { title: 'OBJETO', sub: [{ key: 'description' }] },
         { key: 'status', title: 'SITUAÇÃO' }
     ],
@@ -700,7 +700,7 @@ onMounted(() => {
                                 </div>
 
                                 <!-- Infos -->
-                                <div class="box-revisor m-4 m-0">
+                                <div class="box-revisor m-4 my-0">
                                     <div class="box-revisor-title d-flex mb-4">
                                         <div class="bar-revisor-title me-2"></div>
                                         <div class="txt-revisor-title">
@@ -802,7 +802,7 @@ onMounted(() => {
 
                                 <!-- Items -->
                                 <div class="box-revisor mb-0">
-                                    <div class="box-revisor-title d-flex m-4 mb-1">
+                                    <div class="box-revisor-title d-flex m-4 my-0">
                                         <div class="bar-revisor-title me-2"></div>
                                         <div class="txt-revisor-title">
                                             <h3>Lista de Itens</h3>
@@ -814,14 +814,14 @@ onMounted(() => {
                                     <div class="box-revisor-content">
                                         <!-- list items -->
                                         <div v-if="page.data?.items">
-                                            <TableList :count="false" :header="items.header" :body="page.data.items"
+                                            <TableList :count="false" :header="items.header" :body="page.data.items ?? []"
                                                 :mounts="{
                                                     'item.type': [Mounts.Cast(page.selects.items_types)],
                                                     'dotation': [Mounts.Cast(page.selects.dotations)],
                                                     'program': [Mounts.Cast(page.selects.programs)],
                                                 }" />
                                         </div>
-                                        <p v-else>Sem itens para mostrar</p>
+                                        <p class="mx-4 mt-2" v-else>Sem itens para mostrar</p>
                                     </div>
                                 </div>
 
