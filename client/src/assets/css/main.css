@@ -267,6 +267,17 @@
   background-color: var(--color-input-active);
 }
 
+.btn-action-close {
+  background-color: transparent;
+  color: var(--color-input-text);
+  padding: 8px;
+}
+
+.btn-action-close:hover {
+  background-color: var(--color-base-tls);
+  color: var(--color-base);
+}
+
 .spinner-border {
   border: solid var(--color-base);
   border-right-color: transparent;

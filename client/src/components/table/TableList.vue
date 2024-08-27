@@ -173,7 +173,7 @@ watch(() => props.body, (newval) => {
 }
 
 .tablelist-sec {
-    background-color: var(--color-background);
+    background-color: var(--color-input);
     border-radius: 15px;
 }
 

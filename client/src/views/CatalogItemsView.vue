@@ -344,9 +344,8 @@ onBeforeMount(() => {
                                     </p>
                                 </div>
                                 <div class="d-flex gap-2 flex-wrap">
-                                    <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-action-tertiary">
+                                    <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-action-close">
                                         <ion-icon name="close" class="fs-5"></ion-icon>
-                                        Fechar
                                     </button>
                                 </div>
                             </div>
