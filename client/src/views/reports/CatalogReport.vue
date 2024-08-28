@@ -85,7 +85,7 @@ const items = ref({
                 }" />
         </div>
         <div v-else class="small mb-4">
-            <p>Demanda não possuí materiais ou serviços</p>
+            <p>Catálogo não possuí materiais ou serviços</p>
         </div>
 
         <!-- City and Date -->

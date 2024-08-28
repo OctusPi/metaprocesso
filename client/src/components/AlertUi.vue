@@ -78,7 +78,7 @@ watch(() => props.alert, (newValue) => {
 
     .btn-alert{
         border-radius: 50%;
-        padding: 10px !important;
+        padding: 8px !important;
         display: flex;
         align-items: center;
         justify-content: center;

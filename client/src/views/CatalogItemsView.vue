@@ -3,22 +3,19 @@ import { onBeforeMount, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
+import Mounts from '@/services/mounts';
+import http from '@/services/http';
 import defines from '@/utils/defines';
+import utils from '@/utils/utils';
 
 import NavMainUi from '@/components/NavMainUi.vue';
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import TableList from '@/components/table/TableList.vue';
-import utils from '@/utils/utils';
-import http from '@/services/http';
-import Mounts from '@/services/mounts';
 import ListCatGov from '@/components/ListCatGov.vue';
-import router from '@/router';
 
 const route = useRoute()
-
-const emit = defineEmits(['callAlert', 'callUpdate'])
-
+const emit  = defineEmits(['callAlert', 'callUpdate'])
 const props = defineProps({
     datalist: { type: Array, default: () => [] }
 })
@@ -35,7 +32,7 @@ const [page, pageData] = Layout.new(emit, {
         { key: 'status', title: 'STATUS' }
     ],
     rules: {
-        code: 'requierd',
+        code: 'required',
         name: 'required',
         type: 'required',
         und: 'required',
@@ -138,10 +135,10 @@ onBeforeMount(() => {
                             <ion-icon name="grid-outline" class="fs-5"></ion-icon>
                             Grupos
                         </button>
-                        <button @click="router.replace({ name: 'catalogs' })" class="btn btn-action-secondary">
+                        <RouterLink to="/catalogs" class="btn btn-action-secondary">
                             <ion-icon name="arrow-back" class="fs-5"></ion-icon>
                             Voltar
-                        </button>
+                        </RouterLink>
                     </div>
                 </div>
 
