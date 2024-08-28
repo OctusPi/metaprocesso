@@ -94,15 +94,6 @@ onMounted(() => {
                 <div v-if="page.ui.search" role="search" class="content container p-4 mb-4">
                     <form @submit.prevent="pageData.list" class="row g-3">
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-name" class="form-label">Comissão</label>
-                            <select name="type" class="form-control" id="type" v-model="page.search.comission">
-                                <option value=""></option>
-                                <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
-                                    {{ s.title }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col-sm-12 col-md-4">
                             <label for="s-name" class="form-label">Nome</label>
                             <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
                                 placeholder="Pesquise por partes do nome da comissão">
@@ -111,6 +102,15 @@ onMounted(() => {
                             <label for="s-description" class="form-label">Descrição</label>
                             <input type="text" name="description" class="form-control" id="s-description"
                                 v-model="page.search.description" placeholder="Pesquise por partes da descrição">
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <label for="s-name" class="form-label">Comissão</label>
+                            <select name="type" class="form-control" id="type" v-model="page.search.comission">
+                                <option value=""></option>
+                                <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
+                                    {{ s.title }}
+                                </option>
+                            </select>
                         </div>
                         <div class="d-flex flex-row-reverse mt-4">
                             <button type="submit" class="btn btn-action-primary">
