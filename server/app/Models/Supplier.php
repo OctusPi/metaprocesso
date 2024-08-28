@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 
 class Supplier extends Model
 {
@@ -22,24 +23,29 @@ class Supplier extends Model
         'address',
         'modality',
         'size',
+        'organ'
     ];
 
     public function rules(): array
     {
         return [
             'name' => 'required',
-            'cnpj' => 'required',
+            'cnpj' => ['required', Rule::unique('suppliers', 'cnpj')->where(function($query){
+                return $query->where('organ', $this->organ);
+            })->ignore($this->id)],
             'address' => 'required',
             'email' => 'required',
             'phone' => 'required',
             'modality' => 'required',
+            'organ' => 'required'
         ];
     }
 
     public function messages(): array
     {
         return [
-            'required' => 'Campo obrigatório não informado!'
+            'required' => 'Campo obrigatório não informado!',
+            'unique'   => 'Fornecedor já registrado...'
         ];
     }
 

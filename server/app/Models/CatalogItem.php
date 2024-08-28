@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Validation\Rule;
 
 class CatalogItem extends Model
 {
@@ -59,7 +60,11 @@ class CatalogItem extends Model
         return [
             'organ' => 'required',
             'catalog' => 'required',
-            'code' => 'required',
+            'code' => [
+                'required',
+                Rule::unique('catalog_items', 'code')->where(function ($query) {
+                    return $query->where('organ', $this->organ)->where('catalog', $this->catalog);
+            })->ignore($this->id)],
             'name' => 'required',
             'description' => 'required',
             'und' => 'required',
@@ -73,7 +78,8 @@ class CatalogItem extends Model
     public static function messages(): array
     {
         return [
-            'required' => 'Campo obrigatório não informado!'
+            'required' => 'Campo obrigatório não informado!',
+            'unique'   => 'Item já existente no catálogo'
         ];
     }
 

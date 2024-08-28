@@ -18,9 +18,15 @@ abstract class Controller
     use AuthorizesRequests, ValidatesRequests;
 
     protected ?Model $model;
-    protected bool $secutiry = true;
     protected ?string $access_check = null;
+    protected bool $secutiry = true;
 
+    /**
+     * foundation stone construct controllers
+     * @param mixed $model
+     * @param mixed $access_check
+     * @param bool $secutiry
+     */
     public function __construct(?string $model = null, ?string $access_check = null, bool $secutiry = true)
     {
         $this->model = !is_null($model) ? new $model() : null;

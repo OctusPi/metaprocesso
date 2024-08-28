@@ -13,6 +13,7 @@ use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\Processes;
 use App\Http\Controllers\Programs;
 use App\Http\Controllers\Sectors;
+use App\Http\Controllers\Suppliers;
 use App\Http\Controllers\Units;
 use App\Http\Controllers\Users;
 use App\Http\Controllers\Organs;
@@ -20,20 +21,6 @@ use App\Http\Controllers\Dfds;
 use Illuminate\Support\Facades\Route;
 use App\Utils\Notify;
 use App\Http\Controllers\Authentication;
-
-function common(string $prefix, string $controller)
-{
-    Route::prefix($prefix)->controller($controller)->group(function () {
-        Route::post('/save', 'save');
-        Route::post('/destroy', 'delete');
-        Route::post('/list', 'list');
-        Route::get('/details/{id}', 'details');
-        Route::get('/selects/{key?}/{search?}', 'selects');
-        Route::get('/download/{id}', 'download');
-        Route::get('/export/{id}', 'export');
-        Route::get('', 'index');
-    });
-}
 
 
 // open
@@ -47,23 +34,37 @@ Route::prefix('/auth')->controller(Authentication::class)->group(function () {
 //authenticaded
 Route::middleware('auth:sanctum')->group(function () {
 
+    $common = function (string $prefix, string $controller) {
+        Route::prefix($prefix)->controller($controller)->group(function () {
+            Route::post('/save', 'save');
+            Route::post('/destroy', 'delete');
+            Route::post('/list', 'list');
+            Route::get('/details/{id}', 'details');
+            Route::get('/selects/{key?}/{search?}', 'selects');
+            Route::get('/download/{id}', 'download');
+            Route::get('/export/{id}', 'export');
+            Route::get('', 'index');
+        });
+    };
+
     // commons
-    common('/home', Home::class);
-    common('/organs', Organs::class);
-    common('/units', Units::class);
-    common('/sectors', Sectors::class);
-    common('/users', Users::class);
-    common('/ordinators', Ordinators::class);
-    common('/demandants', Demandants::class);
-    common('/comissions', Comissions::class);
-    common('/endedcomissions', ComissionsEnds::class);
-    common('/programs', Programs::class);
-    common('/dotations', Dotations::class);
-    common('/comissionmembers/{comission}', ComissionMembers::class);
-    common('/dfds', Dfds::class);
-    common('/catalogs', Catalogs::class);
-    common('/catalogitems/{catalog}', CatalogItems::class);
-    common('/processes', Processes::class);
+    $common('/home', Home::class);
+    $common('/organs', Organs::class);
+    $common('/units', Units::class);
+    $common('/sectors', Sectors::class);
+    $common('/users', Users::class);
+    $common('/ordinators', Ordinators::class);
+    $common('/demandants', Demandants::class);
+    $common('/comissions', Comissions::class);
+    $common('/endedcomissions', ComissionsEnds::class);
+    $common('/comissionmembers/{comission}', ComissionMembers::class);
+    $common('/programs', Programs::class);
+    $common('/dotations', Dotations::class);
+    $common('/catalogs', Catalogs::class);
+    $common('/catalogitems/{catalog}', CatalogItems::class);
+    $common('/suppliers', Suppliers::class);
+    $common('/dfds', Dfds::class);
+    $common('/processes', Processes::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
