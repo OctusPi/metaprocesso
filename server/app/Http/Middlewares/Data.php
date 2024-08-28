@@ -4,6 +4,7 @@ namespace App\Http\Middlewares;
 
 use App\Models\Dfd;
 use App\Models\Etp;
+use App\Models\Supplier;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\Organ;
@@ -81,6 +82,7 @@ class Data
                     Catalog::class,
                     CatalogItem::class,
                     CatalogSubCategoryItem::class,
+                    Supplier::class,
                     Etp::class,
                     PriceRecord::class,
                     Process::class,

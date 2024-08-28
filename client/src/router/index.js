@@ -62,6 +62,12 @@ const router = createRouter({
       component: () => import('../views/ComissionsView.vue')
     },
     {
+      path: '/comissionmembers/:id(\\d+)',
+      name: 'comissionmembers',
+      meta: { auth: true },
+      component: () => import('../views/ComissionMembers.vue')
+    },
+    {
       path: '/sectors',
       name: 'sectors',
       meta: { auth: true },
@@ -104,10 +110,10 @@ const router = createRouter({
       component: () => import('../views/CatalogItemsView.vue')
     },
     {
-      path: '/comissionmembers/:id(\\d+)',
-      name: 'comissionmembers',
+      path: '/suppliers',
+      name: 'suppliers',
       meta: { auth: true },
-      component: () => import('../views/ComissionMembers.vue')
+      component: () => import('../views/SuppliersView.vue')
     },
     {
       path: '/forbidden',
@@ -128,11 +134,9 @@ router.beforeEach(async (to) => {
 		try {
 			const isAuthenticated = await auth.is_authenticated(to.path)
       if (!isAuthenticated) {
-        console.log('executou success')
 				return '/'
 			}
     } catch (e) {
-      console.log('nao executou success', e)
       return e.response?.status === 403
         ? '/forbidden' : e.response?.status === 404
         ? '/notfound' : '/'
