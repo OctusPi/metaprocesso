@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CatalogItem;
 use App\Models\Dfd;
 use App\Models\Unit;
 use App\Models\User;
@@ -124,7 +125,8 @@ class Processes extends Controller
             'hirings_dfd' => Dfd::list_hirings(),
             'acquisitions_dfd' => Dfd::list_acquisitions(),
             'modalities' => Process::list_modalitys(),
-            'responsibilitys' => ComissionMember::list_responsabilities()
+            'responsibilitys' => ComissionMember::list_responsabilities(),
+            'items_types' => CatalogItem::list_types()
         ], 200);
     }
 
