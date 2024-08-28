@@ -110,6 +110,12 @@ const router = createRouter({
       component: () => import('../views/ComissionMembers.vue')
     },
     {
+      path: '/processes',
+      name: 'processes',
+      meta: { auth: true },
+      component: () => import('../views/ProcessesView.vue')
+    },
+    {
       path: '/forbidden',
       name: 'forbidden',
       component: () => import('../views/ForbiddenView.vue')

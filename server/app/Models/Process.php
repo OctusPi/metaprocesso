@@ -79,9 +79,9 @@ class Process extends Model
         return [
             'protocol' => [
                 'required',
-                Rule::unique('processes', 'protocol')->where(function ($query) {
-                    return $query->where('organ', $this->organ);
-                })->ignore($this->id)
+                Rule::unique('processes', 'protocol')
+                    ->where('organ', $this->organ)
+                    ->ignore($this->id)
             ],
             'ip' => 'required',
             'date_hour_ini' => 'required',

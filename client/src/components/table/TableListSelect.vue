@@ -1,0 +1,50 @@
+<script setup>
+import { onMounted, ref, watch } from "vue"
+import TableList from "./TableList.vue";
+import utils from "@/utils/utils";
+
+const props = defineProps({
+    body: { type: Array, default: () => [] },
+    header: { type: Array, default: () => [] },
+    virtual: { type: Object, default: () => ({}) },
+    mounts: { type: Object },
+    smaller: { type: Boolean },
+    sent: { type: Boolean, default: true },
+    count: { type: Boolean, default: false },
+    identify: { type: String },
+    only: { type: String, default: () => null },
+})
+
+const model = defineModel({ default: [] })
+
+const bodylist = ref(model.value)
+
+watch(() => props.body, (newValue) => {
+    if (Array.isArray(newValue)) {
+        bodylist.value = utils.reduceArrays(model.value, newValue)
+    }
+});
+
+onMounted(() => {
+    bodylist.value = model.value
+})
+
+</script>
+
+<template>
+    <TableList :header="props.header" :body="bodylist" :order="false" :mounts="props.mounts" :smaller="props.smaller"
+        :virtual="virtual" :sent="props.sent">
+        <template #select="{ instance }">
+            <input class="form-check-input" type="checkbox" :value="props.only ? instance[props.only] : instance"
+                :name="props.identify + '_check'" v-model="model">
+        </template>
+    </TableList>
+</template>
+
+<style scoped>
+input {
+    background-color: transparent;
+    width: 1.15rem;
+    height: 1.15rem;
+}
+</style>

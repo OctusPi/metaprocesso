@@ -18,6 +18,6 @@ export default class Actions {
         return Actions.Create(icon, 'Exportar', action)
     }
     static ModalDetails(action) {
-        return Actions.Create('bi bi-book', 'Detalhar', action, '#modalDetails')
+        return Actions.Create('book-outline', 'Detalhar', action, '#modalDetails')
     }
 }

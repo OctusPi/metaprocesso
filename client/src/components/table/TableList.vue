@@ -155,12 +155,12 @@ watch(() => props.body, (newval) => {
             </table>
         </div>
 
-        <div v-else class="text-center p-4">
+        <div v-else class="text-center p-4 txt-color-sec">
             <ion-icon name="cube-outline" class="fs-4"></ion-icon>
             <p class="p-0 m-0">Não foram localizados registros...</p>
         </div>
     </div>
-    <div v-else class="text-center p-4">
+    <div v-else class="text-center txt-color-sec p-4">
         <ion-icon name="chatbox-ellipses-outline" class="fs-3"></ion-icon>
         <p class="p-0 m-0">Aplique o filtro na opção localizar, para visualizar os dados...</p>
     </div>

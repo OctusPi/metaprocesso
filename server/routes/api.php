@@ -10,6 +10,7 @@ use App\Http\Controllers\Demandants;
 use App\Http\Controllers\Dotations;
 use App\Http\Controllers\Home;
 use App\Http\Controllers\Ordinators;
+use App\Http\Controllers\Processes;
 use App\Http\Controllers\Programs;
 use App\Http\Controllers\Sectors;
 use App\Http\Controllers\Units;
@@ -62,6 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
     common('/dfds', Dfds::class);
     common('/catalogs', Catalogs::class);
     common('/catalogitems/{catalog}', CatalogItems::class);
+    common('/processes', Processes::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
@@ -72,6 +74,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('/dfds')->controller(Dfds::class)->group(function(){
         Route::post('/items', 'items');
         Route::post('/generate', 'generate');
+    });
+
+    Route::prefix('/processes')->controller(Processes::class)->group(function(){
+        Route::post('/list_dfds', 'list_dfds');
+        Route::get('/list_dfd_items/{id}', 'list_dfd_items');
     });
 
     Route::prefix('/catalogitems/{catalog}')->controller(CatalogItems::class)->group(function(){
