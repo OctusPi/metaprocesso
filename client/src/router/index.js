@@ -98,6 +98,12 @@ const router = createRouter({
       component: () => import('../views/DfdsView.vue')
     },
     {
+      path: '/etps',
+      name: 'etps',
+      meta: { auth: true },
+      component: () => import('../views/EtpsView.vue')
+    },
+    {
       path: '/catalogs',
       name: 'catalogs',
       meta: { auth: true },
@@ -135,21 +141,21 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to) => {
-	if (to.name != 'selectorgan' && to.meta?.auth) {
-		utils.load(true)
-		try {
-			const isAuthenticated = await auth.is_authenticated(to.path)
+  if (to.name != 'selectorgan' && to.meta?.auth) {
+    utils.load(true)
+    try {
+      const isAuthenticated = await auth.is_authenticated(to.path)
       if (!isAuthenticated) {
-				return '/'
-			}
+        return '/'
+      }
     } catch (e) {
       return e.response?.status === 403
         ? '/forbidden' : e.response?.status === 404
-        ? '/notfound' : '/'
-		}finally{
-			utils.load(false)
-		}
-	}
+          ? '/notfound' : '/'
+    } finally {
+      utils.load(false)
+    }
+  }
 })
 
 export default router

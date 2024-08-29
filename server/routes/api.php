@@ -8,6 +8,7 @@ use App\Http\Controllers\Comissions;
 use App\Http\Controllers\ComissionsEnds;
 use App\Http\Controllers\Demandants;
 use App\Http\Controllers\Dotations;
+use App\Http\Controllers\Etps;
 use App\Http\Controllers\Home;
 use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\Processes;
@@ -65,6 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
     $common('/suppliers', Suppliers::class);
     $common('/dfds', Dfds::class);
     $common('/processes', Processes::class);
+    $common('/etps', Etps::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
