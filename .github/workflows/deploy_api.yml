@@ -21,7 +21,7 @@ jobs:
         REMOTE_HOST: ${{ secrets.REMOTE_HOST}}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         SOURCE: "server/"
-        TARGET: ${{ secrets.REMOTE_TARGET }}
+        TARGET: ${{ secrets.DEPLOY_API_TARGET }}
 
     - name: Build Application
       uses: appleboy/ssh-action@v1.0.3
@@ -29,3 +29,10 @@ jobs:
         host: ${{ secrets.REMOTE_HOST}}
         username: ${{ secrets.REMOTE_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+            cd ${{ secrets.DEPLOY_API_TARGET }}
+            chown -R octuspi:octuspi .
+            sudo -u root composer install --optimize-autoloader --no-dev --no-interaction
+            php artisan migrate --force
+            php artisan cache:clear
+            php artisan config:cache
