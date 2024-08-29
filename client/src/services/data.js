@@ -27,6 +27,7 @@ class Data {
                 this.page.ui.search = !this.page.ui.search
                 this.page.ui.register = false
                 this.page.ui.prepare = false
+                this.page.search = {}
                 break;
             case 'prepare':
                 this.page.ui.prepare = !this.page.ui.prepare
@@ -59,6 +60,7 @@ class Data {
         if (over)  data = Object.assign(data, over)
 
         http.post(`${this.page.url}/save`, data, this.emit, () => {
+            this.page.search = this.page.data
             this.list();
             onSave()
         })
