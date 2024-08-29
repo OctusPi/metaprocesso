@@ -32,7 +32,7 @@ class User extends Authenticatable
     public const MOD_PRICERECORDS = ['id' => 6, 'module' => 'pricerecords', 'title' => 'Registro de Preços'];
     public const MOD_REFTERM = ['id' => 7, 'module' => 'refterms', 'title' => 'Termos de Referência'];
     public const MOD_RISKINESS = ['id' => 8, 'module' => 'riskiness', 'title' => 'Mapas de Risco'];
-    public const MOD_PROCCESS = ['id' => 9, 'module' => 'processes', 'title' => 'Processos'];
+    public const MOD_PROCESSES = ['id' => 9, 'module' => 'processes', 'title' => 'Processos'];
     public const MOD_TRANSMISSION = ['id' => 10, 'module' => 'trasmission', 'title' => 'Publicação e Transmissão'];
     public const MOD_REPORTS = ['id' => 11, 'module' => 'reports', 'title' => 'Relatórios'];
     public const MOD_USERS = ['id' => 12, 'module' => 'users', 'title' => 'Gestão de Usuários'];
@@ -148,7 +148,7 @@ class User extends Authenticatable
             self::MOD_PRICERECORDS,
             self::MOD_REFTERM,
             self::MOD_RISKINESS,
-            self::MOD_PROCCESS,
+            self::MOD_PROCESSES,
             self::MOD_TRANSMISSION,
             self::MOD_REPORTS
         ];

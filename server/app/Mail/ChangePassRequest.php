@@ -2,8 +2,8 @@
 
 namespace App\Mail;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
@@ -15,7 +15,7 @@ class ChangePassRequest extends BaseMail
     /**
      * Create a new message instance.
      */
-    public function __construct(protected User $user, protected $expiration)
+    public function __construct(protected Model $user, protected $expiration)
     {
         parent::__construct();
     }

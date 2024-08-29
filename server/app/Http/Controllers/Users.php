@@ -12,76 +12,96 @@ use App\Utils\Notify;
 use App\Utils\Utils;
 use Exception;
 use Illuminate\Http\Request;
-use Log;
-use Mail;
-use Str;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class Users extends Controller
 {
+    /**
+     * Construtor do Controller de Usuários.
+     */
     public function __construct()
     {
         parent::__construct(User::class, User::MOD_USERS['module']);
     }
 
+    /**
+     * Lista os usuários de acordo com os parâmetros de busca.
+     *
+     * @param Request $request Objeto de requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON.
+     */
     public function list(Request $request)
     {
+        $organs = array_column($request->user()->organs, 'id');
+        $s_objs = Utils::map_search_obj($organs, 'organs', 'id');
+
         return $this->base_list(
             $request,
             ['name', 'profile', 'email'],
-            ['name']
+            ['name'],
+            objects:$s_objs
         );
     }
 
+    /**
+     * Salva um usuário, criando um novo ou atualizando um existente.
+     *
+     * @param Request $request Objeto de requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON.
+     */
     public function save(Request $request)
     {
-        $validateErros = $this->validate($request->all());
-
-        if ($validateErros) {
-            return response()->json(Notify::warning($validateErros), 400);
-        }
-
+        // Atualização de usuário existente
         if ($request->id) {
             return $this->base_save($request);
         }
 
+        // Criação de novo usuário
         $pass = Str::random(8);
-        $user = (new User())->fill($request->all());
-
+        $user = $this->model->fill($request->all());
         $user->username = $request->email;
-        $user->password = $pass;
+        $user->password = bcrypt($pass);  // Segurança: criptografar a senha
 
         if ($user->save()) {
+            // Envio do e-mail de boas-vindas
             Mail::to($user)->send(new Wellcome($user, $pass));
-            return Response()->json(Notify::success("Usuário cadastrado com sucesso"), 200);
+            return response()->json(Notify::success("Usuário cadastrado com sucesso"), 200);
         }
 
-        return Response()->json(Notify::warning("Usuário já cadastrado no sistema"), 400);
+        return response()->json(Notify::warning("Usuário já cadastrado no sistema"), 400);
     }
 
+    /**
+     * Retorna dados de seleção para uso em formulários ou filtros.
+     *
+     * @param Request $request Objeto de requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON.
+     */
     public function selects(Request $request)
     {
-        $profiles = [];
+        $profiles = array_filter(User::list_profiles(), function ($value, $key) use ($request) {
+            return $key >= $request->user()->profile;
+        }, ARRAY_FILTER_USE_BOTH);
 
-        foreach (User::list_profiles() as $key => $value) {
-            if ($key >= $request->user()->profile) {
-                $profiles[] = ['id' => $key, 'title' => $value];
-            }
-        }
+        // Mapeia os perfis em um formato adequado para seleção
+        $profiles = array_map(fn($key, $value) => ['id' => $key, 'title' => $value], array_keys($profiles), $profiles);
 
         try {
-            return Response()->json([
+            return response()->json([
                 'profiles' => $profiles,
-                'organs' => Utils::map_select(Data::find(Organ::class, order: ['name'])),
-                'units' => Utils::map_select(Data::find(Unit::class, order: ['name'])),
-                'sectors' => Utils::map_select(Data::find(Sector::class, order: ['name'])),
+                'organs' => Utils::map_select(Data::find(new Organ(), order: ['name'])),
+                'units' => Utils::map_select(Data::find(new Unit(), order: ['name'])),
+                'sectors' => Utils::map_select(Data::find(new Sector(), order: ['name'])),
                 'status' => User::list_status(),
                 'modules' => $request->user()->profile != User::PRF_ADMIN
                     ? $request->user()->modules
                     : User::list_modules(),
             ], 200);
         } catch (Exception $th) {
-            Log::info($th->getMessage());
-            return Response()->json(Notify::error('Falha ao recuperar dados!'), 500);
+            Log::error($th->getMessage());
+            return response()->json(Notify::error('Falha ao recuperar dados!'), 500);
         }
     }
 }

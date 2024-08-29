@@ -23,25 +23,24 @@ class Demandants extends Controller
             $request,
             ['unit', 'sector', 'name'],
             ['name'],
-            ['organ', 'unit'],
-            organ: true
+            ['organ', 'unit']
         );
     }
 
     public function selects(Request $request)
     {
-        $sectors = $request->key == 'unit' ? Utils::map_select(Data::find(Sector::class, [
+        $sectors = $request->key == 'unit' ? Utils::map_select(Data::find(new Sector(), [
             [
                 'column' => 'unit',
                 'operator' => '=',
                 'mode' => 'AND',
                 'value' => $request->search,
             ]
-        ], ['name'])) : Utils::map_select(Data::find(Sector::class, order: ['name']));
+        ], ['name'])) : Utils::map_select(Data::find(new Sector(), order: ['name']));
 
         return Response()->json([
             'sectors' => $sectors,
-            'units' => Utils::map_select(Data::find(Unit::class, order: ['name'])),
+            'units' => Utils::map_select(Data::find(new Unit(), order: ['name'])),
             'status' => Demandant::list_status(),
         ], 200);
     }

@@ -2,8 +2,8 @@
 
 namespace App\Mail;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -15,7 +15,7 @@ class Wellcome extends BaseMail
     /**
      * Create a new message instance.
      */
-    public function __construct(protected User $user, protected String $passwd)
+    public function __construct(protected Model $user, protected String $passwd)
     {
         parent::__construct();
     }

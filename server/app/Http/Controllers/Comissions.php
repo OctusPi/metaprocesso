@@ -13,43 +13,62 @@ use Illuminate\Http\Request;
 
 class Comissions extends Controller
 {
+    /**
+     * Construtor do controller de Comissões.
+     * Define o model associado e o módulo de acesso.
+     */
     public function __construct()
     {
         parent::__construct(Comission::class, User::MOD_COMISSIONS['module']);
     }
 
+    /**
+     * Lista as comissões baseando-se nos filtros fornecidos.
+     */
     public function list(Request $request)
     {
         return $this->base_list(
             $request,
-            ['name', 'type', 'description'],
-            ['name'],
-            ['organ', 'unit'],
-            organ: true
+            ['name', 'type', 'description'], // Campos para busca
+            ['name'], // Ordenação por nome
+            ['organ', 'unit'] // Relações para carregamento adiantado
         );
     }
 
+    /**
+     * Salva ou atualiza uma comissão, com suporte a upload de documentos.
+     */
     public function save(Request $request)
     {
+        // Inicializa o manipulador de upload
         $upload = new Uploads($request, ['document' => ['nullable' => true]]);
 
+        // Remove o documento antigo, se existir
         if ($request->id && $request->hasFile('document')) {
             $instance = $this->model::find($request->id);
             $upload->remove($instance->document);
         }
 
+        // Salva os dados da comissão
         return $this->base_save($request, $upload->mergeUploads([]));
     }
 
+    /**
+     * Retorna detalhes de uma comissão específica.
+     * Suporta exibição de dados adicionais conforme a consulta.
+     */
     public function details(Request $request)
     {
         if ($request->query('display') == 1) {
-            return Data::findOne(Comission::class, ['id' => $request->id], with: ['organ', 'unit']);
+            return Data::findOne($this->model, ['id' => $request->id], with: ['organ', 'unit']);
         }
 
         return $this->base_details($request);
     }
 
+    /**
+     * Faz o download do documento associado à comissão.
+     */
     public function download(Request $request)
     {
         $comission = Comission::find($request->id);
@@ -61,10 +80,13 @@ class Comissions extends Controller
         return response()->json(Notify::warning('Arquivo Indisponível'));
     }
 
+    /**
+     * Retorna os dados de seleção (unidades, tipos, status) necessários para formularios.
+     */
     public function selects(Request $request)
     {
-        return Response()->json([
-            'units' => Utils::map_select(Data::find(Unit::class, order: ['name'])),
+        return response()->json([
+            'units' => Utils::map_select(Data::find(new Unit(), order: ['name'])),
             'types' => Comission::list_types(),
             'status' => Comission::list_status()
         ], 200);

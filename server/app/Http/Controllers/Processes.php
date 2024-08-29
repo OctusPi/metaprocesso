@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CatalogItem;
 use App\Models\Dfd;
+use App\Models\DfdItem;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
 use App\Utils\Notify;
-use App\Models\DfdItem;
 use App\Models\Process;
 use App\Models\Program;
-use App\Http\Middlewares\Data;
 use App\Models\Dotation;
 use App\Models\Comission;
 use App\Models\Ordinator;
+use App\Models\CatalogItem;
 use Illuminate\Http\Request;
+use App\Http\Middlewares\Data;
 use App\Models\ComissionMember;
 use Illuminate\Support\Collection;
 
@@ -23,7 +23,7 @@ class Processes extends Controller
 {
     public function __construct()
     {
-        parent::__construct(Process::class, User::MOD_PROCCESS['module']);
+        parent::__construct(Process::class, User::MOD_PROCESSES['module']);
     }
 
     public function save(Request $request)
@@ -71,8 +71,7 @@ class Processes extends Controller
             $request,
             ['organ', 'units', 'protocol', 'date_hour_ini', 'status', 'description'],
             ['date_hour_ini'],
-            ['organ', 'comission'],
-            organ: true
+            ['organ', 'comission']
         );
     }
 
@@ -85,13 +84,13 @@ class Processes extends Controller
         $search = Utils::map_search(['protocol', 'organ', 'description'], $request->all());
         $betw = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
 
-        $query = Data::find(Dfd::class, $search, ['date_ini'], ['organ', 'unit', 'comission', 'demandant', 'ordinator'], $betw);
+        $query = Data::find(new Dfd(), $search, ['date_ini'], ['organ', 'unit', 'comission', 'demandant', 'ordinator'], $betw);
         return Response()->json($query, 200);
     }
 
     public function list_dfd_items(Request $request)
     {
-        return Data::find(DfdItem::class, ['dfd' => $request->id], null, ['item', 'dotation', 'program']);
+        return Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']);
     }
 
 
@@ -113,11 +112,11 @@ class Processes extends Controller
     public function selects(Request $request)
     {
         return Response()->json([
-            'comissions' => Utils::map_select(Data::find(Comission::class, order: ['name'])),
-            'ordinators' => Utils::map_select(Data::find(Ordinator::class, order: ['name'])),
-            'programs' => Utils::map_select(Data::find(Program::class, order: ['name'])),
-            'dotations' => Utils::map_select(Data::find(Dotation::class, order: ['name'])),
-            'units' => Utils::map_select(Data::find(Unit::class, order: ['name'])),
+            'comissions' => Utils::map_select(Data::find(new Comission(), order: ['name'])),
+            'ordinators' => Utils::map_select(Data::find(new Ordinator(), order: ['name'])),
+            'programs' => Utils::map_select(Data::find(new Program(), order: ['name'])),
+            'dotations' => Utils::map_select(Data::find(new Dotation(), order: ['name'])),
+            'units' => Utils::map_select(Data::find(new Unit(), order: ['name'])),
             'types' => Process::list_types(),
             'status' => Process::list_status(),
             'dfds_status' => Dfd::list_status(),

@@ -24,8 +24,7 @@ class CatalogItems extends Controller
             $request,
             ['catalog', 'name', 'description', 'status', 'type', 'category', 'subcategory'],
             ['name'],
-            ['subcategory'],
-            organ: true
+            ['subcategory']
         );
     }
 
@@ -54,7 +53,7 @@ class CatalogItems extends Controller
             'categories' => CatalogItem::list_categories(),
             'status' => CatalogItem::list_status(),
             'origins' => CatalogItem::list_origins(),
-            'groups' => Utils::map_select(Data::find(CatalogSubCategoryItem::class, order: ['name'])),
+            'groups' => Utils::map_select(Data::find(new CatalogSubCategoryItem(), order: ['name'])),
         ], 200);
     }
 }

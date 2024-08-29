@@ -25,14 +25,13 @@ class ComissionsEnds extends Controller
             $request,
             ['name', 'description'],
             ['end_term'],
-            ['organ', 'unit', 'comission'],
-            organ: true
+            ['organ', 'unit', 'comission']
         );
     }
 
     public function save(Request $request)
     {
-        $comission = Comission::find($request->comission);
+        $comission = Data::findOne(new Comission(), ['id' => $request->comission]);
 
         if (!$comission) {
             return response()->json(Notify::warning('Comissão não existe'), 404);
@@ -72,7 +71,7 @@ class ComissionsEnds extends Controller
     public function selects(Request $request)
     {
         return Response()->json([
-            'units' => Utils::map_select(Data::find(Unit::class, order: ['name'])),
+            'units' => Utils::map_select(Data::find(new Unit(), order: ['name'])),
         ], 200);
     }
 }

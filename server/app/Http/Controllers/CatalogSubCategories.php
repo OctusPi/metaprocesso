@@ -19,8 +19,7 @@ class CatalogSubCategories extends Controller
         return $this->base_list(
             $request,
             ['name', 'organ'],
-            ['name'],
-            organ: true
+            ['name']
         );
     }
 }
