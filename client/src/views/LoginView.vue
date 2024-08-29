@@ -10,10 +10,7 @@ const user = ref(auth.get_user())
 
 const emit = defineEmits(['callAlert'])
 const page = ref({
-    data: {
-        username:'octus@mail.com',
-        password:'senha123'
-    },
+    data: {},
     rules:{
         fields: {
             username:'required|email',
