@@ -113,9 +113,6 @@ class Processes extends Controller
     {
         return Response()->json([
             'comissions' => Utils::map_select(Data::find(new Comission(), order: ['name'])),
-            'ordinators' => Utils::map_select(Data::find(new Ordinator(), order: ['name'])),
-            'programs' => Utils::map_select(Data::find(new Program(), order: ['name'])),
-            'dotations' => Utils::map_select(Data::find(new Dotation(), order: ['name'])),
             'units' => Utils::map_select(Data::find(new Unit(), order: ['name'])),
             'types' => Process::list_types(),
             'status' => Process::list_status(),

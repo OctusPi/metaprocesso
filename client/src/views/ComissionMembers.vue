@@ -7,7 +7,7 @@ import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import Mounts from '@/services/mounts';
 import http from '@/services/http';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { onMounted } from 'vue';
 import { watch } from 'vue';
 import FileInput from '@/components/inputs/FileInput.vue';
@@ -18,7 +18,6 @@ const props = defineProps({
     datalist: { type: Array, default: () => [] }
 })
 
-const router = useRouter()
 const route = useRoute()
 
 const [page, pageData] = Layout.new(emit, {
@@ -82,10 +81,10 @@ onMounted(() => {
                             <ion-icon name="search" class="fs-5"></ion-icon>
                             Pesquisar
                         </button>
-                        <button @click="router.replace({ name: 'comissions' })" class="btn btn-action-secondary">
+                        <RouterLink to="/comissions" class="btn btn-action-secondary">
                             <ion-icon name="arrow-back" class="fs-5"></ion-icon>
                             Voltar
-                        </button>
+                        </RouterLink>
                     </div>
                 </div>
                 <!-- Search -->
