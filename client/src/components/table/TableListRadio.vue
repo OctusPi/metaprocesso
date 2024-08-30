@@ -6,7 +6,6 @@ import utils from "@/utils/utils";
 const props = defineProps({
     body: { type: Array, default: () => [] },
     header: { type: Array, default: () => [] },
-    virtual: { type: Object, default: () => ({}) },
     mounts: { type: Object },
     smaller: { type: Boolean },
     sent: { type: Boolean, default: true },
