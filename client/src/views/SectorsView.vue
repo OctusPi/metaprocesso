@@ -19,7 +19,7 @@ const [page, pageData] = Layout.new(emit, {
     header: [
         { key: 'name', title: 'IDENTIFICAÇÃO' },
         { key: 'unit.name', title: 'VÍNCULO' },
-        { key: 'description', title: 'DESCRIÇÃO' },
+        { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] },
     ],
     rules: {
         name: 'required',
@@ -108,7 +108,7 @@ onMounted(() => {
                 <div role="heading" class="inside-title mb-4">
                     <div>
                         <h2>Registrar Setor</h2>
-                        <p>Registro dos setores do sistema</p>
+                        <p>Preencha os dados abaixo para realizar o registro</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">

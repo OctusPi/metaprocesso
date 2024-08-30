@@ -43,7 +43,6 @@ const [extinct, extinctData] = Layout.new(emit, {
     rules: {
         end_term: 'required',
         description: 'required',
-        organ: 'required',
         unit: 'required',
         comission: 'required',
     },
@@ -150,7 +149,7 @@ onMounted(() => {
                 <div role="heading" class="inside-title mb-4">
                     <div>
                         <h2>Registrar Comissão</h2>
-                        <p>Registro das comissões do sistema</p>
+                        <p>Preencha os dados abaixo para realizar o registro</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">

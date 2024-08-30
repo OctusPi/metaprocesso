@@ -33,7 +33,6 @@ const [page, pageData] = Layout.new(emit, {
     ],
     rules: {
         process: 'required',
-        organ: 'required',
         comission: 'required',
         protocol: 'required',
         emission: 'required',

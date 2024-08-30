@@ -5,7 +5,7 @@ import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
-import { onMounted } from 'vue';
+import { onMounted, watch } from 'vue';
 import Mounts from '@/services/mounts';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
@@ -27,6 +27,10 @@ const [page, pageData] = Layout.new(emit, {
         unit: 'required',
         status: 'required'
     }
+})
+
+watch(() => props.datalist, (newdata) => {
+    page.datalist = newdata
 })
 
 onMounted(() => {
@@ -109,7 +113,7 @@ onMounted(() => {
                 <div role="heading" class="inside-title mb-4">
                     <div>
                         <h2>Registrar Programa</h2>
-                        <p>Registro dos programas do sistema</p>
+                        <p>Preencha os dados abaixo para realizar o registro</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
