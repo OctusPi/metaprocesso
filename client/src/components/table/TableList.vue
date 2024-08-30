@@ -24,7 +24,7 @@ function multiplexer(instance, key) {
             if (Array.isArray(value)) {
                 value = value.map((item) => item[subk]).join(',')
             } else {
-                value = value[subk] ?? {}
+                value = value[subk] ?? ''
             }
         })
         return value

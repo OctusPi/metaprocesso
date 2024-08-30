@@ -6,7 +6,7 @@ use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Program;
-use App\Middleware\Data;
+use App\Http\Middlewares\Data;
 use Illuminate\Http\Request;
 
 class Programs extends Controller
