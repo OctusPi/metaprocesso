@@ -21,8 +21,9 @@ const [page, pageData] = Layout.new(emit, {
     header: [
         { key: 'name', title: 'NOME' },
         { key: 'email', title: 'E-MAIL' },
+        { key: 'lastlogin', title: 'ÚLTIMO ACESSO', err: 'Não Acessado' },
         { key: 'profile', title: 'PERFIL', sub: [{ key: 'passchange', title: 'Senha' }] },
-        { key: 'status', title: 'STATUS', sub: [{ key: 'lastlogin', title: 'Ultimo Acesso:' }] }
+        { key: 'status', title: 'STATUS' }
     ],
     rules: {
         name: 'required',
@@ -73,8 +74,8 @@ onMounted(() => {
                     <form @submit.prevent="pageData.list" class="row g-3">
                         <div class="col-sm-12 col-md-4">
                             <label for="s-name" class="form-label">Nome</label>
-                            <input type="text" name="name" class="form-control" id="s-name"
-                                v-model="page.search.name" placeholder="Pesquise por partes do nome do usuário">
+                            <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
+                                placeholder="Pesquise por partes do nome do usuário">
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-email" class="form-label">E-mail</label>
@@ -83,8 +84,7 @@ onMounted(() => {
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-profile" class="form-label">Perfil</label>
-                            <select name="profile" class="form-control" id="s-profile"
-                                v-model="page.search.profile">
+                            <select name="profile" class="form-control" id="s-profile" v-model="page.search.profile">
                                 <option></option>
                                 <option v-for="s in page.selects.profiles" :value="s.id" :key="s.id">
                                     {{ s.title }}
@@ -116,7 +116,7 @@ onMounted(() => {
                 <div role="heading" class="inside-title mb-4">
                     <div>
                         <h2>Registrar Usuário</h2>
-                        <p>Registro dos usuários do sistema</p>
+                        <p>Preencha os dados abaixo para realizar o registro</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">

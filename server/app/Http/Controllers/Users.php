@@ -34,14 +34,14 @@ class Users extends Controller
      */
     public function list(Request $request)
     {
-        $organs = array_column($request->user()->organs, 'id');
+        $organs = collect($request->user()->organs)->pluck('id');
         $s_objs = Utils::map_search_obj($organs, 'organs', 'id');
 
         return $this->base_list(
             $request,
             ['name', 'profile', 'email'],
             ['name'],
-            objects:$s_objs
+            objects: $s_objs
         );
     }
 

@@ -32,7 +32,7 @@ class Dotations extends Controller
         // Retorna a lista base usando critérios de filtragem e ordenação
         return $this->base_list(
             $request,
-            ['unit', 'name', 'description'], // Campos para filtro
+            ['unit', 'name', 'law'], // Campos para filtro
             ['name'], // Campo para ordenação
             ['organ', 'unit'] // Relações para carregamento adiantado (eager loading)
         );
