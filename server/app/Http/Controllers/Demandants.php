@@ -29,19 +29,16 @@ class Demandants extends Controller
 
     public function selects(Request $request)
     {
-        $sectors = $request->key == 'unit' ? Utils::map_select(Data::find(new Sector(), [
-            [
-                'column' => 'unit',
-                'operator' => '=',
-                'mode' => 'AND',
-                'value' => $request->search,
-            ]
-        ], ['name'])) : Utils::map_select(Data::find(new Sector(), order: ['name']));
-
-        return Response()->json([
-            'sectors' => $sectors,
-            'units' => Utils::map_select(Data::find(new Unit(), order: ['name'])),
+        $selections = [
+            'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
+            'sectors' => Utils::map_select(Data::find(new Sector(), [], ['name'])),
             'status' => Demandant::list_status(),
-        ], 200);
+        ];
+
+        if ($request->key == 'filter') {
+            $selections['sectors'] = Data::find(new Sector(), ['unit' => $request->search], ['name']);
+        }
+
+        return Response()->json($selections, 200);
     }
 }

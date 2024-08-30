@@ -82,7 +82,7 @@ onMounted(() => {
                         <div class="col-sm-12 col-md-4">
                             <label for="s-unit" class="form-label">Unidade</label>
                             <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit"
-                                @change="pageData.selects('unit', page.search.unit)">
+                                @change="pageData.selects('filter', page.search.unit)">
                                 <option value=""></option>
                                 <option v-for="o in page.selects.units" :key="o.id" :value="o.id">
                                     {{ o.title }}
@@ -155,7 +155,7 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="unit" class="form-label">Unidade</label>
                                 <select name="unit" class="form-control"
-                                    @change="pageData.selects('unit', page.data.unit)"
+                                    @change="pageData.selects('filter', page.data.unit)"
                                     :class="{ 'form-control-alert': page.valids.unit }" id="unit"
                                     v-model="page.data.unit">
                                     <option value=""></option>
