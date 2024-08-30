@@ -33,7 +33,7 @@ onMounted(() => {
 
 <template>
     <TableList :header="props.header" :body="body" :order="false" :mounts="props.mounts" :smaller="props.smaller"
-        :virtual="virtual" :sent="props.sent">
+        :sent="props.sent">
         <template #select="{ instance }">
             <input class="form-check-input" type="radio" :value="props.only ? instance[props.only] : instance"
                 :name="props.identify + '_check'" v-model="model">
