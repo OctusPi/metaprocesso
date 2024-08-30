@@ -22,11 +22,11 @@ const [page, pageData] = Layout.new(emit, {
     header: [
         { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cpf' }] },
         { key: 'unit.name', title: 'VINCULO' },
-        { key: 'status', title: 'STATUS', sub: [{ key: 'start_term' }, { key: 'end_term' }] },
+        { key: 'status', title: 'STATUS', sub: [{ title: 'De ', key: 'start_term' }, { title: 'à ', key: 'end_term', err: 'Agora' }] },
     ],
     rules: {
         name: 'required',
-        cpf:  'required',
+        cpf: 'required',
         unit: 'required',
         status: 'required',
         start_term: 'required'
@@ -133,7 +133,7 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <form class="form-row" @submit.prevent="pageData.save()">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-                        
+
                             <div class="col-sm-12 col-md-8">
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control"

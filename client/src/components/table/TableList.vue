@@ -4,7 +4,6 @@ import { ref, watch } from "vue"
 const props = defineProps({
     body: { type: Array, default: () => [] },
     header: { type: Array, default: () => [] },
-    virtual: { type: Object, default: () => ({}) },
     actions: { type: Array },
     mounts: { type: Object },
     smaller: { type: Boolean },
@@ -18,9 +17,9 @@ const userBody = ref(props.body)
 const userHeader = ref(props.header)
 
 function multiplexer(instance, key) {
-    if (key.includes(".")) {
+    if (key.includes('.')) {
         let value = instance
-        key.split(".").forEach((subk) => {
+        key.split('.').forEach((subk) => {
             if (Array.isArray(value)) {
                 value = value.map((item) => item[subk]).join(',')
             } else {
@@ -35,7 +34,7 @@ function multiplexer(instance, key) {
 
 function orderBy(e, key) {
     if (e.target.dataset.asc) {
-        e.target.removeAttribute("data-asc")
+        e.target.removeAttribute('data-asc')
         userBody.value.sort((a, b) => {
             return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
         })
@@ -48,12 +47,6 @@ function orderBy(e, key) {
 }
 
 function applyMounters(instance, header) {
-    const mountedInstance = { ...instance, _virtual: {} }
-
-    Object.keys(props.virtual).forEach(key => {
-        mountedInstance._virtual[key] = props.virtual[key](instance)
-    })
-
     return header.map((attr) => {
         if (!attr.key) {
             return { value: null, classes: [] }
@@ -61,22 +54,19 @@ function applyMounters(instance, header) {
 
         if (props.mounts && props.mounts[attr.key]) {
             return props.mounts[attr.key].reduce((initial, current) => {
-                const { value, classes } = current(initial.value, mountedInstance)
+                const { value, classes } = current(initial.value, instance)
 
-                initial.classes = [
-                    ...initial.classes,
-                    ...classes
-                ]
+                initial.classes.push(...classes)
 
                 if (value != null) {
                     initial.value = value
                 }
 
                 return initial
-            }, { value: multiplexer(mountedInstance, attr.key), classes: [] })
+            }, { value: multiplexer(instance, attr.key), classes: [] })
         }
 
-        return { value: multiplexer(mountedInstance, attr.key), classes: [] }
+        return { value: multiplexer(instance, attr.key), classes: [] }
     })
 }
 
