@@ -296,7 +296,7 @@ onMounted(() => {
                 <div role="heading" class="inside-title mb-4">
                     <div>
                         <h2>Registrar DFD</h2>
-                        <p>Registro das DFDs do sistema</p>
+                        <p>Registro de Documento de Formalização de Demanda</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
@@ -309,7 +309,7 @@ onMounted(() => {
                     <TabNav :tabs="tabs" identify="tabbed" />
                     <form @submit.prevent="pageData.save({ status: 2 })">
                         <div class="content">
-                            <input type="hidden" name="id" v-model="page.id">
+                            <!-- tab origem -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('origin') }">
                                 <div class="col-sm-12 col-md-8">
@@ -362,7 +362,8 @@ onMounted(() => {
                                     </select>
                                 </div>
                             </div>
-
+                           
+                            <!-- tab informacoes -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('infos') }">
                                 <div class="col-sm-12 col-md-4">
@@ -464,11 +465,13 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- tab items -->
                             <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('items') }">
                                 <div class="col-sm-12 p-4 pt-1">
                                     <label for="search-item" class="form-label">Localizar Item no Catálogo
                                         Padronizado</label>
-                                    <div class="d-flex">
+                                    <div class="input-group">
                                         <input type="text" class="form-control" id="search-item"
                                             placeholder="Pesquise por parte do nome do item"
                                             aria-label="Pesquise por parte do nome do item"
@@ -483,8 +486,9 @@ onMounted(() => {
                                     </div>
 
                                     <!-- List Search Items -->
-                                    <div v-if="items.search && items.body.length"
-                                        class="position-absolute my-2 top-100 start-0">
+                                    <div class="container-list position-relative bg-success">
+                                        <div v-if="items.search && items.body.length"
+                                        class="position-absolute my-2 top-0 start-0 z-3">
                                         <div class="form-control load-items-cat p-0 m-0">
                                             <ul class="search-list-items">
                                                 <li v-for="i in items.body" :key="i.id" @click="select_item(i)"
@@ -513,6 +517,7 @@ onMounted(() => {
                                                 </li>
                                             </ul>
                                         </div>
+                                    </div>
                                     </div>
                                 </div>
                                 <div v-if="items.selected_item.item" class="p-4 py-0">
@@ -552,7 +557,7 @@ onMounted(() => {
                                                 v-model="items.selected_item.program">
                                                 <option value=""></option>
                                                 <option v-for="p in page.selects.programs" :key="p.id" :value="p.id">
-                                                    {{ p.title }}
+                                                    {{ p.name }}
                                                 </option>
                                             </select>
                                         </div>
@@ -562,7 +567,7 @@ onMounted(() => {
                                                 v-model="items.selected_item.dotation">
                                                 <option value=""></option>
                                                 <option v-for="d in page.selects.dotations" :key="d.id" :value="d.id">
-                                                    {{ d.title }}
+                                                    {{ d.name }}
                                                 </option>
                                             </select>
                                         </div>
@@ -581,17 +586,20 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
+
                                 <div v-if="page.data?.items">
                                     <TableList :count="false" :header="items.header" :actions="[
                                         Actions.Edit(update_item),
                                         Actions.FastDelete(delete_item),
                                     ]" :body="page.data.items" :mounts="{
                                         'item.type': [Mounts.Cast(page.selects.items_types)],
-                                        'dotation': [Mounts.Cast(page.selects.dotations)],
-                                        'program': [Mounts.Cast(page.selects.programs)],
+                                        'dotation': [Mounts.Cast(page.selects.dotations, 'id', 'name')],
+                                        'program': [Mounts.Cast(page.selects.programs, 'id', 'name')],
                                     }" />
                                 </div>
                             </div>
+
+                            <!-- tab detalhes -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('details') }">
                                 <div class="col-sm-12">
@@ -622,6 +630,8 @@ onMounted(() => {
                                         v-model="page.data.justification_quantity"></textarea>
                                 </div>
                             </div>
+
+                            <!-- tab revisar -->
                             <div class="tab-pane fade row gap-1 pt-3 position-relative"
                                 :class="{ 'show active': tabs.is('revisor') }">
                                 <!-- origin -->
