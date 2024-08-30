@@ -43,7 +43,7 @@ class Suppliers extends Controller
     {
         // Recupera e retorna dados de modalidades e tamanhos de fornecedores
         return response()->json([
-            'modalities' => Supplier::list_modalities(),
+            'modalities' => Supplier::list_modalitys(),
             'sizes' => Supplier::list_sizes()
         ]);
     }
