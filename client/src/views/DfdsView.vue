@@ -162,8 +162,9 @@ function generate(type) {
 }
 
 function rescue_members() {
-    http.get(`${page.url}/selects/comission/${page.data.comission}`, emit, (resp) => {
-        page.data.comission_members = resp.data
+    http.get(`${page.url}/selects/filter/${page.data.unit},${page.data.comission}`, emit, (resp) => {
+        page.selects = resp.data
+        page.data.comission_members = resp.data.comission_members
     })
 }
 
@@ -315,7 +316,7 @@ onMounted(() => {
                                     <label for="unit" class="form-label">Unidade</label>
                                     <select name="unit" class="form-control"
                                         :class="{ 'form-control-alert': page.valids.unit }" id="unit"
-                                        @change="pageData.selects('unit', page.data.unit)" v-model="page.data.unit">
+                                        @change="pageData.selects('filter', `${page.data.unit},${page.data.comission}`)" v-model="page.data.unit">
                                         <option value=""></option>
                                         <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
                                             {{ s.title }}
@@ -329,7 +330,7 @@ onMounted(() => {
                                         v-model="page.data.ordinator">
                                         <option value=""></option>
                                         <option v-for="s in page.selects.ordinators" :value="s.id" :key="s.id">
-                                            {{ s.title }}
+                                            {{ s.name }}
                                         </option>
                                     </select>
                                 </div>
@@ -356,7 +357,7 @@ onMounted(() => {
                                         v-model="page.data.demandant">
                                         <option value=""></option>
                                         <option v-for="s in page.selects.demandants" :value="s.id" :key="s.id">
-                                            {{ s.title }}
+                                            {{ s.name }}
                                         </option>
                                     </select>
                                 </div>

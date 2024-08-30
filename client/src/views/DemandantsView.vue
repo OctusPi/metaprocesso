@@ -26,8 +26,7 @@ const [page, pageData] = Layout.new(emit, {
     ],
     rules: {
         name: 'required',
-        cpf: 'required',
-        organ: 'required',
+        cpf:  'required',
         unit: 'required',
         status: 'required',
         start_term: 'required'
@@ -134,7 +133,7 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <form class="form-row" @submit.prevent="pageData.save()">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-                            <input type="hidden" name="id" v-model="page.id">
+                        
                             <div class="col-sm-12 col-md-8">
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control"
@@ -156,7 +155,7 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="unit" class="form-label">Unidade</label>
                                 <select name="unit" class="form-control"
-                                    @change="layout.data.selects('unit', page.data.unit)"
+                                    @change="pageData.selects('unit', page.data.unit)"
                                     :class="{ 'form-control-alert': page.valids.unit }" id="unit"
                                     v-model="page.data.unit">
                                     <option value=""></option>

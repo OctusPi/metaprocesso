@@ -2,12 +2,12 @@
 namespace App\Http\Middlewares;
 
 
+use App\Utils\Notify;
 use App\Models\Dfd;
 use App\Models\Etp;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\Organ;
-use App\Utils\Notify;
 use App\Models\Sector;
 use App\Models\Catalog;
 use App\Models\Process;
@@ -22,9 +22,9 @@ use App\Models\CatalogItem;
 use App\Models\PriceRecord;
 use App\Models\ComissionEnd;
 use App\Models\ComissionMember;
+use App\Models\CatalogSubCategoryItem;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use App\Models\CatalogSubCategoryItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
