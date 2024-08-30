@@ -112,9 +112,7 @@ class Data
      */
     public static function delete(Model $model, int $id)
     {
-        $delete = $model->where(['id' => $id, 'organ' => self::getOrgan()])->delete();
-
-        if ($delete) {
+        if ($model->where(['id' => $id, 'organ' => self::getOrgan()])->delete()) {
             return self::result(200, 'Registro removido com sucesso...');
         }
 
