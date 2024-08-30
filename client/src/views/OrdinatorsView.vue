@@ -55,7 +55,7 @@ onMounted(() => {
                     <div>
                         <h2>Ordenadores</h2>
                         <p>
-                            Listagem dos ordenadores relacionados ao
+                            Listagem dos ordenadores atrelados ao
                             <span class="txt-color">{{ page.organ_name }}</span>
                         </p>
                     </div>
@@ -120,7 +120,7 @@ onMounted(() => {
                 <div role="heading" class="inside-title mb-4">
                     <div>
                         <h2>Registrar Ordenador</h2>
-                        <p>Registrar um Ordenador de Despesas para Unidade</p>
+                        <p>Preencha os dados abaixo para realizar o registro</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">

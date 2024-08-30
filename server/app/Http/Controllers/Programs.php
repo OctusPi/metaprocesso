@@ -6,7 +6,7 @@ use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
 use App\Models\Program;
-use App\Middleware\Data;
+use App\Http\Middlewares\Data;
 use Illuminate\Http\Request;
 
 class Programs extends Controller
@@ -29,7 +29,7 @@ class Programs extends Controller
     {
         return $this->base_list(
             $request,
-            ['unit', 'name', 'description'],  // Campos para filtragem
+            ['unit', 'name', 'law'],  // Campos para filtragem
             ['name'],  // Campo para ordenação
             ['organ', 'unit']  // Relações para carregamento adiantado
         );

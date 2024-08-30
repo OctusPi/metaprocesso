@@ -58,7 +58,7 @@ onMounted(() => {
                 <div role="heading" class="inside-title mb-4">
                     <div>
                         <h2>Órgãos</h2>
-                        <p>Listagem de Unidades Executoras Centralizadoras</p>
+                        <p>Listagem dos órgãos disponíveis</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-primary">
@@ -111,8 +111,8 @@ onMounted(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registro de Órgãos</h2>
-                        <p>Registro de Unidades Executoras Centralizadoras</p>
+                        <h2>Registrar Órgão</h2>
+                        <p>Preencha os dados abaixo para realizar o registro</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
