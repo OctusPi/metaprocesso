@@ -93,15 +93,22 @@ class Dfds extends Controller
     public function selects(Request $request)
     {
         $selections = [
-            'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
-            'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
-            'dotations' => Utils::map_select(Data::find(new Dotation(), [], ['name']))
+            'units'         => Utils::map_select(Data::find(new Unit(), [], ['name'])),
+            'comissions'    => Utils::map_select(Data::find(new Comission(), [], ['name'])),
+            'acquisitions'  => Dfd::list_acquisitions(),
+            'prioritys'     => Dfd::list_priority(),
+            'hirings'       => Dfd::list_hirings(),
+            'categories'    => CatalogItem::list_categories(),
+            'items_types'   => CatalogItem::list_types()
         ];
 
         if($request->key == 'filter'){
             [$unit_id, $comission_id] = array_pad(explode(',', $request->search), 2, null);
+
             $selections['ordinators'] = Data::find(new Ordinator(), ['unit' => $unit_id], ['name']);
             $selections['demandants'] = Data::find(new Demandant(), ['unit' => $unit_id], ['name']);
+            $selections['programs'] = Data::find(new Program(), ['unit' => $unit_id], ['name']);
+            $selections['dotations'] = Data::find(new Dotation(), ['unit' => $unit_id], ['name']);
 
             $selections['comission_members'] = $comission_id
             ? Data::find(new ComissionMember(), ['comission' => $comission_id])
@@ -109,6 +116,11 @@ class Dfds extends Controller
         }
 
         return response()->json($selections, 200);
+    }
+
+    public function items(Request $request)
+    {
+        return (new CatalogItems())->list($request);
     }
 
     /**
