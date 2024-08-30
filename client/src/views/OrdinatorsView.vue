@@ -119,8 +119,8 @@ onMounted(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registrar Setor</h2>
-                        <p>Registrar um setor atrelado a uma unidade</p>
+                        <h2>Registrar Ordenador</h2>
+                        <p>Registrar um Ordenador de Despesas para Unidade</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
@@ -132,7 +132,6 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <form class="form-row" @submit.prevent="pageData.save()">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-                            <input type="hidden" name="id" v-model="page.id">
                             <div class="col-sm-12 col-md-8">
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control"

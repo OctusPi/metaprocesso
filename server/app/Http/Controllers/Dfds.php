@@ -50,7 +50,7 @@ class Dfds extends Controller
         $dfd = $request->id ? Data::findOne(new Dfd(), ['id' => $request->id]) : null;
 
         if ($dfd && $dfd->status >= Dfd::STATUS_BLOQUEADO) {
-            return response()->json(Notify::warning('Não é possível editar DFDs em uso no processo!'), 403);
+            return response()->json(Notify::warning('Não é possível editar DFDs bloqueado pelo Processo!'), 403);
         }
 
         $protocol = $request->id ? $request->protocol : Utils::randCode(6, str_pad($request->unit, 3, '0', STR_PAD_LEFT), date('dmY'));
@@ -97,6 +97,16 @@ class Dfds extends Controller
             'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
             'dotations' => Utils::map_select(Data::find(new Dotation(), [], ['name']))
         ];
+
+        if($request->key == 'filter'){
+            [$unit_id, $comission_id] = array_pad(explode(',', $request->search), 2, null);
+            $selections['ordinators'] = Data::find(new Ordinator(), ['unit' => $unit_id], ['name']);
+            $selections['demandants'] = Data::find(new Demandant(), ['unit' => $unit_id], ['name']);
+
+            $selections['comission_members'] = $comission_id
+            ? Data::find(new ComissionMember(), ['comission' => $comission_id])
+            : null;
+        }
 
         return response()->json($selections, 200);
     }
