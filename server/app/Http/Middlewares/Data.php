@@ -112,13 +112,13 @@ class Data
      */
     public static function delete(Model $model, int $id)
     {
-        try {
-            $model->where('id', $id)->where('organ', self::getOrgan())->delete();
+        $delete = $model->where(['id' => $id, 'organ' => self::getOrgan()])->delete();
+
+        if ($delete) {
             return self::result(200, 'Registro removido com sucesso...');
-        } catch (\Throwable $th) {
-            Log::error($th->getMessage());
-            return self::result(500, 'Registro não pode ser apagado, pois é referenciado em outro contexto...');
         }
+
+        return self::result(500, 'Registro não pode ser apagado, pois é referenciado em outro contexto...');
     }
 
     /**
@@ -175,7 +175,7 @@ class Data
 
             Organ::class => self::paramsOrgan(),
 
-            Unit::class =>  $user->profile > User::PRF_GESTOR ? self::paramsUnit($user) : self::paramsGenericOrgan(),
+            Unit::class => $user->profile > User::PRF_GESTOR ? self::paramsUnit($user) : self::paramsGenericOrgan(),
 
             default => null
         };
@@ -300,9 +300,9 @@ class Data
     private static function paramsAND(?array $params): array
     {
         return array_filter(array_map(fn($key, $value) => (object) [
-            'column'   => $value['column']   ?? $key,
+            'column' => $value['column'] ?? $key,
             'operator' => $value['operator'] ?? (is_numeric($value) ? '=' : 'LIKE'),
-            'value'    => $value['value']    ?? $value,
+            'value' => $value['value'] ?? $value,
         ], array_keys($params), $params));
     }
 
@@ -315,9 +315,9 @@ class Data
     private static function paramsOR(?array $params): array
     {
         return array_filter(array_map(fn($param) => (object) [
-            'column'   => $param['column'],
+            'column' => $param['column'],
             'operator' => $param['operator'] ?? (is_numeric($param['value']) ? '=' : 'LIKE'),
-            'value'    => $param['value']
-        ], array_filter($params, fn($param) => isset($param['mode']) && $param['mode'] === 'OR')));
+            'value' => $param['value']
+        ], array_filter($params, fn($param) => isset ($param['mode']) && $param['mode'] === 'OR')));
     }
 }
