@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Utils\Utils;
 use App\Utils\Notify;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Middlewares\Data;
 use Illuminate\Support\Facades\Log;
@@ -219,5 +220,39 @@ abstract class Controller
     public function selects(Request $request)
     {
         return [];
+    }
+
+    public function generate(Request $request)
+    {
+        $api_key = getenv('OPENIA_KEY');
+        $client = new Client();
+        $url = 'https://api.openai.com/v1/chat/completions';
+        $data = [
+            'model' => 'gpt-4',
+            'messages' => [
+                [
+                    'role' => 'system',
+                    'content' => $request->payload
+                ]
+            ],
+            'temperature' => 0.7
+        ];
+
+        try {
+
+            $resp = $client->post($url, [
+                'headers' => [
+                    'Authorization' => "Bearer $api_key",
+                    'Content-Type' => 'application/json'
+                ],
+                'json' => $data
+            ]);
+
+            return Response()->json(json_decode($resp->getBody(), true), 200);
+
+        } catch (\Exception $e) {
+            Log::alert('Falha ao receber dados da API: ' . $e->getMessage());
+            return Response()->json(Notify::warning('Falha ao receber dados da API'), 404);
+        }
     }
 }

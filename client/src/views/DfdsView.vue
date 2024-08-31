@@ -5,19 +5,19 @@ import NavMainUi from '@/components/NavMainUi.vue';
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import TableListStatus from '@/components/table/TableListStatus.vue';
+import TabNav from '@/components/TabNav.vue';
+import DfdReport from './reports/DfdReport.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
-import masks from '@/utils/masks';
 import Mounts from '@/services/mounts';
 import http from '@/services/http';
-import notifys from '@/utils/notifys';
 import gpt from '@/services/gpt';
+import exp from '@/services/export';
+import notifys from '@/utils/notifys';
+import masks from '@/utils/masks';
 import utils from '@/utils/utils';
 import dates from '@/utils/dates';
-import TabNav from '@/components/TabNav.vue';
-import exp from '@/services/export';
 import Tabs from '@/utils/tabs';
-import DfdReport from './reports/DfdReport.vue';
 
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
@@ -129,7 +129,7 @@ function generate(type) {
     const dfd = page.data
     const slc = page.selects
     const base = {
-        organ: slc?.organs.find((o) => o.id === dfd.organ),
+        organ: page.organ,
         unit: slc?.units.find((o) => o.id === dfd.unit),
         type: slc?.acquisitions.find((o) => o.id === dfd.acquisition_type),
         items: JSON.stringify(dfd.items),
@@ -140,17 +140,17 @@ function generate(type) {
     switch (type) {
         case 'dfd_description':
             callresp = (resp) => {
-                page.data.description = resp.data?.choices[0]?.text
+                page.data.description = resp.data?.choices[0]?.message?.content
             }
             break
         case 'dfd_justification':
             callresp = (resp) => {
-                page.data.justification = resp.data?.choices[0]?.text
+                page.data.justification = resp.data?.choices[0]?.message?.content
             }
             break
         case 'dfd_quantitys':
             callresp = (resp) => {
-                page.data.justification_quantity = resp.data?.choices[0]?.text
+                page.data.justification_quantity = resp.data?.choices[0]?.message?.content
             }
             break
         default:
@@ -177,7 +177,7 @@ function update_dfd(id) {
 }
 
 function export_dfd(id) {
-    http.get(`${page.url}/details/${id}`, emit, (resp) => {
+    http.get(`${page.url}/export/${id}`, emit, (resp) => {
         const dfd = resp.data
         const containerReport = document.createElement('div')
         const instanceReport = createApp(DfdReport, {organ:page.organ, dfd: dfd, selects: page.selects })

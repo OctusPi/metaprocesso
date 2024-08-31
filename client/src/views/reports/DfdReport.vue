@@ -38,10 +38,10 @@ const items = ref({
     <header>
         <div class="d-flex align-items-center">
             <div class="ct-logo me-2">
-                <img :src="dfd.organ.logomarca" class="h-logo">
+                <img :src="organ.logomarca" class="h-logo">
             </div>
             <div class="h-info">
-                <h1>{{ dfd.organ.name }}</h1>
+                <h1>{{ organ.name }}</h1>
                 <p>{{ dfd.unit.name }}</p>
                 <p>{{ dfd.unit.address }}</p>
                 <p>{{ dfd.unit.phone }} {{ dfd.unit.email }}</p>
@@ -71,8 +71,8 @@ const items = ref({
             <tr>
                 <td colspan="3">
                     <h3>Orgão</h3>
-                    <p>{{ dfd.organ.name ?? '*****' }}</p>
-                    <p>{{ dfd.organ.cnpj ?? '*****' }}</p>
+                    <p>{{ organ.name ?? '*****' }}</p>
+                    <p>{{ organ.cnpj ?? '*****' }}</p>
                 </td>
             </tr>
             <tr>
@@ -251,7 +251,7 @@ const items = ref({
         </div>
 
         <!-- City and Date -->
-        <p class="mt-4 text-center">{{ `${dfd.organ.postalcity ?? '*****'}, ${dfd.date_ini}` }}</p>
+        <p class="mt-4 text-center">{{ `${organ.postalcity ?? '*****'}, ${dfd.date_ini}` }}</p>
     </main>
 </template>
 

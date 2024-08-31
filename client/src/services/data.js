@@ -60,7 +60,6 @@ class Data {
         if (over)  data = Object.assign(data, over)
 
         http.post(`${this.page.url}/save`, data, this.emit, () => {
-            this.page.search = this.page.data
             this.list();
             onSave()
         })
