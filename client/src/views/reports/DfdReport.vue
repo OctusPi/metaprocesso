@@ -5,6 +5,7 @@ import utils from '@/utils/utils'
 import TableListReport from '@/views/reports/TableListReport.vue'
 
 const props = defineProps({
+    organ:{ type: Object, required: true },
     dfd: { type: Object, required: true },
     selects: { type: Object, required: true }
 })

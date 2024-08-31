@@ -7,6 +7,7 @@ use App\Models\{CatalogItem, Comission, ComissionMember, Demandant, Dfd, DfdItem
 use App\Utils\Notify;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
+use Log;
 
 class Dfds extends Controller
 {
@@ -47,9 +48,9 @@ class Dfds extends Controller
      */
     public function save(Request $request)
     {
-        $dfd = $request->id ? Data::findOne(new Dfd(), ['id' => $request->id]) : null;
+        $this->model = $request->id ? Data::findOne(new Dfd(), ['id' => $request->id]) : $this->model;
 
-        if ($dfd && $dfd->status >= Dfd::STATUS_BLOQUEADO) {
+        if ($this->model && $this->model->status >= Dfd::STATUS_BLOQUEADO) {
             return response()->json(Notify::warning('Não é possível editar DFDs bloqueado pelo Processo!'), 403);
         }
 
@@ -61,10 +62,13 @@ class Dfds extends Controller
             'author' => $request->user()->id
         ];
 
-        $response = $this->base_save($request, $data);
-        $this->manageItems($request, $response->instance ?? null);
+        $save = $this->base_save($request, $data);
+        if($save->status() == 200){
 
-        return $response;
+            $this->manageItems($request);
+        }
+
+        return $save;
     }
 
     /**
@@ -75,13 +79,36 @@ class Dfds extends Controller
      */
     public function details(Request $request)
     {
-        $instance = Dfd::with(['items.item'])->find($request->id);
+        $dfd = $this->base_details($request);
 
-        if (!$instance) {
-            return response()->json(Notify::warning('DFD não localizado...'), 404);
+        if($dfd->status() == 200){
+            $items = Data::find(new DfdItem(), ['dfd' => $request->id], with:['item']) ?? [];
+            $group = array_merge($dfd->getData(true) ?? [], ['items' => $items]);
+            return response()->json($group);
         }
 
-        return response()->json($instance, 200);
+        return response()->json(Notify::warning("DFD não localizado..."), $dfd->status());
+    }
+
+    public function delete(Request $request)
+    {
+
+        $this->check_auth($request);
+
+        if (!password_verify($request->password, $request->user()->getAttribute('password'))) {
+            return response()->json(Notify::warning('Senha de confirmação incorreta!'), 401);
+        }
+
+        $this->model = Data::findOne(new Dfd(), ['id' => $request->id]);
+
+        if ($this->model && $this->model->status >= Dfd::STATUS_BLOQUEADO) {
+            return response()->json(Notify::warning('Não é possível APAGAR DFDs bloqueado pelo Processo!'), 403);
+        }
+
+        DfdItem::where('dfd', $request->id)->delete();
+
+        return $this->base_delete($request);
+
     }
 
     /**
@@ -129,11 +156,11 @@ class Dfds extends Controller
      * @param Request $request Dados da requisição.
      * @param Dfd|null $dfd Instância do DFD para adicionar ou remover itens.
      */
-    private function manageItems(Request $request, ?Dfd $dfd)
+    private function manageItems(Request $request)
     {
-        if (!$dfd) return;
+        if (!$this->model->id) return;
 
-        $currentItems = $dfd->items()->pluck('id')->toArray();
+        $currentItems = Data::find(new DfdItem(), ['dfd' => $this->model->id])->pluck('id');
         $newItems = collect(json_decode($request->items, true))->keyBy('id');
 
         foreach ($currentItems as $itemId) {
@@ -143,9 +170,16 @@ class Dfds extends Controller
         }
 
         foreach ($newItems as $itemData) {
+
             DfdItem::updateOrCreate(
-                ['dfd_id' => $dfd->id, 'item_id' => $itemData['item']['id']],
-                ['quantity' => $itemData['quantity']]
+                [
+                    'id'       => is_numeric($itemData['id']) && !$request->clone ? $itemData['id'] : null,
+                    'dfd'      => $this->model->id,
+                    'item'     => $itemData['item']['id'],
+                    'quantity' => $itemData['quantity'],
+                    'program'  => $itemData['program'] ?? null,
+                    'dotation' => $itemData['dotation'] ?? null
+                ]
             );
         }
     }

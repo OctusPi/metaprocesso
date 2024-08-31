@@ -171,17 +171,16 @@ function rescue_members() {
 function update_dfd(id) {
     http.get(`${page.url}/details/${id}`, emit, (response) => {
         page.data = response.data
-        pageData.selects('organ', page.data.organ)
-        pageData.selects('unit', page.data.unit)
+        pageData.selects('filter', `${page.data.unit},${page.data.comission}`)
         pageData.ui('update')
     })
 }
 
 function export_dfd(id) {
-    http.get(`${page.url}/export/${id}`, emit, (resp) => {
+    http.get(`${page.url}/details/${id}`, emit, (resp) => {
         const dfd = resp.data
         const containerReport = document.createElement('div')
-        const instanceReport = createApp(DfdReport, { dfd: dfd, selects: page.selects })
+        const instanceReport = createApp(DfdReport, {organ:page.organ, dfd: dfd, selects: page.selects })
         instanceReport.mount(containerReport)
         exp.exportPDF(containerReport, `DFD-${dfd.protocol}`)
     })
@@ -191,7 +190,8 @@ function clone_dfd(id) {
     http.get(`${page.url}/details/${id}`, emit, (response) => {
         response.data.id = null
         page.data = response.data
-        pageData.selects('unit', page.data.unit)
+        page.data.clone = true
+        pageData.selects('filter', `${page.data.unit},${page.data.comission}`)
         pageData.ui('update')
     })
 }
@@ -488,7 +488,7 @@ onMounted(() => {
                                     <!-- List Search Items -->
                                     <div class="container-list position-relative bg-success">
                                         <div v-if="items.search && items.body.length"
-                                        class="position-absolute my-2 top-0 start-0 z-3">
+                                        class="position-absolute w-100 my-2 top-0 start-0 z-3">
                                         <div class="form-control load-items-cat p-0 m-0">
                                             <ul class="search-list-items">
                                                 <li v-for="i in items.body" :key="i.id" @click="select_item(i)"
