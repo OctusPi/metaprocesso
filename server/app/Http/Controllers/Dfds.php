@@ -90,6 +90,25 @@ class Dfds extends Controller
         return response()->json(Notify::warning("DFD não localizado..."), $dfd->status());
     }
 
+    /**
+     * Recupera os dados do DFD para exportar.
+     *
+     * @param Request $request Dados da requisição incluindo o ID do DFD.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON com detalhes do DFD.
+     */
+    public function export(Request $request)
+    {
+        $dfd = $this->base_details($request, ['unit', 'ordinator', 'demandant', 'comission']);
+
+        if($dfd->status() == 200){
+            $items = Data::find(new DfdItem(), ['dfd' => $request->id], with:['item']) ?? [];
+            $group = array_merge($dfd->getData(true) ?? [], ['items' => $items]);
+            return response()->json($group);
+        }
+
+        return response()->json(Notify::warning("DFD não localizado..."), $dfd->status());
+    }
+
     public function delete(Request $request)
     {
 
@@ -126,7 +145,8 @@ class Dfds extends Controller
             'prioritys'     => Dfd::list_priority(),
             'hirings'       => Dfd::list_hirings(),
             'categories'    => CatalogItem::list_categories(),
-            'items_types'   => CatalogItem::list_types()
+            'items_types'   => CatalogItem::list_types(),
+            'status'        => Dfd::list_status()
         ];
 
         if($request->key == 'filter'){
@@ -154,7 +174,6 @@ class Dfds extends Controller
      * Gerencia a adição ou remoção de itens de um DFD.
      *
      * @param Request $request Dados da requisição.
-     * @param Dfd|null $dfd Instância do DFD para adicionar ou remover itens.
      */
     private function manageItems(Request $request)
     {
