@@ -67,7 +67,7 @@ abstract class Controller
      * @param Request $request Objeto de requisição HTTP.
      * @return void
      */
-    private function check_auth(Request $request)
+    public function check_auth(Request $request)
     {
         if ($this->index($request)->status() != 200) {
             die();
