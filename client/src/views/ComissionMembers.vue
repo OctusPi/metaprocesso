@@ -26,9 +26,9 @@ const [page, pageData] = Layout.new(emit, {
     comission: {},
     header: [
         { key: 'name', title: 'NOME' },
-        { key: 'responsibility', title: 'RESPONSABILIDADE', sub: [{ key: 'status' }] },
-        { key: 'start_term', title: 'INÍCIO PLEITO' },
-        { key: 'start_term', title: 'TÉRMINO PLEITO' }
+        { key: 'responsibility', title: 'RESPONSABILIDADE' },
+        { title: 'PLEITO', sub: [{ title: 'De ', key: 'start_term' }, { title: 'à ', key: 'end_term', err: 'Agora' }] },
+        { key: 'status', title: 'STATUS' },
     ],
     rules: {
         name: 'required',
@@ -39,7 +39,7 @@ const [page, pageData] = Layout.new(emit, {
 })
 
 function fetchComission() {
-    http.get(`/comissions/details/${route.params.id}?display=1`, emit, (res) => {
+    http.get(`${page.url}/comission`, emit, (res) => {
         page.comission = res.data
     })
 }

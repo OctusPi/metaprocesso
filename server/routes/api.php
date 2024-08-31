@@ -84,6 +84,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
     });
 
+    Route::prefix('/comissionmembers/{comission}')->controller(ComissionMembers::class)->group(function(){
+        Route::get('/comission', 'comission');
+    });
+
     Route::prefix('/catalogitems/{catalog}')->controller(CatalogItems::class)->group(function(){
         Route::get('/catalog', 'catalog');
     });

@@ -23,9 +23,13 @@ const props = defineProps({
 
 <style scoped>
 .separator {
-    background-color: var(--color-background-soft);
+    background-color: var(--color-input);
     width: 100%;
     height: 3px;
+}
+
+.dark .separator {
+    background-color: var(--color-background-soft);
 }
 
 .nav-link {

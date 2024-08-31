@@ -34,7 +34,6 @@ const [page, pageData] = Layout.new(emit, {
         { key: 'status', title: 'SITUAÇÃO' }
     ],
     rules: {
-        protocol: 'required',
         date_hour_ini: 'required',
         year_pca: 'required',
         type: 'required',
@@ -299,7 +298,8 @@ onMounted(() => {
                                 }" id="description" v-model="page.data.description"></textarea>
                             </div>
                         </div>
-                        <div class="tab-pane fade row m-0 g-3 content m-0 g-3" :class="{ 'show active': tabs.is('dfds') }">
+                        <div class="tab-pane fade row m-0 g-3 content m-0 g-3"
+                            :class="{ 'show active': tabs.is('dfds') }">
                             <div class="accordion" id="accordion-dfds">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="accordion-dfds-header">
@@ -321,8 +321,8 @@ onMounted(() => {
                                         </button>
                                     </h2>
                                     <div id="accordion-dfds-collapse" class="accordion-collapse collapse"
-                                        :class="[page.data.dfds && 'show']"
-                                        aria-labelledby="accordion-dfds-header" data-bs-parent="#accordion-dfds">
+                                        :class="[page.data.dfds && 'show']" aria-labelledby="accordion-dfds-header"
+                                        data-bs-parent="#accordion-dfds">
                                         <div class="accordion-body">
                                             <div class="p-4 pt-0 mx-2">
                                                 <div class="dashed-separator mb-3"></div>
@@ -466,16 +466,14 @@ onMounted(() => {
                                 </div>
                                 <div class="box-revisor-content p-0">
                                     <!-- list items -->
-                                    <div v-if="page.data.dfds?.length > 0">
-                                        <TableList secondary :count="false" :header="page.dfds.headers" :body="page.data.dfds"
-                                            :mounts="{
-                                                status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
-                                                description: [Mounts.Truncate()],
-                                            }" :actions="[
+                                    <TableList secondary :count="false" :header="page.dfds.headers"
+                                        :body="page.data.dfds" :mounts="{
+                                            status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
+                                            description: [Mounts.Truncate()],
+                                        }" :actions="[
                                                 Actions.ModalDetails(dfd_details),
                                                 Actions.FastDelete(unselect_dfd),
                                             ]" />
-                                    </div>
                                 </div>
                             </div>
                         </div>

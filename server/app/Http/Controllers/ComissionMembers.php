@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Middlewares\Data;
+use App\Models\Comission;
 use App\Models\User;
 use App\Utils\Notify;
 use App\Utils\Uploads;
@@ -28,7 +29,7 @@ class ComissionMembers extends Controller
     public function save(Request $request)
     {
         // Verifica se a comissão existe
-        $comission = Data::findOne($this->model, ['id' => $request->comission]);
+        $comission = Data::findOne(new Comission(), ['id' => $request->comission]);
         if (!$comission) {
             return response()->json(Notify::warning('Comissão inexistente'), 404);
         }
@@ -60,17 +61,17 @@ class ComissionMembers extends Controller
      */
     public function list(Request $request)
     {
-        // Verifica se a comissão existe
-        $comission = Data::findOne($this->model, ['id' => $request->comission]);
-        if (!$comission) {
-            return response()->json(Notify::warning('Comissão inexistente'), 404);
-        }
-
         return $this->base_list(
             $request,
             ['comission', 'status', 'responsibility', 'name'],
             ['name']
         );
+    }
+
+    public function comission(Request $request)
+    {
+        $request->id = $request->comission;
+        return (new Comissions())->base_details($request);
     }
 
     /**
