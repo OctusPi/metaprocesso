@@ -42,8 +42,7 @@ class CatalogItems extends Controller
     public function catalog(Request $request)
     {
         $request->id = $request->catalog;
-
-        return (new Catalogs())->base_details($request, ['organ', 'comission']);
+        return (new Catalogs())->base_details($request);
     }
 
     public function selects(Request $request)

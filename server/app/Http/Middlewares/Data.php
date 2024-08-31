@@ -23,7 +23,6 @@ use App\Models\PriceRecord;
 use App\Models\ComissionEnd;
 use App\Models\ComissionMember;
 use App\Models\CatalogSubCategoryItem;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,7 +36,7 @@ class Data
      *
      * @return string|null Valor do cabeçalho ou null se não estiver definido.
      */
-    private static function getOrgan(): ?string
+    public static function getOrgan(): ?string
     {
         return request()->header('X-Custom-Header-Organ');
     }
@@ -209,6 +208,7 @@ class Data
         if (method_exists($model, 'rules') && method_exists($model, 'messages')) {
             $validator = Validator::make($data, $model->rules(), $model->messages());
             if ($validator->fails()) {
+                \Log::info($validator->errors());
                 return $validator->errors()->first();
             }
         }

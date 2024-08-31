@@ -54,19 +54,6 @@ class Comissions extends Controller
     }
 
     /**
-     * Retorna detalhes de uma comissão específica.
-     * Suporta exibição de dados adicionais conforme a consulta.
-     */
-    public function details(Request $request)
-    {
-        if ($request->query('display') == 1) {
-            return Data::findOne($this->model, ['id' => $request->id], with: ['organ', 'unit']);
-        }
-
-        return $this->base_details($request);
-    }
-
-    /**
      * Faz o download do documento associado à comissão.
      */
     public function download(Request $request)

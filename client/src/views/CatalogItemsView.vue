@@ -51,7 +51,7 @@ const [groups, groupsData] = Layout.new(emit, {
 })
 
 function detailsCatalog() {
-    http.get(`/catalogitems/${route.params.id}/catalog`, emit, (response) => {
+    http.get(`${page.url}/catalog`, emit, (response) => {
         page.catalog = response.data
         groups.url = `/catalogsubcategories/${page.catalog?.organ?.id}`
     })

@@ -9,62 +9,76 @@ use App\Models\User;
 use App\Utils\Utils;
 use App\Utils\Notify;
 use App\Models\Process;
-use App\Models\Program;
-use App\Models\Dotation;
 use App\Models\Comission;
-use App\Models\Ordinator;
 use App\Models\CatalogItem;
 use Illuminate\Http\Request;
 use App\Http\Middlewares\Data;
 use App\Models\ComissionMember;
 use Illuminate\Support\Collection;
-
 class Processes extends Controller
 {
+    /**
+     * Constrói o controller Processes.
+     */
     public function __construct()
     {
         parent::__construct(Process::class, User::MOD_PROCESSES['module']);
     }
 
+    /**
+     * Salva ou atualiza um processo.
+     *
+     * @param Request $request Dados da requisição para salvar um processo.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON do resultado da operação.
+     */
     public function save(Request $request)
     {
-        if ($request->has('id')) {
-            $instance = Process::find($request->id);
+        if ($request->id) {
+            $instance = Data::findOne($this->model, ['id' => $request->id]);
 
             if (!$instance) {
-                return Response()->json(Notify::warning('Registro não localizado!'), 404);
+                return response()->json(Notify::warning('Processo não localizado!'), 404);
             }
 
             if ($instance->status >= Process::S_ANULADO) {
                 return response()->json(Notify::warning("Não é possível editar o registro!"), 403);
             }
-
-            $process = new Process($request->all());
-
-            $dfds = $this->set_dfd_status($request->status, collect($process->dfds));
-
-            $process->dfds = $dfds->toArray();
-            $process->ordinators = $dfds->pluck('ordinator');
-
-            return $this->base_save($request, $process->toArray());
         }
 
-        $comission = Comission::with('organ')->find($request->comission);
+        $comission = Data::findOne(new Comission(), ['id' => $request->comission], with: ['organ']);
 
-        $premodel = new Process($request->all());
-        $premodel->author = $request->user()->id;
-        $premodel->ip = $request->ip();
-        $premodel->comission_members = $comission->comissionmembers;
-        $premodel->comission_address = $comission->toArray()['organ']['address'];
+        if ($comission->comissionmembers->count() < 1) {
+            return response()->json(Notify::warning("A comissão não possui membros ativos!"), 403);
+        }
 
-        $dfds = $this->set_dfd_status($premodel->status, collect($premodel->dfds));
+        $this->model->fill($request->all());
 
-        $premodel->dfds = $dfds->toArray();
-        $premodel->ordinators = $dfds->pluck('ordinator');
+        if (empty($request->id)) {
+            $this->model->author = $request->user()->id;
+            $this->model->ip = $request->ip();
+            $this->model->protocol = Utils::randCode(6, str_pad(Data::getOrgan(), 3, '0', STR_PAD_LEFT), date('dmY'));
+        }
 
-        return $this->base_save($request, $premodel->toArray());
+        $this->model->comission_members = $comission->comissionmembers->toArray();
+        $this->model->comission_address = $comission->toArray()['organ']['address'];
+
+        $dfds = $this->update_dfds(
+            $this->model->status,
+            collect($this->model->dfds)
+        );
+
+        $this->model->dfds = $dfds->toArray();
+        $this->model->ordinators = $dfds->pluck('ordinator');
+
+        return $this->base_save($request, $this->model->toArray());
     }
 
+    /**
+     * Lista os processos com base em critérios específicos de filtragem.
+     *
+     * @param Request $request Dados da requisição incluindo filtros.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON com a lista de processos.
+     */
     public function list(Request $request)
     {
         return $this->base_list(
@@ -75,31 +89,51 @@ class Processes extends Controller
         );
     }
 
+    /**
+     * Lista os DFDs com base em critérios de busca.
+     *
+     * @param Request $request Dados da requisição incluindo filtros.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON com a lista de DFDs.
+     */
     public function list_dfds(Request $request)
     {
         if (empty($request->except('organ', 'units'))) {
-            return Response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 400);
+            return response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 400);
         }
 
         $search = Utils::map_search(['protocol', 'organ', 'description'], $request->all());
         $betw = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
 
         $query = Data::find(new Dfd(), $search, ['date_ini'], ['organ', 'unit', 'comission', 'demandant', 'ordinator'], $betw);
-        return Response()->json($query, 200);
+        return response()->json($query, 200);
     }
 
+    /**
+     * Lista os itens de um DFD específico.
+     *
+     * @param Request $request Dados da requisição incluindo o ID do DFD.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON com os itens do DFD.
+     */
     public function list_dfd_items(Request $request)
     {
-        return Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']);
+        return response()->json(
+            Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']),
+            200
+        );
     }
 
-
+    /**
+     * Exclui um processo específico.
+     *
+     * @param Request $request Dados da requisição incluindo o ID do processo.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON do resultado da operação.
+     */
     public function delete(Request $request)
     {
-        $instance = Process::find($request->id);
+        $instance = Data::findOne(new Process(), ['id' => $request->id]);
 
         if (!$instance) {
-            return Response()->json(Notify::warning('Registro não localizado!'), 404);
+            return response()->json(Notify::warning('Registro não localizado!'), 404);
         }
 
         if ($instance->status >= Process::S_ANULADO) {
@@ -109,11 +143,17 @@ class Processes extends Controller
         return $this->base_delete($request);
     }
 
+    /**
+     * Retorna seleções de dados para uso em formulários ou filtros.
+     *
+     * @param Request $request Dados da requisição, incluindo chave para especificar a seleção.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON com os dados solicitados.
+     */
     public function selects(Request $request)
     {
-        return Response()->json([
-            'comissions' => Utils::map_select(Data::find(new Comission(), order: ['name'])),
-            'units' => Utils::map_select(Data::find(new Unit(), order: ['name'])),
+        return response()->json([
+            'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
+            'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'types' => Process::list_types(),
             'status' => Process::list_status(),
             'dfds_status' => Dfd::list_status(),
@@ -126,25 +166,32 @@ class Processes extends Controller
         ], 200);
     }
 
-    private function set_dfd_status(?int $status, Collection $collection)
+    /**
+     * Atualiza o status dos DFDs associados a um processo.
+     *
+     * @param int|null $status Status do processo.
+     * @param Collection $collection Coleção de DFDs.
+     * @return Collection Coleção de DFDs atualizada.
+     */
+    private function update_dfds(?int $status, Collection $collection)
     {
         if (empty($status)) {
             return $collection;
         }
 
-        $dfd_instance = Dfd::whereIn('id', $collection->pluck('id'))
+        $dfds = Dfd::whereIn('id', $collection->pluck('id'))
             ->with('organ', 'unit', 'comission', 'demandant', 'ordinator');
 
-        $matched_status = match ($status) {
-            Process::S_ABERTO => Dfd::STATUS_BLOQUEADO,
-            Process::S_FINALIZADO => Dfd::STATUS_PROCESSADO,
-            default => Dfd::STATUS_ENVIADO
-        };
-
         if ($status != Process::S_FRACASSADO) {
-            $dfd_instance->update(['status' => $matched_status]);
+            $dfds->update([
+                'status' => match ($status) {
+                    Process::S_ABERTO => Dfd::STATUS_BLOQUEADO,
+                    Process::S_FINALIZADO => Dfd::STATUS_PROCESSADO,
+                    default => Dfd::STATUS_ENVIADO
+                }
+            ]);
         }
 
-        return $dfd_instance->get();
+        return $dfds->get();
     }
 }
