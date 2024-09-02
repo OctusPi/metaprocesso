@@ -180,7 +180,7 @@ function export_dfd(id) {
     http.get(`${page.url}/export/${id}`, emit, (resp) => {
         const dfd = resp.data
         const containerReport = document.createElement('div')
-        const instanceReport = createApp(DfdReport, {organ:page.organ, dfd: dfd, selects: page.selects })
+        const instanceReport = createApp(DfdReport, { organ: page.organ, dfd: dfd, selects: page.selects })
         instanceReport.mount(containerReport)
         exp.exportPDF(containerReport, `DFD-${dfd.protocol}`)
     })
@@ -316,7 +316,8 @@ onMounted(() => {
                                     <label for="unit" class="form-label">Unidade</label>
                                     <select name="unit" class="form-control"
                                         :class="{ 'form-control-alert': page.valids.unit }" id="unit"
-                                        @change="pageData.selects('filter', `${page.data.unit},${page.data.comission}`)" v-model="page.data.unit">
+                                        @change="pageData.selects('filter', `${page.data.unit},${page.data.comission}`)"
+                                        v-model="page.data.unit">
                                         <option value=""></option>
                                         <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
                                             {{ s.title }}
@@ -362,7 +363,7 @@ onMounted(() => {
                                     </select>
                                 </div>
                             </div>
-                           
+
                             <!-- tab informacoes -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('infos') }">
@@ -467,8 +468,9 @@ onMounted(() => {
                             </div>
 
                             <!-- tab items -->
-                            <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('items') }">
-                                <div class="col-sm-12 p-4 pt-1">
+                            <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
+                                :class="{ 'show active': tabs.is('items') }">
+                                <div class="col-sm-12">
                                     <label for="search-item" class="form-label">Localizar Item no Catálogo
                                         Padronizado</label>
                                     <div class="input-group">
@@ -488,39 +490,39 @@ onMounted(() => {
                                     <!-- List Search Items -->
                                     <div class="container-list position-relative bg-success">
                                         <div v-if="items.search && items.body.length"
-                                        class="position-absolute w-100 my-2 top-0 start-0 z-3">
-                                        <div class="form-control load-items-cat p-0 m-0">
-                                            <ul class="search-list-items">
-                                                <li v-for="i in items.body" :key="i.id" @click="select_item(i)"
-                                                    class="d-flex align-items-center px-3 py-2">
-                                                    <div class="me-3 item-type">
-                                                        {{ i.type == '1' ? 'M' : 'S' }}
-                                                    </div>
-                                                    <div class="item-desc">
-                                                        <h3 class="m-0 p-0 small">
-                                                            {{ `${i.code} - ${i.name}` }}
-                                                        </h3>
-                                                        <p class="m-0 p-0 small">
-                                                            {{
-                                                                `Unidade: ${i.und} - Volume:
-                                                            ${i.volume} - Categoria:
-                                                            ${page.selects.categories.find(
-                                                                    (o) => o.id === i.category
-                                                                )?.title
-                                                                } `
-                                                            }}
-                                                        </p>
-                                                        <p class="m-0 p-0 small">
-                                                            {{ i.description }}
-                                                        </p>
-                                                    </div>
-                                                </li>
-                                            </ul>
+                                            class="position-absolute w-100 my-2 top-0 start-0 z-3">
+                                            <div class="form-control load-items-cat p-0 m-0">
+                                                <ul class="search-list-items">
+                                                    <li v-for="i in items.body" :key="i.id" @click="select_item(i)"
+                                                        class="d-flex align-items-center px-3 py-2">
+                                                        <div class="me-3 item-type">
+                                                            {{ i.type == '1' ? 'M' : 'S' }}
+                                                        </div>
+                                                        <div class="item-desc">
+                                                            <h3 class="m-0 p-0 small">
+                                                                {{ `${i.code} - ${i.name}` }}
+                                                            </h3>
+                                                            <p class="m-0 p-0 small">
+                                                                {{
+                                                                    `Unidade: ${i.und} - Volume:
+                                                                ${i.volume} - Categoria:
+                                                                ${page.selects.categories.find(
+                                                                        (o) => o.id === i.category
+                                                                    )?.title
+                                                                    } `
+                                                                }}
+                                                            </p>
+                                                            <p class="m-0 p-0 small">
+                                                                {{ i.description }}
+                                                            </p>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
-                                    </div>
                                 </div>
-                                <div v-if="items.selected_item.item" class="p-4 py-0">
+                                <div v-if="items.selected_item.item" class="py-0">
                                     <div class="form-control d-flex align-items-center px-3 py-2 mb-3">
                                         <div class="me-3 item-type">
                                             {{ items.selected_item.item.type == '1' ? 'M' : 'S' }}
@@ -578,8 +580,7 @@ onMounted(() => {
                                                     id="item-quantity" v-maska:[masks.masknumbs]
                                                     v-model="items.selected_item.quantity"
                                                     @keydown.enter.prevent="add_item" />
-                                                <button class="btn btn-action-primary" type="button"
-                                                    @click="add_item">
+                                                <button class="btn btn-action-primary" type="button" @click="add_item">
                                                     <ion-icon name="add" class="fs-5"></ion-icon>
                                                 </button>
                                             </div>
@@ -632,94 +633,87 @@ onMounted(() => {
                             </div>
 
                             <!-- tab revisar -->
-                            <div class="tab-pane fade row gap-1 pt-3 position-relative"
+                            <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('revisor') }">
+
                                 <!-- origin -->
-                                <div>
-                                    <div class="box-revisor m-4 mt-2 mb-0">
-                                        <div class="box-revisor-title d-flex mb-4">
-                                            <div class="bar-revisor-title me-2"></div>
-                                            <div class="txt-revisor-title">
-                                                <h3>Origem da Demanda</h3>
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title mb-4">
+                                        <h3>Origem da Demanda</h3>
+                                        <p>
+                                            Dados referentes a origem e responsabilidade pela
+                                            Demanda
+                                        </p>
+                                    </div>
+                                    <div class="box-revisor-content">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h4>Unidade</h4>
                                                 <p>
-                                                    Dados referentes a origem e responsabilidade pela
-                                                    Demanda
+                                                    {{
+                                                        utils.getTxt(
+                                                            page.selects.units,
+                                                            page.data.unit
+                                                        )
+                                                    }}
+                                                </p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>Comissão / Equipe de Planejamento</h4>
+                                                <p>
+                                                    {{
+                                                        utils.getTxt(
+                                                            page.selects.comissions,
+                                                            page.data.comission
+                                                        )
+                                                    }}
+                                                </p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <h4>Ordenador de Despesas</h4>
+                                                <p>
+                                                    {{
+                                                        utils.getTxt(
+                                                            page.selects.ordinators,
+                                                            page.data.ordinator
+                                                        )
+                                                    }}
                                                 </p>
                                             </div>
                                         </div>
-                                        <div class="box-revisor-content">
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <h4>Unidade</h4>
-                                                    <p>
-                                                        {{
-                                                            utils.getTxt(
-                                                                page.selects.units,
-                                                                page.data.unit
-                                                            )
-                                                        }}
-                                                    </p>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <h4>Comissão / Equipe de Planejamento</h4>
-                                                    <p>
-                                                        {{
-                                                            utils.getTxt(
-                                                                page.selects.comissions,
-                                                                page.data.comission
-                                                            )
-                                                        }}
-                                                    </p>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <h4>Ordenador de Despesas</h4>
-                                                    <p>
-                                                        {{
-                                                            utils.getTxt(
-                                                                page.selects.ordinators,
-                                                                page.data.ordinator
-                                                            )
-                                                        }}
-                                                    </p>
-                                                </div>
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h4>Demadantes</h4>
+                                                <p>
+                                                    {{
+                                                        utils.getTxt(
+                                                            page.selects.demandants,
+                                                            page.data.demandant
+                                                        )
+                                                    }}
+                                                </p>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-4">
-                                                    <h4>Demadantes</h4>
-                                                    <p>
-                                                        {{
-                                                            utils.getTxt(
-                                                                page.selects.demandants,
-                                                                page.data.demandant
-                                                            )
-                                                        }}
-                                                    </p>
-                                                </div>
-                                                <div class="col-md-4 mb-4">
-                                                    <h4>Integrantes da Comissão</h4>
-                                                    <span class="p-0 m-0 small" v-for="m in page.data.comission_members"
-                                                        :key="m.id">
-                                                        {{ `${utils.getTxt(page.selects.responsibilitys,
-                                                            m.responsibility)}
-                                                        : ${m.name}; ` }}
-                                                    </span>
-                                                </div>
+                                            <div class="col-md-4">
+                                                <h4>Integrantes da Comissão</h4>
+                                                <span class="p-0 m-0 small" v-for="m in page.data.comission_members"
+                                                    :key="m.id">
+                                                    {{ `${utils.getTxt(page.selects.responsibilitys,
+                                                        m.responsibility)}
+                                                    : ${m.name}; ` }}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Infos -->
-                                <div class="box-revisor m-4 my-0">
-                                    <div class="box-revisor-title d-flex mb-4">
-                                        <div class="bar-revisor-title me-2"></div>
-                                        <div class="txt-revisor-title">
-                                            <h3>Informações Gerais</h3>
-                                            <p>
-                                                Dados de prioridade, previsão de contratação e
-                                                detalhamento de Objeto
-                                            </p>
-                                        </div>
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title mb-4">
+                                        <h3>Informações Gerais</h3>
+                                        <p>
+                                            Dados de prioridade, previsão de contratação e
+                                            detalhamento de Objeto
+                                        </p>
                                     </div>
                                     <div class="box-revisor-content">
                                         <div class="row">
@@ -811,41 +805,35 @@ onMounted(() => {
                                 </div>
 
                                 <!-- Items -->
-                                <div class="box-revisor mb-0">
-                                    <div class="box-revisor-title d-flex m-4 my-0">
-                                        <div class="bar-revisor-title me-2"></div>
-                                        <div class="txt-revisor-title">
-                                            <h3>Lista de Itens</h3>
-                                            <p>
-                                                Lista de materiais ou serviços vinculados a Demanda
-                                            </p>
-                                        </div>
+                                <div class="box-revisor mb-4">
+                                    <div class="box-revisor-title mb-4">
+                                        <h3>Lista de Itens</h3>
+                                        <p>
+                                            Lista de materiais ou serviços vinculados a Demanda
+                                        </p>
                                     </div>
                                     <div class="box-revisor-content">
                                         <!-- list items -->
                                         <div v-if="page.data?.items">
-                                            <TableList :count="false" :header="items.header" :body="page.data.items ?? []"
-                                                :mounts="{
+                                            <TableList :count="false" :header="items.header"
+                                                :body="page.data.items ?? []" :mounts="{
                                                     'item.type': [Mounts.Cast(page.selects.items_types)],
                                                     'dotation': [Mounts.Cast(page.selects.dotations)],
                                                     'program': [Mounts.Cast(page.selects.programs)],
                                                 }" />
                                         </div>
-                                        <p class="mx-4 mt-2" v-else>Sem itens para mostrar</p>
+                                        <p class="text-center" v-else>Sem itens para mostrar</p>
                                     </div>
                                 </div>
 
                                 <!-- details -->
-                                <div class="box-revisor m-4 mb-0">
-                                    <div class="box-revisor-title d-flex mb-4">
-                                        <div class="bar-revisor-title me-2"></div>
-                                        <div class="txt-revisor-title">
-                                            <h3>Detalhamento da Necessidade</h3>
-                                            <p>
-                                                Justificativas para necessidade e quantitativo de
-                                                itens demandados
-                                            </p>
-                                        </div>
+                                <div class="box-revisor">
+                                    <div class="box-revisor-title mb-4">
+                                        <h3>Detalhamento da Necessidade</h3>
+                                        <p>
+                                            Justificativas para necessidade e quantitativo de
+                                            itens demandados
+                                        </p>
                                     </div>
                                     <div class="box-revisor-content">
                                         <div class="row">
@@ -857,7 +845,7 @@ onMounted(() => {
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <h4>Justificativa dos quantitativos demandados</h4>
-                                                <p>
+                                                <p class="m-0 p-0">
                                                     {{
                                                         page.data.justification_quantity ?? '*****'
                                                     }}
@@ -868,12 +856,13 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
+
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
                                 Registrar
                             </button>
-                            
+
                             <button @click="pageData.save({ status: 1 })" type="button"
                                 class="btn btn-action-secondary">
                                 <ion-icon name="document-text-outline" class="fs-5"></ion-icon>
@@ -898,6 +887,3 @@ onMounted(() => {
         </main>
     </div>
 </template>
-
-<style scoped>
-</style>
