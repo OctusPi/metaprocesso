@@ -65,7 +65,7 @@ function close_menu() {
                                     <div class="accordion-body">
                                         <ul class="accordion-submenu">
                                             <li v-for="(subItem, subKey) in item.sub" :key="subKey" class="subitems">
-                                                <RouterLink class="navmain-item" :to="subItem.href">
+                                                <RouterLink class="navmain-item" :class="{ 'active-nav': router.path === subItem.href }" :to="subItem.href">
                                                     <ion-icon :name="subItem.icon" class="navmain-icon"></ion-icon>
                                                     <span class="navmain-title">{{ subItem.title }}</span>
                                                 </RouterLink>
@@ -77,7 +77,7 @@ function close_menu() {
                         </div>
 
                         <RouterLink v-else :to="item.href" class="navmain-item"
-                            :class="{ 'active-nav': router.name === item.href.replace('/', '') }">
+                            :class="{ 'active-nav': router.path === item.href }">
                             <ion-icon :name="item.icon" class="navmain-icon"></ion-icon>
                             <span class="navmain-title">{{ item.title }}</span>
                         </RouterLink>
@@ -129,6 +129,10 @@ function close_menu() {
 .navmain-icon {
     margin-right: 12px;
     font-size: 1.1rem !important;
+}
+
+.active-nav{
+    color: var(--color-base) !important;
 }
 
 @media(max-width:760px) {
