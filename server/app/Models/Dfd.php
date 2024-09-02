@@ -219,6 +219,19 @@ class Dfd extends Model
         ];
     }
 
+    public static function make_details(): array
+    {
+        return [
+            'dfds_status' => Dfd::list_status(),
+            'prioritys_dfd' => Dfd::list_priority(),
+            'hirings_dfd' => Dfd::list_hirings(),
+            'acquisitions_dfd' => Dfd::list_acquisitions(),
+            'modalities' => Process::list_modalitys(),
+            'responsibilitys' => ComissionMember::list_responsabilities(),
+            'items_types' => CatalogItem::list_types()
+        ];
+    }
+
     public function organ(): HasOne
     {
         return $this->hasOne(Organ::class, 'id', 'organ');

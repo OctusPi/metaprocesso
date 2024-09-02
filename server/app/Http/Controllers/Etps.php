@@ -107,10 +107,11 @@ class Etps extends Controller
             );
         }
 
-        return response()->json([
+        return response()->json(array_merge([
             'organs' => Utils::map_select(Data::find(new Organ(), [], ['name'])),
             'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
             'process_status' => Process::list_status(),
-        ], 200);
+            'status' => Etp::list_status(),
+        ], Dfd::make_details()), 200);
     }
 }

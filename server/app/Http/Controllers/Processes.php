@@ -151,19 +151,12 @@ class Processes extends Controller
      */
     public function selects(Request $request)
     {
-        return response()->json([
+        return response()->json(array_merge([
             'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'types' => Process::list_types(),
             'status' => Process::list_status(),
-            'dfds_status' => Dfd::list_status(),
-            'prioritys_dfd' => Dfd::list_priority(),
-            'hirings_dfd' => Dfd::list_hirings(),
-            'acquisitions_dfd' => Dfd::list_acquisitions(),
-            'modalities' => Process::list_modalitys(),
-            'responsibilitys' => ComissionMember::list_responsabilities(),
-            'items_types' => CatalogItem::list_types()
-        ], 200);
+        ], Dfd::make_details()), 200);
     }
 
     /**

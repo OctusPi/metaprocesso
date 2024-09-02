@@ -14,6 +14,7 @@ import TabNav from '@/components/TabNav.vue';
 import Tabs from '@/utils/tabs';
 import InputRichText from '@/components/inputs/InputRichText.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
+import DfdDetails from '@/components/DfdDetails.vue';
 
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
@@ -108,62 +109,122 @@ function generate(type) {
 
     function setValuesAndPayload(key, mPayload) {
         callresp = (resp) => {
-            page[key] = resp.data?.choices[0]?.text;
+            page.data[key] = resp.data?.choices[0]?.text;
         };
         payload = mPayload;
     }
 
     switch (type) {
         case 'object_description':
-            setValuesAndPayload('object_description', 'Create: Please provide a concise description of the contracting object.');
+            setValuesAndPayload(type, `
+            Crie uma descrição concisa para um Estudo Técnico preliminar do órgão ${base.organ?.name}
+            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'object_classification':
-            setValuesAndPayload('object_classification', `Create: Please provide the classification of the contracting object. ${base.object_description}`);
+            setValuesAndPayload(type, `
+            Classifique o objeto de um Estudo Técnico preliminar do órgão ${base.organ?.name}
+            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'necessity':
-            setValuesAndPayload('necessity', 'Create: Please provide the necessity description.');
+            setValuesAndPayload(type, `
+            Descreva a necessidade da criação de um Estudo Técnico preliminar do órgão ${base.organ?.name}
+            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'contract_forecast':
-            setValuesAndPayload('contract_forecast', 'Create: Please provide the forecast for the contract.');
+            setValuesAndPayload(type, `
+            Descreva uma data de previsão por extenso, com base na complexidade o Estudo Técnico preliminar descrito
+            no texto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'contract_requirements':
-            setValuesAndPayload('contract_requirements', 'Create: Please provide the contract requirements.');
+            setValuesAndPayload(type, `
+            Elabore os requisitos para o Estudo técnico preliminar descrito no texto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'market_survey':
-            setValuesAndPayload('market_survey', 'Create: Please provide the market survey description.');
+            setValuesAndPayload(type, `
+            Crie uma descrição para a pesquisa de mercado do Estudo Técnico preliminar do órgão ${base.organ?.name}
+            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'contract_calculus_memories':
-            setValuesAndPayload('contract_calculus_memories', 'Create: Please provide the memories of contract calculations.');
+            setValuesAndPayload(type, `
+            Crie uma descrição para as memórias de cálculos do contrato relacionadas ao Estudo Técnico preliminar do órgão ${base.organ?.name}
+            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'contract_expected_price':
-            setValuesAndPayload('contract_expected_price', 'Create: Please provide the expected price for the contract.');
+            setValuesAndPayload(type, `
+            Crie uma descrição para o preço esperado do contrato com base no Estudo Técnico preliminar descrito no texto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'solution_full_description':
-            setValuesAndPayload('solution_full_description', 'Create: Please provide a full description of the solution.');
+            setValuesAndPayload(type, `
+            Crie uma descrição completa da solução para o Estudo Técnico preliminar do órgão ${base.organ?.name}
+            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'solution_parcel_justification':
-            setValuesAndPayload('solution_parcel_justification', 'Create: Please provide justification for solution parcel.');
+            setValuesAndPayload(type, `
+            Crie uma justificativa para as parcelas da solução descrita no Estudo Técnico preliminar do órgão ${base.organ?.name}
+            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'correlated_contracts':
-            setValuesAndPayload('correlated_contracts', 'Create: Please provide description of correlated contracts.');
+            setValuesAndPayload(type, `
+            Crie uma descrição dos contratos correlacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
+            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'contract_alignment':
-            setValuesAndPayload('contract_alignment', 'Create: Please provide contract alignment details.');
+            setValuesAndPayload(type, `
+            Crie uma descrição para o alinhamento do contrato com o Estudo Técnico preliminar do órgão ${base.organ?.name}
+            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'expected_results':
-            setValuesAndPayload('expected_results', 'Create: Please provide expected results description.');
+            setValuesAndPayload(type, `
+            Crie uma descrição dos resultados esperados com base no Estudo Técnico preliminar descrito no texto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'contract_previous_actions':
-            setValuesAndPayload('contract_previous_actions', 'Create: Please provide previous contract actions.');
+            setValuesAndPayload(type, `
+            Crie uma descrição das ações anteriores relacionadas ao contrato e ao Estudo Técnico preliminar do órgão ${base.organ?.name}
+            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            em plain text
+        `);
             break;
         case 'ambiental_impacts':
-            setValuesAndPayload('ambiental_impacts', 'Create: Please provide possible environmental impacts.');
+            setValuesAndPayload(type, `
+            Crie uma descrição dos possíveis impactos ambientais relacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
+            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            em plain text
+        `);
             break;
         default:
             break;
     }
 
-    gpt.generate(`${page.url}/generate`, payload, emit, callresp)
+    
+    page.data[type] = `<p>${payload}</p>`
+    
+    // gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
 // const attachmentTypes = [
@@ -173,9 +234,9 @@ function generate(type) {
 
 function dfd_details(id) {
     if (page.data.process.dfds) {
-        page.dfd.data = (page.data.process.dfds).find(obj => obj.id === id)
-        http.get(`${page.baseURL}/list_dfd_items/${id}`, emit, (resp) => {
-            page.dfd.items = resp.data
+        page.dfd.data = page.data.process.dfds.find(obj => obj.id === id)
+        http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
+            page.dfd.data.items = resp.data
         })
     }
 }
@@ -451,7 +512,7 @@ onMounted(() => {
                             <div v-if="page.data.process" class="form-neg-box">
                                 <TableList :count="false" :header="page.dfd.headers" :body="page.data.process.dfds"
                                     :mounts="{
-                                        status: [Mounts.Cast(page.selects.status_dfds), Mounts.Status()],
+                                        status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
                                     }" :actions="[
                                         Actions.ModalDetails(dfd_details),
                                     ]" />
@@ -676,7 +737,7 @@ onMounted(() => {
                     </form>
                 </div>
             </section>
-
+            <DfdDetails :dfd="page.dfd.data" :selects="page.selects" />
             <FooterMainUi />
         </main>
     </div>

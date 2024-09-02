@@ -8,13 +8,13 @@ import layout from '@/services/layout';
 import TableListStatus from './table/TableListStatus.vue';
 
 const props = defineProps({
-    dfd: { type: Object, default: () => null },
+    dfd: { type: Object, default: () => ({}) },
     selects: { type: Object, default: () => ({}) },
     modal: { type: String, default: 'modalDetails' }
 })
 
-const [page,] = layout.new(null, {
-    data: props.dfd,
+const [page, ] = layout.new(null, {
+    data: props.dfd ?? {},
     items_headers: [
         { key: 'item.code', title: 'COD', sub: [{ key: 'item.type' }] },
         { key: 'item.name', title: 'ITEM' },
@@ -39,7 +39,7 @@ watch(() => props.selects, (newval) => {
     <div class="modal fade" :id="props.modal" tabindex="-1" :aria-labelledby="'#' + props.modal + 'Label'"
         aria-hidden="true">
         <div class="modal-dialog modal-fullscreen">
-            <div class="modal-content p-4" v-if="page.data">
+            <div class="modal-content p-4" v-if="!Object.is(page.data, {})">
                 <div class="modal-header border-0">
                     <h1 class="modal-title fs-6 p-0 m-0 d-flex align-items-center gap-2"
                         :id="'#' + props.modal + 'Label'">
@@ -67,19 +67,19 @@ watch(() => props.selects, (newval) => {
                                 <div class="col-md-4">
                                     <h4>Orgão</h4>
                                     <p>
-                                        {{ page.data.organ.name }}
+                                        {{ page.data.organ?.name }}
                                     </p>
                                 </div>
                                 <div class="col-md-4">
                                     <h4>Unidade</h4>
                                     <p>
-                                        {{ page.data.unit.name }}
+                                        {{ page.data.unit?.name }}
                                     </p>
                                 </div>
                                 <div class="col-md-4">
                                     <h4>Ordenador de Despesas</h4>
                                     <p>
-                                        {{ page.data.ordinator.name }}
+                                        {{ page.data.ordinator?.name }}
                                     </p>
                                 </div>
                             </div>
@@ -87,13 +87,13 @@ watch(() => props.selects, (newval) => {
                                 <div class="col-md-4">
                                     <h4>Demadantes</h4>
                                     <p>
-                                        {{ page.data.demandant.name }}
+                                        {{ page.data.demandant?.name }}
                                     </p>
                                 </div>
                                 <div class="col-md-4">
                                     <h4>Comissão / Equipe de Planejamento</h4>
                                     <p>
-                                        {{ page.data.comission.name }}
+                                        {{ page.data.comission?.name }}
                                     </p>
                                 </div>
                                 <div class="col-md-4 mb-4">
@@ -217,7 +217,7 @@ watch(() => props.selects, (newval) => {
                                 </p>
                             </div>
                         </div>
-                        <div class="box-revisor-content">
+                        <div>
                             <!-- list items -->
                             <div>
                                 <TableList secondary :count="false" :order="false" :header="page.items_headers"
