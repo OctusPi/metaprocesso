@@ -42,7 +42,7 @@ function close_menu() {
 <template>
     <nav class="main-nav p-4" id="nav-primary">
         <div class="app-title d-flex align-items-center ms-2">
-            <img src="@/assets/imgs/logo.svg" alt="logomarca" />
+            <RouterLink to="/home"><img src="@/assets/imgs/logo.svg" alt="logomarca" /></RouterLink>
             <h1 class="fs-5 p-0 m-0 ms-2">Metaprocesso</h1>
             <ion-icon name="chevron-back-outline" class="fs-6 hide-menu ms-2" @click="close_menu"></ion-icon>
         </div>
