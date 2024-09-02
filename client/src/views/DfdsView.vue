@@ -589,7 +589,7 @@ onMounted(() => {
                                 </div>
 
                                 <div v-if="page.data?.items">
-                                    <TableList :count="false" :header="items.header" :actions="[
+                                    <TableList secondary :count="false" :header="items.header" :actions="[
                                         Actions.Edit(update_item),
                                         Actions.FastDelete(delete_item),
                                     ]" :body="page.data.items" :mounts="{
@@ -813,17 +813,13 @@ onMounted(() => {
                                             Lista de materiais ou serviços vinculados a Demanda
                                         </p>
                                     </div>
-                                    <div class="box-revisor-content">
-                                        <!-- list items -->
-                                        <div v-if="page.data?.items">
-                                            <TableList :count="false" :header="items.header"
-                                                :body="page.data.items ?? []" :mounts="{
-                                                    'item.type': [Mounts.Cast(page.selects.items_types)],
-                                                    'dotation': [Mounts.Cast(page.selects.dotations)],
-                                                    'program': [Mounts.Cast(page.selects.programs)],
-                                                }" />
-                                        </div>
-                                        <p class="text-center" v-else>Sem itens para mostrar</p>
+                                    <div>
+                                        <TableList secondary :count="false" :header="items.header"
+                                            :body="page.data.items ?? []" :mounts="{
+                                                'item.type': [Mounts.Cast(page.selects.items_types)],
+                                                'dotation': [Mounts.Cast(page.selects.dotations)],
+                                                'program': [Mounts.Cast(page.selects.programs)],
+                                            }" />
                                     </div>
                                 </div>
 
