@@ -28,7 +28,7 @@ function chkall() {
 	if (checkall.value === true) {
 		model.value = props.options
 	} else {
-		model.value = null
+		model.value = []
 	}
 }
 
@@ -46,11 +46,11 @@ onMounted(() => {
 
 <template>
 	<div class="position-relative" @mouseover="show_items = true" @mouseleave="show_items = false">
-		<div :class="{ 'form-control-alert': valid }" class="form-control d-flex align-items-center justify-content-between btn-drop">
+		<div :class="{ 'form-control-alert': valid, 'style-open': show_items }" class="form-control d-flex align-items-center justify-content-between btn-drop">
 			<span>{{ show_selected() }}</span>
 			<ion-icon @click="show_items = !show_items" :name="show_items ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
 		</div>
-		<div v-show="show_items" class="w-100 position-absolute div-drop">
+		<div v-show="show_items" class="w-100 position-absolute div-drop" :class="{'style-open-box':show_items}">
 			<div class="form-check form-switch d-flex flex-row-reverse align-items-center" v-if="props.options.length">
 				<input class="form-check-input m-0 ms-2" type="checkbox" role="switch" id="flexSwitchCheckChecked" v-model="checkall" @change="chkall">
 				<label class="form-check-label p-0 m-0 ms-3" for="flexSwitchCheckChecked">Selecionar Todos</label>
@@ -90,4 +90,15 @@ onMounted(() => {
 .check-label {
 	font-size: 0.9rem !important;
 }
+
+.style-open{
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+
+.style-open-box{
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
 </style>
