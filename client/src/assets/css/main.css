@@ -65,6 +65,11 @@
   border-radius: 15px;
 }
 
+.content-secondary {
+  background-color: var(--color-background);
+  border-radius: 15px;
+}
+
 .main-single-box {
   width: 100%;
   min-height: 100vh;
@@ -265,6 +270,16 @@
 
 .btn-action-tertiary:hover {
   background-color: var(--color-input-active);
+}
+
+.btn-check + .btn-action-tertiary:hover {
+  background-color: var(--color-input-active);
+  color: var(--color-input-text);
+}
+
+.btn-check:checked + .btn-action-tertiary {
+  background-color: var(--color-base);
+  color: white;
 }
 
 .btn-action-close {

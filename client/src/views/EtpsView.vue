@@ -15,6 +15,7 @@ import Tabs from '@/utils/tabs';
 import InputRichText from '@/components/inputs/InputRichText.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
+import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
@@ -221,16 +222,16 @@ function generate(type) {
             break;
     }
 
-    
+
     page.data[type] = `<p>${payload}</p>`
-    
+
     // gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
-// const attachmentTypes = [
-//     { id: 0, title: 'Memória de Cálculo' },
-//     { id: 1, title: 'Levantamento de Mercado' },
-// ]
+const attachmentTypes = [
+    { id: 0, title: 'Memória de Cálculo' },
+    { id: 1, title: 'Levantamento de Mercado' },
+]
 
 function dfd_details(id) {
     if (page.data.process.dfds) {
@@ -705,7 +706,7 @@ onMounted(() => {
                                 <div class="col-12 col-md-6">
                                     <input class="btn-check" id="viability-1" type="radio" name="viability" value="1"
                                         v-model="page.data.viability_declaration">
-                                    <label class="btn btn-outline-base" for="viability-1">Esta equipe de
+                                    <label class="btn btn-action-tertiary" for="viability-1">Esta equipe de
                                         planejamento
                                         declara viável esta contratação com base neste ETP, consoante o inciso
                                         XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</label>
@@ -713,16 +714,16 @@ onMounted(() => {
                                 <div class="col-12 col-md-6">
                                     <input class="btn-check" id="viability-2" type="radio" name="viability" value="0"
                                         v-model="page.data.viability_declaration">
-                                    <label class="btn btn-outline-secondary" for="viability-2">Esta equipe de
+                                    <label class="btn btn-action-tertiary" for="viability-2">Esta equipe de
                                         planejamento
                                         declara inviável esta contratação com base neste ETP, consoante o inciso
                                         XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</label>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade row gap-1 pt-3 position-relative"
+                        <div class="tab-pane fade row m-0 g-3"
                             :class="{ 'show active': tabs.is('anexos') }">
-
+                            <AttachmentsCmp origin="etps" :protocol="page.data.protocol" :types="attachmentTypes" />
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
