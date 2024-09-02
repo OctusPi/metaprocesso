@@ -65,15 +65,18 @@ function dateProtocol(pivot, separator = '') {
 }
 
 function reduceArrays(a, b, k = 'id') {
-    const obj = {}
+    const map = new Map()
 
-    function _setobj(arr) {
-        if (Array.isArray(arr))
-            arr.forEach((it) =>  obj[it[k]] = it)
-        return _setobj
-    } _setobj(a)(b)
+    function reduceFunc(arr) {
+        if (Array.isArray(arr)) {
+            arr.forEach((it) =>  map.set(it[k], it))
+        }
+    }
 
-    return Object.values(obj)
+    reduceFunc(a)
+    reduceFunc(b)
+
+    return Array.from(map.values())
 }
 
 export default {

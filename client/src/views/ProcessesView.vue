@@ -16,6 +16,8 @@ import Tabs from '@/utils/tabs';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
 import TableListSelect from '@/components/table/TableListSelect.vue';
+import gpt from '@/services/gpt';
+import notifys from '@/utils/notifys';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -96,6 +98,39 @@ watch(() => page.ui.register, (newdata) => {
         page.data.protocol = utils.dateProtocol(page.organ?.id)
     }
 })
+
+function generate() {
+    const base = {
+        description: page.data.description,
+        type: page.selects.types.find(o => o.id === page.data.type),
+        modality: page.selects.modalities.find(o => o.id === page.data.modality),
+    }
+
+    if (!base.type) {
+        emit('callAlert', notifys.warning('Selecione o tipo do processo'))
+        return
+    }
+
+    if (!base.modality) {
+        emit('callAlert', notifys.warning('Selecione a modalidade do processo'))
+        return
+    }
+
+    if (!base.description) {
+        emit('callAlert', notifys.warning('Digite uma pequena descrição'))
+        return
+    }
+
+    const payload = (`
+        Elabore uma descrição em plain text para um processo administrativo
+        de tipo ${base.type} e modalidade ${base.modality}
+        baseada no input ${base.description}
+    `)
+
+    gpt.generate(`${page.url}/generate`, payload, emit, (resp) => {
+        page.data.description = resp.data?.choices[0]?.message?.content
+    })
+}
 
 onMounted(() => {
     pageData.selects()
@@ -292,7 +327,14 @@ onMounted(() => {
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-12">
-                                <label for="description" class="form-label">Descrição do Objeto</label>
+                                <label for="description" class="form-label d-flex justify-content-between">
+                                    Descrição
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('dfd_description')">
+                                        <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>
+                                        Gerar com I.A
+                                    </a>
+                                </label>
                                 <textarea name="description" class="form-control" rows="4" :class="{
                                     'form-control-alert': page.valids.description
                                 }" id="description" v-model="page.data.description"></textarea>
@@ -469,9 +511,9 @@ onMounted(() => {
                                             status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
                                             description: [Mounts.Truncate()],
                                         }" :actions="[
-                                                Actions.ModalDetails(dfd_details),
-                                                Actions.FastDelete(unselect_dfd),
-                                            ]" />
+                                            Actions.ModalDetails(dfd_details),
+                                            Actions.FastDelete(unselect_dfd),
+                                        ]" />
                                 </div>
                             </div>
                         </div>
