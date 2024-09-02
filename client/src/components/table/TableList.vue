@@ -158,7 +158,6 @@ watch(() => props.body, (newval) => {
 
 <style scoped>
 .tablelist {
-    overflow-x: scroll;
     border-radius: 15px;
 }
 
