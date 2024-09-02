@@ -128,6 +128,12 @@ const router = createRouter({
       component: () => import('../views/ProcessesView.vue')
     },
     {
+      path: '/pricerecords',
+      name: 'pricerecords',
+      meta: { auth: true },
+      component: () => import('../views/PriceRecordsView.vue')
+    },
+    {
       path: '/forbidden',
       name: 'forbidden',
       component: () => import('../views/ForbiddenView.vue')
