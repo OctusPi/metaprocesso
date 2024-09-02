@@ -145,6 +145,7 @@ class Dfds extends Controller
             'hirings'       => Dfd::list_hirings(),
             'categories'    => CatalogItem::list_categories(),
             'items_types'   => CatalogItem::list_types(),
+            'responsibilitys' => ComissionMember::list_responsabilities(),
             'status'        => Dfd::list_status()
         ];
 

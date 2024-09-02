@@ -675,7 +675,8 @@ onMounted(() => {
                                                     {{
                                                         utils.getTxt(
                                                             page.selects.ordinators,
-                                                            page.data.ordinator
+                                                            page.data.ordinator,
+                                                            'id', 'name'
                                                         )
                                                     }}
                                                 </p>
@@ -688,7 +689,7 @@ onMounted(() => {
                                                     {{
                                                         utils.getTxt(
                                                             page.selects.demandants,
-                                                            page.data.demandant
+                                                            page.data.demandant, 'id', 'name'
                                                         )
                                                     }}
                                                 </p>
