@@ -14,10 +14,14 @@ import FooterMainUi from '@/components/FooterMainUi.vue';
 
             <section class="main-section container-fluid p-4">
                 
-                <header class="inside-title mb-2">
-                    <h2 class="p-0 m-0">Titulo Interno</h2>
-                    <p class="p-0 m-0">Breve descricao da funcionalidade da view</p>
-                </header>
+                <div role="heading" class="inside-title mb-4">
+                    <div>
+                        <h2>Dashboard</h2>
+                        <p>
+                            Panorama resultados ano corrente
+                        </p>
+                    </div>
+                </div>
 
                 <div class="container p-4">
                     Conteudo da View
