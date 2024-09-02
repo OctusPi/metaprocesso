@@ -79,6 +79,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/generate', 'generate');
     });
 
+    Route::prefix('/etps')->controller(Etps::class)->group(function(){
+        Route::post('/list_processes', 'list_processes');
+        Route::post('/list_dfds', 'list_dfds');
+        Route::get('/list_dfd_items/{id}', 'list_dfd_items');
+    });
+
     Route::prefix('/processes')->controller(Processes::class)->group(function(){
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
