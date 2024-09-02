@@ -54,7 +54,6 @@ watch(() => props.selects, (newval) => {
                     <!-- origin -->
                     <div class="box-revisor mb-4">
                         <div class="box-revisor-title d-flex mb-4">
-                            <div class="bar-revisor-title me-2"></div>
                             <div class="txt-revisor-title">
                                 <h3>Origem da Demanda</h3>
                                 <p>
@@ -111,7 +110,6 @@ watch(() => props.selects, (newval) => {
                     <!-- Infos -->
                     <div class="box-revisor mb-4">
                         <div class="box-revisor-title d-flex mb-4">
-                            <div class="bar-revisor-title me-2"></div>
                             <div class="txt-revisor-title">
                                 <h3>Informações Gerais</h3>
                                 <p>
@@ -212,7 +210,6 @@ watch(() => props.selects, (newval) => {
                     <!-- Items -->
                     <div class="box-revisor mb-4">
                         <div class="box-revisor-title d-flex mb-4">
-                            <div class="bar-revisor-title me-2"></div>
                             <div class="txt-revisor-title">
                                 <h3>Lista de Itens</h3>
                                 <p>
@@ -234,7 +231,6 @@ watch(() => props.selects, (newval) => {
                     <!-- details -->
                     <div class="box-revisor mb-4">
                         <div class="box-revisor-title d-flex mb-4">
-                            <div class="bar-revisor-title me-2"></div>
                             <div class="txt-revisor-title">
                                 <h3>Detalhamento da Necessidade</h3>
                                 <p>
