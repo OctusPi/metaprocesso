@@ -4,7 +4,6 @@ import Quill from 'quill'
 import 'quill/dist/quill.core.css'
 
 const model = defineModel()
-const initialValue = ref(model.value ?? '')
 
 const props = defineProps({
     identifier: { type: String },
@@ -14,6 +13,7 @@ const props = defineProps({
 
 const richTextEl = ref(null)
 const richTextToolbarEl = ref(null)
+
 
 const quill = ref(null)
 const focus = ref(false)
@@ -28,12 +28,13 @@ onMounted(() => {
         focus.value = quill.value.hasFocus()
     })
     quill.value.on('text-change', () => {
-        if (quill.value.getLength() < 2) {
+        if (quill.value.getLength() <= 1) {
             model.value = null
         } else {
             model.value = quill.value.getSemanticHTML()
         }
     })
+    quill.value.root.innerHTML = model.value ?? ''
 })
 
 </script>
@@ -85,7 +86,7 @@ onMounted(() => {
                 </button>
             </span>
         </div>
-        <div class="ocp-richtext-editor" ref="richTextEl" v-html="initialValue"></div>
+        <div class="ocp-richtext-editor" ref="richTextEl"></div>
     </div>
 </template>
 

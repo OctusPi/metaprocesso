@@ -6,6 +6,7 @@ async function generate(url, payload, emit, call){
     }
 }
 
+
 export default {
     generate
 }
