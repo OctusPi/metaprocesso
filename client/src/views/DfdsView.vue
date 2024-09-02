@@ -125,7 +125,6 @@ function delete_item(id) {
 }
 
 function generate(type) {
-    let callresp = null
     const dfd = page.data
     const slc = page.selects
     const base = {
@@ -136,28 +135,46 @@ function generate(type) {
         description: dfd.description,
         justification: dfd.justification
     }
+    
+    let callresp = null;
+    let payload = null;
 
     switch (type) {
         case 'dfd_description':
             callresp = (resp) => {
                 page.data.description = resp.data?.choices[0]?.message?.content
             }
+            payload = (`
+                Estou elaborando um DFD, por favor crie a descrição sucinta do 
+                objeto de contratação de uma empresa especializada para fornecimento de 
+                ${base.type?.title} para ${base?.description} para atender as necessidades da 
+                ${base.unit?.title} vinculado a ${base.organ?.title}. 
+                Por favor gere a resposta em um único parágarfo, sem quebras de linha.
+            `)
             break
         case 'dfd_justification':
             callresp = (resp) => {
                 page.data.justification = resp.data?.choices[0]?.message?.content
             }
+            payload = (`
+                Justifique a necessidade de contratação para ${base.description}. 
+                Por favor gere a resposta em um único parágarfo, sem quebras de linha.
+            `)
             break
         case 'dfd_quantitys':
             callresp = (resp) => {
                 page.data.justification_quantity = resp.data?.choices[0]?.message?.content
             }
+            payload = (`
+                Justifique a quantidade demandada para esses itens ${base.items} 
+                de acordo com esse objeto: ${base.description} com base nessa justificativa ${base.justification}. 
+                Por favor gere a resposta em um único parágarfo, sem quebras de linha.
+            `)
             break
         default:
             break
     }
 
-    const payload = gpt.make_payload(type, base)
     gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
@@ -434,7 +451,7 @@ onMounted(() => {
                                 </div>
                                 <div class="col-sm-12 col-md-4">
                                     <label for="suggested_hiring" class="form-label">
-                                        Forma de ContrataçãoSugerida
+                                        Forma de Contratação Sugerida
                                     </label>
                                     <select name="suggested_hiring" class="form-control"
                                         :class="{ 'form-control-alert': page.valids.suggested_hiring }"
