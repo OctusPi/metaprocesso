@@ -83,9 +83,9 @@ watch(() => props.body, (newval) => {
 </script>
 
 <template>
-    <div v-if="sent" :class="[props.secondary ? 'tablelist-sec' : 'tablelist']">
+    <div v-if="sent" class="tablelist" :class="[props.secondary ? 'tablelist-sec' : 'tablelist-prim']">
         <div v-if="body.length" class="table-responsive-md">
-            <table class="table-borderless table-striped table-hover"
+            <table class="m-0 table-borderless table-striped table-hover"
                 :class="[props.smaller ? 'table tablesm' : 'table']">
                 <thead>
                     <tr>
@@ -158,13 +158,16 @@ watch(() => props.body, (newval) => {
 
 <style scoped>
 .tablelist {
-    background-color: var(--color-background-soft);
+    overflow: scroll;
     border-radius: 15px;
+}
+
+.tablelist-prim {
+    background-color: var(--color-background-soft);
 }
 
 .tablelist-sec {
     background-color: var(--color-input);
-    border-radius: 15px;
 }
 
 thead th {
