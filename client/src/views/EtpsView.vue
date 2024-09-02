@@ -365,7 +365,7 @@ onMounted(() => {
                             </div>
                         </div>
 
-                        <div class="tab-pane fade row m-0 p-4 pt-1 g-3" :class="{ 'show active': tabs.is('process') }">
+                        <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
                             <div class="accordion mb-3" id="accordion-process">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="accordionSearchProcessHeadId">
@@ -438,7 +438,7 @@ onMounted(() => {
                                             <div class="p-4 pt-0 mx-2">
                                                 <TableListRadio secondary identify="process" v-model="page.data.process"
                                                     :header="page.process.headers" :body="page.process.data" :mounts="{
-                                                        status: [Mounts.Cast(page.selects.status_process), Mounts.Status()],
+                                                        status: [Mounts.Cast(page.selects.process_status), Mounts.Status()],
                                                         description: [Mounts.Truncate(200)],
                                                     }" />
                                             </div>
@@ -463,7 +463,7 @@ onMounted(() => {
                                     Atenção
                                 </h2>
                                 <p class="txt-color-sec small text-center m-0">
-                                    É necessário selecionar um processo para visualizar os DFDs
+                                    É necessário selecionar um processo para visualizar as DFDs
                                 </p>
                             </div>
                         </div>

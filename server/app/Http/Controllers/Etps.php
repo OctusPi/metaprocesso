@@ -67,7 +67,7 @@ class Etps extends Controller
      */
     public function list_processes(Request $request)
     {
-        if (empty($request->except('organ', 'comission'))) {
+        if (empty($request->except('comission'))) {
             return response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
         }
 
@@ -110,7 +110,7 @@ class Etps extends Controller
         return response()->json([
             'organs' => Utils::map_select(Data::find(new Organ(), [], ['name'])),
             'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
-            // Additional selection data...
+            'process_status' => Process::list_status(),
         ], 200);
     }
 }

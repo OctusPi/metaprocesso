@@ -219,12 +219,11 @@ tbody tr:last-child td:first-child {
 }
 
 .table tr td:first-child {
-    padding-left: 50px;
+    padding-left: 3vw;
 }
 
 .table tr td:last-child {
-    padding-right: 4cap;
-    text-align: end;
+    padding-right: 3vw;
 }
 
 .table,
