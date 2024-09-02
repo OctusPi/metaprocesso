@@ -11,6 +11,7 @@ use App\Http\Controllers\Dotations;
 use App\Http\Controllers\Etps;
 use App\Http\Controllers\Home;
 use App\Http\Controllers\Ordinators;
+use App\Http\Controllers\PriceRecords;
 use App\Http\Controllers\Processes;
 use App\Http\Controllers\Programs;
 use App\Http\Controllers\Sectors;
@@ -67,6 +68,7 @@ Route::middleware('auth:sanctum')->group(function () {
     $common('/dfds', Dfds::class);
     $common('/processes', Processes::class);
     $common('/etps', Etps::class);
+    $common('/pricerecords', PriceRecords::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
