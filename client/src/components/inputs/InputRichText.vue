@@ -41,6 +41,7 @@ onMounted(() => {
         }        
         model.value = modelCpy.value
     })
+    quill.value.root.innerHTML = model.value ?? ''
 })
 
 watch(() => model.value, (newval) => {
