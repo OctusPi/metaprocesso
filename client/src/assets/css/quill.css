@@ -85,3 +85,9 @@
 .ql-snow .ql-stroke {
     color: var(--color-input-text);
 }
+
+.ql-picker-options {
+    background-color: var(--color-background-soft) !important;
+    border: 0 !important;
+    border-radius: 8px;
+}
