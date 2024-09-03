@@ -1,7 +1,11 @@
 import 'bootstrap/dist/js/bootstrap.bundle.min'
 import '@vuepic/vue-datepicker/dist/main.css'
-import './assets/css/datepicker.css'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+
 import './assets/css/main.css'
+import './assets/css/datepicker.css'
+import './assets/css/quill.css'
 
 import { createApp } from 'vue'
 import { vMaska } from "maska"
