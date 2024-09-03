@@ -99,42 +99,42 @@ function list_processes() {
 }
 
 function generate(type) {
-    const etp = page.data
-    const slc = page.selects
     const base = {
-        organ: slc?.organs.find((o) => o.id === etp.organ),
-        comission: slc?.comissions.find((o) => o.id === etp.comission),
-        object_description: etp.object_description,
+        organ: page.organ,
+        comission: page.selects.comissions?.find(o => o.id === page.data.comission),
+        object_description: page.data.object_description,
     }
 
     let callresp, payload = null
 
     function setValuesAndPayload(key, mPayload) {
+        payload = mPayload
         callresp = (resp) => {
-            page.data[key] = resp.data?.choices[0]?.text;
+            console.log(resp?.data)
+            page.data[key] = `<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`
+            console.log(`<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`)
         };
-        payload = mPayload;
     }
 
     switch (type) {
         case 'object_description':
             setValuesAndPayload(type, `
             Crie uma descrição concisa para um Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
             em plain text
         `);
             break;
         case 'object_classification':
             setValuesAndPayload(type, `
             Classifique o objeto de um Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
             em plain text
         `);
             break;
         case 'necessity':
             setValuesAndPayload(type, `
             Descreva a necessidade da criação de um Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
             em plain text
         `);
             break;
@@ -154,14 +154,14 @@ function generate(type) {
         case 'market_survey':
             setValuesAndPayload(type, `
             Crie uma descrição para a pesquisa de mercado do Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
             em plain text
         `);
             break;
         case 'contract_calculus_memories':
             setValuesAndPayload(type, `
             Crie uma descrição para as memórias de cálculos do contrato relacionadas ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
             em plain text
         `);
             break;
@@ -174,28 +174,28 @@ function generate(type) {
         case 'solution_full_description':
             setValuesAndPayload(type, `
             Crie uma descrição completa da solução para o Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
             em plain text
         `);
             break;
         case 'solution_parcel_justification':
             setValuesAndPayload(type, `
             Crie uma justificativa para as parcelas da solução descrita no Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
             em plain text
         `);
             break;
         case 'correlated_contracts':
             setValuesAndPayload(type, `
             Crie uma descrição dos contratos correlacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
             em plain text
         `);
             break;
         case 'contract_alignment':
             setValuesAndPayload(type, `
             Crie uma descrição para o alinhamento do contrato com o Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
             em plain text
         `);
             break;
@@ -208,14 +208,14 @@ function generate(type) {
         case 'contract_previous_actions':
             setValuesAndPayload(type, `
             Crie uma descrição das ações anteriores relacionadas ao contrato e ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
             em plain text
         `);
             break;
         case 'ambiental_impacts':
             setValuesAndPayload(type, `
             Crie uma descrição dos possíveis impactos ambientais relacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.name} baseado no input da descrição do objeto '${base.object_description}'
+            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
             em plain text
         `);
             break;
@@ -223,10 +223,7 @@ function generate(type) {
             break;
     }
 
-
-    page.data[type] = `<p>${payload}</p>`
-
-    // gpt.generate(`${page.url}/generate`, payload, emit, callresp)
+    gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
 const attachmentTypes = [
