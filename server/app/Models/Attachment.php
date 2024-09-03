@@ -18,7 +18,7 @@ class Attachment extends Model
         'origin',
         'protocol',
         'type',
-        'file',
+        'document',
     ];
 
     public function rules(): array
@@ -27,7 +27,7 @@ class Attachment extends Model
             'origin' => 'required',
             'protocol' => 'required',
             'type' => 'required',
-            'file' => 'required',
+            'document' => 'required',
         ];
     }
 
