@@ -10,8 +10,9 @@ const emit = defineEmits(['callAlert', 'callRemove'])
 
 const props = defineProps({
     origin: { type: String },
+    originName: { type: String, default: 'objeto' },
     protocol: { type: String },
-    types: { type: Object }
+    types: { type: Object },
 })
 
 const [page, pageData] = Layout.new(emit, {
@@ -38,10 +39,11 @@ watch(() => props.protocol, (newdata) => {
     pageData.list()
 })
 
-watch(() => page.data, (newdata) => {
-    page.data = newdata
-    page.data.origin = props.origin
-    page.data.protocol = props.protocol
+watch(() => page.ui.register, (newdata) => {
+    if (newdata && !page.data.id) {
+        page.data.origin = props.origin
+        page.data.protocol = props.protocol
+    }
 })
 
 onMounted(() => {
@@ -54,10 +56,9 @@ onMounted(() => {
         <div v-if="!page.ui.register" class="container-fluid m-0 p-4 content">
             <div role="heading" class="inside-title mb-4">
                 <div>
-                    <h2>Processos</h2>
+                    <h2>Anexos</h2>
                     <p>
-                        Listagem dos processos atreladas ao
-                        <span class="txt-color">{{ page.organ_name }}</span>
+                        Listagem de arquivos anexados
                     </p>
                 </div>
                 <div class="d-flex gap-2 flex-wrap">
@@ -70,7 +71,8 @@ onMounted(() => {
             <div class="container p-0">
                 <TableList secondary :header="page.header" :body="page.datalist" :actions="[
                     Actions.Edit(pageData.update),
-                    Actions.Delete(pageData.remove),
+                    Actions.Delete((id) => pageData.remove(id, pageData.list)),
+                    Actions.Dowload((id) => pageData.download(id, ``)),
                 ]" :mounts="{
                     type: [Mounts.Cast(props.types)],
                 }" />
@@ -94,11 +96,11 @@ onMounted(() => {
                 </div>
             </div>
             <div role="form" class="p-0">
-                <form class="form-row" @submit.prevent="pageData.save()">
+                <form class="form-row" @submit.prevent="pageData.save">
                     <div class="row m-0 mb-3 g-3">
                         <input type="hidden" name="id" v-model="page.id">
                         <div class="col-sm-12 col-md-4">
-                            <label for="type" class="form-label">Tipos</label>
+                            <label for="type" class="form-label">Tipo</label>
                             <select name="type" class="form-control" :class="{ 'form-control-alert': page.valids.type }"
                                 id="type" v-model="page.data.type">
                                 <option value=""></option>
@@ -108,7 +110,7 @@ onMounted(() => {
                             </select>
                         </div>
                         <div class="col-sm-12 col-md-8">
-                            <FileInput identify="attachments-upload" v-model="page.data.file"
+                            <FileInput label="Arquivo" identify="attachments-upload" v-model="page.data.file"
                                 :valid="page.valids.file" />
                         </div>
                     </div>

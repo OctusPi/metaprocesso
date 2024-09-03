@@ -46,12 +46,17 @@ class Etp extends Model
     public function rules(): array
     {
         return [
-            'process' => ['required', Rule::unique('etps', 'process')->ignore($this->id)],
+            'process' => [
+                'required',
+                Rule::unique('etps', 'process')
+                    ->ignore($this->id)
+            ],
             'protocol' => [
                 'required',
-                Rule::unique('etps', 'protocol')->where(function ($query) {
-                    return $query->where('organ', $this->organ);
-            })->ignore($this->id)],
+                Rule::unique('etps', 'protocol')
+                    ->where('organ', $this->organ)
+                    ->ignore($this->id)
+            ],
             'ip' => 'required',
             'organ' => 'required',
             'comission' => 'required',

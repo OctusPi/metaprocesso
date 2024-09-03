@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{CatalogItem, Comission, ComissionMember, Dfd, DfdItem, Etp, Organ, PriceRecord, Process, User};
+use App\Models\{Comission, ComissionMember, Dfd, DfdItem, Etp, Organ, Process, User};
 use App\Utils\Utils;
 use App\Utils\Notify;
 use Illuminate\Http\Request;
@@ -56,7 +56,7 @@ class Etps extends Controller
      */
     public function details(Request $request)
     {
-        return $this->base_details($request, ['process', 'process.organ']);
+        return $this->base_details($request, ['process']);
     }
 
     /**

@@ -17,6 +17,7 @@ function handleFile(event) {
     if (file) {
         model.value = file
         name.value = file.name
+        valid.value = false
     }
 }
 
@@ -31,16 +32,16 @@ watch(() => props.valid, (newVal) => {
     <div>
         <label role="text" class="form-label">{{ props.label }}</label>
         <div class="d-flex gap-1">
-            <label :for="props.identify" class="form-control upload-label m-0">
+            <label :for="props.identify" class="form-control upload-label m-0" :class="{ 'form-control-alert': valid }">
                 <div class="d-flex no-wrap align-items-center gap-2 overflow-hidden">
-                    <ion-icon v-if="model" name="cloud-done-outline" class="upload-icon fs-5" />
-                    <ion-icon v-else name="cloud-upload-outline" class="upload-icon fs-5" />
-                    {{ (name && name != "null") ? name : `Selecionar Arquivo` }}
-                </div>
-                <input :id="props.identify" type="file" name="document" class="d-none" @change="handleFile"
-                    accept="application/pdf">
-            </label>
+                <ion-icon v-if="model" name="cloud-done-outline" class="upload-icon fs-5" />
+                <ion-icon v-else name="cloud-upload-outline" class="upload-icon fs-5" />
+                {{ (name && name != "null") ? name : `Selecionar Arquivo` }}
         </div>
+        <input :id="props.identify" type="file" name="document" class="d-none" @change="handleFile"
+            accept="application/pdf">
+        </label>
+    </div>
     </div>
 </template>
 
@@ -50,11 +51,19 @@ watch(() => props.valid, (newVal) => {
     border: 1px dashed var(--color-base);
 }
 
+.form-control-alert {
+    border: 1px dashed var(--color-danger);
+}
+
 .upload-label:hover {
     background-color: var(--color-input-focus);
 }
 
 .upload-icon {
     color: var(--color-base);
+}
+
+.form-control-alert .upload-icon {
+    color: var(--color-danger);
 }
 </style>

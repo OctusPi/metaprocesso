@@ -10,6 +10,7 @@ use App\Http\Controllers\Demandants;
 use App\Http\Controllers\Dotations;
 use App\Http\Controllers\Etps;
 use App\Http\Controllers\Home;
+use App\Http\Controllers\Attachments;
 use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\PriceRecords;
 use App\Http\Controllers\Processes;
@@ -69,6 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
     $common('/processes', Processes::class);
     $common('/etps', Etps::class);
     $common('/pricerecords', PriceRecords::class);
+    $common('/attachments/{origin}/{protocol}', Attachments::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {

@@ -73,13 +73,13 @@ class Data {
         })
     }
 
-    remove = (id, onRemove = () => {}) => {
+    remove = (id, onRemove = null) => {
         this.emit('callRemove', {
             id: id,
             url: this.page.url,
             search: this.page.search,
+            onRemove: onRemove
         })
-        onRemove()
     }
 
     fastremove = (id, onRemove = () => {}) => {

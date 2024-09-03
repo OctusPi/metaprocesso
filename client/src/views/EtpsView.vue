@@ -17,6 +17,7 @@ import TableListRadio from '@/components/table/TableListRadio.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
 import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 
+const ETPS_ORIGIN = "1";
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -62,7 +63,7 @@ const [page, pageData] = Layout.new(emit, {
         headers: [
             { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { key: 'ordinators.name', title: 'ORDENADORES' },
-            { key: 'units.title', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
+            { key: 'units.title', title: 'ORIGEM'},
             { title: 'OBJETO', sub: [{ key: 'description' }] },
             { key: 'status', title: 'SITUAÇÃO' }
         ],
@@ -317,9 +318,10 @@ onMounted(() => {
                         <div class="col-sm-12 col-md-4">
                             <label for="emission" class="form-label">Emissão</label>
                             <VueDatePicker auto-apply v-model="page.search.emission" :enable-time-picker="false"
-                                format="dd/MM/yyyy" model-type="dd/MM/yyyy" input-class-name="dp-custom-input-dtpk"
-                                locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                                format="dd/MM/yyyy" model-type="dd/MM/yyyy 00:00"
+                                input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
+                                menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-necessity" class="form-label">Necessidade</label>
@@ -370,7 +372,7 @@ onMounted(() => {
                 </div>
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
-                    <form @submit.prevent="pageData.save">
+                    <form @submit.prevent="pageData.save({ process: page.data.process.id })">
                         <input type="hidden" name="id" v-model="page.id">
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('info') }">
@@ -721,9 +723,10 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade row m-0 g-3"
-                            :class="{ 'show active': tabs.is('anexos') }">
-                            <AttachmentsCmp origin="etps" :protocol="page.data.protocol" :types="attachmentTypes" />
+                        <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('anexos') }">
+                            <AttachmentsCmp origin-name="ETP" @callAlert="(data) => emit('callAlert', data)"
+                                @callRemove="(data) => emit('callRemove', data)" :origin="ETPS_ORIGIN"
+                                :protocol="page.data.protocol" :types="attachmentTypes" />
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
