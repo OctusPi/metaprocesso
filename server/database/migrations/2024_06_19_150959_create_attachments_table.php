@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('origin');
             $table->string('protocol');
             $table->integer('type');
-            $table->string('file');
+            $table->string('document');
         });
     }
 

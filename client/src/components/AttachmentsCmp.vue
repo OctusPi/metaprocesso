@@ -29,7 +29,7 @@ const [page, pageData] = Layout.new(emit, {
         origin: 'required',
         protocol: 'required',
         type: 'required',
-        file: 'required',
+        document: 'required',
     }
 })
 
@@ -72,7 +72,7 @@ onMounted(() => {
                 <TableList secondary :header="page.header" :body="page.datalist" :actions="[
                     Actions.Edit(pageData.update),
                     Actions.Delete((id) => pageData.remove(id, pageData.list)),
-                    Actions.Dowload((id) => pageData.download(id, ``)),
+                    Actions.Dowload((id) => pageData.download(id, `Anexo`)),
                 ]" :mounts="{
                     type: [Mounts.Cast(props.types)],
                 }" />
@@ -110,8 +110,8 @@ onMounted(() => {
                             </select>
                         </div>
                         <div class="col-sm-12 col-md-8">
-                            <FileInput label="Arquivo" identify="attachments-upload" v-model="page.data.file"
-                                :valid="page.valids.file" />
+                            <FileInput label="Arquivo" identify="attachments-upload" v-model="page.data.document"
+                                :valid="page.valids.document" />
                         </div>
                     </div>
                 </form>

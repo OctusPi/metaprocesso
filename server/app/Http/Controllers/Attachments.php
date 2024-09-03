@@ -28,11 +28,11 @@ class Attachments extends Controller
 
     public function save(Request $request)
     {
-        $upload = new Uploads($request, ['file' => ['nullable' => false]]);
+        $upload = new Uploads($request, ['document' => ['nullable' => false]]);
 
         if ($request->id) {
             $instance = $this->model::find($request->id);
-            $upload->remove($instance->file);
+            $upload->remove($instance->document);
         }
 
         return $this->base_save($request, $upload->mergeUploads([]));
@@ -42,9 +42,9 @@ class Attachments extends Controller
     public function download(Request $request)
     {
         $attachment = Data::findOne(new Attachment(), ['id' => $request->id]);
-        if ($attachment && $attachment->file) {
+        if ($attachment && $attachment->document) {
             return response()->download(
-                storage_path("uploads/$attachment->file"),
+                storage_path("uploads/$attachment->document"),
                 "$attachment->protocol.pdf"
             );
         }
