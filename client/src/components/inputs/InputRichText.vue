@@ -1,8 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import Quill from 'quill'
 
 const model = defineModel()
+const modelCpy = ref()
 
 const props = defineProps({
     identifier: { type: String },
@@ -17,6 +18,7 @@ const focus = ref(false)
 
 onMounted(() => {
     quill.value = new Quill(richTextEl.value, {
+        theme: 'snow',
         modules: {
             toolbar: [
                 [{ 'header': [1, 2, 3, false] }],
@@ -27,19 +29,24 @@ onMounted(() => {
                 ['clean']
             ]
         },
-        theme: 'snow'
     })
     quill.value.on('editor-change', () => {
         focus.value = quill.value.hasFocus()
     })
     quill.value.on('text-change', () => {
-        if (quill.value.getLength() <= 1) {
-            model.value = null
+        if (quill.value.getLength() > 1) {
+            modelCpy.value = quill.value.getSemanticHTML()
         } else {
-            model.value = quill.value.getSemanticHTML()
-        }
+            modelCpy.value = null
+        }        
+        model.value = modelCpy.value
     })
-    quill.value.root.innerHTML = model.value ?? ''
+})
+
+watch(() => model.value, (newval) => {
+    if (modelCpy.value != newval) {
+        quill.value.root.innerHTML = newval ?? ''
+    }
 })
 
 </script>
