@@ -348,7 +348,7 @@ onMounted(() => {
                         Actions.Delete(pageData.remove),
                     ]" :mounts="{
                         status: [Mounts.Cast(page.selects.status), Mounts.Status()],
-                        necessity: [Mounts.StripHTML()],
+                        necessity: [Mounts.StripHTML(), Mounts.Truncate(200)],
                     }" />
                 </div>
             </section>
