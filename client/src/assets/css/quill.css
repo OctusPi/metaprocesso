@@ -1,0 +1,87 @@
+@import url('./base.css');
+
+.ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+    padding: 0;
+    border: 0;
+}
+
+.ql-formats {
+    margin: 0 !important;
+}
+
+.ql-snow * {
+    color: var(--color-input-txt) !important;
+}
+
+.ql-snow .ql-stroke {
+    stroke: var(--color-input-txt);
+}
+
+.ql-snow .ql-fill {
+    fill: var(--color-input-txt);
+}
+
+.ql-snow.ql-toolbar button {
+    border-radius: 4px;
+}
+
+.ql-snow.ql-toolbar button:hover {
+    background-color: var(--color-base-tls);
+    color: var(--color-base);
+}
+
+.ql-snow.ql-toolbar .ql-picker-label {
+    border: 0;
+}
+
+.ql-snow.ql-toolbar .ql-picker-label:hover {
+    border: 0;
+    color: var(--color-base) !important;
+}
+
+.ql-snow.ql-toolbar .ql-picker-label:hover .ql-stroke {
+    stroke: var(--color-base);
+}
+
+.ql-active *.ql-stroke {
+    stroke: var(--color-base) !important;
+}
+
+.ql-active *.ql-fill {
+    fill: var(--color-base) !important;
+}
+
+.ql-active {
+    color: var(--color-base) !important;
+}
+
+.ql-snow.ql-toolbar button:hover .ql-stroke {
+    stroke: var(--color-base);
+}
+
+.ql-snow.ql-toolbar button:hover .ql-fill {
+    fill: var(--color-base);
+}
+
+
+.ql-snow .ql-tooltip {
+    background-color: var(--color-background-soft);
+    color: var(--color-input-text);
+    border-radius: 8px;
+    box-shadow: none;
+    padding: 10px 14px;
+    border: 1px solid var(--color-input-focus);
+}
+
+.ql-snow .ql-tooltip input {
+    background-color: var(--color-input);
+    border: none !important;
+    outline: none;
+    border-radius: 4px;
+    color: var(--color-input-text);
+}
+
+.ql-snow .ql-stroke {
+    color: var(--color-input-text);
+}

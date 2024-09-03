@@ -63,7 +63,7 @@ const [page, pageData] = Layout.new(emit, {
         headers: [
             { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { key: 'ordinators.name', title: 'ORDENADORES' },
-            { key: 'units.title', title: 'ORIGEM'},
+            { key: 'units.title', title: 'ORIGEM' },
             { title: 'OBJETO', sub: [{ key: 'description' }] },
             { key: 'status', title: 'SITUAÇÃO' }
         ],
@@ -372,7 +372,7 @@ onMounted(() => {
                 </div>
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
-                    <form @submit.prevent="pageData.save({ process: page.data.process.id })">
+                    <form @submit.prevent="pageData.save({ process: page.data.process?.id })">
                         <input type="hidden" name="id" v-model="page.id">
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('info') }">
