@@ -26,7 +26,7 @@ function show_selected(){
 
 function chkall() {
 	if (checkall.value === true) {
-		model.value = props.options
+		model.value = toRaw(props.options)
 	} else {
 		model.value = []
 	}
