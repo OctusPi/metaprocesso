@@ -128,7 +128,6 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <form class="form-row" @submit.prevent="pageData.save()">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-                            <input type="hidden" name="id" v-model="page.id">
                             <div class="col-sm-12">
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control"
