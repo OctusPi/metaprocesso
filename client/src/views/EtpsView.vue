@@ -82,9 +82,9 @@ const [page, pageData] = Layout.new(emit, {
 })
 
 const tabs = new Tabs([
-    { id: 'info', title: 'Informações' },
     { id: 'process', title: 'Processo' },
     { id: 'dfds', title: 'DFDs' },
+    { id: 'info', title: 'Informações' },
     { id: 'necessidade', title: 'Necessidade' },
     { id: 'solucao', title: 'Solução' },
     { id: 'planejamento', title: 'Planejamento' },
@@ -103,6 +103,7 @@ function generate(type) {
         organ: page.organ,
         comission: page.selects.comissions?.find(o => o.id === page.data.comission),
         object_description: page.data.object_description,
+        process: page.process
     }
 
     let callresp, payload = null
@@ -110,7 +111,6 @@ function generate(type) {
     function setValuesAndPayload(key, mPayload) {
         payload = mPayload
         callresp = (resp) => {
-            console.log(resp?.data)
             page.data[key] = `<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`
             console.log(`<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`)
         };
@@ -119,104 +119,89 @@ function generate(type) {
     switch (type) {
         case 'object_description':
             setValuesAndPayload(type, `
-            Crie uma descrição concisa para um Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
-            em plain text
+            Crie uma descrição concisa para um Estudo Técnico preliminar pelo órgão ${base.organ?.name}
+            baseado no descrição do processo '${base.process?.description} em plain text
         `);
             break;
         case 'object_classification':
             setValuesAndPayload(type, `
             Classifique o objeto de um Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
-            em plain text
+            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
         `);
             break;
         case 'necessity':
             setValuesAndPayload(type, `
             Descreva a necessidade da criação de um Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
-            em plain text
+            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
         `);
             break;
         case 'contract_forecast':
             setValuesAndPayload(type, `
             Descreva uma data de previsão por extenso, com base na complexidade o Estudo Técnico preliminar descrito
-            no texto '${base.object_description}'
-            em plain text
+            no texto '${base.object_description}' em plain text
         `);
             break;
         case 'contract_requirements':
             setValuesAndPayload(type, `
-            Elabore os requisitos para o Estudo técnico preliminar descrito no texto '${base.object_description}'
-            em plain text
+            Elabore os requisitos para o Estudo técnico preliminar descrito no texto '${base.object_description}' em plain text
         `);
             break;
         case 'market_survey':
             setValuesAndPayload(type, `
             Crie uma descrição para a pesquisa de mercado do Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
-            em plain text
+            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
         `);
             break;
         case 'contract_calculus_memories':
             setValuesAndPayload(type, `
             Crie uma descrição para as memórias de cálculos do contrato relacionadas ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
-            em plain text
+            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
         `);
             break;
         case 'contract_expected_price':
             setValuesAndPayload(type, `
-            Crie uma descrição para o preço esperado do contrato com base no Estudo Técnico preliminar descrito no texto '${base.object_description}'
-            em plain text
+            Crie uma descrição para o preço esperado do contrato com base no Estudo Técnico preliminar descrito no texto '${base.object_description}' em plain text
         `);
             break;
         case 'solution_full_description':
             setValuesAndPayload(type, `
             Crie uma descrição completa da solução para o Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
-            em plain text
+            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
         `);
             break;
         case 'solution_parcel_justification':
             setValuesAndPayload(type, `
             Crie uma justificativa para as parcelas da solução descrita no Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
-            em plain text
+            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
         `);
             break;
         case 'correlated_contracts':
             setValuesAndPayload(type, `
             Crie uma descrição dos contratos correlacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
-            em plain text
+            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
         `);
             break;
         case 'contract_alignment':
             setValuesAndPayload(type, `
             Crie uma descrição para o alinhamento do contrato com o Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
-            em plain text
+            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
         `);
             break;
         case 'expected_results':
             setValuesAndPayload(type, `
-            Crie uma descrição dos resultados esperados com base no Estudo Técnico preliminar descrito no texto '${base.object_description}'
-            em plain text
+            Crie uma descrição dos resultados esperados com base no Estudo Técnico preliminar descrito no texto '${base.object_description}' em plain text
         `);
             break;
         case 'contract_previous_actions':
             setValuesAndPayload(type, `
             Crie uma descrição das ações anteriores relacionadas ao contrato e ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
-            em plain text
+            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
         `);
             break;
         case 'ambiental_impacts':
             setValuesAndPayload(type, `
             Crie uma descrição dos possíveis impactos ambientais relacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            pela comissão ${base.comission?.title} baseado no input da descrição do objeto '${base.object_description}'
-            em plain text
+            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
         `);
             break;
         default:
@@ -293,34 +278,20 @@ onMounted(() => {
                                 v-model="page.search.protocol" placeholder="Pesquise por partes do protocolo" />
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-organ" class="form-label">Orgão</label>
-                            <select name="organ" class="form-control" id="s-organ" v-model="page.search.organ"
-                                @change="pageData.selects('organ', page.search.organ)">
-                                <option value=""></option>
-                                <option v-for="o in page.selects.organs" :key="o.id" :value="o.id">
-                                    {{ o.title }}
-                                </option>
-                            </select>
+                            <label for="date_s_ini" class="form-label">Data Inicial</label>
+                            <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false"
+                                format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
+                                locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-comission" class="form-label">Comissão</label>
-                            <select name="comission" class="form-control" id="s-comission"
-                                v-model="page.search.comission">
-                                <option value=""></option>
-                                <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
-                                    {{ o.title }}
-                                </option>
-                            </select>
+                            <label for="date_s_fin" class="form-label">Data Final</label>
+                            <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
+                                format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
+                                locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
-                        <div class="col-sm-12 col-md-4">
-                            <label for="emission" class="form-label">Emissão</label>
-                            <VueDatePicker auto-apply v-model="page.search.emission" :enable-time-picker="false"
-                                format="dd/MM/yyyy" model-type="dd/MM/yyyy 00:00"
-                                input-class-name="dp-custom-input-dtpk" locale="pt-br"
-                                calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
-                                menu-class-name="dp-custom-menu" />
-                        </div>
-                        <div class="col-sm-12 col-md-4">
+                        <div class="col-sm-12 col-md-8">
                             <label for="s-necessity" class="form-label">Necessidade</label>
                             <input type="text" name="necessity" class="form-control" id="s-necessity"
                                 v-model="page.search.necessity" placeholder="Pesquise por partes da necessidade" />
@@ -371,85 +342,25 @@ onMounted(() => {
                     <TabNav :tabs="tabs" identify="tabbed" />
                     <form @submit.prevent="pageData.save({ process: page.data.process?.id })">
                         <input type="hidden" name="id" v-model="page.id">
-                        <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
-                            :class="{ 'show active': tabs.is('info') }">
-                            <div class="col-sm-12 col-md-4">
-                                <label for="emission" class="form-label">Emissão</label>
-                                <VueDatePicker auto-apply v-model="page.data.emission"
-                                    :input-class-name="page.valids.emission ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
-                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="comission" class="form-label">Comissão</label>
-                                <select name="comission" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.comission }" id="comission"
-                                    v-model="page.data.comission">
-                                    <option value=""></option>
-                                    <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
-                                        {{ o.title }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="status" class="form-label">Situação Atual</label>
-                                <select name="status" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.status }" id="status"
-                                    v-model="page.data.status">
-                                    <option value=""></option>
-                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{
-                                        s.title }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <label for="object_description" class="form-label d-flex justify-content-between">
-                                    Descrição sucinta do objeto
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('object_description')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.object_description" placeholder="Descrição do Objeto"
-                                    identifier="object_description" v-model="page.data.object_description" />
-                            </div>
-                            <div class="col-12">
-                                <label for="object_classification" class="form-label d-flex justify-content-between">
-                                    Classificação do objeto
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('object_classification')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.object_classification"
-                                    placeholder="Classificação do Objeto" identifier="object_classification"
-                                    v-model="page.data.object_classification" />
-                            </div>
-                        </div>
-
                         <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
                             <div class="accordion mb-3" id="accordion-process">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="accordionSearchProcessHeadId">
                                         <button class="w-100 text-center px-2 py-3" type="button"
-                                            :data-bs-toggle="[page.data.comission && 'collapse']"
-                                            data-bs-target="#accordionSearchColapseId" aria-expanded="true"
-                                            aria-controls="accordionSearchColapseId">
+                                            data-bs-toggle="collapse" data-bs-target="#accordionSearchColapseId"
+                                            aria-expanded="true" aria-controls="accordionSearchColapseId">
                                             <h2 class="txt-color text-center m-0">
                                                 <i class="bi bi-journal-bookmark me-1"></i>
                                                 Localizar Processo
                                             </h2>
                                             <p class="validation txt-color-sec small text-center m-0" :class="{
-                                                'text-danger': page.valids.process || !page.data.comission
+                                                'text-danger': page.valids.process
                                             }">
-                                                {{
-                                                    page.data.comission
-                                                        ? `Aplique os filtros abaixo para localizar os Processos`
-                                                        : `Selecione uma comissão para continuar`
-                                                }}
+                                                Aplique os filtros abaixo para localizar os Processos
                                             </p>
                                         </button>
                                     </h2>
-                                    <div id="accordionSearchColapseId" class="accordion-collapse collapse"
+                                    <div id="accordionSearchColapseId" class="accordion-collapse collapse" :class="{'show': page.data.id }"
                                         aria-labelledby="accordion-processHeadId" data-bs-parent="#accordion-process">
                                         <div class="accordion-body p-0 m-0">
                                             <div class="p-4 pt-0 mx-2">
@@ -526,6 +437,60 @@ onMounted(() => {
                                 <p class="txt-color-sec small text-center m-0">
                                     É necessário selecionar um processo para visualizar as DFDs
                                 </p>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
+                            :class="{ 'show active': tabs.is('info') }">
+                            <div class="col-sm-12 col-md-4">
+                                <label for="emission" class="form-label">Emissão</label>
+                                <VueDatePicker auto-apply v-model="page.data.emission"
+                                    :input-class-name="page.valids.emission ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                    :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="comission" class="form-label">Comissão</label>
+                                <select name="comission" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.comission }" id="comission"
+                                    v-model="page.data.comission">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="status" class="form-label">Situação Atual</label>
+                                <select name="status" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.status }" id="status"
+                                    v-model="page.data.status">
+                                    <option value=""></option>
+                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{
+                                        s.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="object_description" class="form-label d-flex justify-content-between">
+                                    Descrição sucinta do objeto
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('object_description')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.object_description" placeholder="Descrição do Objeto"
+                                    identifier="object_description" v-model="page.data.object_description" />
+                            </div>
+                            <div class="col-12">
+                                <label for="object_classification" class="form-label d-flex justify-content-between">
+                                    Classificação do objeto
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('object_classification')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.object_classification"
+                                    placeholder="Classificação do Objeto" identifier="object_classification"
+                                    v-model="page.data.object_classification" />
                             </div>
                         </div>
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
@@ -705,7 +670,7 @@ onMounted(() => {
                                 <div class="col-12 col-md-6">
                                     <input class="btn-check" id="viability-1" type="radio" name="viability" value="1"
                                         v-model="page.data.viability_declaration">
-                                    <label class="btn btn-action-tertiary" for="viability-1">Esta equipe de
+                                    <label class="btn btn-action-primary-tls" for="viability-1">Esta equipe de
                                         planejamento
                                         declara viável esta contratação com base neste ETP, consoante o inciso
                                         XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</label>
@@ -713,7 +678,7 @@ onMounted(() => {
                                 <div class="col-12 col-md-6">
                                     <input class="btn-check" id="viability-2" type="radio" name="viability" value="0"
                                         v-model="page.data.viability_declaration">
-                                    <label class="btn btn-action-tertiary" for="viability-2">Esta equipe de
+                                    <label class="btn btn-action-danger-tls" for="viability-2">Esta equipe de
                                         planejamento
                                         declara inviável esta contratação com base neste ETP, consoante o inciso
                                         XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</label>
