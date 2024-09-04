@@ -134,6 +134,12 @@ const router = createRouter({
       component: () => import('../views/PriceRecordsView.vue')
     },
     {
+      path: '/riskiness',
+      name: 'riskiness',
+      meta: { auth: true },
+      component: () => import('../views/RiskMapsView.vue')
+    },
+    {
       path: '/forbidden',
       name: 'forbidden',
       component: () => import('../views/ForbiddenView.vue')
