@@ -1,5 +1,5 @@
 <script setup>
-import { createApp, onMounted, watch } from 'vue';
+import { createApp, inject, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
@@ -12,7 +12,7 @@ import FooterMainUi from '@/components/FooterMainUi.vue';
 import CatalogReport from './reports/CatalogReport.vue';
 import TableList from '@/components/table/TableList.vue';
 
-
+const sysapp = inject('sysapp')
 const router = useRouter()
 const emit = defineEmits(['callAlert', 'callUpdate'])
 const props = defineProps({
@@ -39,7 +39,7 @@ const [page, pageData] = Layout.new(emit, {
 function export_catalog(id) {
     http.get(`${page.url}/export/${id}`, emit, (resp) => {
         const containerReport = document.createElement('div')
-        const instanceReport = createApp(CatalogReport, { catalog: resp.data, selects: page.selects })
+        const instanceReport = createApp(CatalogReport, { qrdata: sysapp, catalog: resp.data, selects: page.selects })
         instanceReport.mount(containerReport)
         exp.exportPDF(containerReport, `CATÁLOGO-${resp.data.name}`)
     })
