@@ -55,3 +55,7 @@ th, td {
 .missing i {
     font-size: 1em;
 }
+
+.x-small{
+    font-size: 0.5rem !important;
+}

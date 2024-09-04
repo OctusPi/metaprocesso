@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from 'vue'
-import TableListReport from '@/views/reports/TableListReport.vue'
+import QrcodeVue from 'qrcode.vue';
 import dates from '@/utils/dates';
+import TableListReport from '@/views/reports/TableListReport.vue'
 
 const props = defineProps({
+    qrdata: {type: Object, default:() => { }},
     catalog: { type: Object, required: true },
     selects: { type: Object, required: true }
 })
@@ -26,14 +28,25 @@ const items = ref({
 
 <template>
     <main>
-        <div class="d-flex align-catalogs-center">
-            <div class="ct-logo me-2">
-                <img :src="catalog.organ.logomarca" class="h-logo">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <div class="ct-logo me-2">
+                    <img :src="catalog.organ.logomarca" class="h-logo">
+                </div>
+                <div class="h-info">
+                    <h1>{{ catalog.organ.name }}</h1>
+                    <p>{{ catalog.organ.address }}</p>
+                    <p>{{ catalog.organ.phone }} {{ catalog.organ.email }}</p>
+                </div>
             </div>
-            <div class="h-info">
-                <h1>{{ catalog.organ.name }}</h1>
-                <p>{{ catalog.organ.address }}</p>
-                <p>{{ catalog.organ.phone }} {{ catalog.organ.email }}</p>
+            <div class="d-flex align-items-center">
+                <div class="me-2 text-end">
+                    <p class="p-0 m-0 x-small">{{ qrdata.url }}</p>
+                    <p class="p-0 m-0 x-small">{{ `${qrdata.name} - ${qrdata.version}` }}</p>
+                    <p class="p-0 m-0 x-small">{{ qrdata.copy }}</p>
+                    <p class="p-0 m-0 x-small">{{ dates.dateTxtNow() }}</p>
+                </div>
+                <qrcode-vue :value="qrdata.url" :size="parseInt('65')" level="H" />
             </div>
         </div>
         <div class="my-4">
@@ -48,6 +61,7 @@ const items = ref({
             </p>
         </div>
         <table>
+            <tbody>
             <tr>
                 <td colspan="3">
                     <h3>Orgão</h3>
@@ -67,6 +81,7 @@ const items = ref({
                     <p>{{ catalog.name ?? '*****' }}</p>
                 </td>
             </tr>
+        </tbody>
         </table>
 
         <div class="table-title">

@@ -25,7 +25,8 @@ app.provide('sysapp', {
   name: import.meta.env.VITE_APP_NAME ?? 'Metaprocesso',
   desc: import.meta.env.VITE_APP_DESC ?? 'Gestão de Compras Públicas',
   copy: import.meta.env.VITE_APP_COPY ?? 'OctusPi Development 2024',
-  version: import.meta.env.VITE_APP_VER ?? '1.0.0 alpha'
+  url: import.meta.env.VITE_APP_URL ?? 'localhost',
+  version: import.meta.env.VITE_APP_VERSION ?? '1.0.0 alpha'
 })
 
 app.mount('#app')

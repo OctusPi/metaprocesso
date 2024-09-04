@@ -1,5 +1,5 @@
 <script setup>
-import { createApp, onMounted, ref, watch } from 'vue';
+import { createApp, inject, onMounted, ref, watch } from 'vue';
 import TableList from '@/components/table/TableList.vue';
 import NavMainUi from '@/components/NavMainUi.vue';
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
@@ -20,6 +20,7 @@ import dates from '@/utils/dates';
 import Tabs from '@/utils/tabs';
 
 
+const sysapp = inject('sysapp')
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
 const props = defineProps({
@@ -197,7 +198,7 @@ function export_dfd(id) {
     http.get(`${page.url}/export/${id}`, emit, (resp) => {
         const dfd = resp.data
         const containerReport = document.createElement('div')
-        const instanceReport = createApp(DfdReport, { organ: page.organ, dfd: dfd, selects: page.selects })
+        const instanceReport = createApp(DfdReport, {qrdata:sysapp, organ: page.organ, dfd: dfd, selects: page.selects })
         instanceReport.mount(containerReport)
         exp.exportPDF(containerReport, `DFD-${dfd.protocol}`)
     })
