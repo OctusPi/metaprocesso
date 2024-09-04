@@ -68,6 +68,7 @@ const items = ref({
             </p>
         </div>
         <table>
+        <tbody>
             <tr>
                 <td colspan="3">
                     <h3>Orgão</h3>
@@ -107,6 +108,7 @@ const items = ref({
                     </p>
                 </td>
             </tr>
+        </tbody>
         </table>
 
 
@@ -119,6 +121,7 @@ const items = ref({
             </p>
         </div>
         <table>
+            <tbody>
             <tr>
                 <td>
                     <h3>Previsão de Contratação</h3>
@@ -193,6 +196,7 @@ const items = ref({
                     <p>{{ dfd.description ?? '*****' }}</p>
                 </td>
             </tr>
+            </tbody>
         </table>
 
         <!-- Items -->
@@ -217,6 +221,7 @@ const items = ref({
             </p>
         </div>
         <table>
+        <tbody>
             <tr>
                 <td colspan="3">
                     <h3>Justificativa da necessidade da contratação</h3>
@@ -233,6 +238,7 @@ const items = ref({
                     </p>
                 </td>
             </tr>
+        </tbody>
         </table>
 
 
