@@ -272,14 +272,25 @@
   background-color: var(--color-input-active);
 }
 
-.btn-check + .btn-action-tertiary:hover {
-  background-color: var(--color-input-active);
-  color: var(--color-input-text);
+.btn-action-primary-tls,
+.btn-action-danger-tls{
+  background-color: var(--color-input-focus) !important;
+  color: var(--color-input-txt) !important;
 }
 
-.btn-check:checked + .btn-action-tertiary {
-  background-color: var(--color-base);
-  color: white;
+.btn-action-primary-tls:hover,
+.btn-action-danger-tls:hover {
+  background-color: var(--color-input-focus);
+}
+
+.btn-check:checked + .btn-action-primary-tls {
+  background-color: var(--color-base-tls) !important;
+  color: var(--color-base) !important;
+}
+
+.btn-check:checked + .btn-action-danger-tls {
+  background-color: var(--color-danger-tls) !important;
+  color: var(--color-danger-hover) !important;
 }
 
 .btn-action-close {

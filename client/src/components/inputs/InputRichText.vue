@@ -86,9 +86,13 @@ watch(() => model.value, (newval) => {
 }
 
 .ocp-richtext-editor {
-    height: 128px;
     border: 0;
     border-top: 1px solid var(--color-input-focus) !important;
     margin-top: 8px !important;
+}
+
+.ocp-richtext-editor .ql-editor {
+    min-height: 128px;
+    height: 128px;
 }
 </style>

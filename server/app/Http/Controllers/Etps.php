@@ -40,11 +40,16 @@ class Etps extends Controller
      */
     public function list(Request $request)
     {
+        $date_between = $request->has(['date_i', 'date_f']) ?
+            ['emission' => [$request->date_i, $request->date_f]] :
+            ['emission' => [date('Y') . '-01-01', date('Y-m-d')]];
+
         return $this->base_list(
             $request,
-            ['protocol', 'organ', 'emission', 'comission', 'necessity', 'status'],
+            ['protocol', 'necessity', 'status'],
             ['protocol'],
-            ['organ', 'comission', 'process']
+            ['organ', 'comission', 'process'],
+            $date_between
         );
     }
 
@@ -67,11 +72,11 @@ class Etps extends Controller
      */
     public function list_processes(Request $request)
     {
-        if (empty($request->except('comission'))) {
+        if (!$request->anyFilled('protocol', 'description', 'date_i', 'date_f')) {
             return response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
         }
 
-        $search = Utils::map_search(['protocol', 'organ', 'comission', 'description'], $request->all());
+        $search = Utils::map_search(['protocol', 'description'], $request->all());
         $betw = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
 
         $query = Data::find(new Process(), $search, null, ['organ', 'comission'], $betw);

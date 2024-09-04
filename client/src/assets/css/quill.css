@@ -91,3 +91,7 @@
     border: 0 !important;
     border-radius: 8px;
 }
+
+.ql-editor {
+    resize: vertical;
+}
