@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue"
+import { ref, watch, toRaw } from "vue"
 
 const props = defineProps({
     body: { type: Array, default: () => [] },
@@ -105,7 +105,7 @@ watch(() => props.body, (newval) => {
                     <tr v-for="(instance, i) in userBody" :key="i" @click="(e) => $slots.select && checkInput(e)"
                         :class="[$slots.select && 'cursor-pointer']">
                         <td v-if="$slots.select" class="align-middle">
-                            <slot :instance="instance" name="select"></slot>
+                            <slot :instance="toRaw(instance)" name="select"></slot>
                         </td>
                         <td v-for="(mounted, j) in applyMounters(instance, userHeader)" :key="j" class="align-middle">
                             <div>
