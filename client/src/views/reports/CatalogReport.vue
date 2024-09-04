@@ -46,7 +46,7 @@ const items = ref({
                     <p class="p-0 m-0 x-small">{{ qrdata.copy }}</p>
                     <p class="p-0 m-0 x-small">{{ dates.dateTxtNow() }}</p>
                 </div>
-                <qrcode-vue :value="qrdata.url" size="65" level="H" />
+                <qrcode-vue :value="qrdata.url" :size="parseInt('65')" level="H" />
             </div>
         </div>
         <div class="my-4">
