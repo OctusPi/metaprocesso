@@ -1,46 +1,61 @@
 <script setup>
-
-import { onMounted, ref, watch } from 'vue';
-
-const show_items = ref(false)
+import { ref, watch } from 'vue';
 
 const props = defineProps({
-	options: { type: Array, required: true, default:() => [] },
+	options: { type: Array, required: true, default: () => [] },
 	identify: { type: String, required: true },
-	idkey: { type: [Object, String], default: () => null },
+	idkey: { type: [Object, String], default: 'id' },
 	valid: { type: Boolean, default: false },
-	label: {type: String, default: () => 'title'}
+	label: { type: String, default: 'title' }
 });
 
-const model = defineModel({ default: [] })
-const valid = ref(props.valid)
-const checkall = ref(false)
+const show_items = ref(false);
+const model = defineModel({ default: [] });
+const t_items = ref(0); 
+const s_items = ref([]);
+const valid = ref(props.valid);
+const checkall = ref(false);
 
-function show_selected(){
-	if(model.value){
-		return `${(model.value.length).toString().padStart(2, '0')} Itens Selecionados`
-	}
+let isUpdatingFromModel = false; 
+let isUpdatingFromSItems = false; 
 
-	return 'Selecionar Itens'
-}
+const show_selected = () => `${t_items.value.toString().padStart(2, '0')} Itens Selecionados`;
 
-function chkall() {
-	if (checkall.value === true) {
-		model.value = props.options
+const check_all = () => {
+	if (!checkall.value) {
+		s_items.value = [];
 	} else {
-		model.value = []
+		s_items.value = props.options.map(p => p[props.idkey]);
 	}
-}
+};
 
 watch(() => props.valid, (newVal) => {
-	valid.value = newVal
-})
+	valid.value = newVal;
+});
 
-onMounted(() => {
-	if (!model.value) {
-		model.value = []
+watch(s_items, (newItems) => {
+	if (!isUpdatingFromModel) {
+		isUpdatingFromSItems = true;
+		const newModel = props.options.filter(option => newItems.includes(option[props.idkey]));
+		if (JSON.stringify(newModel) !== JSON.stringify(model.value)) {
+			model.value = newModel;
+		}
+		t_items.value = newItems.length;
+		isUpdatingFromSItems = false;
 	}
-})
+}, { immediate: true });
+
+watch(model, (newModel) => {
+	if (!isUpdatingFromSItems) {
+		isUpdatingFromModel = true;
+		const newSItems = newModel.map(item => item[props.idkey]);
+		if (JSON.stringify(newSItems) !== JSON.stringify(s_items.value)) {
+			s_items.value = newSItems;
+		}
+		t_items.value = newSItems.length;
+		isUpdatingFromModel = false;
+	}
+}, { immediate: true });
 
 </script>
 
@@ -50,16 +65,16 @@ onMounted(() => {
 			<span>{{ show_selected() }}</span>
 			<ion-icon @click="show_items = !show_items" :name="show_items ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
 		</div>
-		<div v-show="show_items" class="w-100 position-absolute div-drop" :class="{'style-open-box':show_items}">
+		<div v-show="show_items" class="w-100 position-absolute div-drop" :class="{'style-open-box': show_items}">
 			<div class="form-check form-switch d-flex flex-row-reverse align-items-center" v-if="props.options.length">
-				<input class="form-check-input m-0 ms-2" type="checkbox" role="switch" id="flexSwitchCheckChecked" v-model="checkall" @change="chkall">
+				<input class="form-check-input m-0 ms-2" type="checkbox" role="switch" id="flexSwitchCheckChecked" v-model="checkall" @change="check_all">
 				<label class="form-check-label p-0 m-0 ms-3" for="flexSwitchCheckChecked">Selecionar Todos</label>
 			</div>
 
 			<div class="form-check mb-1" v-for="option in props.options" :key="option.id + props.identify">
 				<input class="form-check-input" type="checkbox"
-					:name="option.id + props.identify" v-model="model"
-					:value="!props.idkey ? option : option[props.idkey]" :id="option.id + props.identify">
+					:name="option.id + props.identify" v-model="s_items"
+					:value="option[props.idkey]" :id="option.id + props.identify">
 				<label class="check-label form-check-label" :for="option.id + props.identify">
 					{{ option[props.label] }}
 				</label>
@@ -91,14 +106,13 @@ onMounted(() => {
 	font-size: 0.9rem !important;
 }
 
-.style-open{
+.style-open {
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
 
-.style-open-box{
+.style-open-box {
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 }
-
 </style>
