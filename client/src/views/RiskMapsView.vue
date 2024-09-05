@@ -470,7 +470,8 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade content p-4 pt-1 row m-0 g-3" :class="{ 'show active': tabs.is('infos') }">
+                        <div class="tab-pane fade content p-4 pt-1 row m-0 g-3"
+                            :class="{ 'show active': tabs.is('infos') }">
                             <div class="col-sm-12 col-md-8">
                                 <label for="comission" class="form-label">Comissão</label>
                                 <select name="comission" class="form-control"

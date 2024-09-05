@@ -338,8 +338,7 @@ onMounted(() => {
                                 }" id="description" v-model="page.data.description"></textarea>
                             </div>
                         </div>
-                        <div class="tab-pane fade row content m-0 g-3"
-                            :class="{ 'show active': tabs.is('dfds') }">
+                        <div class="tab-pane fade row content m-0 g-3" :class="{ 'show active': tabs.is('dfds') }">
                             <div class="accordion" id="accordion-dfds">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="accordion-dfds-header">
@@ -426,6 +425,29 @@ onMounted(() => {
                         </div>
                         <div class="tab-pane fade row position-relative content m-0 g-3 p-4 pt-3"
                             :class="{ 'show active': tabs.is('revisar') }">
+                            <div class="box-revisor">
+                                <div class="box-revisor-title d-flex mb-4">
+                                    <div class="txt-revisor-title">
+                                        <h3>Origem</h3>
+                                        <p>Instituições que originaram o processo</p>
+                                    </div>
+                                </div>
+                                <div class="box-revisor-content">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h4>Unidades</h4>
+                                            <p>{{ page.data.units.map(item => item.title).join(', ') ?? '*****' }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h4>Comissão</h4>
+                                            <p>{{ utils.getTxt(
+                                                page.selects.comissions,
+                                                page.data.comission
+                                            ) }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="box-revisor">
                                 <div class="box-revisor-title d-flex mb-4">
                                     <div class="txt-revisor-title">
