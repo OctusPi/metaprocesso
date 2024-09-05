@@ -113,7 +113,6 @@ class Etps extends Controller
         }
 
         return response()->json(array_merge([
-            'organs' => Utils::map_select(Data::find(new Organ(), [], ['name'])),
             'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
             'process_status' => Process::list_status(),
             'status' => Etp::list_status(),

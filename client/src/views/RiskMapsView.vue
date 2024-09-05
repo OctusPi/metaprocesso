@@ -16,6 +16,9 @@ import masks from '@/utils/masks';
 import utils from '@/utils/utils';
 import dates from '@/utils/dates';
 import Tabs from '@/utils/tabs';
+import TableListRadio from '@/components/table/TableListRadio.vue';
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
+import TableListSelect from '@/components/table/TableListSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -142,8 +145,8 @@ function swithToModal(id, reference, ds, key) {
     reference.datalist = reference.risk[key] ?? []
 }
 
-function search_process() {
-    http.post('/pricerecords/list_processes', main.process.search, emit, (resp) => {
+function list_processes() {
+    http.post('/riskiness/list_processes', main.process.search, emit, (resp) => {
         main.process.data = resp.data ?? []
     })
 }
@@ -199,10 +202,10 @@ watch(() => main.ui.register, (newdata) => {
 })
 
 const tabs = new Tabs([
-    { id: 'process', icon: 'bi-bounding-box', title: 'Processo' },
-    { id: 'infos', icon: 'bi-bounding-box', title: 'Infos' },
-    { id: 'risks', icon: 'bi-journal-bookmark', title: 'Riscos' },
-    { id: 'accompaniments', icon: 'bi-check', title: 'Acompanhamentos' },
+    { id: 'process', title: 'Processo' },
+    { id: 'infos', title: 'Infos' },
+    { id: 'risks', title: 'Riscos' },
+    { id: 'accompaniments', title: 'Acompanhamentos' },
 ])
 
 watch(() => props.datalist, (newdata) => {
@@ -226,10 +229,9 @@ onMounted(() => {
             <section v-if="!main.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>DFDs</h2>
+                        <h2>Mapas de Risco</h2>
                         <p>
-                            Listagem das DFDs atreladas ao
-                            <span class="txt-color">{{ main.organ_name }}</span>
+                            Listagem dos Mapas de Riscos para os processos administrativos
                         </p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
@@ -269,92 +271,85 @@ onMounted(() => {
                                 </option>
                             </select>
                         </div>
-                        <div class="col-sm-12 col-md-8">
+                        <div class="col-12">
                             <label for="s-description" class="form-label">Descrição</label>
                             <input type="text" name="description" class="form-control" id="s-description"
                                 v-model="main.search.description" placeholder="Descrição" />
                         </div>
                         <div class="col-sm-12">
-                            <div class="accordion" id="s-accordionSearchProcess">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="s-accordionSearchProcessHeadId">
+                            <div class="accordion mb-3" id="accordion-process">
+                                <div class="accordion-item secondary">
+                                    <h2 class="accordion-header" id="accordionSearchProcessHeadId">
                                         <button class="w-100 text-center px-2 py-3" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#s-accordionSearchColapseId"
-                                            aria-expanded="true" aria-controls="s-accordionSearchColapseId">
+                                            data-bs-toggle="collapse" data-bs-target="#accordionSearchColapseRegisterId"
+                                            aria-expanded="true" aria-controls="accordionSearchColapseRegisterId">
                                             <h2 class="txt-color text-center m-0">
                                                 <i class="bi bi-journal-bookmark me-1"></i>
                                                 Localizar Processo
                                             </h2>
-                                            <p class="validation small text-center m-0 txt-color-sec">
+                                            <p class="validation txt-color-sec small text-center m-0" :class="{
+                                                'text-danger': main.valids.process
+                                            }">
                                                 Aplique os filtros abaixo para localizar os Processos
                                             </p>
                                         </button>
                                     </h2>
-                                    <div id="s-accordionSearchColapseId" class="accordion-collapse collapse"
-                                        aria-labelledby="accordionSearchProcessHeadId"
-                                        data-bs-parent="#accordionSearchProcess">
+                                    <div id="accordionSearchColapseRegisterId" class="accordion-collapse collapse"
+                                        :class="{ 'show': main.data.id }"
+                                        aria-labelledby="accordion-processRegisterHeadId"
+                                        data-bs-parent="#accordion-process">
                                         <div class="accordion-body p-0 m-0">
-                                            <div class="row g-3 p-4">
-                                                <div class="col-sm-12 col-md-4">
-                                                    <label for="date_s_ini" class="form-label">Data Inicial</label>
-                                                    <VueDatePicker auto-apply v-model="main.process.search.date_i"
-                                                        :enable-time-picker="false" format="dd/MM/yyyy"
-                                                        model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
-                                                        locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                                        calendar-cell-class-name="dp-custom-cell"
-                                                        menu-class-name="dp-custom-menu" />
-                                                </div>
-                                                <div class="col-sm-12 col-md-4">
-                                                    <label for="date_s_fin" class="form-label">Data Final</label>
-                                                    <VueDatePicker auto-apply v-model="main.process.search.date_f"
-                                                        :enable-time-picker="false" format="dd/MM/yyyy"
-                                                        model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
-                                                        locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                                        calendar-cell-class-name="dp-custom-cell"
-                                                        menu-class-name="dp-custom-menu" />
-                                                </div>
-                                                <div class="col-sm-12 col-md-4">
-                                                    <label for="s-protocol" class="form-label">Protocolo</label>
-                                                    <input type="text" name="protocol" class="form-control"
-                                                        id="s-protocol" v-model="main.process.search.protocol"
-                                                        placeholder="Número do Protocolo do Processo" />
-                                                </div>
-                                                <div class="col-sm-12 col-md-4">
-                                                    <label for="s-organ" class="form-label">Orgão</label>
-                                                    <select name="organ" class="form-control" id="s-organ"
-                                                        v-model="main.process.search.organ"
-                                                        @change="mainData.selects('organ', main.process.search.organ)">
-                                                        <option value=""></option>
-                                                        <option v-for="o in main.selects.organs" :key="o.id"
-                                                            :value="o.id">
-                                                            {{ o.title }}
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-12 col-md-4">
-                                                    <label for="s-unit" class="form-label">Unidades</label>
-                                                    <InputDropMultSelect v-model="main.process.search.units"
-                                                        :options="main.selects.units" identify="p_units" />
-                                                </div>
-                                                <div class="col-sm-12 col-md-4">
-                                                    <label for="s-description" class="form-label">Objeto</label>
-                                                    <input type="text" name="description" class="form-control"
-                                                        id="s-description" v-model="main.process.search.description"
-                                                        placeholder="Pesquise por partes do Objeto do Processo" />
-                                                </div>
-                                                <div class="mt-4">
-                                                    <button @click="search_process" type="button"
-                                                        class="btn btn-primary">
-                                                        <i class="bi bi-search"></i> Localizar Processos
-                                                    </button>
+                                            <div class="p-4 pt-0 mx-2">
+                                                <div class="dashed-separator mb-3"></div>
+                                                <div class="row g-3">
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                                        <VueDatePicker auto-apply v-model="main.process.search.date_i"
+                                                            :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            model-type="yyyy-MM-dd"
+                                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                                            calendar-class-name="dp-custom-calendar"
+                                                            calendar-cell-class-name="dp-custom-cell"
+                                                            menu-class-name="dp-custom-menu" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="date_s_fin" class="form-label">Data Final</label>
+                                                        <VueDatePicker auto-apply v-model="main.process.search.date_f"
+                                                            :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            model-type="yyyy-MM-dd"
+                                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                                            calendar-class-name="dp-custom-calendar"
+                                                            calendar-cell-class-name="dp-custom-cell"
+                                                            menu-class-name="dp-custom-menu" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-protocol" class="form-label">Protocolo</label>
+                                                        <input type="text" name="protocol" class="form-control"
+                                                            id="s-protocol" v-model="main.process.search.protocol"
+                                                            placeholder="Número do Protocolo do Processo" />
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <label for="s-description" class="form-label">Objeto</label>
+                                                        <input type="text" name="description" class="form-control"
+                                                            id="s-description" v-model="main.process.search.description"
+                                                            placeholder="Pesquise por partes do Objeto do Processo" />
+                                                    </div>
+                                                    <div class="d-flex flex-row-reverse mt-4">
+                                                        <button type="button" @click="list_processes"
+                                                            class="btn btn-action-primary">
+                                                            <ion-icon name="search" class="fs-5"></ion-icon>
+                                                            Localizar
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
-
-                                            <TableListRadio identify="process" v-model="mainData.process"
-                                                :header="main.process.headers" :body="main.process.data" :mounts="{
-                                                    status: [Mounts.Cast(main.selects.status_process), Mounts.Status()],
-                                                    description: [Mounts.Truncate(200)],
-                                                }" />
+                                            <div class="p-4 pt-0 mx-2">
+                                                <TableListRadio secondary identify="process" v-model="main.data.process"
+                                                    :header="main.process.headers" :body="main.process.data" :mounts="{
+                                                        status: [Mounts.Cast(main.selects.process_status), Mounts.Status()],
+                                                        description: [Mounts.Truncate(200)],
+                                                    }" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -383,8 +378,8 @@ onMounted(() => {
             <section v-if="main.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registrar DFD</h2>
-                        <p>Registro de Documento de Formalização de Demanda</p>
+                        <h2>Registrar Mapa</h2>
+                        <p>Preencha os dados abaixo para realizar o registro</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="mainData.ui('register')" class="btn btn-action-secondary">
@@ -396,8 +391,118 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
                     <form @submit.prevent="mainData.save">
-                        <div class="tab-pane fade row m-0 p-4 pt-1 g-3" :class="{ 'show active': tabs.is('origin') }">
-
+                        <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
+                            <div class="accordion mb-3" id="accordion-process">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="accordionSearchProcessHeadId">
+                                        <button class="w-100 text-center px-2 py-3" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#accordionSearchColapseRegisterId"
+                                            aria-expanded="true" aria-controls="accordionSearchColapseRegisterId">
+                                            <h2 class="txt-color text-center m-0">
+                                                <i class="bi bi-journal-bookmark me-1"></i>
+                                                Localizar Processo
+                                            </h2>
+                                            <p class="validation txt-color-sec small text-center m-0" :class="{
+                                                'text-danger': main.valids.process
+                                            }">
+                                                Aplique os filtros abaixo para localizar os Processos
+                                            </p>
+                                        </button>
+                                    </h2>
+                                    <div id="accordionSearchColapseRegisterId" class="accordion-collapse collapse"
+                                        :class="{ 'show': main.data.id }"
+                                        aria-labelledby="accordion-processRegisterHeadId"
+                                        data-bs-parent="#accordion-process">
+                                        <div class="accordion-body p-0 m-0">
+                                            <div class="p-4 pt-0 mx-2">
+                                                <div class="dashed-separator mb-3"></div>
+                                                <div class="row g-3">
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                                        <VueDatePicker auto-apply v-model="main.process.search.date_i"
+                                                            :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            model-type="yyyy-MM-dd"
+                                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                                            calendar-class-name="dp-custom-calendar"
+                                                            calendar-cell-class-name="dp-custom-cell"
+                                                            menu-class-name="dp-custom-menu" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="date_s_fin" class="form-label">Data Final</label>
+                                                        <VueDatePicker auto-apply v-model="main.process.search.date_f"
+                                                            :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            model-type="yyyy-MM-dd"
+                                                            input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                                            calendar-class-name="dp-custom-calendar"
+                                                            calendar-cell-class-name="dp-custom-cell"
+                                                            menu-class-name="dp-custom-menu" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-protocol" class="form-label">Protocolo</label>
+                                                        <input type="text" name="protocol" class="form-control"
+                                                            id="s-protocol" v-model="main.process.search.protocol"
+                                                            placeholder="Número do Protocolo do Processo" />
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <label for="s-description" class="form-label">Objeto</label>
+                                                        <input type="text" name="description" class="form-control"
+                                                            id="s-description" v-model="main.process.search.description"
+                                                            placeholder="Pesquise por partes do Objeto do Processo" />
+                                                    </div>
+                                                    <div class="d-flex flex-row-reverse mt-4">
+                                                        <button type="button" @click="list_processes"
+                                                            class="btn btn-action-primary">
+                                                            <ion-icon name="search" class="fs-5"></ion-icon>
+                                                            Localizar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="p-4 pt-0 mx-2">
+                                                <TableListRadio secondary identify="process" v-model="main.data.process"
+                                                    :header="main.process.headers" :body="main.process.data" :mounts="{
+                                                        status: [Mounts.Cast(main.selects.process_status), Mounts.Status()],
+                                                        description: [Mounts.Truncate(200)],
+                                                    }" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade content p-4 pt-1 row m-0 g-3" :class="{ 'show active': tabs.is('infos') }">
+                            <div class="col-sm-12 col-md-8">
+                                <label for="comission" class="form-label">Comissão</label>
+                                <select name="comission" class="form-control"
+                                    :class="{ 'form-control-alert': main.valids.comission }" id="comission"
+                                    v-model="main.data.comission">
+                                    <option value=""></option>
+                                    <option v-for="o in main.selects.comissions" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                                <div class="form-text txt-color-sec">
+                                    Ao selecionar a comissão/equipe de planejamento seus
+                                    integrantes serão vinculados ao documento
+                                </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="phase" class="form-label">Fase</label>
+                                <select name="phase" class="form-control" :class="{
+                                    'form-control-alert': main.valids.phase
+                                }" id="phase" v-model="main.data.phase">
+                                    <option value=""></option>
+                                    <option v-for="o in main.selects.phases" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12">
+                                <label class="form-label" for="description">Descrição do mapeamento</label>
+                                <textarea name="description" class="form-control" rows="4" :class="{
+                                    'form-control-alert': main.valids.description
+                                }" id="description" v-model="main.data.description"></textarea>
+                            </div>
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
