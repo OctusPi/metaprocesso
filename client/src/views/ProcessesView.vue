@@ -340,7 +340,7 @@ onMounted(() => {
                                 }" id="description" v-model="page.data.description"></textarea>
                             </div>
                         </div>
-                        <div class="tab-pane fade row m-0 g-3 content m-0 g-3"
+                        <div class="tab-pane fade row content m-0 g-3"
                             :class="{ 'show active': tabs.is('dfds') }">
                             <div class="accordion" id="accordion-dfds">
                                 <div class="accordion-item">
@@ -405,7 +405,7 @@ onMounted(() => {
                                                             placeholder="Pesquise por partes do Objeto do DFD" />
                                                     </div>
 
-                                                    <div class="d-flex flex-row flex-row-reverse mt-4">
+                                                    <div class="d-flex flex-row-reverse mt-4">
                                                         <button type="button" @click="listDfds"
                                                             class="btn btn-action-primary">
                                                             <ion-icon name="search" class="fs-5"></ion-icon>
