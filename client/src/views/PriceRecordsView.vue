@@ -1,19 +1,18 @@
 <script setup>
-import { createApp, onMounted, ref, watch } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
 import TableList from '@/components/table/TableList.vue';
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import NavMainUi from '@/components/NavMainUi.vue';
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import TableListStatus from '@/components/table/TableListStatus.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import TabNav from '@/components/TabNav.vue';
-import DfdReport from './reports/DfdReport.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import Mounts from '@/services/mounts';
 import http from '@/services/http';
 import gpt from '@/services/gpt';
-import exp from '@/services/export';
 import masks from '@/utils/masks';
 import utils from '@/utils/utils';
 import dates from '@/utils/dates';
@@ -157,34 +156,6 @@ function generate(type) {
     gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
-function update_dfd(id) {
-    http.get(`${page.url}/details/${id}`, emit, (response) => {
-        page.data = response.data
-        pageData.selects('filter', `${page.data.unit},${page.data.comission}`)
-        pageData.ui('update')
-    })
-}
-
-function export_dfd(id) {
-    http.get(`${page.url}/export/${id}`, emit, (resp) => {
-        const dfd = resp.data
-        const containerReport = document.createElement('div')
-        const instanceReport = createApp(DfdReport, { organ: page.organ, dfd: dfd, selects: page.selects })
-        instanceReport.mount(containerReport)
-        exp.exportPDF(containerReport, `DFD-${dfd.protocol}`)
-    })
-}
-
-function clone_dfd(id) {
-    http.get(`${page.url}/details/${id}`, emit, (response) => {
-        response.data.id = null
-        page.data = response.data
-        page.data.clone = true
-        pageData.selects('filter', `${page.data.unit},${page.data.comission}`)
-        pageData.ui('update')
-    })
-}
-
 function list_processes() {
     http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
         page.process.data = resp.data ?? []
@@ -195,7 +166,7 @@ watch(() => props.datalist, (newdata) => {
     page.datalist = newdata
 })
 
-onMounted(() => {
+onBeforeMount(() => {
     pageData.selects()
     pageData.list()
 })
@@ -276,13 +247,7 @@ onMounted(() => {
                 <div role="list" class="container p-0">
                     <TableList :header="page.header" :body="page.datalist" :actions="[
                         Actions.Edit(update_dfd),
-                        Actions.Delete(pageData.remove),
-                        Actions.Export('document-text-outline', export_dfd),
-                        Actions.Create('documents-outline', 'Clonar', clone_dfd),
-                    ]" :mounts="{
-                        status: [Mounts.Cast(page.selects.status), Mounts.Status()],
-                        description: [Mounts.Truncate()],
-                    }" />
+                        Actions.Delete(pageData.remove),]" />
                 </div>
             </section>
 
@@ -363,7 +328,7 @@ onMounted(() => {
                                                         </div>
                                                         <div class="col-sm-12 col-md-4">
                                                             <label for="s-unit" class="form-label">Unidades</label>
-                                                            <InputDropMultSelect v-model="page.search.units" :options="page.selects.units"
+                                                            <InputDropMultSelect v-model="page.process.search.units" :options="page.selects.units"
                                                                 identify="units" />
                                                         </div>
                                                         <div class="col-sm-12 col-md-8">

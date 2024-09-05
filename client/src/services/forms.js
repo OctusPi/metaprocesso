@@ -1,8 +1,16 @@
-function casting(key, value){
+function checkobj(value) {
+    if (value !== null) {
+        return Array.isArray(value) && value.length > 0 || Object.keys(value).length > 0
+    }
+
+    return false;
+}
+
+function casting(key, value) {
     if(key !== 'document'){
         switch (typeof value) {
             case 'object':
-                return value !== null ? JSON.stringify(value) : ''
+                return value !== null && checkobj(value) ? JSON.stringify(value) : ''
             case 'boolean':
                 return value ? 1 : 0 
             default:

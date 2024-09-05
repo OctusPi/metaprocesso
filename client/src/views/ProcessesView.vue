@@ -61,7 +61,6 @@ const [page, pageData] = Layout.new(emit, {
     },
 })
 
-
 const tabs = new Tabs([
     { id: 'origem', title: 'Origem' },
     { id: 'processo', title: 'Processo' },
@@ -182,7 +181,6 @@ onMounted(() => {
                                 calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
                                 menu-class-name="dp-custom-menu" />
                         </div>
-
                         <div class="col-sm-12 col-md-4">
                             <label for="s-protocol" class="form-label">Protocolo</label>
                             <input type="text" name="protocol" class="form-control" id="s-protocol"
