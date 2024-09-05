@@ -1,0 +1,122 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Comission;
+use App\Models\ComissionMember;
+use App\Models\Dfd;
+use App\Models\Organ;
+use App\Models\Process;
+use App\Models\RiskMap;
+use App\Models\User;
+use App\Utils\Notify;
+use App\Utils\Utils;
+use Illuminate\Http\Request;
+use App\Utils\Dates;
+use App\Http\Middlewares\Data;
+
+
+class RiskMaps extends Controller
+{
+    public function __construct()
+    {
+        parent::__construct(RiskMap::class, User::MOD_RISKINESS['module']);
+    }
+
+    public function list(Request $request)
+    {
+        return $this->base_list(
+            $request,
+            ['organ', 'date_version', 'phase', 'description', 'process'],
+            ['date_version'],
+            ['process', 'comission']
+        );
+    }
+
+    /**
+     * Lista processos associados a um Mapa de Risco.
+     *
+     * @param Request $request Dados da requisição.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON com a lista de processos.
+     */
+    public function list_processes(Request $request)
+    {
+        if (!$request->anyFilled('protocol', 'description', 'date_i', 'date_f')) {
+            return response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
+        }
+
+        $search = Utils::map_search(['protocol', 'description'], $request->all());
+        $betw = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
+
+        $query = Data::find(new Process(), $search, null, ['organ', 'comission'], $betw);
+        return response()->json($query, 200);
+    }
+
+    public function export(Request $request)
+    {
+        $riskmap = RiskMap::where('id', $request->id)->with([
+            'process',
+            'comission',
+            'organ',
+            'unit',
+        ])->first()->toArray();
+
+        if (!$riskmap) {
+            return Response()->json(Notify::warning('Mapa de Risco não localizado...'), 404);
+        }
+
+        return Response()->json($riskmap, 200);
+    }
+
+    public function save(Request $request)
+    {
+        $comission = Data::findOne(new Comission(), ['id' => $request->comission]);
+        if (!$comission) {
+            return Response()->json(Notify::warning("Comissão não existe!"), 404);
+        }
+
+        $preload = [
+            'author' => $request->user()->id,
+            'organ' => $comission->organ,
+            'unit' => $comission->unit,
+            'comission_members' => $comission->comissionmembers->toArray(),
+            'date_version' => Dates::nowWithFormat(Dates::PTBR),
+        ];
+
+        $riskiness = collect(json_decode($request->riskiness));
+        if ($riskiness->isEmpty()) {
+            return Response()->json(Notify::warning("Ao menos um risco deve ser especificado!"), 400);
+        }
+
+        $empty = $riskiness->firstWhere('risk_actions', []);
+        if ($empty) {
+            return Response()->json(Notify::warning("Adicione ao menos uma ação para o risco $empty->verb_id!"), 400);
+        }
+
+        if (!$request->id) {
+            $last_item = RiskMap::orderByDesc('created_at')->first();
+            $last_version = floatval($last_item ? $last_item->version : 0);
+            $preload['version'] = sprintf("%.1f", $last_version + 1);
+        }
+
+        return $this->base_save($request, $preload);
+    }
+
+    public function details(Request $request)
+    {
+        return $this->base_details($request, ['process']);
+    }
+
+    public function selects(Request $request)
+    {
+        return response()->json(array_merge([
+            'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
+            'phases' => RiskMap::list_phases(),
+            'risk_impacts' => RiskMap::list_impacts(),
+            'risk_probabilities' => RiskMap::list_probabilities(),
+            'risk_actions' => RiskMap::list_actions(),
+            'process_status' => Process::list_status(),
+            'responsabilitys' => ComissionMember::list_responsabilities(),
+        ], Dfd::make_details()), 200);
+    }
+}
