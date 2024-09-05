@@ -166,7 +166,7 @@ class Processes extends Controller
      */
     private function update_dfds(?int $status, Collection $collection)
     {
-        if (empty($status)) {
+        if ($status != null) {
             return $collection;
         }
 
@@ -181,6 +181,7 @@ class Processes extends Controller
                     default => Dfd::STATUS_ENVIADO
                 }
             ]);
+
         }
 
         return $dfds->get();
