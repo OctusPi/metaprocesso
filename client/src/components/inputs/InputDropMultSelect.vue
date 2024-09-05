@@ -1,6 +1,6 @@
 <script setup>
 
-import { onMounted, ref, toRaw, watch } from 'vue';
+import { ref, toRaw, watch } from 'vue';
 
 const show_items = ref(false)
 
@@ -32,14 +32,8 @@ function chkall() {
 	}
 }
 
-watch(() => props.valid, (newVal) => {
-	valid.value = newVal
-})
-
-onMounted(() => {
-	if (!model.value) {
-		model.value = []
-	}
+watch(() => props.valid, (newval) => {
+	valid.value = newval
 })
 
 </script>
