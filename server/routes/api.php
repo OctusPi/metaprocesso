@@ -15,6 +15,7 @@ use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\PriceRecords;
 use App\Http\Controllers\Processes;
 use App\Http\Controllers\Programs;
+use App\Http\Controllers\RiskMaps;
 use App\Http\Controllers\Sectors;
 use App\Http\Controllers\Suppliers;
 use App\Http\Controllers\Units;
@@ -71,6 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     $common('/etps', Etps::class);
     $common('/pricerecords', PriceRecords::class);
     $common('/attachments/{origin}/{protocol}', Attachments::class);
+    $common('/riskiness', RiskMaps::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
@@ -101,6 +103,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
         Route::post('/generate', 'generate');
+    });
+
+    Route::prefix('/riskiness')->controller(Etps::class)->group(function(){
+        Route::post('/list_processes', 'list_processes');
+        Route::post('/list_dfds', 'list_dfds');
+        Route::get('/list_dfd_items/{id}', 'list_dfd_items');
     });
 
     Route::prefix('/comissionmembers/{comission}')->controller(ComissionMembers::class)->group(function(){

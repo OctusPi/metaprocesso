@@ -310,9 +310,21 @@
   overflow: hidden;
 }
 
+.accordion-item.secondary {
+  background-color: var(--color-background);
+}
+
 .accordion-collapse {
   background-color: var(--color-background-soft);
   border: 0;
+}
+
+.accordion-item.secondary .accordion-collapse {
+  background-color: var(--color-background);
+}
+
+.accordion-item.secondary .accordion-header button {
+  background-color: var(--color-background);
 }
 
 .accordion-header button {
