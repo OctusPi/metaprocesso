@@ -93,7 +93,7 @@ const tabs = new Tabs([
 ])
 
 function list_processes() {
-    http.post('/etps/list_processes', page.process.search, emit, (resp) => {
+    http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
         page.process.data = resp.data ?? []
     })
 }

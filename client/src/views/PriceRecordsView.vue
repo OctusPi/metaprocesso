@@ -185,6 +185,12 @@ function clone_dfd(id) {
     })
 }
 
+function list_processes() {
+    http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
+        page.process.data = resp.data ?? []
+    })
+}
+
 watch(() => props.datalist, (newdata) => {
     page.datalist = newdata
 })
@@ -353,14 +359,19 @@ onMounted(() => {
                                                             <label for="s-protocol" class="form-label">Protocolo</label>
                                                             <input type="text" name="protocol" class="form-control"
                                                                 id="s-protocol" v-model="page.process.search.protocol"
-                                                                placeholder="Número do Protocolo do Processo" />
+                                                                placeholder="Número do Protocolo do Processo" @keydown.enter.prevent="list_processes" />
                                                         </div>
-                                                        <div class="col-12">
+                                                        <div class="col-sm-12 col-md-4">
+                                                            <label for="s-unit" class="form-label">Unidades</label>
+                                                            <InputDropMultSelect v-model="page.search.units" :options="page.selects.units"
+                                                                identify="units" />
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-8">
                                                             <label for="s-description" class="form-label">Objeto</label>
                                                             <input type="text" name="description" class="form-control"
                                                                 id="s-description"
                                                                 v-model="page.process.search.description"
-                                                                placeholder="Pesquise por partes do Objeto do Processo" />
+                                                                placeholder="Pesquise por partes do Objeto do Processo" @keydown.enter.prevent="list_processes"/>
                                                         </div>
                                                         <div class="d-flex flex-row-reverse mt-4">
                                                             <button type="button" @click="list_processes"
