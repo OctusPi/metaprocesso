@@ -22,7 +22,7 @@ function getModel() {
 }
 
 watch(() => props.body, (newValue) => {
-    body.value = utils.reduceArrays(getModel(), newValue)
+    body.value = utils.reduceArrays(newValue, getModel())
 });
 
 onMounted(() => {

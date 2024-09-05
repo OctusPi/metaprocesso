@@ -20,7 +20,7 @@ const bodylist = ref(model.value)
 
 watch(() => props.body, (newValue) => {
     if (Array.isArray(newValue)) {
-        bodylist.value = utils.reduceArrays(model.value, newValue)
+        bodylist.value = utils.reduceArrays(newValue, model.value)
     }
 });
 
