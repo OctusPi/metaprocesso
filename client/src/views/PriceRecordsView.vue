@@ -325,7 +325,7 @@ onBeforeMount(() => {
                                             <div class="accordion-body p-0 m-0">
                                                 <div class="p-4 pt-0 mx-2">
                                                     <div class="dashed-separator mb-3"></div>
-                                                    <div class="row">
+                                                    <div class="row g-3">
                                                         <div class="col-sm-12 col-md-4">
                                                             <label for="date_s_ini" class="form-label">Data
                                                                 Inicial</label>
@@ -356,8 +356,6 @@ onBeforeMount(() => {
                                                                 id="s-protocol" v-model="page.process.search.protocol"
                                                                 placeholder="Número do Protocolo do Processo"
                                                                 @keydown.enter.prevent="list_processes" />
-                                                            placeholder="Número do Protocolo do Processo"
-                                                            @keydown.enter.prevent="list_processes" />
                                                         </div>
                                                         <div class="col-sm-12 col-md-4">
                                                             <label for="s-unit" class="form-label">Unidades</label>
@@ -371,8 +369,6 @@ onBeforeMount(() => {
                                                                 v-model="page.process.search.description"
                                                                 placeholder="Pesquise por partes do Objeto do Processo"
                                                                 @keydown.enter.prevent="list_processes" />
-                                                            placeholder="Pesquise por partes do Objeto do Processo"
-                                                            @keydown.enter.prevent="list_processes" />
                                                         </div>
                                                         <div class="d-flex flex-row-reverse mt-4">
                                                             <button type="button" @click="list_processes"
