@@ -12,9 +12,9 @@ class BaseMail extends Mailable
     protected string $renewRoute = 'renew';
 
     public function __construct(){
-        $this->system = getenv('APP_NAME');
-        $this->sender = 'Administração ' . getenv('APP_NAME');
-        $this->appUrl = getenv('CLIENT_URL');
+        $this->system = config('app.name');
+        $this->sender = 'Administração ' . config('app.name');
+        $this->appUrl = config('app.url');
     }
 
     protected function makeUrl(array $routes): string

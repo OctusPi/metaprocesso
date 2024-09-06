@@ -30,8 +30,11 @@ use App\Http\Controllers\Authentication;
 // open
 Route::prefix('/auth')->controller(Authentication::class)->group(function () {
     Route::post('', 'login');
-    Route::get('/check', 'check');
     Route::post('/recover', 'recover');
+    Route::get('logout', 'logout');
+    Route::get('/check', 'check');
+    Route::get('/auth_renew/{token_renew}', 'auth_renew');
+    Route::post('/renew', 'renew');
 });
 
 
@@ -76,7 +79,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
-        Route::post('/renew', 'renew');
         Route::post('/auth_organ', 'auth_organ');
     });
 
