@@ -393,14 +393,14 @@ onMounted(() => {
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
-                                                        <input type="text" name="protocol" class="form-control"
+                                                        <input @keydown.enter.prevent="listDfds" type="text" name="protocol" class="form-control"
                                                             id="s-protocol" v-model="page.dfds.search.protocol"
                                                             placeholder="Número do Protocolo" />
                                                     </div>
                                                     <div class="col-sm-12">
                                                         <label for="s-description" class="form-label">Descrição
                                                             do objeto</label>
-                                                        <input type="text" name="description" class="form-control"
+                                                        <input @keydown.enter.prevent="listDfds" type="text" name="description" class="form-control"
                                                             id="s-description" v-model="page.dfds.search.description"
                                                             placeholder="Pesquise por partes do Objeto do DFD" />
                                                     </div>

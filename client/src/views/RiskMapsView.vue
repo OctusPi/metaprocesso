@@ -75,6 +75,7 @@ const [risks, risksData] = Layout.pseudo(emit, {
 })
 
 const [actions, actionsData] = Layout.pseudo(emit, {
+    modal: 'actionsModal',
     risk: {},
     header: [
         { key: 'verb_id', title: 'ID', sub: [{ key: 'risk_action_type' }] },
@@ -89,6 +90,7 @@ const [actions, actionsData] = Layout.pseudo(emit, {
 })
 
 const [damage, damageData] = Layout.pseudo(emit, {
+    modal: 'damageModal',
     risk: {},
     header: [
         { key: 'risk_damage', title: 'DANO' },
@@ -133,6 +135,7 @@ risksData.setBeforeSave((data) => {
 
 actionsData.setAfterSave((data, index) => {
     const sep = actionsData.separate('risk_action_type', index)
+    console.log(data, index)
     const act = main.selects.risk_actions
         .find(({ id }) => id == data.risk_action_type)
     return {
@@ -505,12 +508,213 @@ onMounted(() => {
                                 }" id="description" v-model="main.data.description"></textarea>
                             </div>
                         </div>
+                        <div class="tab-pane fade content p-4 pt-2 row m-0 g-3"
+                            :class="{ 'show active': tabs.is('risks') }">
+                            <div v-if="!risks.ui.register">
+                                <div role="heading" class="inside-title mb-4">
+                                    <div>
+                                        <h2>Riscos</h2>
+                                        <p>
+                                            Listagem dos riscos encontrados
+                                        </p>
+                                    </div>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button type="button" @click="risksData.ui('register')"
+                                            class="btn btn-action-primary">
+                                            <ion-icon name="add" class="fs-5"></ion-icon>
+                                            Adicionar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div role="list">
+                                    <TableList secondary :header="risks.header" :body="risks.datalist" :actions="[
+                                        Actions.Edit(risksData.update),
+                                        Actions.FastDelete((id) => risksData.removeCascade(id, accomp, 'id', 'accomp_risk')),
+                                        Actions.Create('download', 'Danos', (id) => swithToModal(id, damage, risks, 'risk_damage'), '#' + damage.modal),
+                                        Actions.Create('download', 'Ações', (id) => swithToModal(id, actions, risks, 'risk_actions'), '#' + actions.modal),
+                                    ]" :mounts="{
+                                        'risk_impact': [Mounts.Cast(main.selects.risk_impacts)],
+                                        'risk_probability': [Mounts.Cast(main.selects.risk_probabilities)],
+                                    }" />
+                                </div>
+                            </div>
+                            <div v-if="risks.ui.register">
+                                <div role="heading" class="inside-title mb-4">
+                                    <div>
+                                        <h2>Registrar Risco</h2>
+                                        <p>Preencha os dados abaixo para realizar o registro</p>
+                                    </div>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button @click="risksData.ui('register')" class="btn btn-action-tertiary">
+                                            <ion-icon name="arrow-back" class="fs-5"></ion-icon>
+                                            Voltar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-sm-12 col-md-8">
+                                        <label for="risk_name" class="form-label">Risco</label>
+                                        <input type="text" name="risk_name" class="form-control"
+                                            :class="{ 'form-control-alert': risks.valids.risk_name }" id="risk_name"
+                                            v-model="risks.data.risk_name" placeholder="Nome do risco">
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="risk_treatment" class="form-label">Tratamento</label>
+                                        <input type="text" name="risk_treatment" class="form-control"
+                                            :class="{ 'form-control-alert': risks.valids.risk_treatment }"
+                                            id="risk_treatment" v-model="risks.data.risk_treatment"
+                                            placeholder="Tratamento do risco">
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="risk_impact" class="form-label">Impacto</label>
+                                        <select name="risk_impact" class="form-control"
+                                            :class="{ 'form-control-alert': risks.valids.risk_impact }" id="risk_impact"
+                                            v-model="risks.data.risk_impact">
+                                            <option value=""></option>
+                                            <option v-for="o in main.selects.risk_impacts" :key="o.id" :value="o.id">
+                                                {{ o.title }} ({{ o.value }})
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="risk_probability" class="form-label">Probabilidade</label>
+                                        <select name="risk_probability" class="form-control"
+                                            :class="{ 'form-control-alert': risks.valids.risk_probability }"
+                                            id="risk_probability" v-model="risks.data.risk_probability">
+                                            <option value=""></option>
+                                            <option v-for="o in main.selects.risk_probabilities" :key="o.id"
+                                                :value="o.id">
+                                                {{ o.title }} ({{ o.value }})
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="risk_related" class="form-label">Relacionado ao(à)</label>
+                                        <input type="text" name="risk_related" class="form-control"
+                                            :class="{ 'form-control-alert': risks.valids.risk_related }"
+                                            id="risk_related" v-model="risks.data.risk_related"
+                                            placeholder="Entidade relacionada ao risco">
+                                    </div>
+                                    <div class="d-flex flex-row-reverse gap-2 mt-4">
+                                        <button type="button" @click="risksData.save" class="btn btn-action-primary">
+                                            <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
+                                            Registrar
+                                        </button>
+                                        <button @click="risksData.ui('register')" class="btn btn-action-tertiary">
+                                            <ion-icon name="close-outline" class="fs-5"></ion-icon>
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade content p-4 pt-2 row m-0 g-3"
+                            :class="{ 'show active': tabs.is('accompaniments') }">
+                            <div v-if="!accomp.ui.register">
+                                <div role="heading" class="inside-title mb-4">
+                                    <div>
+                                        <h2>Acompanhamentos</h2>
+                                        <p>
+                                            Listagem dos acompanhamentos para cada risco
+                                        </p>
+                                    </div>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button type="button" @click="accompData.ui('register')"
+                                            class="btn btn-action-primary">
+                                            <ion-icon name="add" class="fs-5"></ion-icon>
+                                            Adicionar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div role="list">
+                                    <TableList :header="accomp.header" :body="accomp.datalist" :actions="[
+                                        Actions.Edit(accompData.update),
+                                        Actions.FastDelete(accompData.remove),
+                                    ]" :virtual="{
+                                            risk: ({ accomp_risk }) => risks.datalist.find((o) => o.id == accomp_risk)
+                                        }" :mounts="{
+                                            'accomp_risk': [Mounts.CastVirt('verb_id', (addr, v) => v?.risk.id === addr ? v.risk : {})],
+                                            'accomp_action': [Mounts.CastVirt('verb_id', (addr, v) => v?.risk.risk_actions.find((o) => o.id === addr))],
+                                        }" />
+                                </div>
+                            </div>
+                            <div v-if="accomp.ui.register">
+                                <div role="heading" class="inside-title mb-4">
+                                    <div>
+                                        <h2>Registrar Acompanhamento</h2>
+                                        <p>Preencha os dados abaixo para realizar o registro</p>
+                                    </div>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button type="button" @click="accompData.ui('register')"
+                                            class="btn btn-action-tertiary">
+                                            <ion-icon name="arrow-back" class="fs-5"></ion-icon>
+                                            Voltar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="accomp_date" class="form-label">
+                                            Data do Acompanhamento
+                                        </label>
+                                        <VueDatePicker auto-apply v-model="accomp.data.accomp_date"
+                                            :input-class-name="accomp.valids.accomp_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                            locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                            calendar-cell-class-name="dp-custom-cell"
+                                            menu-class-name="dp-custom-menu" />
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="accomp_risk" class="form-label">Risco</label>
+                                        <select name="accomp_risk" class="form-control"
+                                            @change="(e) => accompData.select(risks.datalist, 'risk_actions', 'id', e.target.value)"
+                                            :class="{ 'form-control-alert': accomp.valids.accomp_risk }"
+                                            id="accomp_risk" v-model="accomp.data.accomp_risk">
+                                            <option value=""></option>
+                                            <option v-for="o in risks.datalist" :key="o.verb_id" :value="o.id">
+                                                {{ o.verb_id }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="accomp_action" class="form-label">Ação</label>
+                                        <select name="accomp_action" class="form-control"
+                                            :class="{ 'form-control-alert': accomp.valids.accomp_action }"
+                                            id="accomp_action" v-model="accomp.data.accomp_action">
+                                            <option value=""></option>
+                                            <option v-for="o in accomp.selects.risk_actions" :key="o.verb_id"
+                                                :value="o.id">
+                                                {{ o.verb_id }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="accomp_treatment" class="form-label">Tratamento</label>
+                                        <input type="text" name="accomp_treatment" class="form-control"
+                                            :class="{ 'form-control-alert': accomp.valids.accomp_treatment }"
+                                            id="accomp_treatment" v-model="accomp.data.accomp_treatment"
+                                            placeholder="Tratamento do risco">
+                                    </div>
+                                    <div class="d-flex flex-row-reverse gap-2 mt-4">
+                                        <button type="button" @click="accompData.save" class="btn btn-action-primary">
+                                            <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
+                                            Registrar
+                                        </button>
+                                        <button type="button" @click="accompData.ui('register')"
+                                            class="btn btn-action-tertiary">
+                                            <ion-icon name="close-outline" class="fs-5"></ion-icon>
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
-                            <button class="btn btn-action-primary">
+                            <button type="submit" class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
                                 Registrar
                             </button>
-                            <button @click="mainData.ui('register')" class="btn btn-action-secondary">
+                            <button type="button" @click="mainData.ui('register')" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>
                                 Cancelar
                             </button>
@@ -522,6 +726,174 @@ onMounted(() => {
                             </button>
                         </div>
                     </form>
+                </div>
+            </section>
+
+            <section class="modal fade" :id="actions.modal" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered mx-auto">
+                    <div class="modal-content p-4 content">
+                        <div class="modal-body p-0 my-1">
+                            <div v-if="!actions.ui.register" role="heading" class="inside-title mb-4 w-100">
+                                <div>
+                                    <h2>Ações</h2>
+                                    <p>
+                                        Ações determinadas para o risco
+                                        <span class="txt-color">{{ actions.risk.verb_id }}</span>
+                                    </p>
+                                </div>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-action-close">
+                                        <ion-icon name="close" class="fs-5"></ion-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div v-if="actions.ui.register">
+                                <div role="heading" class="inside-title mb-4 w-100">
+                                    <div>
+                                        <h2>Adicionar Ação</h2>
+                                        <p>
+                                            Preencha os dados para determinar a ação
+                                        </p>
+                                    </div>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button @click="actionsData.ui('list')" class="btn btn-action-tertiary">
+                                            <ion-icon name="arrow-back" class="fs-5"></ion-icon>
+                                            Voltar
+                                        </button>
+                                    </div>
+                                </div>
+                                <form @submit.prevent="actionsData.save" class="row p-0 g-3 py-1">
+                                    <input type="hidden" name="id" v-model="actions.data.id">
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="risk_action_name" class="form-label">Ação</label>
+                                        <input type="text" name="risk_action_name" class="form-control"
+                                            :class="{ 'form-control-alert': actions.valids.risk_action_name }"
+                                            id="risk_action_name" v-model="actions.data.risk_action_name"
+                                            placeholder="Nome do risco">
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="risk_action_type" class="form-label">Tipo</label>
+                                        <select name="risk_action_type" class="form-control"
+                                            :class="{ 'form-control-alert': actions.valids.risk_action_type }"
+                                            id="risk_action_type" v-model="actions.data.risk_action_type">
+                                            <option value=""></option>
+                                            <option v-for="o in main.selects.risk_actions" :key="o.id" :value="o.id">
+                                                {{ o.title }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-8">
+                                        <label for="risk_action_responsability"
+                                            class="form-label">Responsabilidade</label>
+                                        <input type="text" name="risk_action_responsability" class="form-control"
+                                            :class="{ 'form-control-alert': actions.valids.risk_action_responsability }"
+                                            id="risk_action_responsability"
+                                            v-model="actions.data.risk_action_responsability"
+                                            placeholder="Responsáveis pela ação">
+                                    </div>
+                                    <div class="d-flex flex-row-reverse mt-4 gap-2">
+                                        <button type="submit" class="btn btn-action-primary">
+                                            <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
+                                            Salvar
+                                        </button>
+                                        <button @click="actionsData.ui('list')" class="btn btn-action-tertiary">
+                                            <ion-icon name="close" class="fs-5"></ion-icon>
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div v-if="!actions.ui.register" class="mb-3">
+                                <TableList secondary :body="actions.datalist" :header="actions.header" :actions="[
+                                    Actions.FastDelete((id) => actionsData.removeCascade(id, accomp, 'id', 'accomp_action')),
+                                    Actions.Edit(actionsData.update),
+                                ]" :mounts="{
+                                    risk_action_type: [Mounts.Cast(main.selects.risk_actions)]
+                                }" />
+                            </div>
+                        </div>
+                        <div v-if="!actions.ui.register" class="modal-footer border-0 p-0">
+                            <button @click="actionsData.ui('register')" class="btn btn-action-primary">
+                                <ion-icon name="add" class="fs-5"></ion-icon>
+                                Adicionar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="modal fade" :id="damage.modal" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered mx-auto">
+                    <div class="modal-content p-4 content">
+                        <div class="modal-body p-0 my-1">
+                            <div v-if="!damage.ui.register" role="heading" class="inside-title mb-4 w-100">
+                                <div>
+                                    <h2>Danos</h2>
+                                    <p>
+                                        Danos identificados no risco
+                                        <span class="txt-color">{{ damage.risk.verb_id }}</span>
+                                    </p>
+                                </div>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-action-close">
+                                        <ion-icon name="close" class="fs-5"></ion-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div v-if="damage.ui.register">
+                                <div role="heading" class="inside-title mb-4 w-100">
+                                    <div>
+                                        <h2>Adicionar um Dano</h2>
+                                        <p>
+                                            Preencha o nome do dano abaixo
+                                        </p>
+                                    </div>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button @click="damageData.ui('list')" class="btn btn-action-tertiary">
+                                            <ion-icon name="arrow-back" class="fs-5"></ion-icon>
+                                            Voltar
+                                        </button>
+                                    </div>
+                                </div>
+                                <form @submit.prevent="damageData.save" class="row p-0 g-3 py-1">
+                                    <input type="hidden" name="id" v-model="damage.data.id">
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="risk_damage" class="form-label">Dano</label>
+                                        <input type="text" name="risk_damage" class="form-control"
+                                            :class="{ 'form-control-alert': damage.valids.risk_damage }"
+                                            id="risk_damage" v-model="damage.data.risk_damage"
+                                            placeholder="Dano causado">
+                                    </div>
+                                    <div class="d-flex flex-row-reverse mt-4 gap-2">
+                                        <button type="submit" class="btn btn-action-primary">
+                                            <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
+                                            Salvar
+                                        </button>
+                                        <button @click="damageData.ui('list')" class="btn btn-action-tertiary">
+                                            <ion-icon name="close" class="fs-5"></ion-icon>
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div v-if="!damage.ui.register" class="mb-3">
+                                <TableList secondary :header="damage.header" :body="damage.datalist" :actions="[
+                                    Actions.FastDelete(damageData.remove),
+                                    Actions.Edit(damageData.update),
+                                ]" :mounts="{
+                                    risk_action_type: [Mounts.Cast(main.selects.risk_actions)]
+                                }" />
+                            </div>
+                        </div>
+                        <div v-if="!damage.ui.register" class="modal-footer border-0 p-0">
+                            <button @click="damageData.ui('register')" class="btn btn-action-primary">
+                                <ion-icon name="add" class="fs-5"></ion-icon>
+                                Adicionar
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </section>
 

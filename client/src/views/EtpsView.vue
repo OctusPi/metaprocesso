@@ -359,8 +359,9 @@ onMounted(() => {
                                             </p>
                                         </button>
                                     </h2>
-                                    <div id="accordionSearchColapseId" class="accordion-collapse collapse" :class="{'show': page.data.id }"
-                                        aria-labelledby="accordion-processHeadId" data-bs-parent="#accordion-process">
+                                    <div id="accordionSearchColapseId" class="accordion-collapse collapse"
+                                        :class="{ 'show': page.data.id }" aria-labelledby="accordion-processHeadId"
+                                        data-bs-parent="#accordion-process">
                                         <div class="accordion-body p-0 m-0">
                                             <div class="p-4 pt-0 mx-2">
                                                 <div class="dashed-separator mb-3"></div>
@@ -387,14 +388,16 @@ onMounted(() => {
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
-                                                        <input type="text" name="protocol" class="form-control"
-                                                            id="s-protocol" v-model="page.process.search.protocol"
+                                                        <input @keydown.enter.prevent="list_processes" type="text"
+                                                            name="protocol" class="form-control" id="s-protocol"
+                                                            v-model="page.process.search.protocol"
                                                             placeholder="Número do Protocolo do Processo" />
                                                     </div>
                                                     <div class="col-12">
                                                         <label for="s-description" class="form-label">Objeto</label>
-                                                        <input type="text" name="description" class="form-control"
-                                                            id="s-description" v-model="page.process.search.description"
+                                                        <input @keydown.enter.prevent="list_processes" type="text"
+                                                            name="description" class="form-control" id="s-description"
+                                                            v-model="page.process.search.description"
                                                             placeholder="Pesquise por partes do Objeto do Processo" />
                                                     </div>
                                                     <div class="d-flex flex-row-reverse mt-4">

@@ -5,6 +5,7 @@ const props = defineProps({
     body: { type: Array, default: () => [] },
     header: { type: Array, default: () => [] },
     actions: { type: Array },
+    virtual: { type: Object, default: () => ({}) },
     mounts: { type: Object },
     smaller: { type: Boolean },
     sent: { type: Boolean, default: true },
@@ -47,6 +48,12 @@ function orderBy(e, key) {
 }
 
 function applyMounters(instance, header) {
+    const mInstance = {...instance, _virtual: {}}
+
+    Object.keys(props.virtual).forEach((key) => {
+        mInstance._virtual[key] = props.virtual[key](instance)
+    })
+
     return header.map((attr) => {
         if (!attr.key) {
             return { value: null, classes: [] }
@@ -63,10 +70,10 @@ function applyMounters(instance, header) {
                 }
 
                 return initial
-            }, { value: multiplexer(instance, attr.key), classes: [] })
+            }, { value: multiplexer(mInstance, attr.key), classes: [] })
         }
 
-        return { value: multiplexer(instance, attr.key), classes: [] }
+        return { value: multiplexer(mInstance, attr.key), classes: [] }
     })
 }
 
