@@ -43,8 +43,17 @@ onMounted(() => {
 
 <style scoped>
 input {
-    background-color: transparent;
     width: 1.15rem;
     height: 1.15rem;
+    background-color: var(--color-background-soft);
+    border: 0;
+}
+
+.dark input {
+    background-color: var(--color-input-focus);
+}
+
+input:checked {
+    background-color: var(--color-base);
 }
 </style>

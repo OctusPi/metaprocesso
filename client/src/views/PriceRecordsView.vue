@@ -269,7 +269,7 @@ onBeforeMount(() => {
                     <TabNav :tabs="tabs" identify="tabbed" />
                     <form @submit.prevent="pageData.save({ status: 2 })">
                         <div class="content">
-                            
+
                             <!-- tab proccess -->
                             <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
                                 <div class="accordion mb-3" id="accordion-process">
@@ -324,19 +324,21 @@ onBeforeMount(() => {
                                                             <label for="s-protocol" class="form-label">Protocolo</label>
                                                             <input type="text" name="protocol" class="form-control"
                                                                 id="s-protocol" v-model="page.process.search.protocol"
-                                                                placeholder="Número do Protocolo do Processo" @keydown.enter.prevent="list_processes" />
+                                                                placeholder="Número do Protocolo do Processo"
+                                                                @keydown.enter.prevent="list_processes" />
                                                         </div>
                                                         <div class="col-sm-12 col-md-4">
                                                             <label for="s-unit" class="form-label">Unidades</label>
-                                                            <InputDropMultSelect v-model="page.process.search.units" :options="page.selects.units"
-                                                                identify="units" />
+                                                            <InputDropMultSelect v-model="page.process.search.units"
+                                                                :options="page.selects.units" identify="units" />
                                                         </div>
                                                         <div class="col-sm-12 col-md-8">
                                                             <label for="s-description" class="form-label">Objeto</label>
                                                             <input type="text" name="description" class="form-control"
                                                                 id="s-description"
                                                                 v-model="page.process.search.description"
-                                                                placeholder="Pesquise por partes do Objeto do Processo" @keydown.enter.prevent="list_processes"/>
+                                                                placeholder="Pesquise por partes do Objeto do Processo"
+                                                                @keydown.enter.prevent="list_processes" />
                                                         </div>
                                                         <div class="d-flex flex-row-reverse mt-4">
                                                             <button type="button" @click="list_processes"
@@ -368,8 +370,8 @@ onBeforeMount(() => {
                                         :mounts="{
                                             status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
                                         }" :actions="[
-                                        Actions.ModalDetails(dfd_details),
-                                    ]" />
+                                            Actions.ModalDetails(dfd_details),
+                                        ]" />
                                 </div>
                                 <div class="pb-3" v-else>
                                     <h2

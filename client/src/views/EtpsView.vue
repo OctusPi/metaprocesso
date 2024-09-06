@@ -701,6 +701,12 @@ onMounted(() => {
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>
                                 Cancelar
                             </button>
+                            <button @click="tabs.next()" type="button" class="btn btn-action-secondary me-auto">
+                                <ion-icon name="arrow-forward" class="fs-5"></ion-icon>
+                            </button>
+                            <button @click="tabs.prev()" type="button" class="btn btn-action-secondary">
+                                <ion-icon name="arrow-back" class="fs-5"></ion-icon>
+                            </button>
                         </div>
                     </form>
                 </div>

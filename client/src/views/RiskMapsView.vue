@@ -327,14 +327,16 @@ onMounted(() => {
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
-                                                        <input type="text" name="protocol" class="form-control"
-                                                            id="s-protocol" v-model="main.process.search.protocol"
+                                                        <input @keydown.enter.prevent="list_processes" type="text"
+                                                            name="protocol" class="form-control" id="s-protocol"
+                                                            v-model="main.process.search.protocol"
                                                             placeholder="Número do Protocolo do Processo" />
                                                     </div>
                                                     <div class="col-12">
                                                         <label for="s-description" class="form-label">Objeto</label>
-                                                        <input type="text" name="description" class="form-control"
-                                                            id="s-description" v-model="main.process.search.description"
+                                                        <input @keydown.enter.prevent="list_processes" type="text"
+                                                            name="description" class="form-control" id="s-description"
+                                                            v-model="main.process.search.description"
                                                             placeholder="Pesquise por partes do Objeto do Processo" />
                                                     </div>
                                                     <div class="d-flex flex-row-reverse mt-4">
@@ -631,8 +633,8 @@ onMounted(() => {
                                         Actions.Edit(accompData.update),
                                         Actions.FastDelete(accompData.remove),
                                     ]" :virtual="{
-                                            risk: ({ accomp_risk }) => risks.datalist.find((o) => o.id == accomp_risk)
-                                        }" :mounts="{
+                                        risk: ({ accomp_risk }) => risks.datalist.find((o) => o.id == accomp_risk)
+                                    }" :mounts="{
                                             'accomp_risk': [Mounts.CastVirt('verb_id', (addr, v) => v?.risk.id === addr ? v.risk : {})],
                                             'accomp_action': [Mounts.CastVirt('verb_id', (addr, v) => v?.risk.risk_actions.find((o) => o.id === addr))],
                                         }" />
