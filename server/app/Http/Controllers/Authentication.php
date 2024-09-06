@@ -59,6 +59,16 @@ class Authentication extends Controller
         return response()->json(Notify::warning('Usuário ou Senha Inválidos!'), 403);
     }
 
+    public function logout(Request $request)
+    {
+        $tokenData = Guardian::getUserByToken($request->bearerToken());
+        if($tokenData){
+            $tokenData->tokens()->delete();
+        }
+
+        return response()->json(Notify::success("Saída realizada com segurança..."));
+    }
+
     /**
      * Request recover password by email
      * @param \Illuminate\Http\Request $request
@@ -73,8 +83,9 @@ class Authentication extends Controller
         }
 
         try {
+            $user->tokens()->delete();
             $token = $user->createToken('recoverpass', ['pass-recover'], now()->addHour());
-            $user->token = $token;
+            $user->token = $token->plainTextToken;
             $user->passchange = true;
 
             if ($user->save()) {
@@ -126,6 +137,7 @@ class Authentication extends Controller
         $user->passchange = false;
 
         if ($user->update()) {
+            $user->tokens()->delete();
             Mail::to($user)->send(new ChangePassNotification());
             return response()->json(Notify::success('Senha alterada com sucesso!'), 200);
         }
@@ -139,6 +151,29 @@ class Authentication extends Controller
         return Guardian::checkToken($token)
             ? response()->json(['token_valid' => true], 200)
             : response()->json(Notify::info('Login expirado, realize o login novamente...'), 401);
+    }
+
+    public function auth_renew(Request $request)
+    {
+        $token = $request->token_renew;
+        if(!Guardian::checkToken($token)){
+            response()->json(Notify::warning('Link de recução expirou, solicite novamente...'), 401);
+        }
+
+        $user = Guardian::getUserByToken($token);
+
+        if(!$user){
+            return response()->json(Notify::warning('Token de recuperação inválido...'), 404);
+        }
+
+        Log::info($user->lastlogin);
+
+        return response()->json([
+            'name' => $user->name,
+            'profile' => User::list_profiles()[$user->profile] ?? '',
+            'lastlogin' => $user->lastlogin,
+        ], 200);
+
     }
 
     public function auth_organ(Request $request)
