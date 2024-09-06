@@ -15,7 +15,6 @@ use App\Models\PriceRecord;
 use Illuminate\Http\Request;
 use App\Http\Middlewares\Data;
 use App\Http\Controllers\Controller;
-use Log;
 
 class PriceRecords extends Controller
 {

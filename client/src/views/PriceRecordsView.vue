@@ -56,9 +56,9 @@ const [page, pageData] = Layout.new(emit, {
         ],
     },
     suppliers: {
-        data:[],
+        data: [],
         search: '',
-        headers:[]
+        headers: []
     },
     header: [
         { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
@@ -325,7 +325,7 @@ onBeforeMount(() => {
                                             <div class="accordion-body p-0 m-0">
                                                 <div class="p-4 pt-0 mx-2">
                                                     <div class="dashed-separator mb-3"></div>
-                                                    <div class="row g-3">
+                                                    <div class="row">
                                                         <div class="col-sm-12 col-md-4">
                                                             <label for="date_s_ini" class="form-label">Data
                                                                 Inicial</label>
@@ -356,13 +356,11 @@ onBeforeMount(() => {
                                                                 id="s-protocol" v-model="page.process.search.protocol"
                                                                 placeholder="Número do Protocolo do Processo"
                                                                 @keydown.enter.prevent="list_processes" />
-                                                                placeholder="Número do Protocolo do Processo"
-                                                                @keydown.enter.prevent="list_processes" />
+                                                            placeholder="Número do Protocolo do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                         </div>
                                                         <div class="col-sm-12 col-md-4">
                                                             <label for="s-unit" class="form-label">Unidades</label>
-                                                            <InputDropMultSelect v-model="page.process.search.units"
-                                                                :options="page.selects.units" identify="units" />
                                                             <InputDropMultSelect v-model="page.process.search.units"
                                                                 :options="page.selects.units" identify="units" />
                                                         </div>
@@ -373,8 +371,8 @@ onBeforeMount(() => {
                                                                 v-model="page.process.search.description"
                                                                 placeholder="Pesquise por partes do Objeto do Processo"
                                                                 @keydown.enter.prevent="list_processes" />
-                                                                placeholder="Pesquise por partes do Objeto do Processo"
-                                                                @keydown.enter.prevent="list_processes" />
+                                                            placeholder="Pesquise por partes do Objeto do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                         </div>
                                                         <div class="d-flex flex-row-reverse mt-4">
                                                             <button type="button" @click="list_processes"
@@ -415,7 +413,7 @@ onBeforeMount(() => {
                                         <ion-icon name="warning" class="fs-5" />
                                         Atenção
                                     </h2>
-                                    <p class="txt-color-sec small text-center m-0">
+                                    <p class="txt-color-sec small text-center m-0 pb-3">
                                         É necessário selecionar um processo para visualizar as DFDs
                                     </p>
                                 </div>
@@ -464,7 +462,8 @@ onBeforeMount(() => {
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('suppliers') }">
                                 <div class="col-sm-12">
-                                    <label for="search-supplier" class="form-label">Localizar Fornecedores no Catálogo</label>
+                                    <label for="search-supplier" class="form-label">Localizar Fornecedores no
+                                        Catálogo</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="search-supplier"
                                             placeholder="Pesquise por parte do nome ou pelo CNPJ do Fornecedor"
@@ -475,15 +474,16 @@ onBeforeMount(() => {
                                             <ion-icon name="search" class="fs-5"></ion-icon>
                                         </button>
                                     </div>
-                                    
+
 
                                     List Search Suppliers
                                     <div class="container-list position-relative bg-success">
-                                        <div v-if="page.supplier.search && page.suppliers.data.length"
+                                        <div v-if="page.suppliers.search && page.suppliers.data.length"
                                             class="position-absolute w-100 my-2 top-0 start-0 z-3">
                                             <div class="form-control load-items-cat p-0 m-0">
                                                 <ul class="search-list-items">
-                                                    <li v-for="i in page.suppliers.data" :key="i.id" @click="select_supplier(i)"
+                                                    <li v-for="i in page.suppliers.data" :key="i.id"
+                                                        @click="select_supplier(i)"
                                                         class="d-flex align-items-center px-3 py-2">
                                                         <div class="me-3 item-type">
                                                             {{ i.type == '1' ? 'M' : 'S' }}
@@ -512,7 +512,7 @@ onBeforeMount(() => {
                                         </div>
                                     </div>
                                 </div>
-                                
+
 
                                 <!-- <div v-if="page.data?.items">
                                     <TableList secondary :count="false" :header="items.header" :actions="[
