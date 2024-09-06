@@ -100,7 +100,7 @@ onMounted(() => {
                         <div class="mb-4">
                     <button type="submit" class="btn btn-action-primary w-100 d-flex align-items-center justify-content-center">
                         Cadastrar Senha
-                        <ion-icon name="lock-open-outline" class="fs-6 ms-1"></ion-icon>
+                        <ion-icon name="lock-open-outline" class="fs-5 ms-1"></ion-icon>
                     </button>
                 </div>
 
