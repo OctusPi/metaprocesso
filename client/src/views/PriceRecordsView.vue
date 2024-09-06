@@ -1,5 +1,6 @@
 <script setup>
 import { onBeforeMount, ref, watch } from 'vue';
+
 import TableList from '@/components/table/TableList.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import NavMainUi from '@/components/NavMainUi.vue';
@@ -8,6 +9,8 @@ import FooterMainUi from '@/components/FooterMainUi.vue';
 import TableListStatus from '@/components/table/TableListStatus.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import TabNav from '@/components/TabNav.vue';
+import DfdDetails from '@/components/DfdDetails.vue';
+
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import Mounts from '@/services/mounts';
@@ -39,13 +42,15 @@ const [page, pageData] = Layout.new(emit, {
             { key: 'status', title: 'SITUAÇÃO' }
         ],
     },
-    dfd: {
-        data: {},
+    dfds: {
+        search: {},
+        datalist: [],
+        data: null,
         headers: [
             { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { key: 'demandant.name', title: 'DEMANDANTE' },
             { key: 'ordinator.name', title: 'ORDENADOR' },
-            { key: 'unit.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
+            { key: 'unit.name', title: 'ORIGEM' },
             { title: 'OBJETO', sub: [{ key: 'description' }] },
             { key: 'status', title: 'SITUAÇÃO' }
         ],
@@ -160,6 +165,15 @@ function list_processes() {
     http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
         page.process.data = resp.data ?? []
     })
+}
+
+function dfd_details(id) {
+    if (page.data.process.dfds) {
+        page.dfds.data = page.data.process.dfds.find(obj => obj.id === id)
+        http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
+            page.dfds.data.items = resp.data
+        })
+    }
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -364,7 +378,7 @@ onBeforeMount(() => {
                             <!-- tab dfds -->
                             <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('dfds') }">
                                 <div v-if="page.data.process" class="form-neg-box">
-                                    <TableList :count="false" :header="page.dfd.headers" :body="page.data.process.dfds"
+                                    <TableList :count="false" :header="page.dfds.headers" :body="page.data.process.dfds"
                                         :mounts="{
                                             status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
                                         }" :actions="[
@@ -759,6 +773,8 @@ onBeforeMount(() => {
                     </form>
                 </div>
             </section>
+
+            <DfdDetails :dfd="page.dfds.data" :selects="page.selects" />
 
             <FooterMainUi />
         </main>
