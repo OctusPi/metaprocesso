@@ -387,7 +387,7 @@ onBeforeMount(() => {
                                         Actions.ModalDetails(dfd_details),
                                     ]" />
                             </div>
-                            <div v-else>
+                            <div class="m-0 py-3" v-else>
                                 <h2
                                     class="txt-color text-center m-0 d-flex justify-content-center align-items-center gap-1">
                                     <ion-icon name="warning" class="fs-5" />
