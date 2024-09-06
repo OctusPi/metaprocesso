@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Collection;
+use Log;
 
 class Data
 {
@@ -193,6 +194,8 @@ class Data
             $with ? fn() => $query->with($with) : null,
         ], fn($clause) => $clause && $clause());
 
+        Log::info($query->toSql());
+
         return $query;
     }
 
@@ -296,13 +299,15 @@ class Data
      * @return array Lista de parâmetros filtrados.
      */
     private static function paramsAND(?array $params): array
-    {
-        return array_filter(array_map(fn($key, $value) => (object) [
-            'column' => $value['column'] ?? $key,
+{
+    return array_filter(array_map(fn($key, $value) =>
+        (!isset($value['mode']) || $value['mode'] === 'AND') ?
+        (object) [
+            'column'   => $value['column']   ?? $key,
             'operator' => $value['operator'] ?? (is_numeric($value) ? '=' : 'LIKE'),
-            'value' => $value['value'] ?? $value,
-        ], array_keys($params), $params));
-    }
+            'value'    => $value['value']    ?? $value,
+        ] : null, array_keys($params), $params));
+}
 
     /**
      * Retorna condições de filtro para parâmetros OR.
@@ -313,9 +318,9 @@ class Data
     private static function paramsOR(?array $params): array
     {
         return array_filter(array_map(fn($param) => (object) [
-            'column' => $param['column'],
+            'column'   => $param['column'],
             'operator' => $param['operator'] ?? (is_numeric($param['value']) ? '=' : 'LIKE'),
-            'value' => $param['value']
+            'value'    => $param['value']
         ], array_filter($params, fn($param) => isset ($param['mode']) && $param['mode'] === 'OR')));
     }
 }
