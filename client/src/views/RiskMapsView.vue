@@ -162,7 +162,6 @@ function export_riskiness(id) {
         instanceReport.mount(containerReport)
         exp.exportPDF(containerReport, `Mapa_De_Risco-${instance.date_version}-v${instance.version}`)
     })
-
 }
 
 function copyFromDataset(dsval, key, newval) {

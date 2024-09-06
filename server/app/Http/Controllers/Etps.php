@@ -73,14 +73,15 @@ class Etps extends Controller
      */
     public function list_processes(Request $request)
     {
-        if (!$request->anyFilled('protocol', 'description', 'date_i', 'date_f')) {
+        if (!$request->anyFilled('protocol', 'description', 'date_i', 'date_f', 'units')) {
             return response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
         }
 
         $search = Utils::map_search(['protocol', 'description'], $request->all());
         $betw = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
+        $objs = Utils::map_search_obj($request->units, 'units', 'id');
 
-        $query = Data::find(new Process(), $search, null, ['organ', 'comission'], $betw);
+        $query = Data::find(new Process(), $search, null, ['organ', 'comission'], $betw, $objs);
         return response()->json($query, 200);
     }
 

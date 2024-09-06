@@ -137,7 +137,7 @@ watch(() => props.body, (newval) => {
                                 <ul class="dropdown-menu px-2 py-3">
                                     <li>
                                         <a v-for="(item, j) in props.actions" :key="j"
-                                            class="dropdown-item item-action-menu" href="#"
+                                            class="dropdown-item item-action-menu align-items-center" href="#"
                                             @click.prevent="item.action && item.action(instance.id)"
                                             :data-bs-target="item.modal" :data-bs-toggle="item.modal ? 'modal' : null">
                                             <ion-icon :name="item.icon" class="me-2" />
