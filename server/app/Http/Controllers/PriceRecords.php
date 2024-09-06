@@ -51,7 +51,10 @@ class PriceRecords extends Controller
      */
     public function list_dfd_items(Request $request)
     {
-        return Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']);
+        return response()->json(
+            Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']),
+            200
+        );
     }
 
     /**

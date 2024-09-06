@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\{Comission, ComissionMember, Dfd, DfdItem, Etp, Organ, Process, User};
+use App\Models\Unit;
 use App\Utils\Utils;
 use App\Utils\Notify;
 use Illuminate\Http\Request;
@@ -91,7 +92,10 @@ class Etps extends Controller
      */
     public function list_dfd_items(Request $request)
     {
-        return Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']);
+        return response()->json(
+            Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']),
+            200
+        );
     }
 
     /**
@@ -113,6 +117,7 @@ class Etps extends Controller
         }
 
         return response()->json(array_merge([
+            'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
             'process_status' => Process::list_status(),
             'status' => Etp::list_status(),
