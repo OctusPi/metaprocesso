@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dfd;
+use App\Models\Supplier;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
@@ -51,7 +52,21 @@ class PriceRecords extends Controller
      */
     public function list_dfd_items(Request $request)
     {
-        return Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']);
+        return response()->json(Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']));
+    }
+
+    /**
+     * Lista fornecedores associados a uma coleta de preços.
+     *
+     * @param Request $request Dados da requisição.
+     * @return \Illuminate\Database\Eloquent\Collection|null Resposta JSON com a lista de itens DFD.
+     */
+    public function list_suppliers(Request $request)
+    {
+        return response()->json(Data::find(new Supplier(), [
+            ['column' => 'name', 'value' => $request->supplier, 'mode' => 'OR'],
+            ['column' => 'cnpj', 'value' => $request->supplier, 'mode' => 'OR'],
+        ], ['name']));
     }
 
     /**

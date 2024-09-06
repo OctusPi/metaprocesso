@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('comission')->constrained('comissions');
             $table->json('comission_members')->nullable();
             $table->json('suppliers')->nullable();
+            $table->text('suppliers_justification')->nullable();
             $table->foreignId('author')->constrained('users');
             $table->integer('status');
         });

@@ -16,7 +16,7 @@ import Actions from '@/services/actions';
 import Mounts from '@/services/mounts';
 import http from '@/services/http';
 import gpt from '@/services/gpt';
-import masks from '@/utils/masks';
+// import masks from '@/utils/masks';
 import utils from '@/utils/utils';
 import dates from '@/utils/dates';
 import Tabs from '@/utils/tabs';
@@ -54,6 +54,11 @@ const [page, pageData] = Layout.new(emit, {
             { title: 'OBJETO', sub: [{ key: 'description' }] },
             { key: 'status', title: 'SITUAÇÃO' }
         ],
+    },
+    suppliers: {
+        data:[],
+        search: '',
+        headers:[]
     },
     header: [
         { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
@@ -167,6 +172,10 @@ function list_processes() {
     })
 }
 
+function select_supplier(supplier) {
+    console.log(supplier)
+}
+
 function dfd_details(id) {
     if (page.data.process.dfds) {
         page.dfds.data = page.data.process.dfds.find(obj => obj.id === id)
@@ -174,6 +183,12 @@ function dfd_details(id) {
             page.dfds.data.items = resp.data
         })
     }
+}
+
+function list_suppliers() {
+    http.post(`${page.url}/list_suppliers`, { supplier: page.suppliers.search }, emit, (resp) => {
+        page.suppliers.data = resp.data
+    })
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -283,7 +298,7 @@ onBeforeMount(() => {
                     <TabNav :tabs="tabs" identify="tabbed" />
                     <form @submit.prevent="pageData.save({ status: 2 })">
                         <div class="content">
-                            
+
                             <!-- tab proccess -->
                             <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
                                 <div class="accordion mb-3" id="accordion-process">
@@ -338,19 +353,21 @@ onBeforeMount(() => {
                                                             <label for="s-protocol" class="form-label">Protocolo</label>
                                                             <input type="text" name="protocol" class="form-control"
                                                                 id="s-protocol" v-model="page.process.search.protocol"
-                                                                placeholder="Número do Protocolo do Processo" @keydown.enter.prevent="list_processes" />
+                                                                placeholder="Número do Protocolo do Processo"
+                                                                @keydown.enter.prevent="list_processes" />
                                                         </div>
                                                         <div class="col-sm-12 col-md-4">
                                                             <label for="s-unit" class="form-label">Unidades</label>
-                                                            <InputDropMultSelect v-model="page.process.search.units" :options="page.selects.units"
-                                                                identify="units" />
+                                                            <InputDropMultSelect v-model="page.process.search.units"
+                                                                :options="page.selects.units" identify="units" />
                                                         </div>
                                                         <div class="col-sm-12 col-md-8">
                                                             <label for="s-description" class="form-label">Objeto</label>
                                                             <input type="text" name="description" class="form-control"
                                                                 id="s-description"
                                                                 v-model="page.process.search.description"
-                                                                placeholder="Pesquise por partes do Objeto do Processo" @keydown.enter.prevent="list_processes"/>
+                                                                placeholder="Pesquise por partes do Objeto do Processo"
+                                                                @keydown.enter.prevent="list_processes" />
                                                         </div>
                                                         <div class="d-flex flex-row-reverse mt-4">
                                                             <button type="button" @click="list_processes"
@@ -377,162 +394,145 @@ onBeforeMount(() => {
 
                             <!-- tab dfds -->
                             <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('dfds') }">
-                            <div v-if="page.data.process" class="form-neg-box p-0">
-                                <TableList :count="false" :header="page.dfds.headers" :body="page.data.process.dfds"
-                                    :mounts="{
-                                        status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
-                                    }" :actions="[
-                                        Actions.ModalDetails(dfd_details),
-                                    ]" />
+                                <div v-if="page.data.process" class="form-neg-box p-0">
+                                    <TableList :count="false" :header="page.dfds.headers" :body="page.data.process.dfds"
+                                        :mounts="{
+                                            status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
+                                        }" :actions="[
+                                            Actions.ModalDetails(dfd_details),
+                                        ]" />
+                                </div>
+                                <div v-else>
+                                    <h2
+                                        class="txt-color text-center m-0 d-flex justify-content-center align-items-center gap-1">
+                                        <ion-icon name="warning" class="fs-5" />
+                                        Atenção
+                                    </h2>
+                                    <p class="txt-color-sec small text-center m-0">
+                                        É necessário selecionar um processo para visualizar as DFDs
+                                    </p>
+                                </div>
                             </div>
-                            <div v-else>
-                                <h2
-                                    class="txt-color text-center m-0 d-flex justify-content-center align-items-center gap-1">
-                                    <ion-icon name="warning" class="fs-5" />
-                                    Atenção
-                                </h2>
-                                <p class="txt-color-sec small text-center m-0">
-                                    É necessário selecionar um processo para visualizar as DFDs
-                                </p>
-                            </div>
-                        </div>
 
                             <!-- tab informacoes -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('infos') }">
                                 <div class="col-sm-12 col-md-4">
-                                    <label for="date_ini" class="form-label">Data Envio Demanda</label>
+                                    <label for="protocol" class="form-label">Número Protocolo</label>
+                                    <input type="text" name="protocol" class="form-control" :class="{
+                                        'form-control-alert': page.valids.protocol
+                                    }" id="protocol" placeholder="000-000000-0000" v-model="page.data.protocol" />
+                                </div>
+                                <div class="col-sm-12 col-md-4">
+                                    <label for="date_ini" class="form-label">Data Inicio da Coleta</label>
                                     <VueDatePicker auto-apply v-model="page.data.date_ini"
                                         :input-class-name="page.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                         :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
                                         locale="pt-br" calendar-class-name="dp-custom-calendar"
                                         calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+
                                 </div>
                                 <div class="col-sm-12 col-md-4">
-                                    <label for="estimated_date" class="form-label">Data Prevista
-                                        Contratação</label>
-                                    <VueDatePicker auto-apply v-model="page.data.estimated_date"
-                                        :input-class-name="page.valids.estimated_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                    <label for="date_fin" class="form-label">Data Finalização da Coleta</label>
+                                    <VueDatePicker auto-apply v-model="page.data.date_fin"
+                                        :input-class-name="page.valids.date_fin ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                         :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
                                         locale="pt-br" calendar-class-name="dp-custom-calendar"
                                         calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                                 </div>
-                                <div class="col-sm-12 col-md-4">
-                                    <label for="year_pca" class="form-label">Ano do PCA</label>
-                                    <input maxlength="4" type="text" name="year_pca" class="form-control"
-                                        :class="{ 'form-control-alert': page.valids.year_pca }" id="year_pca"
-                                        placeholder="AAAA" v-maska:[masks.masknumbs] v-model="page.data.year_pca" />
-                                </div>
-                                <div class="col-sm-12 col-md-4">
-                                    <label for="acquisition_type" class="form-label">Tipo de Aquisição</label>
-                                    <select name="acquisition_type" class="form-control"
-                                        :class="{ 'form-control-alert': page.valids.acquisition_type }"
-                                        id="acquisition_type" v-model="page.data.acquisition_type">
-                                        <option value=""></option>
-                                        <option v-for="s in page.selects.acquisitions" :value="s.id" :key="s.id">
-                                            {{ s.title }}
-                                        </option>
-                                    </select>
-                                </div>
-                                <div class="col-sm-12 col-md-4">
-                                    <label for="estimated_value" class="form-label">Valor Estimado</label>
-                                    <input type="text" name="estimated_value" class="form-control"
-                                        :class="{ 'form-control-alert': page.valids.estimated_value }"
-                                        id="estimated_value" placeholder="R$0,00" v-maska:[masks.maskmoney]
-                                        v-model="page.data.estimated_value" />
-                                </div>
-                                <div class="col-sm-12 col-md-4">
-                                    <label for="priority" class="form-label">Prioridade</label>
-                                    <select name="priority" class="form-control"
-                                        :class="{ 'form-control-alert': page.valids.priority }" id="priority"
-                                        v-model="page.data.priority">
-                                        <option value=""></option>
-                                        <option v-for="s in page.selects.prioritys" :value="s.id" :key="s.id">
-                                            {{ s.title }}
-                                        </option>
-                                    </select>
-                                </div>
                                 <div class="col-sm-12">
-                                    <label for="description" class="form-label d-flex justify-content-between">
-                                        Descrição sucinta do objeto
-                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                            @click="generate('dfd_description')">
-                                            <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>
-                                            Gerar com I.A
-                                        </a>
-                                    </label>
-                                    <textarea name="description" class="form-control" rows="4"
-                                        :class="{ 'form-control-alert': page.valids.description }" id="description"
-                                        v-model="page.data.description"></textarea>
-                                </div>
-                                <div class="col-sm-12 col-md-4">
-                                    <label for="suggested_hiring" class="form-label">
-                                        Forma de Contratação Sugerida
-                                    </label>
-                                    <select name="suggested_hiring" class="form-control"
-                                        :class="{ 'form-control-alert': page.valids.suggested_hiring }"
-                                        id="suggested_hiring" v-model="page.data.suggested_hiring">
+                                    <label for="comission" class="form-label">Comissão</label>
+                                    <select name="comission" class="form-control" :class="{
+                                        'form-control-alert': page.valids.comission
+                                    }" id="comission" v-model="page.data.comission">
                                         <option value=""></option>
-                                        <option v-for="s in page.selects.hirings" :value="s.id" :key="s.id">
+                                        <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
                                             {{ s.title }}
                                         </option>
                                     </select>
-                                </div>
-                                <div class="col-sm-12 col-md-4">
-                                    <label for="bonds" class="form-label">Vinculo ou Dependência</label>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="bonds"
-                                            v-model="page.data.bonds">
-                                        <label class="form-check-label" for="bonds">Indicação de vinculação ou
-                                            dependência com o objeto de outro documento de formalização de
-                                            demanda.</label>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-4">
-                                    <label class="form-label" for="price_taking">Registro de Preço</label>
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch" id="price_taking"
-                                            v-model="page.data.price_taking">
-                                        <label class="form-check-label" for="price_taking">Indique se a demanda
-                                            se
-                                            trata de registro de preços.</label>
-                                    </div>
                                 </div>
                             </div>
 
-                            <!-- tab detalhes -->
+                            <!-- tab suppliers -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('suppliers') }">
                                 <div class="col-sm-12">
+                                    <label for="search-supplier" class="form-label">Localizar Fornecedores no Catálogo</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="search-supplier"
+                                            placeholder="Pesquise por parte do nome ou pelo CNPJ do Fornecedor"
+                                            aria-label="Pesquise por parte do nome ou pelo CNPJ do Fornecedor"
+                                            aria-describedby="btn-search-supplier" v-model="page.suppliers.search"
+                                            @keydown.enter.prevent="list_suppliers" />
+                                        <button class="btn btn-action-primary" type="button" @click="list_suppliers">
+                                            <ion-icon name="search" class="fs-5"></ion-icon>
+                                        </button>
+                                    </div>
+                                    
+
+                                    List Search Suppliers
+                                    <div class="container-list position-relative bg-success">
+                                        <div v-if="page.supplier.search && page.suppliers.data.length"
+                                            class="position-absolute w-100 my-2 top-0 start-0 z-3">
+                                            <div class="form-control load-items-cat p-0 m-0">
+                                                <ul class="search-list-items">
+                                                    <li v-for="i in page.suppliers.data" :key="i.id" @click="select_supplier(i)"
+                                                        class="d-flex align-items-center px-3 py-2">
+                                                        <div class="me-3 item-type">
+                                                            {{ i.type == '1' ? 'M' : 'S' }}
+                                                        </div>
+                                                        <div class="item-desc">
+                                                            <h3 class="m-0 p-0 small">
+                                                                {{ `${i.code} - ${i.name}` }}
+                                                            </h3>
+                                                            <p class="m-0 p-0 small">
+                                                                {{
+                                                                    `Unidade: ${i.und} - Volume:
+                                                                ${i.volume} - Categoria:
+                                                                ${page.selects.categories.find(
+                                                                        (o) => o.id === i.category
+                                                                    )?.title
+                                                                    } `
+                                                                }}
+                                                            </p>
+                                                            <p class="m-0 p-0 small">
+                                                                {{ i.description }}
+                                                            </p>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+
+                                <!-- <div v-if="page.data?.items">
+                                    <TableList secondary :count="false" :header="items.header" :actions="[
+                                        Actions.Edit(update_item),
+                                        Actions.FastDelete(delete_item),
+                                    ]" :body="page.data.items" :mounts="{
+                                        'item.type': [Mounts.Cast(page.selects.items_types)],
+                                        'dotation': [Mounts.Cast(page.selects.dotations, 'id', 'name')],
+                                        'program': [Mounts.Cast(page.selects.programs, 'id', 'name')],
+                                    }" />
+                                </div> -->
+
+                                <div class="col-sm-12">
                                     <label for="justification" class="form-label d-flex justify-content-between">
-                                        Justificativa da necessidade da contratação
+                                        Justificativa da escolha de fornecedores
                                         <a href="#" class="a-ia d-flex align-items-center gap-1"
                                             @click="generate('dfd_justification')">
                                             <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>
                                             Gerar com I.A
                                         </a>
                                     </label>
-                                    <textarea name="justification" class="form-control" rows="4" :class="{
-                                        'form-control-alert': page.valids.justification
-                                    }" id="justification" v-model="page.data.justification"></textarea>
-                                </div>
-                                <div class="col-sm-12">
-                                    <label for="justification_quantity"
-                                        class="form-label d-flex justify-content-between">
-                                        Justificativa dos quantitativos demandados
-                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                            @click="generate('dfd_quantitys')">
-                                            <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>
-                                            Gerar com I.A
-                                        </a>
-                                    </label>
-                                    <textarea name="justification_quantity" class="form-control" rows="4"
-                                        id="justification_quantity"
-                                        v-model="page.data.justification_quantity"></textarea>
+                                    <textarea name="justification" class="form-control" rows="4" id="justification"
+                                        v-model="page.data.suppliers_justification"></textarea>
                                 </div>
                             </div>
 
-                            <!-- tab revisar -->
+                            <!-- tab coletas -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('proposals') }">
 

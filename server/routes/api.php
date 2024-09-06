@@ -96,7 +96,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('/pricerecords')->controller(PriceRecords::class)->group(function(){
         Route::post('/list_processes', 'list_processes');
-        Route::post('/list_dfds', 'list_dfds');
+        Route::post('/list_suppliers', 'list_suppliers');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
         Route::post('/generate', 'generate');
     });

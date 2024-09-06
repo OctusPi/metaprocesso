@@ -29,6 +29,7 @@ class PriceRecord extends Model
         'comission',
         'comission_members',
         'suppliers',
+        'suppliers_justification',
         'author',
         'status'
     ];
