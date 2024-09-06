@@ -194,8 +194,6 @@ class Data
             $with ? fn() => $query->with($with) : null,
         ], fn($clause) => $clause && $clause());
 
-        Log::info($query->toSql());
-
         return $query;
     }
 

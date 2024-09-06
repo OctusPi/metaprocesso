@@ -479,24 +479,22 @@ onBeforeMount(() => {
                                                         @click="select_supplier(i)"
                                                         class="d-flex align-items-center px-3 py-2">
                                                         <div class="me-3 item-type">
-                                                            {{ i.type == '1' ? 'M' : 'S' }}
+                                                            <button type="button" class="btn btn-sm btn-action-close">
+                                                                <ion-icon name="add-circle-outline" class="fs-5"></ion-icon>
+                                                            </button>
                                                         </div>
                                                         <div class="item-desc">
                                                             <h3 class="m-0 p-0 small">
-                                                                {{ `${i.code} - ${i.name}` }}
+                                                                {{ `${i.cnpj} - ${i.name}` }}
                                                             </h3>
                                                             <p class="m-0 p-0 small">
-                                                                {{
-                                                                    `Unidade: ${i.und} - Volume:
-                                                                ${i.volume} - Categoria:
-                                                                ${page.selects.categories.find(
-                                                                        (o) => o.id === i.category
-                                                                    )?.title
-                                                                    } `
-                                                                }}
+                                                                {{ i.address }}
                                                             </p>
                                                             <p class="m-0 p-0 small">
-                                                                {{ i.description }}
+                                                                {{ `${i.email} - ${i.phone}` }}
+                                                            </p>
+                                                            <p class="m-0 p-0 small">
+                                                                {{ `${i.agent} - ${i.cpf}` }}
                                                             </p>
                                                         </div>
                                                     </li>

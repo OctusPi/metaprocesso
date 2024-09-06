@@ -1,6 +1,6 @@
 <script setup>
 import { createApp, onMounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
+
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import http from '@/services/http';
@@ -14,8 +14,6 @@ import CatalogReport from './reports/CatalogReport.vue';
 import TableList from '@/components/table/TableList.vue';
 import Mounts from '@/services/mounts';
 
-
-const router = useRouter()
 const emit = defineEmits(['callAlert', 'callUpdate'])
 const props = defineProps({
     datalist: { type: Array, default: () => [] }
@@ -50,10 +48,6 @@ function export_catalog(id) {
         instanceReport.mount(containerReport)
         exp.exportPDF(containerReport, `CATÁLOGO-${resp.data.name}`)
     })
-}
-
-function catalog(id) {
-    router.replace({ name: 'catalogitems', params: { id } })
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -143,7 +137,6 @@ onMounted(() => {
 
                 <div role="list" class="container p-0">
                     <TableList :header="page.header" :body="page.datalist" :actions="[
-                        Actions.Create('cube-outline', 'Itens', catalog),
                         Actions.Edit(pageData.update),
                         Actions.Delete(pageData.remove),
                         Actions.Export('document-text-outline', export_catalog),
