@@ -341,6 +341,7 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
                     <form @submit.prevent="pageData.save({ process: page.data.process?.id })">
+                        <!-- tab processo -->
                         <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
                             <div class="accordion mb-3" id="accordion-process">
                                 <div class="accordion-item">
@@ -418,6 +419,7 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
+                        <!-- tab dfds -->
                         <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('dfds') }">
                             <div v-if="page.data.process" class="form-neg-box">
                                 <TableList :count="false" :header="page.dfd.headers" :body="page.data.process.dfds"

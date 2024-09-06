@@ -377,25 +377,25 @@ onBeforeMount(() => {
 
                             <!-- tab dfds -->
                             <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('dfds') }">
-                                <div v-if="page.data.process" class="form-neg-box">
-                                    <TableList :count="false" :header="page.dfds.headers" :body="page.data.process.dfds"
-                                        :mounts="{
-                                            status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
-                                        }" :actions="[
+                            <div v-if="page.data.process" class="form-neg-box p-0">
+                                <TableList :count="false" :header="page.dfds.headers" :body="page.data.process.dfds"
+                                    :mounts="{
+                                        status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
+                                    }" :actions="[
                                         Actions.ModalDetails(dfd_details),
                                     ]" />
-                                </div>
-                                <div class="pb-3" v-else>
-                                    <h2
-                                        class="txt-color text-center m-0 d-flex justify-content-center align-items-center gap-1">
-                                        <ion-icon name="warning" class="fs-5" />
-                                        Atenção
-                                    </h2>
-                                    <p class="txt-color-sec small text-center m-0">
-                                        É necessário selecionar um processo para visualizar as DFDs
-                                    </p>
-                                </div>
                             </div>
+                            <div v-else>
+                                <h2
+                                    class="txt-color text-center m-0 d-flex justify-content-center align-items-center gap-1">
+                                    <ion-icon name="warning" class="fs-5" />
+                                    Atenção
+                                </h2>
+                                <p class="txt-color-sec small text-center m-0">
+                                    É necessário selecionar um processo para visualizar as DFDs
+                                </p>
+                            </div>
+                        </div>
 
                             <!-- tab informacoes -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
