@@ -238,7 +238,7 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
                     <form @submit.prevent="pageData.save">
-                        <input type="hidden" name="id" v-model="page.id">
+                        <!-- tab origigem -->
                         <div class="tab-pane fade row content m-0 g-3 p-4 pt-1"
                             :class="{ 'show active': tabs.is('origem') }">
                             <div class="col-sm-12 col-md-4">
@@ -270,6 +270,7 @@ onMounted(() => {
                             </div>
                         </div>
 
+                        <!-- tab processo -->
                         <div class="tab-pane fade row content m-0 g-3 p-4 pt-1"
                             :class="{ 'show active': tabs.is('processo') }">
                             <div class="col-sm-12 col-md-4">
@@ -338,6 +339,8 @@ onMounted(() => {
                                 }" id="description" v-model="page.data.description"></textarea>
                             </div>
                         </div>
+
+                        <!-- tab dfds -->
                         <div class="tab-pane fade row content m-0 g-3" :class="{ 'show active': tabs.is('dfds') }">
                             <div class="accordion" id="accordion-dfds">
                                 <div class="accordion-item">
@@ -423,7 +426,9 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade row position-relative content m-0 g-3 p-4 pt-3"
+
+                        <!-- tab revisar -->
+                        <div class="tab-pane fade row content m-0 g-3 p-4 pt-1"
                             :class="{ 'show active': tabs.is('revisar') }">
                             <div class="box-revisor">
                                 <div class="box-revisor-title d-flex mb-4">
@@ -436,7 +441,9 @@ onMounted(() => {
                                     <div class="row">
                                         <div class="col-md-6">
                                             <h4>Unidades</h4>
-                                            <p>{{ page.data.units.map(item => item.title).join(', ') ?? '*****' }}</p>
+                                            <span class="p-0 m-0 small" v-for="u in page.data.units" :key="u.id">
+                                                    {{ `${u.title ?? '***'}; ` }}
+                                            </span>
                                         </div>
                                         <div class="col-md-6">
                                             <h4>Comissão</h4>
@@ -473,8 +480,7 @@ onMounted(() => {
                                             <h4>Ano PCA</h4>
                                             <p>{{ page.data.year_pca ?? '*****' }}</p>
                                         </div>
-                                    </div>
-                                    <div class="row">
+                                    
                                         <div class="col-md-3">
                                             <h4>Modalidade</h4>
                                             <p>
@@ -504,8 +510,7 @@ onMounted(() => {
                                                 }}
                                             </p>
                                         </div>
-                                    </div>
-                                    <div class="row">
+                                    
                                         <div class="col-md-12">
                                             <h4>Descrição do Processo</h4>
                                             <p>{{ page.data.description ?? '*****' }}</p>
@@ -538,6 +543,7 @@ onMounted(() => {
                             </div>
                         </div>
 
+                        <!-- nav buttons -->
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
@@ -557,7 +563,9 @@ onMounted(() => {
                     </form>
                 </div>
             </section>
+
             <DfdDetails :dfd="page.dfds.data" :selects="page.selects" />
+
             <FooterMainUi />
         </main>
     </div>
