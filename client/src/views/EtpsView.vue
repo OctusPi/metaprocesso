@@ -16,6 +16,7 @@ import InputRichText from '@/components/inputs/InputRichText.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
 import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 
 const ETPS_ORIGIN = "1";
 
@@ -360,14 +361,15 @@ onMounted(() => {
                                             </p>
                                         </button>
                                     </h2>
-                                    <div id="accordionSearchColapseId" class="accordion-collapse collapse" :class="{'show': page.data.id }"
+                                    <div id="accordionSearchColapseId" class="accordion-collapse collapse show"
                                         aria-labelledby="accordion-processHeadId" data-bs-parent="#accordion-process">
                                         <div class="accordion-body p-0 m-0">
                                             <div class="p-4 pt-0 mx-2">
                                                 <div class="dashed-separator mb-3"></div>
                                                 <div class="row g-3">
                                                     <div class="col-sm-12 col-md-4">
-                                                        <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                                        <label for="date_s_ini" class="form-label">Data
+                                                            Inicial</label>
                                                         <VueDatePicker auto-apply v-model="page.process.search.date_i"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
@@ -377,7 +379,8 @@ onMounted(() => {
                                                             menu-class-name="dp-custom-menu" />
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
-                                                        <label for="date_s_fin" class="form-label">Data Final</label>
+                                                        <label for="date_s_fin" class="form-label">Data
+                                                            Final</label>
                                                         <VueDatePicker auto-apply v-model="page.process.search.date_f"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
@@ -390,13 +393,20 @@ onMounted(() => {
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
                                                         <input type="text" name="protocol" class="form-control"
                                                             id="s-protocol" v-model="page.process.search.protocol"
-                                                            placeholder="Número do Protocolo do Processo" />
+                                                            placeholder="Número do Protocolo do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-unit" class="form-label">Unidades</label>
+                                                        <InputDropMultSelect v-model="page.process.search.units"
+                                                            :options="page.selects.units" identify="units" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-8">
                                                         <label for="s-description" class="form-label">Objeto</label>
                                                         <input type="text" name="description" class="form-control"
                                                             id="s-description" v-model="page.process.search.description"
-                                                            placeholder="Pesquise por partes do Objeto do Processo" />
+                                                            placeholder="Pesquise por partes do Objeto do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                     </div>
                                                     <div class="d-flex flex-row-reverse mt-4">
                                                         <button type="button" @click="list_processes"
@@ -699,6 +709,12 @@ onMounted(() => {
                             <button @click="pageData.ui('register')" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>
                                 Cancelar
+                            </button>
+                            <button @click="tabs.next()" type="button" class="btn btn-action-secondary me-auto">
+                                <ion-icon name="arrow-forward" class="fs-5"></ion-icon>
+                            </button>
+                            <button @click="tabs.prev()" type="button" class="btn btn-action-secondary">
+                                <ion-icon name="arrow-back" class="fs-5"></ion-icon>
                             </button>
                         </div>
                     </form>

@@ -7,6 +7,7 @@ const props = defineProps({
     body: { type: Array, default: () => [] },
     header: { type: Array, default: () => [] },
     mounts: { type: Object },
+    virtual: { type: Object, default: () => ({}) },
     smaller: { type: Boolean },
     sent: { type: Boolean, default: true },
     count: { type: Boolean, default: false },
@@ -32,8 +33,8 @@ onMounted(() => {
 </script>
 
 <template>
-    <TableList :header="props.header" :body="body" :order="false" :mounts="props.mounts" :smaller="props.smaller"
-        :sent="props.sent">
+    <TableList :header="props.header" :virtual="props.virtual" :body="body" :order="false" :mounts="props.mounts"
+        :smaller="props.smaller" :sent="props.sent">
         <template #select="{ instance }">
             <input class="form-check-input" type="radio" :value="props.only ? instance[props.only] : instance"
                 :name="props.identify + '_check'" v-model="model">
@@ -43,8 +44,17 @@ onMounted(() => {
 
 <style scoped>
 input {
-    background-color: transparent;
     width: 1.15rem;
     height: 1.15rem;
+    background-color: var(--color-background-soft);
+    border: 0;
+}
+
+.dark input {
+    background-color: var(--color-input-focus);
+}
+
+input:checked {
+    background-color: var(--color-base);
 }
 </style>

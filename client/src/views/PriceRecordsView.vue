@@ -299,6 +299,7 @@ onBeforeMount(() => {
                     <form @submit.prevent="pageData.save({ status: 2 })">
                         <div class="content">
 
+
                             <!-- tab proccess -->
                             <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
                                 <div class="accordion mb-3" id="accordion-process">
@@ -355,9 +356,13 @@ onBeforeMount(() => {
                                                                 id="s-protocol" v-model="page.process.search.protocol"
                                                                 placeholder="Número do Protocolo do Processo"
                                                                 @keydown.enter.prevent="list_processes" />
+                                                                placeholder="Número do Protocolo do Processo"
+                                                                @keydown.enter.prevent="list_processes" />
                                                         </div>
                                                         <div class="col-sm-12 col-md-4">
                                                             <label for="s-unit" class="form-label">Unidades</label>
+                                                            <InputDropMultSelect v-model="page.process.search.units"
+                                                                :options="page.selects.units" identify="units" />
                                                             <InputDropMultSelect v-model="page.process.search.units"
                                                                 :options="page.selects.units" identify="units" />
                                                         </div>
@@ -366,6 +371,8 @@ onBeforeMount(() => {
                                                             <input type="text" name="description" class="form-control"
                                                                 id="s-description"
                                                                 v-model="page.process.search.description"
+                                                                placeholder="Pesquise por partes do Objeto do Processo"
+                                                                @keydown.enter.prevent="list_processes" />
                                                                 placeholder="Pesquise por partes do Objeto do Processo"
                                                                 @keydown.enter.prevent="list_processes" />
                                                         </div>

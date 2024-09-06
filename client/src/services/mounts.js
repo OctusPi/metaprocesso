@@ -22,6 +22,7 @@ export default class Mounts {
 
     static CastVirt(key, compareFunc) {
         return (address, instance) => {
+            console.log(instance)
             return {
                 value: compareFunc(address, instance._virtual)[key],
                 classes: []
@@ -63,27 +64,47 @@ export default class Mounts {
     }
 
     static Status() {
-        const badges = {
-            'tls-yellow': 'Rascunho|Inativo|Baixa|Deserto|Fracassado',
-            'tls-blue': 'Enviado|Aberto|Ativo|Ativa',
-            'tls-orange': 'Pendente|Média|Adiado|Revogado',
-            'tls-red': 'Bloqueado|Alta|Anulado|Cancelado',
-            'tls-grey': 'Processado|Ativo|Ativa|Finalizado'
-        }
-
         return (address) => {
-            for (let key in badges) {
-                if (badges[key].includes(address)) {
-                    return {
-                        value: address,
-                        classes: ['badge', 'tls', key]
-                    }
-                }
+            let colorClass = 'tls-grey'
+
+            switch(address) {
+                case 'Rascunho':
+                case 'Inativo':
+                case 'Baixa':
+                case 'Deserto':
+                case 'Fracassado':
+                    colorClass = 'tls-yellow'
+                    break
+                case 'Enviado':
+                case 'Aberto':
+                case 'Ativo':
+                case 'Ativa':
+                    colorClass = 'tls-blue'
+                    break
+                case 'Pendente':
+                case 'Média':
+                case 'Adiado':
+                case 'Revogado':
+                    colorClass = 'tls-orange'
+                    break
+                case 'Bloqueado':
+                case 'Alta':
+                case 'Anulado':
+                case 'Cancelado':
+                    colorClass = 'tls-red'
+                    break
+                case 'Processado':
+                case 'Finalizado':
+                    colorClass = 'tls-grey'
+                    break
+                default:
+                    colorClass = 'tls-grey'
+                    break
             }
 
             return {
                 value: address,
-                classes: ['badge', 'tls', 'tls-grey']
+                classes: ['badge', 'tls', colorClass]
             }
         }
     }
