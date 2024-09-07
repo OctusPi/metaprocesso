@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, watch } from 'vue';
+import { createApp, inject, onMounted, watch } from 'vue';
 import TableList from '@/components/table/TableList.vue';
 import NavMainUi from '@/components/NavMainUi.vue';
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
@@ -17,8 +17,12 @@ import TableListRadio from '@/components/table/TableListRadio.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
 import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
+import EtpReport from './reports/EtpReport.vue';
+import exp from '@/services/export';
 
-const ETPS_ORIGIN = "1";
+const ORIGIN_ETPS = "1";
+
+const sysapp = inject('sysapp')
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -96,6 +100,40 @@ const tabs = new Tabs([
 function list_processes() {
     http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
         page.process.data = resp.data ?? []
+    })
+}
+
+const ATTACHMENT_MEMORY = 1;
+const ATTACHMENT_MARKET = 2;
+
+const attachmentTypes = [
+    { id: ATTACHMENT_MEMORY, title: 'Memória de Cálculo' },
+    { id: ATTACHMENT_MARKET, title: 'Levantamento de Mercado' },
+]
+
+function export_etp(id) {
+    http.get(`${page.url}/export/${id}`, emit, (resp) => {
+        const etp = resp.data
+        const attachments = []
+
+        // etp.attachments.forEach((item) => {
+        //     http.download(`/attachments/${ORIGIN_ETPS}/${etp?.protocol}/download/${item.id}`, {}, async (res) => {
+
+        //     })
+        // })
+
+        const containerReport = document.createElement('div')
+        const instanceReport = createApp(EtpReport, {
+            attachments,
+            qrdata: sysapp,
+            organ: page.organ,
+            etp: etp,
+            selects: page.selects,
+            types: { MEMORY: ATTACHMENT_MEMORY, MARKET: ATTACHMENT_MARKET },
+            attachmentsUrl: `/attachments/${ORIGIN_ETPS}/${etp?.protocol}`
+        })
+        instanceReport.mount(containerReport)
+        exp.exportPDF(containerReport, `ETP-${etp.protocol}`)
     })
 }
 
@@ -212,11 +250,6 @@ function generate(type) {
     gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
-const attachmentTypes = [
-    { id: 0, title: 'Memória de Cálculo' },
-    { id: 1, title: 'Levantamento de Mercado' },
-]
-
 function dfd_details(id) {
     if (page.data.process.dfds) {
         page.dfd.data = page.data.process.dfds.find(obj => obj.id === id)
@@ -318,6 +351,7 @@ onMounted(() => {
                     <TableList :header="page.header" :body="page.datalist" :actions="[
                         Actions.Edit((id) => { pageData.update(id) }),
                         Actions.Delete(pageData.remove),
+                        Actions.Export('document-text-outline', export_etp),
                     ]" :mounts="{
                         status: [Mounts.Cast(page.selects.status), Mounts.Status()],
                         necessity: [Mounts.StripHTML(), Mounts.Truncate(200)],
@@ -698,7 +732,7 @@ onMounted(() => {
                         </div>
                         <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('anexos') }">
                             <AttachmentsCmp origin-name="ETP" @callAlert="(data) => emit('callAlert', data)"
-                                @callRemove="(data) => emit('callRemove', data)" :origin="ETPS_ORIGIN"
+                                @callRemove="(data) => emit('callRemove', data)" :origin="ORIGIN_ETPS"
                                 :protocol="page.data.protocol" :types="attachmentTypes" />
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">

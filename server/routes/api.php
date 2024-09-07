@@ -91,7 +91,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/list_processes', 'list_processes');
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
+        Route::get('/export/{id}', 'export');
         Route::post('/generate', 'generate');
+
     });
 
     Route::prefix('/pricerecords')->controller(PriceRecords::class)->group(function(){
@@ -126,6 +128,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/{organ}/save', 'save');
         Route::post('/{organ}/fastdestroy', 'fast_delete');
         Route::get('/{organ}/details/{id}', 'details');
+    });
+
+    Route::prefix('/attachments/{origin}/{protocol}')->controller(Attachments::class)->group(function(){
+        Route::get('/download_png/{id}', 'download_as_png');
     });
 });
 

@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Comission, ComissionMember, Dfd, DfdItem, Etp, Organ, Process, User};
+use App\Models\{Comission, ComissionMember, Dfd, DfdItem, Etp, Process, User};
+use App\Models\Attachment;
 use App\Models\Unit;
 use App\Utils\Utils;
 use App\Utils\Notify;
@@ -12,7 +13,7 @@ use App\Http\Middlewares\Data;
 class Etps extends Controller
 {
     /**
-     * Construtor para inicializar o controller de Etps com o modelo Etp.
+     * Construtor para inicializar o controller de Etps com o modelo ETP.
      */
     public function __construct()
     {
@@ -20,7 +21,7 @@ class Etps extends Controller
     }
 
     /**
-     * Salva um novo registro de Etp ou atualiza um existente.
+     * Salva um novo registro de ETP ou atualiza um existente.
      *
      * @param Request $request Dados da requisição.
      * @return \Illuminate\Http\JsonResponse Resposta JSON com o resultado da operação.
@@ -55,10 +56,10 @@ class Etps extends Controller
     }
 
     /**
-     * Retorna os detalhes de um Etp específico.
+     * Retorna os detalhes de um ETP específico.
      *
      * @param Request $request Dados da requisição.
-     * @return \Illuminate\Http\JsonResponse Detalhes do Etp solicitado.
+     * @return \Illuminate\Http\JsonResponse Detalhes do ETP solicitado.
      */
     public function details(Request $request)
     {
@@ -66,7 +67,7 @@ class Etps extends Controller
     }
 
     /**
-     * Lista processos associados a um Etp.
+     * Lista processos associados a um ETP.
      *
      * @param Request $request Dados da requisição.
      * @return \Illuminate\Http\JsonResponse Resposta JSON com a lista de processos.
@@ -86,10 +87,35 @@ class Etps extends Controller
     }
 
     /**
-     * Lista itens de DFD associados a um processo.
+     * Recupera os dados do ETP para exportar.
+     *
+     * @param Request $request Dados da requisição incluindo o ID do ETP.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON com detalhes do ETP.
+     */
+    public function export(Request $request)
+    {
+        $etp = $this->base_details($request, ['process', 'comission', 'user']);
+
+        if ($etp->status() == 200) {
+            $data = $etp->getData(true);
+
+            $attachments = Data::find(
+                new Attachment(),
+                ['origin' => Attachment::ETP, 'protocol' => $data['protocol']],
+                ['updated_at']
+            );
+
+            return response()->json(array_merge($data, ['attachments' => $attachments->toArray()]), 200);
+        }
+
+        return response()->json(Notify::warning("ETP não localizado..."), $etp->status());
+    }
+
+    /**
+     * Lista itens de ETP associados a um processo.
      *
      * @param Request $request Dados da requisição.
-     * @return \Illuminate\Database\Eloquent\Collection|null Resposta JSON com a lista de itens DFD.
+     * @return \Illuminate\Database\Eloquent\Collection|null Resposta JSON com a lista de itens ETP.
      */
     public function list_dfd_items(Request $request)
     {
@@ -121,7 +147,8 @@ class Etps extends Controller
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
             'process_status' => Process::list_status(),
-            'status' => Etp::list_status(),
+            'status' => ETP::list_status(),
+            'responsibilities' => ComissionMember::list_responsabilities(),
         ], Dfd::make_details()), 200);
     }
 }

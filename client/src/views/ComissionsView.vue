@@ -25,7 +25,7 @@ const [page, pageData] = Layout.new(emit, {
     url: '/comissions',
     datalist: props.datalist,
     header: [
-        { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'type' }] },
+        { key: 'name', title: 'IDENTIFICAÇÃO' },
         { key: 'unit.name', title: 'VINCULO' },
         { key: 'status', title: 'STATUS', sub: [{ title: 'De ', key: 'start_term' }, { title: 'à ', key: 'end_term', err: 'Agora' }] },
     ],

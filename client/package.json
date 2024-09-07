@@ -17,6 +17,7 @@
     "bootstrap": "^5.3.3",
     "html2pdf.js": "^0.10.1",
     "maska": "^2.1.11",
+    "pdfjs-dist": "^4.6.82",
     "pinia": "^2.2.1",
     "qrcode.vue": "^3.4.1",
     "quill": "^2.0.2",
