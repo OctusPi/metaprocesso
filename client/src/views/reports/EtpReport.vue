@@ -1,38 +1,19 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 import QrcodeVue from 'qrcode.vue'
 import dates from '@/utils/dates'
 import utils from '@/utils/utils'
-import http from '@/services/http';
 
 const props = defineProps({
     qrdata: { type: Object, default: () => { } },
     organ: { type: Object, required: true },
     etp: { type: Object, required: true },
-    types: { type: Object, required: true },
     selects: { type: Object, required: true },
-    attachments: { type: Array, required: true },
-    attachmentsUrl: { type: String, required: true },
 })
 
 const etp = ref(props.etp)
 const selects = ref(props.selects)
 const organ = ref(props.organ)
-const attachments = ref(props.attachments)
-
-onMounted(async () => {
-    etp.value.attachments.forEach((item) => {
-        http.download(`${props.attachmentsUrl}/download/${item.id}`, {}, (res) => {
-            const url = URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }))
-            const link = document.createElement('a')
-            link.href = url;
-            link.download = `${etp.value.id}-Anexo-${item.id}.pdf`
-            document.body.appendChild(link)
-            link.click()
-            window.URL.revokeObjectURL(url);
-        })
-    })
-})
 
 </script>
 
@@ -98,25 +79,11 @@ onMounted(async () => {
             <div class="mt-4">
                 <h1 class="etp-title">ESTIMATIVA DAS QUANTIDADES A SEREM CONTRATADAS (MEMÓRIAS DE CÁLCULO)</h1>
                 <div v-html="etp.contract_calculus_memories"></div>
-                <div class="attachments">
-                    <div v-for="attachment in attachments.filter((item) => item.type === props.types.MEMORY)"
-                        :key="attachment.id">
-                        {{attachment}}
-                        <img :src="attachment.document" />
-                    </div>
-                </div>
             </div>
 
             <div class="mt-4">
                 <h1 class="etp-title">ESTIMATIVA DO VALOR DA CONTRATAÇÃO</h1>
                 <div v-html="etp.contract_expected_price"></div>
-                <div class="attachments">
-                    <div v-for="attachment in attachments.filter((item) => item.type === props.types.ESTIMATIVE)"
-                        :key="attachment.id">
-                        {{attachment}}
-                        <img :src="attachment.document" />
-                    </div>
-                </div>
             </div>
 
             <div class="mt-4">

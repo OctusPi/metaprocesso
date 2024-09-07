@@ -19,6 +19,8 @@ import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import EtpReport from './reports/EtpReport.vue';
 import exp from '@/services/export';
+import PDFMerger from 'pdf-merger-js';
+import axsi from '@/services/axsi';
 
 const ORIGIN_ETPS = "1";
 
@@ -112,28 +114,38 @@ const attachmentTypes = [
 ]
 
 function export_etp(id) {
-    http.get(`${page.url}/export/${id}`, emit, (resp) => {
+    http.get(`${page.url}/export/${id}`, emit, async (resp) => {
         const etp = resp.data
-        const attachments = []
 
-        // etp.attachments.forEach((item) => {
-        //     http.download(`/attachments/${ORIGIN_ETPS}/${etp?.protocol}/download/${item.id}`, {}, async (res) => {
-
-        //     })
-        // })
-
+        const merger = new PDFMerger()
+        
         const containerReport = document.createElement('div')
         const instanceReport = createApp(EtpReport, {
-            attachments,
             qrdata: sysapp,
             organ: page.organ,
             etp: etp,
             selects: page.selects,
-            types: { MEMORY: ATTACHMENT_MEMORY, MARKET: ATTACHMENT_MARKET },
-            attachmentsUrl: `/attachments/${ORIGIN_ETPS}/${etp?.protocol}`
         })
         instanceReport.mount(containerReport)
-        exp.exportPDF(containerReport, `ETP-${etp.protocol}`)
+
+        const pdf = await exp.generatePDF(containerReport)
+
+        await merger.add(pdf)
+        
+        for (const item of etp.attachments) {
+            await axsi.axiosInstanceAuth.request({
+                method: 'GET',
+                url: `/attachments/${ORIGIN_ETPS}/${etp?.protocol}/download/${item.id}`,
+                responseType: 'blob',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }).then(async res => {
+                await merger.add(res.data)
+            }).catch(e => console.error(e))
+        }
+
+        await merger.save(`ETP-${etp.protocol}`)
     })
 }
 

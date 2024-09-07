@@ -15,7 +15,6 @@ async function exportPDF(data, exportname) {
         
         await nextTick()
         html2pdf().from(data).set(optionExport).save()
-
     } catch (error) {
         console.log(error)
     } finally {
@@ -24,6 +23,26 @@ async function exportPDF(data, exportname) {
     
 }
 
+async function generatePDF(data) {
+    utils.load(true)
+    try {
+        const optionExport = {
+            margin: 10,
+            filename: 'nulldoc.pdf',
+            image: { type: 'jpeg', quality:0.98},
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait'}
+        }
+
+        return html2pdf().set(optionExport).from(data).toPdf().output('blob')
+    } catch (error) {
+        throw console.error(error)
+    } finally {
+        utils.load(false)
+    }
+}
+
 export default {
-    exportPDF
+    exportPDF,
+    generatePDF
 }
