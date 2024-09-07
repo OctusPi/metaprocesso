@@ -63,8 +63,8 @@ class PriceRecords extends Controller
     public function list_suppliers(Request $request)
     {
         return response()->json(Data::find(new Supplier(), [
-            ['column' => 'name', 'value' => $request->supplier, 'mode' => 'OR'],
-            ['column' => 'cnpj', 'value' => $request->supplier, 'mode' => 'OR'],
+            ['column' => 'name', 'operator' => 'LIKE', 'value' => "%$request->supplier%", 'mode' => 'OR'],
+            ['column' => 'cnpj', 'operatot' => 'LIKE', 'value' => "%$request->supplier%", 'mode' => 'OR']
         ], ['name']));
     }
 
@@ -81,6 +81,7 @@ class PriceRecords extends Controller
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'types' => Process::list_types(),
             'process_status' => Process::list_status(),
+            'modalitys' => Supplier::list_modalitys(),
         ], Dfd::make_details()), 200);
     }
 }

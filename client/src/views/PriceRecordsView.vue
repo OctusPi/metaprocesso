@@ -172,10 +172,6 @@ function list_processes() {
     })
 }
 
-function select_supplier(supplier) {
-    console.log(supplier)
-}
-
 function dfd_details(id) {
     if (page.data.process.dfds) {
         page.dfds.data = page.data.process.dfds.find(obj => obj.id === id)
@@ -189,6 +185,10 @@ function list_suppliers() {
     http.post(`${page.url}/list_suppliers`, { supplier: page.suppliers.search }, emit, (resp) => {
         page.suppliers.data = resp.data
     })
+}
+
+function select_supplier(supplier) {
+    console.log(supplier)
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -298,7 +298,6 @@ onBeforeMount(() => {
                     <TabNav :tabs="tabs" identify="tabbed" />
                     <form @submit.prevent="pageData.save({ status: 2 })">
                         <div class="content">
-
 
                             <!-- tab proccess -->
                             <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
@@ -470,9 +469,7 @@ onBeforeMount(() => {
                                             <ion-icon name="search" class="fs-5"></ion-icon>
                                         </button>
                                     </div>
-
-
-                                    List Search Suppliers
+                                    
                                     <div class="container-list position-relative bg-success">
                                         <div v-if="page.suppliers.search && page.suppliers.data.length"
                                             class="position-absolute w-100 my-2 top-0 start-0 z-3">
@@ -482,24 +479,22 @@ onBeforeMount(() => {
                                                         @click="select_supplier(i)"
                                                         class="d-flex align-items-center px-3 py-2">
                                                         <div class="me-3 item-type">
-                                                            {{ i.type == '1' ? 'M' : 'S' }}
+                                                            <button type="button" class="btn btn-sm btn-action-close">
+                                                                <ion-icon name="add-circle-outline" class="fs-5"></ion-icon>
+                                                            </button>
                                                         </div>
                                                         <div class="item-desc">
                                                             <h3 class="m-0 p-0 small">
-                                                                {{ `${i.code} - ${i.name}` }}
+                                                                {{ `${i.cnpj} - ${i.name}` }}
                                                             </h3>
                                                             <p class="m-0 p-0 small">
-                                                                {{
-                                                                    `Unidade: ${i.und} - Volume:
-                                                                ${i.volume} - Categoria:
-                                                                ${page.selects.categories.find(
-                                                                        (o) => o.id === i.category
-                                                                    )?.title
-                                                                    } `
-                                                                }}
+                                                                {{ i.address }}
                                                             </p>
                                                             <p class="m-0 p-0 small">
-                                                                {{ i.description }}
+                                                                {{ `${i.email} - ${i.phone}` }}
+                                                            </p>
+                                                            <p class="m-0 p-0 small">
+                                                                {{ `${i.agent} - ${i.cpf}` }}
                                                             </p>
                                                         </div>
                                                     </li>
@@ -508,7 +503,6 @@ onBeforeMount(() => {
                                         </div>
                                     </div>
                                 </div>
-
 
                                 <!-- <div v-if="page.data?.items">
                                     <TableList secondary :count="false" :header="items.header" :actions="[
