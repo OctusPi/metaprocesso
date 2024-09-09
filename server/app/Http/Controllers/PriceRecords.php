@@ -81,7 +81,8 @@ class PriceRecords extends Controller
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'types' => Process::list_types(),
             'process_status' => Process::list_status(),
-            'modalitys' => Supplier::list_modalitys(),
+            'modalities' => Supplier::list_modalitys(),
+            'sizes' => Supplier::list_sizes()
         ], Dfd::make_details()), 200);
     }
 }

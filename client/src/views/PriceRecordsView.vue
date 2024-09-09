@@ -1,12 +1,11 @@
 <script setup>
-import { onBeforeMount, ref, watch } from 'vue';
+import { onBeforeMount, watch } from 'vue';
 
 import TableList from '@/components/table/TableList.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import NavMainUi from '@/components/NavMainUi.vue';
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
-import TableListStatus from '@/components/table/TableListStatus.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import TabNav from '@/components/TabNav.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
@@ -16,10 +15,8 @@ import Actions from '@/services/actions';
 import Mounts from '@/services/mounts';
 import http from '@/services/http';
 import gpt from '@/services/gpt';
-// import masks from '@/utils/masks';
-import utils from '@/utils/utils';
-import dates from '@/utils/dates';
 import Tabs from '@/utils/tabs';
+import notifys from '@/utils/notifys';
 
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
@@ -58,7 +55,11 @@ const [page, pageData] = Layout.new(emit, {
     suppliers: {
         data: [],
         search: '',
-        headers: []
+        headers: [
+        { key: 'name', title: 'FORNECEDOR', sub: [{ key: 'cnpj', title: 'CNPJ: ' }] },
+        { key: 'modality', title: 'DEFINIÇÃO', sub: [{ key: 'size' }] },
+        { key: 'address', title: 'ENDEREÇO' },
+    ],
     },
     header: [
         { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
@@ -85,25 +86,6 @@ const [page, pageData] = Layout.new(emit, {
     }
 })
 
-const items = ref({
-    search: null,
-    body: [],
-    header: [
-        { key: 'item.code', title: 'COD', sub: [{ key: 'item.type' }] },
-        { key: 'item.name', title: 'ITEM' },
-        { key: 'item.description', title: 'DESCRIÇÃO' },
-        { key: 'item.und', title: 'UDN', sub: [{ key: 'item.volume' }] },
-        { key: 'program', title: 'VINC.', sub: [{ key: 'dotation' }] },
-        { key: 'quantity', title: 'QUANT.' }
-    ],
-    selected_item: {
-        item: null,
-        program: null,
-        dotation: null,
-        quantity: 0
-    }
-})
-
 const tabs = new Tabs([
     { id: 'process', title: 'Processo' },
     { id: 'dfds', title: 'DFDs' },
@@ -112,59 +94,6 @@ const tabs = new Tabs([
     { id: 'proposals', title: 'Coletas' }
 ])
 
-function generate(type) {
-    const dfd = page.data
-    const slc = page.selects
-    const base = {
-        organ: page.organ,
-        unit: slc?.units.find((o) => o.id === dfd.unit),
-        type: slc?.acquisitions.find((o) => o.id === dfd.acquisition_type),
-        items: JSON.stringify(dfd.items),
-        description: dfd.description,
-        justification: dfd.justification
-    }
-
-    let callresp = null;
-    let payload = null;
-
-    switch (type) {
-        case 'dfd_description':
-            callresp = (resp) => {
-                page.data.description = resp.data?.choices[0]?.message?.content
-            }
-            payload = (`
-                Estou elaborando um DFD, por favor crie a descrição sucinta do 
-                objeto de contratação de uma empresa especializada para fornecimento de 
-                ${base.type?.title} para ${base?.description} para atender as necessidades da 
-                ${base.unit?.title} vinculado a ${base.organ?.title}. 
-                Por favor gere a resposta em um único parágarfo, sem quebras de linha.
-            `)
-            break
-        case 'dfd_justification':
-            callresp = (resp) => {
-                page.data.justification = resp.data?.choices[0]?.message?.content
-            }
-            payload = (`
-                Justifique a necessidade de contratação para ${base.description}. 
-                Por favor gere a resposta em um único parágarfo, sem quebras de linha.
-            `)
-            break
-        case 'dfd_quantitys':
-            callresp = (resp) => {
-                page.data.justification_quantity = resp.data?.choices[0]?.message?.content
-            }
-            payload = (`
-                Justifique a quantidade demandada para esses itens ${base.items} 
-                de acordo com esse objeto: ${base.description} com base nessa justificativa ${base.justification}. 
-                Por favor gere a resposta em um único parágarfo, sem quebras de linha.
-            `)
-            break
-        default:
-            break
-    }
-
-    gpt.generate(`${page.url}/generate`, payload, emit, callresp)
-}
 
 function list_processes() {
     http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
@@ -188,7 +117,50 @@ function list_suppliers() {
 }
 
 function select_supplier(supplier) {
-    console.log(supplier)
+    if (!page.data.suppliers) {
+        page.data.suppliers = []
+    }
+
+    if (page.data.suppliers && !page.data.suppliers.find(s => s.id == supplier?.id)) {
+        page.data.suppliers.push(supplier)
+        page.suppliers.search = ''
+        page.suppliers.data = []
+        return
+    }
+
+    emit('callAlert', notifys.warning('Fornecedor já adicionado as coletas...'))
+}
+
+function remove_supplier(id) {
+    page.data.suppliers = page.data.suppliers.filter(s => s.id !== id);
+}
+
+function generate(type) {
+
+    if (!page.data?.process && !page.data?.suppliers) {
+      emit('callAlert', notifys.warning('É necessário inicialmente selecionar um processo e adicionar fornecedores...'))
+      return
+    }
+
+    let callresp = null;
+    let payload = null;
+
+    switch (type) {
+        case 'suppliers_justification':
+            callresp = (resp) => {
+                page.data.suppliers_justification = resp.data?.choices[0]?.message?.content
+            }
+            payload = (`
+                Justifique a escolha desses fornecedores ${JSON.stringify(page.data?.suppliers ?? '')} 
+                de acordo com esse objeto: ${page.data?.process?.description}. 
+                Por favor gere a resposta em um único parágarfo, sem quebras de linha.
+            `)
+            break
+        default:
+            break
+    }
+
+    gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -504,22 +476,23 @@ onBeforeMount(() => {
                                     </div>
                                 </div>
 
-                                <!-- <div v-if="page.data?.items">
-                                    <TableList secondary :count="false" :header="items.header" :actions="[
-                                        Actions.Edit(update_item),
-                                        Actions.FastDelete(delete_item),
-                                    ]" :body="page.data.items" :mounts="{
-                                        'item.type': [Mounts.Cast(page.selects.items_types)],
-                                        'dotation': [Mounts.Cast(page.selects.dotations, 'id', 'name')],
-                                        'program': [Mounts.Cast(page.selects.programs, 'id', 'name')],
-                                    }" />
-                                </div> -->
+                                <div v-if="page.data?.suppliers">
+                                    <TableList secondary :count="false" :header="page.suppliers.headers" 
+                                    :body="page.data.suppliers"
+                                    :mounts="{
+                                        modality: [Mounts.Cast(page.selects.modalities)],
+                                        size: [Mounts.Cast(page.selects.sizes)],
+                                    }"
+                                    :actions="[
+                                        Actions.FastDelete(remove_supplier),
+                                    ]" />
+                                </div>
 
                                 <div class="col-sm-12">
                                     <label for="justification" class="form-label d-flex justify-content-between">
                                         Justificativa da escolha de fornecedores
                                         <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                            @click="generate('dfd_justification')">
+                                            @click="generate('suppliers_justification')">
                                             <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>
                                             Gerar com I.A
                                         </a>
@@ -533,224 +506,21 @@ onBeforeMount(() => {
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('proposals') }">
 
-                                <!-- origin -->
-                                <div class="box-revisor mb-4">
-                                    <div class="box-revisor-title mb-4">
-                                        <h3>Origem da Demanda</h3>
-                                        <p>
-                                            Dados referentes a origem e responsabilidade pela
-                                            Demanda
-                                        </p>
-                                    </div>
-                                    <div class="box-revisor-content">
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <h4>Unidade</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.units,
-                                                            page.data.unit
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <h4>Comissão / Equipe de Planejamento</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.comissions,
-                                                            page.data.comission
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <h4>Ordenador de Despesas</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.ordinators,
-                                                            page.data.ordinator,
-                                                            'id', 'name'
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <h4>Demadantes</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.demandants,
-                                                            page.data.demandant, 'id', 'name'
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <h4>Integrantes da Comissão</h4>
-                                                <span class="p-0 m-0 small" v-for="m in page.data.comission_members"
-                                                    :key="m.id">
-                                                    {{ `${utils.getTxt(page.selects.responsibilitys,
-                                                        m.responsibility)}
-                                                    : ${m.name}; ` }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div v-if="page.data.process">
+                                    Adicionar propostas
                                 </div>
-
-                                <!-- Infos -->
-                                <div class="box-revisor mb-4">
-                                    <div class="box-revisor-title mb-4">
-                                        <h3>Informações Gerais</h3>
-                                        <p>
-                                            Dados de prioridade, previsão de contratação e
-                                            detalhamento de Objeto
-                                        </p>
-                                    </div>
-                                    <div class="box-revisor-content">
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <h4>Data Envio</h4>
-                                                <p>{{ page.data.date_ini ?? '*****' }}</p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h4>Previsão Contratação</h4>
-                                                <p>
-                                                    {{
-                                                        dates.getMonthYear(page.data.estimated_date)
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <h4>Ano PCA</h4>
-                                                <p>{{ page.data.year_pca ?? '*****' }}</p>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <h4>Prioridade</h4>
-                                                <p>
-                                                    <TableListStatus :data="utils.getTxt(
-                                                        page.selects.prioritys,
-                                                        page.data.priority
-                                                    )" />
-                                                </p>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <h4>Valor Estimado</h4>
-                                                <p>R${{ page.data.estimated_value ?? '*****' }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <h4>Tipo de Aquisição</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.acquisitions,
-                                                            page.data.acquisition_type
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h4>Forma Sugerida</h4>
-                                                <p>
-                                                    {{
-                                                        utils.getTxt(
-                                                            page.selects.hirings,
-                                                            page.data.suggested_hiring
-                                                        )
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h4>Vinculo ou Dependência</h4>
-                                                <p class="txt-very-small p-0 m-0">
-                                                    Dependência com o
-                                                    objeto de outro documento de formalização de
-                                                    demanda
-                                                </p>
-                                                <p>
-                                                    {{
-                                                        page.data.bonds ? 'Sim Possui' : 'Não Possui'
-                                                    }}
-                                                </p>
-                                            </div>
-                                            <div class="col-md-3">
-                                                <h4>Registro de Preço</h4>
-                                                <p class="txt-very-small p-0 m-0">
-                                                    Indique se a demanda se trata de registro de preços.
-                                                </p>
-                                                <p>
-                                                    {{
-                                                        page.data.price_taking ? 'Sim' : 'Não'
-                                                    }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <h4>Descrição sucinta do Objeto</h4>
-                                                <p>{{ page.data.description ?? '*****' }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Items -->
-                                <div class="box-revisor mb-4">
-                                    <div class="box-revisor-title mb-4">
-                                        <h3>Lista de Itens</h3>
-                                        <p>
-                                            Lista de materiais ou serviços vinculados a Demanda
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <TableList secondary :count="false" :header="items.header"
-                                            :body="page.data.items ?? []" :mounts="{
-                                                'item.type': [Mounts.Cast(page.selects.items_types)],
-                                                'dotation': [Mounts.Cast(page.selects.dotations)],
-                                                'program': [Mounts.Cast(page.selects.programs)],
-                                            }" />
-                                    </div>
-                                </div>
-
-                                <!-- details -->
-                                <div class="box-revisor">
-                                    <div class="box-revisor-title mb-4">
-                                        <h3>Detalhamento da Necessidade</h3>
-                                        <p>
-                                            Justificativas para necessidade e quantitativo de
-                                            itens demandados
-                                        </p>
-                                    </div>
-                                    <div class="box-revisor-content">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <h4>Justificativa da necessidade da contratação</h4>
-                                                <p>{{ page.data.justification ?? '*****' }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <h4>Justificativa dos quantitativos demandados</h4>
-                                                <p class="m-0 p-0">
-                                                    {{
-                                                        page.data.justification_quantity ?? '*****'
-                                                    }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div v-else>
+                                    <h2
+                                        class="txt-color text-center m-0 d-flex justify-content-center align-items-center gap-1">
+                                        <ion-icon name="warning" class="fs-5" />
+                                        Atenção
+                                    </h2>
+                                    <p class="txt-color-sec small text-center m-0 pb-3">
+                                        É necessário selecionar um processo para iniciar as coletas
+                                    </p>
                                 </div>
                             </div>
                         </div>
-
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
