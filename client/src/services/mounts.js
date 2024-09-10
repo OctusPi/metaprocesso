@@ -22,7 +22,6 @@ export default class Mounts {
 
     static CastVirt(key, compareFunc) {
         return (address, instance) => {
-            console.log(instance)
             return {
                 value: compareFunc(address, instance._virtual)[key],
                 classes: []
@@ -105,6 +104,31 @@ export default class Mounts {
             return {
                 value: address,
                 classes: ['badge', 'tls', colorClass]
+            }
+        }
+    }
+
+    static Level() {
+        return (address) => {
+            if (address >= 225) {
+                return {
+                    value: address,
+                    classes: ['badge', 'tls', 'tls-red']
+                }
+            }
+
+            if (address >= 100) {
+                return {
+                    value: address,
+                    classes: ['badge', 'tls', 'tls-yellow']
+                }
+            }
+
+            if (address >= 50) {
+                return {
+                    value: address,
+                    classes: ['badge', 'tls', 'tls-green']
+                }
             }
         }
     }

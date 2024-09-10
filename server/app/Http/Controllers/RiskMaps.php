@@ -57,8 +57,7 @@ class RiskMaps extends Controller
         $riskmap = RiskMap::where('id', $request->id)->with([
             'process',
             'comission',
-            'organ',
-            'unit',
+            'comission.unit',
         ])->first()->toArray();
 
         if (!$riskmap) {
@@ -77,8 +76,6 @@ class RiskMaps extends Controller
 
         $preload = [
             'author' => $request->user()->id,
-            'organ' => $comission->organ,
-            'unit' => $comission->unit,
             'comission_members' => $comission->comissionmembers->toArray(),
             'date_version' => Dates::nowWithFormat(Dates::PTBR),
         ];
@@ -91,6 +88,10 @@ class RiskMaps extends Controller
         $empty = $riskiness->firstWhere('risk_actions', []);
         if ($empty) {
             return Response()->json(Notify::warning("Adicione ao menos uma ação para o risco $empty->verb_id!"), 400);
+        }
+
+        if (!$request->accompaniments) {
+            return Response()->json(Notify::warning("Adicione um acompanhamento para os riscos!"), 400);
         }
 
         if (!$request->id) {

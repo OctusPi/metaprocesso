@@ -43,7 +43,6 @@ class RiskMap extends Model
             'process' => ['required', Rule::unique('risk_maps', 'process')->ignore($this->id)],
             'comission' => 'required',
             'organ' => 'required',
-            'unit' => 'required',
             'author' => 'required',
             'date_version' => 'required',
             'version' => 'required',
@@ -124,10 +123,5 @@ class RiskMap extends Model
     public function organ(): HasOne
     {
         return $this->hasOne(Organ::class, 'id', 'organ');
-    }
-
-    public function unit(): HasOne
-    {
-        return $this->hasOne(Unit::class, 'id', 'unit');
     }
 }

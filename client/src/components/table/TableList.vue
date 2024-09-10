@@ -61,7 +61,7 @@ function applyMounters(instance, header) {
 
         if (props.mounts && props.mounts[attr.key]) {
             return props.mounts[attr.key].reduce((initial, current) => {
-                const { value, classes } = current(initial.value, instance)
+                const { value, classes } = current(initial.value, mInstance)
 
                 initial.classes.push(...classes)
 
