@@ -6,11 +6,14 @@ import PseudoData from '@/services/pseudodata';
 
 const props = defineProps({
     riskmap: { type: Object, required: true },
-    selects: { type: Object, required: true }
+    selects: { type: Object, required: true },
+    types: { type: Object, required: true },
 })
 
 const riskmap = ref(props.riskmap)
 const selects = ref(props.selects)
+
+riskmap.value.unit = riskmap.value.comission.unit
 
 const riskiness = ref({
     datalist: riskmap.value.riskiness,
@@ -22,17 +25,19 @@ const riskiness = ref({
         { key: 'risk_related', title: 'Relacionado ao(à)' },
         { key: 'risk_probability', cast: 'value', title: 'P' },
         { key: 'risk_impact', cast: 'value', title: 'I' },
-        { key: 'risk_level', title: 'Nível de Risco (P X I)', fclass: (body) => {
-            if (body.risk_level <= 50) {
-                return 'green'
+        {
+            key: 'risk_level', title: 'Nível de Risco (P X I)', fclass: (body) => {
+                if (body.risk_level <= 50) {
+                    return 'green'
+                }
+                if (body.risk_level <= 100) {
+                    return 'yellow'
+                }
+                if (body.risk_level <= 225) {
+                    return 'red'
+                }
             }
-            if (body.risk_level <= 100) {
-                return 'yellow'
-            }
-            if (body.risk_level <= 225) {
-                return 'red'
-            }
-        } }
+        }
     ],
     selects: {},
     data: {},
@@ -62,9 +67,6 @@ const accomp = ref({
         valids: {}
     },
 })
-
-const PREVENTIVES = 1;
-const CONTINGENCE = 2;
 
 function actions(risk, act) {
     return risk.risk_actions.filter((item) => {
@@ -109,49 +111,51 @@ function actions(risk, act) {
             </p>
         </div>
         <table>
-            <tr>
-                <td colspan="3">
-                    <h3>Orgão</h3>
-                    <p>{{ riskmap.organ.name ?? '*****' }}</p>
-                    <p>{{ riskmap.organ.cnpj ?? '*****' }}</p>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <h3>Unidade</h3>
-                    <p>{{ riskmap.unit.name ?? '*****' }}</p>
-                    <p>{{ riskmap.unit.cnpj ?? '*****' }}</p>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <h3>Comissão/Equipe de Planejamento</h3>
-                    <p>{{ riskmap.comission.name ?? '*****' }}</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <h3>Versão</h3>
-                    <p>{{ riskmap.version ?? '*****' }}</p>
-                </td>
-                <td>
-                    <h3>Fase</h3>
-                    <p>{{ utils.getTxt(selects.phases, riskmap.phase) ?? '*****' }}</p>
-                </td>
-                <td>
-                    <h3>Emissão</h3>
-                    <p>{{ riskmap.date_version ?? '*****' }}</p>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <h3>Integrantes da Comissão</h3>
-                    <p class="p-0 m-0 small" v-for="m in riskmap.comission.comission_members" :key="m.id">
-                        {{ `${utils.getTxt(selects.responsibilitys, m.responsibility)}
-                        : ${m.name} ` }}
-                    </p>
-                </td>
-            </tr>
+            <tbody>
+                <tr>
+                    <td colspan="3">
+                        <h3>Orgão</h3>
+                        <p>{{ riskmap.organ.name ?? '*****' }}</p>
+                        <p>{{ riskmap.organ.cnpj ?? '*****' }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <h3>Unidade</h3>
+                        <p>{{ riskmap.unit.name ?? '*****' }}</p>
+                        <p>{{ riskmap.unit.cnpj ?? '*****' }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <h3>Comissão/Equipe de Planejamento</h3>
+                        <p>{{ riskmap.comission.name ?? '*****' }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h3>Versão</h3>
+                        <p>{{ riskmap.version ?? '*****' }}</p>
+                    </td>
+                    <td>
+                        <h3>Fase</h3>
+                        <p>{{ utils.getTxt(selects.phases, riskmap.phase) ?? '*****' }}</p>
+                    </td>
+                    <td>
+                        <h3>Emissão</h3>
+                        <p>{{ riskmap.date_version ?? '*****' }}</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <h3>Integrantes da Comissão</h3>
+                        <p class="p-0 m-0 small" v-for="m in riskmap.comission.comission_members" :key="m.id">
+                            {{ `${utils.getTxt(selects.responsibilitys, m.responsibility)}
+                            : ${m.name} ` }}
+                        </p>
+                    </td>
+                </tr>
+            </tbody>
         </table>
 
         <div class="table-title">
@@ -178,68 +182,72 @@ function actions(risk, act) {
                 <th class="text-center">Risco {{ risk.verb_id }}</th>
                 <td class="colapse">
                     <table class="noborder">
-                        <tr>
-                            <th style="width: 20%;">Risco</th>
-                            <td>{{ risk.risk_name }}</td>
-                        </tr>
-                        <tr>
-                            <th style="width: 20%;">Probabilidade</th>
-                            <td>{{ utils.getTxt(selects.risk_probabilities, risk.risk_probability) }}</td>
-                        </tr>
-                        <tr>
-                            <th style="width: 20%;">Impacto</th>
-                            <td>{{ utils.getTxt(selects.risk_impacts, risk.risk_impact) }}</td>
-                        </tr>
+                        <tbody>
+                            <tr>
+                                <th style="width: 20%;">Risco</th>
+                                <td>{{ risk.risk_name }}</td>
+                            </tr>
+                            <tr>
+                                <th style="width: 20%;">Probabilidade</th>
+                                <td>{{ utils.getTxt(selects.risk_probabilities, risk.risk_probability) }}</td>
+                            </tr>
+                            <tr>
+                                <th style="width: 20%;">Impacto</th>
+                                <td>{{ utils.getTxt(selects.risk_impacts, risk.risk_impact) }}</td>
+                            </tr>
 
-                        <!--Danos-->
-                        <tr v-for="damage in risk.risk_damage" :key="damage.id">
-                            <th>Dano {{ damage.verb_id }}</th>
-                            <td>{{ damage.risk_damage }}</td>
-                        </tr>
-                        <tr>
-                            <th>Tratamento</th>
-                            <td>{{ risk.risk_treatment }}</td>
-                        </tr>
-                        <tr v-if="actions(risk, PREVENTIVES).length > 0">
-                            <td colspan="2" class="colapse">
-                                <table class="nomargin">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th style="width: 80%;">Ação Preventiva</th>
-                                            <th style="width: 20%;">Responsável</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="action in actions(risk, PREVENTIVES)" :key="action.id">
-                                            <td>{{ action.verb_id }}</td>
-                                            <td>{{ action.risk_action_name }}</td>
-                                            <td>{{ action.risk_action_responsability }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                        <tr v-if="actions(risk, CONTINGENCE).length > 0">
-                            <td colspan="2" class="colapse">
-                                <table class="nomargin">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th style="width: 80%;">Ação de Contingência</th>
-                                            <th style="width: 20%;">Responsável</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="action in actions(risk, CONTINGENCE)" :key="action.id">
-                                            <td>{{ action.verb_id }}</td>
-                                            <td>{{ action.risk_action_name }}</td>
-                                            <td>{{ action.risk_action_responsability }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
+                            <!--Danos-->
+                            <tr v-for="damage in risk.risk_damage" :key="damage.id">
+                                <th>Dano {{ damage.verb_id }}</th>
+                                <td>{{ damage.risk_damage }}</td>
+                            </tr>
+                            <tr>
+                                <th>Tratamento</th>
+                                <td>{{ risk.risk_treatment }}</td>
+                            </tr>
+                            <tr class="m-0 p-0" v-if="actions(risk, props.types.PREVENTIVE).length > 0">
+                                <td colspan="2" class="colapse">
+                                    <table class="nomargin">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th style="width: 80%;">Ação Preventiva</th>
+                                                <th style="width: 20%;">Responsável</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="action in actions(risk, props.types.PREVENTIVE)"
+                                                :key="action.id">
+                                                <td>{{ action.verb_id }}</td>
+                                                <td>{{ action.risk_action_name }}</td>
+                                                <td>{{ action.risk_action_responsability }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr v-if="actions(risk, props.types.CONTINCENGE).length > 0">
+                                <td colspan="2" class="colapse">
+                                    <table class="nomargin">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th style="width: 80%;">Ação de Contingência</th>
+                                                <th style="width: 20%;">Responsável</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="action in actions(risk, props.types.CONTINGENCE)"
+                                                :key="action.id">
+                                                <td>{{ action.verb_id }}</td>
+                                                <td>{{ action.risk_action_name }}</td>
+                                                <td>{{ action.risk_action_responsability }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </td>
             </tr>
@@ -281,19 +289,21 @@ function actions(risk, act) {
 
 <style scoped>
 @import url('../../assets/css/reports.css');
+
 .colapse {
     padding: 0;
     border: none;
 }
+
 .nomargin {
     margin: 0;
 }
+
 .noborder {
     padding: 0;
     margin: 0;
     border-collapse: collapse;
 }
-
 </style>
 
 <style>

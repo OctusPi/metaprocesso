@@ -9,16 +9,10 @@ import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import Mounts from '@/services/mounts';
 import http from '@/services/http';
-import gpt from '@/services/gpt';
 import exp from '@/services/export';
-import notifys from '@/utils/notifys';
-import masks from '@/utils/masks';
-import utils from '@/utils/utils';
-import dates from '@/utils/dates';
 import Tabs from '@/utils/tabs';
 import TableListRadio from '@/components/table/TableListRadio.vue';
-import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
-import TableListSelect from '@/components/table/TableListSelect.vue';
+import RiskMapReport from './reports/RiskMapReport.vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -30,8 +24,8 @@ const [main, mainData] = Layout.new(emit, {
     url: '/riskiness',
     datalist: props.datalist,
     header: [
-        { key: 'version', title: 'VERSÃO E DATA', sub: [{ key: 'date_version' }] },
-        { key: 'comission.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
+        { key: 'version', title: 'VERSÃO', sub: [{ key: 'date_version' }] },
+        { key: 'comission.name', title: 'ORIGEM' },
         { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] },
         { key: 'phase', title: 'FASE' }
     ],
@@ -47,7 +41,7 @@ const [main, mainData] = Layout.new(emit, {
         headers: [
             { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { key: 'ordinators.name', title: 'ORDENADORES' },
-            { key: 'units.title', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
+            { key: 'units.title', title: 'ORIGEM' },
             { title: 'OBJETO', sub: [{ key: 'description' }] },
             { key: 'status', title: 'SITUAÇÃO' }
         ],
@@ -158,7 +152,14 @@ function export_riskiness(id) {
     http.get(`${main.url}/export/${id}`, emit, (resp) => {
         const instance = resp.data
         const containerReport = document.createElement('div')
-        const instanceReport = createApp(RiskMapReport, { riskmap: instance, selects: main.selects })
+        const instanceReport = createApp(RiskMapReport, {
+            riskmap: { ...instance, organ: main.organ, unit: instance.comission.unit },
+            selects: main.selects,
+            types: {
+                PREVENTIVE: 1,
+                CONTINGENCE: 2
+            }
+        })
         instanceReport.mount(containerReport)
         exp.exportPDF(containerReport, `Mapa_De_Risco-${instance.date_version}-v${instance.version}`)
     })
@@ -197,9 +198,9 @@ watch(() => main.ui.register, (newdata) => {
         risks.datalist = []
         main.process.data = []
     }
-    if (newdata && mainData.id) {
-        risks.datalist = mainData.riskiness ?? []
-        accomp.datalist = mainData.accompaniments ?? []
+    if (newdata && main.data.id) {
+        risks.datalist = main.data.riskiness ?? []
+        accomp.datalist = main.data.accompaniments ?? []
     }
 })
 
@@ -371,7 +372,7 @@ onMounted(() => {
                     <TableList :header="main.header" :body="main.datalist" :actions="[
                         Actions.Edit(mainData.update),
                         Actions.Delete(mainData.remove),
-                        Actions.Export('file', export_riskiness),
+                        Actions.Export('document-text-outline', export_riskiness),
                     ]" :mounts="{
                         phase: [Mounts.Cast(main.selects.phases)]
                     }" />
@@ -394,7 +395,11 @@ onMounted(() => {
                 </div>
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
-                    <form @submit.prevent="mainData.save">
+                    <form @submit.prevent="mainData.save({
+                        process: main.data.process.id,
+                        riskiness: risks.datalist,
+                        accompaniments: accomp.datalist
+                    })">
                         <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
                             <div class="accordion mb-3" id="accordion-process">
                                 <div class="accordion-item">
@@ -533,9 +538,12 @@ onMounted(() => {
                                         Actions.FastDelete((id) => risksData.removeCascade(id, accomp, 'id', 'accomp_risk')),
                                         Actions.Create('download', 'Danos', (id) => swithToModal(id, damage, risks, 'risk_damage'), '#' + damage.modal),
                                         Actions.Create('download', 'Ações', (id) => swithToModal(id, actions, risks, 'risk_actions'), '#' + actions.modal),
-                                    ]" :mounts="{
+                                    ]" :virtual="{
+                                        test: (inst) => inst.risk_name
+                                    }" :mounts="{
                                         'risk_impact': [Mounts.Cast(main.selects.risk_impacts)],
                                         'risk_probability': [Mounts.Cast(main.selects.risk_probabilities)],
+                                        'risk_level': [Mounts.Level()],
                                     }" />
                                 </div>
                             </div>
@@ -628,15 +636,15 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div role="list">
-                                    <TableList :header="accomp.header" :body="accomp.datalist" :actions="[
+                                    <TableList secondary :header="accomp.header" :body="accomp.datalist" :actions="[
                                         Actions.Edit(accompData.update),
                                         Actions.FastDelete(accompData.remove),
                                     ]" :virtual="{
-                                        risk: ({ accomp_risk }) => risks.datalist.find((o) => o.id == accomp_risk)
+                                        risk: ({ accomp_risk }) => risks.datalist.find((o) => o.id === accomp_risk)
                                     }" :mounts="{
-                                            'accomp_risk': [Mounts.CastVirt('verb_id', (addr, v) => v?.risk.id === addr ? v.risk : {})],
-                                            'accomp_action': [Mounts.CastVirt('verb_id', (addr, v) => v?.risk.risk_actions.find((o) => o.id === addr))],
-                                        }" />
+                                        'accomp_risk': [Mounts.CastVirt('verb_id', (addr, v) => v?.risk.id === addr ? v.risk : {})],
+                                        'accomp_action': [Mounts.CastVirt('verb_id', (addr, v) => v?.risk?.risk_actions?.find((o) => o.id === addr))],
+                                    }" />
                                 </div>
                             </div>
                             <div v-if="accomp.ui.register">
