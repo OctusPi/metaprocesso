@@ -95,10 +95,15 @@ const tabs = new Tabs([
 ])
 
 const collects = ref({
-    selected: 'E-mails',
+    selected: 'emails',
+    types: {
+        'emails': {nav:'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
+        'manual': {nav: 'Inserção Manual', title: 'Inserir Coletas Manualmente', subtitle: 'Adicionar coletas através de banco de preços do TCE ou sites de varejo online.' },
+    },
+    headers:[],
     data: {
-        'E-mails': { title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
-        'Inserção Manual': { title: 'Inserir Coletas Manualmente', subtitle: 'Adicionar coletas através de banco de preços do TCE ou sites de varejo online.' },
+        'emails': [],
+        'manual': []
     }
 })
 
@@ -516,29 +521,29 @@ onBeforeMount(() => {
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="h-pane">
                                             <h2 class="txt-color m-0">
-                                                {{ collects.data[collects.selected].title }}
+                                                {{ collects.types[collects.selected].title }}
                                             </h2>
                                             <p class="validation txt-color-sec small m-0">
-                                                {{ collects.data[collects.selected].subtitle }}
+                                                {{ collects.types[collects.selected].subtitle }}
                                             </p>
                                         </div>
                                         <div class="n-pane d-flex align-items-center">
-                                            <div v-for="(c, i) in collects.data" :key="i" class="ms-2">
+                                            <div v-for="(c, i) in collects.types" :key="i" class="ms-2">
                                                 <input class="btn-check" :id="`type-collect-${i}`" type="radio"
-                                                    name="viability" :value="i" v-model="collects.selected">
-                                                <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{ i
+                                                    name="type-collect" :value="i" v-model="collects.selected">
+                                                <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{ c.nav
                                                     }}</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="dashed-separator my-2"></div>
 
-                                    <div v-if="collects.selected === 'E-mails'">
-                                        Coletas email
+                                    <div v-if="collects.selected === 'emails'">
+                                        <TableList :header="collects.headers" :body="collects.data.emails" />
                                     </div>
 
                                     <div v-else>
-                                        Coletas Manuais
+                                        <TableList :header="collects.headers" :body="collects.data.manual" />
                                     </div>
 
                                 </div>
