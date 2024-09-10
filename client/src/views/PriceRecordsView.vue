@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, watch } from 'vue';
+import { onBeforeMount, ref, watch } from 'vue';
 
 import TableList from '@/components/table/TableList.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
@@ -56,10 +56,10 @@ const [page, pageData] = Layout.new(emit, {
         data: [],
         search: '',
         headers: [
-        { key: 'name', title: 'FORNECEDOR', sub: [{ key: 'cnpj', title: 'CNPJ: ' }] },
-        { key: 'modality', title: 'DEFINIÇÃO', sub: [{ key: 'size' }] },
-        { key: 'address', title: 'ENDEREÇO' },
-    ],
+            { key: 'name', title: 'FORNECEDOR', sub: [{ key: 'cnpj', title: 'CNPJ: ' }] },
+            { key: 'modality', title: 'DEFINIÇÃO', sub: [{ key: 'size' }] },
+            { key: 'address', title: 'ENDEREÇO' },
+        ],
     },
     header: [
         { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
@@ -94,6 +94,13 @@ const tabs = new Tabs([
     { id: 'proposals', title: 'Coletas' }
 ])
 
+const collects = ref({
+    selected: 'E-mails',
+    data: {
+        'E-mails': { title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
+        'Inserção Manual': { title: 'Inserir Coletas Manualmente', subtitle: 'Adicionar coletas através de banco de preços do TCE ou sites de varejo online.' },
+    }
+})
 
 function list_processes() {
     http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
@@ -138,8 +145,8 @@ function remove_supplier(id) {
 function generate(type) {
 
     if (!page.data?.process && !page.data?.suppliers) {
-      emit('callAlert', notifys.warning('É necessário inicialmente selecionar um processo e adicionar fornecedores...'))
-      return
+        emit('callAlert', notifys.warning('É necessário inicialmente selecionar um processo e adicionar fornecedores...'))
+        return
     }
 
     let callresp = null;
@@ -441,7 +448,7 @@ onBeforeMount(() => {
                                             <ion-icon name="search" class="fs-5"></ion-icon>
                                         </button>
                                     </div>
-                                    
+
                                     <div class="container-list position-relative bg-success">
                                         <div v-if="page.suppliers.search && page.suppliers.data.length"
                                             class="position-absolute w-100 my-2 top-0 start-0 z-3">
@@ -452,7 +459,8 @@ onBeforeMount(() => {
                                                         class="d-flex align-items-center px-3 py-2">
                                                         <div class="me-3 item-type">
                                                             <button type="button" class="btn btn-sm btn-action-close">
-                                                                <ion-icon name="add-circle-outline" class="fs-5"></ion-icon>
+                                                                <ion-icon name="add-circle-outline"
+                                                                    class="fs-5"></ion-icon>
                                                             </button>
                                                         </div>
                                                         <div class="item-desc">
@@ -477,15 +485,13 @@ onBeforeMount(() => {
                                 </div>
 
                                 <div v-if="page.data?.suppliers">
-                                    <TableList secondary :count="false" :header="page.suppliers.headers" 
-                                    :body="page.data.suppliers"
-                                    :mounts="{
-                                        modality: [Mounts.Cast(page.selects.modalities)],
-                                        size: [Mounts.Cast(page.selects.sizes)],
-                                    }"
-                                    :actions="[
-                                        Actions.FastDelete(remove_supplier),
-                                    ]" />
+                                    <TableList secondary :count="false" :header="page.suppliers.headers"
+                                        :body="page.data.suppliers" :mounts="{
+                                            modality: [Mounts.Cast(page.selects.modalities)],
+                                            size: [Mounts.Cast(page.selects.sizes)],
+                                        }" :actions="[
+                                            Actions.FastDelete(remove_supplier),
+                                        ]" />
                                 </div>
 
                                 <div class="col-sm-12">
@@ -507,7 +513,34 @@ onBeforeMount(() => {
                                 :class="{ 'show active': tabs.is('proposals') }">
 
                                 <div v-if="page.data.process">
-                                    Adicionar propostas
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="h-pane">
+                                            <h2 class="txt-color m-0">
+                                                {{ collects.data[collects.selected].title }}
+                                            </h2>
+                                            <p class="validation txt-color-sec small m-0">
+                                                {{ collects.data[collects.selected].subtitle }}
+                                            </p>
+                                        </div>
+                                        <div class="n-pane d-flex align-items-center">
+                                            <div v-for="(c, i) in collects.data" :key="i" class="ms-2">
+                                                <input class="btn-check" :id="`type-collect-${i}`" type="radio"
+                                                    name="viability" :value="i" v-model="collects.selected">
+                                                <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{ i
+                                                    }}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dashed-separator my-2"></div>
+
+                                    <div v-if="collects.selected === 'E-mails'">
+                                        Coletas email
+                                    </div>
+
+                                    <div v-else>
+                                        Coletas Manuais
+                                    </div>
+
                                 </div>
                                 <div v-else>
                                     <h2
@@ -524,9 +557,10 @@ onBeforeMount(() => {
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
-                                Registrar
+                                Salvar
                             </button>
-                            <button @click="pageData.ui('register')" class="btn btn-action-secondary">
+
+                            <button type="button" @click="pageData.ui('register')" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>
                                 Cancelar
                             </button>
