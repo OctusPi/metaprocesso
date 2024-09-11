@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Supplier extends Model
 {
@@ -47,6 +48,11 @@ class Supplier extends Model
             'required' => 'Campo obrigatório não informado!',
             'unique'   => 'Fornecedor já registrado...'
         ];
+    }
+
+    public function proposal(): BelongsTo
+    {
+        return $this->belongsTo(Proposal::class);
     }
 
     public static function list_modalitys(): array

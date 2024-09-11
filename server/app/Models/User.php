@@ -174,6 +174,11 @@ class User extends Authenticatable
         return $this->belongsTo(PriceRecord::class);
     }
 
+    public function proposal(): BelongsTo
+    {
+        return $this->belongsTo(Proposal::class);
+    }
+
     public function riskmap(): BelongsTo
     {
         return $this->belongsTo(RiskMap::class);

@@ -26,43 +26,53 @@ class Proposal extends Model
         'id',
         'protocol',
         'ip',
+        'author',
+        'token',
         'date_ini',
         'hour_ini',
+        'date_fin',
+        'hour_fin',
         'organ',
         'process',
         'price_record',
-        'modality',
         'supplier',
+        'modality',
         'items',
         'status'
+    ];
+
+    protected $casts = [
+        'items' => Json::class
     ];
 
     public function rules():array
     {
         return [
-            'protocol' => 'required',
-            'ip' => 'required',
-            'date_ini' => 'required',
-            'hour_ini' => 'required',
-            'organ' => 'required',
-            'process' => 'required',
+            'protocol'     => 'required',
+            'ip'           => 'required',
+            'author'       => 'required',
+            'token'        => 'required',
+            'date_ini'     => 'required',
+            'hour_ini'     => 'required',
+            'organ'        => 'required',
+            'process'      => 'required',
             'price_record' => 'required',
-            'modality' => 'required',
-            'supplier' => [
-                'required',
+            'supplier'     => [
+                'requried',
                 Rule::unique('price_records_proposals', 'supplier')->where(function ($query) {
-                    return $query->where('price_record', $this->price_record);
-            })->ignore($this->id)],
-            'items' => 'required',
-            'status'    => 'required',
+                    return $query->where('supplier', '!=', null)->where('price_record', $this->price_record);
+                })->ignore($this->id)
+            ],
+            'modality' => 'required',
+            'status'   => 'required'
         ];
     }
 
-    public function messages():array
+    public function messages()
     {
         return [
             'required' => 'Campo obrigatório não informado!',
-            'unique'   => 'Fornecedor já tem proposta ativa para essa coleta...'
+            'unique'   => 'Já existe uma coleta para esse fornecedor.'
         ];
     }
 
@@ -98,5 +108,10 @@ class Proposal extends Model
     public function pricerecord():HasOne
     {
         return $this->hasOne(PriceRecord::class, 'id', 'price_record');
+    }
+
+    public function supplier(): HasOne
+    {
+        return $this->hasOne(Supplier::class, 'id', 'supplier');
     }
 }

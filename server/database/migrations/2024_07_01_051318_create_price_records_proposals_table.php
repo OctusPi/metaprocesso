@@ -16,7 +16,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('protocol');
             $table->string('ip');
-            $table->string('token');
+            $table->string('token')->unique();
             $table->date('date_ini');
             $table->time('hour_ini');
             $table->date('date_fin')->nullable();
@@ -24,8 +24,9 @@ return new class extends Migration
             $table->foreignId('organ')->constrained('organs');
             $table->foreignId('process')->constrained('processes');
             $table->foreignId('price_record')->constrained('price_records');
+            $table->foreignId('author')->constrained('users');
+            $table->foreignId('supplier')->nullable()->constrained('suppliers');
             $table->integer('modality');
-            $table->json('supplier')->nullable();
             $table->json('items')->nullable();
             $table->integer('status');
         });
