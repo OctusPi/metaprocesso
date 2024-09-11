@@ -6,10 +6,10 @@ export default class Actions {
         return Actions.Create('create-outline', 'Editar', action)
     }
     static Delete(action) {
-        return Actions.Create('trash-outline', 'Deletar', action, '#modalDelete')
+        return Actions.Create('trash-outline', 'Remover', action, '#modalDelete')
     }
     static FastDelete(action) {
-        return Actions.Create('trash-outline', 'Deletar', action)
+        return Actions.Create('trash-outline', 'Remover', action)
     }
     static Dowload(action) {
         return Actions.Create('download-outline', 'Download', action)

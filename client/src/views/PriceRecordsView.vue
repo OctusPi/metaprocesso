@@ -280,7 +280,7 @@ onBeforeMount(() => {
                 </div>
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
-                    <form @submit.prevent="pageData.save({ status: 2 })">
+                    <form @submit.prevent="pageData.save()">
                         <div class="content">
 
                             <!-- tab proccess -->
@@ -490,11 +490,14 @@ onBeforeMount(() => {
                                 </div>
 
                                 <div v-if="page.data?.suppliers">
-                                    <TableList secondary :count="false" :header="page.suppliers.headers"
-                                        :body="page.data.suppliers" :mounts="{
+                                    <TableList secondary :count="false" 
+                                        :header="page.suppliers.headers"
+                                        :body="page.data.suppliers" 
+                                        :mounts="{
                                             modality: [Mounts.Cast(page.selects.modalities)],
                                             size: [Mounts.Cast(page.selects.sizes)],
-                                        }" :actions="[
+                                        }" 
+                                        :actions="[
                                             Actions.FastDelete(remove_supplier),
                                         ]" />
                                 </div>
@@ -536,10 +539,10 @@ onBeforeMount(() => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="dashed-separator my-2"></div>
+                                    <div class="dashed-separator mt-2 mb-3"></div>
 
                                     <div v-if="collects.selected === 'emails'">
-                                        <TableList :header="collects.headers" :body="collects.data.emails" />
+                                        <TableList secondary :header="collects.headers" :body="collects.data.emails" />
                                     </div>
 
                                     <div v-else>
@@ -564,11 +567,11 @@ onBeforeMount(() => {
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
                                 Salvar
                             </button>
-
                             <button type="button" @click="pageData.ui('register')" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>
                                 Cancelar
                             </button>
+
                             <button @click="tabs.next()" type="button" class="btn btn-action-secondary me-auto">
                                 <ion-icon name="arrow-forward" class="fs-5"></ion-icon>
                             </button>

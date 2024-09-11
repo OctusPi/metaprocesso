@@ -137,7 +137,7 @@ watch(() => props.body, (newval) => {
                                 <ul class="dropdown-menu px-2 py-3">
                                     <li>
                                         <a v-for="(item, j) in props.actions" :key="j"
-                                            class="dropdown-item item-action-menu align-items-center" href="#"
+                                            class="dropdown-item item-action-menu d-flex align-items-center" href="#"
                                             @click.prevent="item.action && item.action(instance.id)"
                                             :data-bs-target="item.modal" :data-bs-toggle="item.modal ? 'modal' : null">
                                             <ion-icon :name="item.icon" class="me-2" />
@@ -153,13 +153,13 @@ watch(() => props.body, (newval) => {
         </div>
 
         <div v-else class="text-center p-4 txt-color-sec">
-            <ion-icon name="cube-outline" class="fs-4"></ion-icon>
-            <p class="p-0 m-0">Não foram localizados registros...</p>
+            <ion-icon name="ellipsis-horizontal-outline" class="fs-4"></ion-icon>
+            <p class="p-0 m-0 small">Não foram localizados registros...</p>
         </div>
     </div>
     <div v-else class="text-center txt-color-sec p-4">
         <ion-icon name="chatbox-ellipses-outline" class="fs-3"></ion-icon>
-        <p class="p-0 m-0">Aplique o filtro na opção localizar, para visualizar os dados...</p>
+        <p class="p-0 m-0 small">Aplique o filtro na opção localizar, para visualizar os dados...</p>
     </div>
 </template>
 
@@ -222,15 +222,15 @@ tbody tr:last-child td:first-child {
 }
 
 .table tr th:first-child {
-    padding-left: 50px;
+    padding-left: 2vw;
 }
 
 .table tr td:first-child {
-    padding-left: 3vw;
+    padding-left: 2vw;
 }
 
 .table tr td:last-child {
-    padding-right: 3vw;
+    padding-right: 2vw;
 }
 
 .table,

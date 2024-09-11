@@ -121,11 +121,11 @@
 
 .header-main-btn-icon {
   color: var(--color-input-txt);
-  padding: 8px 10px 5px 10px !important;
+  padding: 8px 10px 8px 10px !important;
 }
 
 .header-main-btn-icon:hover {
-  background-color: var(--color-base-trans-hover);
+  background-color: var(--color-base-tls);
   color: var(--color-base);
 }
 
@@ -349,7 +349,7 @@
 }
 
 .dropdown-item {
-  font-size: 0.8rem;
+  font-size: 0.83rem;
   color: var(--color-text) !important;
   border-radius: 10px;
 }
