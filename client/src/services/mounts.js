@@ -75,7 +75,9 @@ export default class Mounts {
                     colorClass = 'tls-yellow'
                     break
                 case 'Enviado':
+                case 'Enviada':
                 case 'Aberto':
+                case 'Aberta':
                 case 'Ativo':
                 case 'Ativa':
                     colorClass = 'tls-blue'
@@ -94,6 +96,7 @@ export default class Mounts {
                     break
                 case 'Processado':
                 case 'Finalizado':
+                case 'Finalizada':
                     colorClass = 'tls-grey'
                     break
                 default:

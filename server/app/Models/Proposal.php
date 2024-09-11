@@ -11,9 +11,11 @@ class Proposal extends Model
 {
     use HasFactory;
 
+    const S_WAITING = 0;
     const S_START = 1;
-    const S_PENDING = 2;
-    const S_FINISHED = 3;
+    const S_OPENED = 2;
+    const S_PENDING = 3;
+    const S_FINISHED = 4;
 
     const M_MAIL = 1;
     const M_MANUAL = 2;
@@ -89,7 +91,9 @@ class Proposal extends Model
     public static function list_status():array
     {
         return [
-            ['id' => self::S_START, 'title' => 'Iniciada'],
+            ['id' => self::S_WAITING, 'title' => 'A Enviar'],
+            ['id' => self::S_START, 'title' => 'Enviada'],
+            ['id' => self::S_OPENED, 'title' => 'Aberta'],
             ['id' => self::S_PENDING, 'title' => 'Pendente'],
             ['id' => self::S_FINISHED, 'title' => 'Finalizada']
         ];

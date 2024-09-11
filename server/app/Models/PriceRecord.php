@@ -34,12 +34,18 @@ class PriceRecord extends Model
         'status'
     ];
 
+    protected $casts = [
+        'comission_members' => Json::class,
+        'suppliers' => Json::class
+    ];
+
     public function rules():array
     {
         return [
             'protocol'  => 'required',
             'ip'        => 'required',
             'date_ini'  => 'required',
+            'date_fin'  => 'required',
             'process'   => ['required', Rule::unique('price_records', 'process')->ignore($this->id)],
             'organ'     => 'required',
             'comission' => 'required',

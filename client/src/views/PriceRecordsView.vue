@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, ref, watch } from 'vue';
+import { onBeforeMount, watch } from 'vue';
 
 import TableList from '@/components/table/TableList.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
@@ -17,6 +17,7 @@ import http from '@/services/http';
 import gpt from '@/services/gpt';
 import Tabs from '@/utils/tabs';
 import notifys from '@/utils/notifys';
+import dates from '@/utils/dates'
 
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
@@ -33,6 +34,7 @@ const [page, pageData] = Layout.new(emit, {
         data: [],
         headers: [
             { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { key: 'modality', title: 'TIPO', sub: [{ key: 'type' }] },
             { key: 'ordinators.name', title: 'ORDENADORES' },
             { key: 'units.title', title: 'ORIGEM' },
             { title: 'OBJETO', sub: [{ key: 'description' }] },
@@ -61,6 +63,24 @@ const [page, pageData] = Layout.new(emit, {
             { key: 'address', title: 'ENDEREÇO' },
         ],
     },
+    proposals: {
+        selected: 'emails',
+    types: {
+        'emails': { nav: 'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
+        'manual': { nav: 'Inserção Manual', title: 'Inserir Coletas Manualmente', subtitle: 'Adicionar coletas através de banco de preços do TCE ou sites de varejo online.' },
+    },
+    headers: [
+        { title: 'DATA', key: 'date_ini', sub: [{ key: 'hour_ini' }] },
+        { title: 'REPOSTA', key: 'date_fin', sub: [{ key: 'hour_fin' }] },
+        { title: 'FORNECEDOR', key: 'supplier.name', sub: [{ key: 'supplier.cnpj' }] },
+        { title: 'MODALIDADE', key: 'modality' },
+        { title: 'SITUAÇÃO', key: 'status' }
+    ],
+    data: {
+        'emails': [],
+        'manual': []
+    }
+    },
     header: [
         { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
         { key: 'demandant.name', title: 'DEMANDANTE' },
@@ -70,19 +90,11 @@ const [page, pageData] = Layout.new(emit, {
         { key: 'status', title: 'SITUAÇÃO' }
     ],
     rules: {
-        unit: 'required',
-        ordinator: 'required',
-        demandant: 'required',
-        comission: 'required',
+        process: 'required',
+        protocol: 'required',
         date_ini: 'required',
-        estimated_date: 'required',
-        year_pca: 'required',
-        acquisition_type: 'required',
-        estimated_value: 'required',
-        priority: 'required',
-        description: 'required',
-        suggested_hiring: 'required',
-        justification: 'required'
+        date_fin: 'required',
+        comission: 'required'
     }
 })
 
@@ -91,21 +103,8 @@ const tabs = new Tabs([
     { id: 'dfds', title: 'DFDs' },
     { id: 'infos', title: 'Informações' },
     { id: 'suppliers', title: 'Fornecedores' },
-    { id: 'proposals', title: 'Coletas' }
+    { id: 'page.proposals', title: 'Coletas' }
 ])
-
-const collects = ref({
-    selected: 'emails',
-    types: {
-        'emails': {nav:'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
-        'manual': {nav: 'Inserção Manual', title: 'Inserir Coletas Manualmente', subtitle: 'Adicionar coletas através de banco de preços do TCE ou sites de varejo online.' },
-    },
-    headers:[],
-    data: {
-        'emails': [],
-        'manual': []
-    }
-})
 
 function list_processes() {
     http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
@@ -137,6 +136,17 @@ function select_supplier(supplier) {
         page.data.suppliers.push(supplier)
         page.suppliers.search = ''
         page.suppliers.data = []
+
+        if (!page.proposals.data.emails.find(o => o.supplier.id == supplier.id)) {
+            page.proposals.data.emails.push({
+                date_ini: page.data.date_ini,
+                hour_ini:dates.getHourNow(),
+                supplier: supplier,
+                modality: 1,
+                status: 0
+            })
+        }
+
         return
     }
 
@@ -145,6 +155,7 @@ function select_supplier(supplier) {
 
 function remove_supplier(id) {
     page.data.suppliers = page.data.suppliers.filter(s => s.id !== id);
+    page.proposals.data.emails = page.proposals.data.emails.filter(o => o.supplier.id !== id)
 }
 
 function generate(type) {
@@ -367,6 +378,8 @@ onBeforeMount(() => {
                                                         v-model="page.data.process" :header="page.process.headers"
                                                         :body="page.process.data" :mounts="{
                                                             status: [Mounts.Cast(page.selects.process_status), Mounts.Status()],
+                                                            modality: [Mounts.Cast(page.selects.process_modalities)],
+                                                            type: [Mounts.Cast(page.selects.process_types)],
                                                             description: [Mounts.Truncate(200)],
                                                         }" />
                                                 </div>
@@ -490,14 +503,11 @@ onBeforeMount(() => {
                                 </div>
 
                                 <div v-if="page.data?.suppliers">
-                                    <TableList secondary :count="false" 
-                                        :header="page.suppliers.headers"
-                                        :body="page.data.suppliers" 
-                                        :mounts="{
-                                            modality: [Mounts.Cast(page.selects.modalities)],
-                                            size: [Mounts.Cast(page.selects.sizes)],
-                                        }" 
-                                        :actions="[
+                                    <TableList secondary :count="false" :header="page.suppliers.headers"
+                                        :body="page.data.suppliers" :mounts="{
+                                            modality: [Mounts.Cast(page.selects.supplier_modalities)],
+                                            size: [Mounts.Cast(page.selects.supplier_sizes)],
+                                        }" :actions="[
                                             Actions.FastDelete(remove_supplier),
                                         ]" />
                                 </div>
@@ -518,35 +528,40 @@ onBeforeMount(() => {
 
                             <!-- tab coletas -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
-                                :class="{ 'show active': tabs.is('proposals') }">
+                                :class="{ 'show active': tabs.is('page.proposals') }">
 
                                 <div v-if="page.data.process">
                                     <div class="d-flex align-items-center justify-content-between">
                                         <div class="h-pane">
                                             <h2 class="txt-color m-0">
-                                                {{ collects.types[collects.selected].title }}
+                                                {{ page.proposals.types[page.proposals.selected].title }}
                                             </h2>
                                             <p class="validation txt-color-sec small m-0">
-                                                {{ collects.types[collects.selected].subtitle }}
+                                                {{ page.proposals.types[page.proposals.selected].subtitle }}
                                             </p>
                                         </div>
                                         <div class="n-pane d-flex align-items-center">
-                                            <div v-for="(c, i) in collects.types" :key="i" class="ms-2">
+                                            <div v-for="(c, i) in page.proposals.types" :key="i" class="ms-2">
                                                 <input class="btn-check" :id="`type-collect-${i}`" type="radio"
-                                                    name="type-collect" :value="i" v-model="collects.selected">
-                                                <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{ c.nav
-                                                    }}</label>
+                                                    name="type-collect" :value="i" v-model="page.proposals.selected">
+                                                <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
+                                                    c.nav
+                                                }}</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="dashed-separator mt-2 mb-3"></div>
 
-                                    <div v-if="collects.selected === 'emails'">
-                                        <TableList secondary :header="collects.headers" :body="collects.data.emails" />
+                                    <div v-if="page.proposals.selected === 'emails'">
+                                        <TableList secondary :count="false" :header="page.proposals.headers"
+                                            :body="page.proposals.data.emails" :mounts="{
+                                                modality: [Mounts.Cast(page.selects.proposal_modalities)],
+                                                status: [Mounts.Cast(page.selects.proposal_status), Mounts.Status()]
+                                            }" />
                                     </div>
 
                                     <div v-else>
-                                        <TableList :header="collects.headers" :body="collects.data.manual" />
+                                        <TableList :header="page.proposals.headers" :body="page.proposals.data.manual" />
                                     </div>
 
                                 </div>
@@ -565,7 +580,7 @@ onBeforeMount(() => {
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
-                                Salvar
+                                Registrar
                             </button>
                             <button type="button" @click="pageData.ui('register')" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Dfd;
+use App\Models\Proposal;
 use App\Models\Supplier;
 use App\Models\Unit;
 use App\Models\User;
@@ -79,10 +80,17 @@ class PriceRecords extends Controller
         return response()->json(array_merge([
             'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
-            'types' => Process::list_types(),
+            'status' => PriceRecord::list_status(),
+
+            'process_modalities' => Process::list_modalitys(),
+            'process_types' => Process::list_types(),
             'process_status' => Process::list_status(),
-            'modalities' => Supplier::list_modalitys(),
-            'sizes' => Supplier::list_sizes()
+
+            'supplier_modalities' => Supplier::list_modalitys(),
+            'supplier_sizes' => Supplier::list_sizes(),
+
+            'proposal_modalities' => Proposal::list_modalitys(),
+            'proposal_status' => Proposal::list_status()
         ], Dfd::make_details()), 200);
     }
 }
