@@ -16,8 +16,11 @@ return new class extends Migration
             $table->timestamps();
             $table->string('protocol');
             $table->string('ip');
+            $table->string('token');
             $table->date('date_ini');
-            $table->string('hour_ini')->nullable();
+            $table->time('hour_ini');
+            $table->date('date_fin')->nullable();
+            $table->time('hour_fin')->nullable();
             $table->foreignId('organ')->constrained('organs');
             $table->foreignId('process')->constrained('processes');
             $table->foreignId('price_record')->constrained('price_records');

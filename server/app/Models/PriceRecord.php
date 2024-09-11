@@ -52,7 +52,7 @@ class PriceRecord extends Model
     {
         return [
             'required' => 'Campo obrigatório não informado!',
-            'unique'   => 'Registro de preco já iniciada para o processo...'
+            'unique'   => 'Registro de preço já iniciada para o processo...'
         ];
     }
 
