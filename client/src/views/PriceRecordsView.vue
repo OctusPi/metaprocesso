@@ -83,12 +83,11 @@ const [page, pageData] = Layout.new(emit, {
     }
     },
     header: [
-        { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-        { key: 'demandant.name', title: 'DEMANDANTE' },
-        { key: 'ordinator.name', title: 'ORDENADOR' },
-        { key: 'unit.name', title: 'ORIGEM' },
-        { title: 'OBJETO', sub: [{ key: 'description' }] },
-        { key: 'status', title: 'SITUAÇÃO' }
+        { title: 'IDENTIFICAÇÃO', key: 'date_ini', sub: [{ key: 'protocol' }] },
+        { title: 'PROCESSO', key:'process.protocol', sub: [{ key: 'process.description' }] },
+        { title: 'FORCECEDORES', key: 'suppliers.name' },
+        { title: 'PRAZO COLETA', key: 'date_fin' },
+        { title: 'SITUAÇÃO', key: 'status' }
     ],
     rules: {
         process: 'required',
@@ -253,19 +252,19 @@ onBeforeMount(() => {
                             <input type="text" name="protocol" class="form-control" id="s-protocol"
                                 v-model="page.search.protocol" placeholder="Número do Protocolo" />
                         </div>
+                        <div class="col-sm-12 col-md-8">
+                            <label for="s-suppliers" class="form-label">Forncedor</label>
+                            <InputDropMultSelect :options="page.selects.suppliers" identify="search_suppliers" label="name" v-model="page.search.suppliers" />
+                                
+                        </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-unit" class="form-label">Unidade</label>
-                            <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit">
+                            <label for="s-status" class="form-label">Situação</label>
+                            <select name="status" class="form-control" id="s-status" v-model="page.search.status">
                                 <option value=""></option>
-                                <option v-for="o in page.selects.units" :key="o.id" :value="o.id">
+                                <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
                                     {{ o.title }}
                                 </option>
                             </select>
-                        </div>
-                        <div class="col-sm-12 col-md-8">
-                            <label for="s-description" class="form-label">Objeto</label>
-                            <input type="text" name="description" class="form-control" id="s-description"
-                                v-model="page.search.description" placeholder="Pesquise por partes do Objeto do DFD" />
                         </div>
                         <div class="d-flex flex-row-reverse mt-4">
                             <button type="submit" class="btn btn-action-primary">
@@ -278,7 +277,11 @@ onBeforeMount(() => {
                 <div role="list" class="container p-0">
                     <TableList :header="page.header" :body="page.datalist" :actions="[
                         Actions.Edit(update_dfd),
-                        Actions.Delete(pageData.remove),]" />
+                        Actions.Delete(pageData.remove),]"
+                        :mounts="{
+                        status: [Mounts.Cast(page.selects.status), Mounts.Status()],
+                        'process.description': [Mounts.Truncate()],
+                        }" />
                 </div>
             </section>
 

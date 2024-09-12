@@ -80,6 +80,7 @@ export default class Mounts {
                 case 'Aberta':
                 case 'Ativo':
                 case 'Ativa':
+                case 'Iniciada':
                     colorClass = 'tls-blue'
                     break
                 case 'Pendente':
