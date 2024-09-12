@@ -134,6 +134,17 @@ const router = createRouter({
       component: () => import('../views/PriceRecordsView.vue')
     },
     {
+      path: '/proposal',
+      name: 'proposal',
+      meta: { auth: true },
+      component: () => import('../views/ProposalView.vue')
+    },
+    {
+      path: '/proposal_supplier/{token}',
+      name: 'proposal_supplier',
+      component: () => import('../views/ProposalSupplierView.vue')
+    },
+    {
       path: '/riskiness',
       name: 'riskiness',
       meta: { auth: true },

@@ -52,6 +52,16 @@ function getHourNow() {
     return `${hour}:${minute}:${second}`;
 }
 
+function getDateNow() {
+
+    const dataAtual = new Date();
+    const dia = pad(dataAtual.getDate(), 2);
+    const mes = pad(dataAtual.getMonth(), 2);
+    const ano = pad(dataAtual.getFullYear(), 2);
+
+    return `${dia}/${mes}/${ano}`;
+}
+
 function getMonthNow() {
     const dateNow = new Date()
     return pad(dateNow.getMonth() + 1, 2)
@@ -111,6 +121,7 @@ function nowPtbr() {
 export default {
     months,
     dateTxtNow,
+    getDateNow,
     getHourNow,
     listYears,
     getMonthNow,

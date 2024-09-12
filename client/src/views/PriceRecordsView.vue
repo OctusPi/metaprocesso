@@ -18,6 +18,7 @@ import gpt from '@/services/gpt';
 import Tabs from '@/utils/tabs';
 import notifys from '@/utils/notifys';
 import dates from '@/utils/dates'
+import utils from '@/utils/utils';
 
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
@@ -105,6 +106,12 @@ const tabs = new Tabs([
     { id: 'suppliers', title: 'Fornecedores' },
     { id: 'page.proposals', title: 'Coletas' }
 ])
+
+function prepare_register() {
+    pageData.ui('register')
+    page.data.protocol = utils.dateProtocol(page.organ.id, '-', utils.randCode(6))
+    page.data.date_ini = dates.getDateNow()
+}
 
 function list_processes() {
     http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
@@ -214,7 +221,7 @@ onBeforeMount(() => {
                         </p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
-                        <button @click="pageData.ui('register')" class="btn btn-action-primary">
+                        <button @click="prepare_register" class="btn btn-action-primary">
                             <ion-icon name="add" class="fs-5"></ion-icon>
                             Adicionar
                         </button>

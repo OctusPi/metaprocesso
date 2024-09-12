@@ -47,7 +47,7 @@ function stripHTML(str) {
     return parser.body.textContent
 }
 
-function dateProtocol(pivot, separator = '') {
+function dateProtocol(pivot, separator = '', rng = null) {
     if (!pivot) {
         return null
     }
@@ -61,7 +61,7 @@ function dateProtocol(pivot, separator = '') {
 
     const mili = d.getMilliseconds().toString().padStart(4, '0')
 
-    return String(pivot).padStart(3, '0') + separator + date + separator + mili
+    return String(pivot).padStart(3, '0') + separator + (rng ?? date) + separator + mili
 }
 
 function reduceArrays(a, b, k = 'id') {
