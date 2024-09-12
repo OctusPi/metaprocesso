@@ -19,9 +19,6 @@ import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import EtpReport from './reports/EtpReport.vue';
 import exp from '@/services/export';
-import PDFMerger from 'pdf-merger-js';
-import axsi from '@/services/axsi';
-
 const ORIGIN_ETPS = "1";
 
 const sysapp = inject('sysapp')
@@ -33,7 +30,7 @@ const props = defineProps({
 })
 
 const [page, pageData] = Layout.new(emit, {
-    url: '/etps',
+    url: '/refterms',
     datalist: props.datalist,
     header: [
         { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
@@ -42,34 +39,31 @@ const [page, pageData] = Layout.new(emit, {
         { key: 'status', title: 'STATUS' },
     ],
     rules: {
-        process: 'required',
         comission: 'required',
-        protocol: 'required',
-        emission: 'required',
-        status: 'required',
-        object_description: 'required',
-        object_classification: 'required',
         necessity: 'required',
         contract_forecast: 'required',
         contract_requirements: 'required',
-        market_survey: 'required',
-        contract_calculus_memories: 'required',
         contract_expected_price: 'required',
+        market_survey: 'required',
         solution_full_description: 'required',
-        solution_parcel_justification: 'required',
-        correlated_contracts: 'required',
-        contract_alignment: 'required',
-        expected_results: 'required',
-        contract_previous_actions: 'required',
         ambiental_impacts: 'required',
-        viability_declaration: 'required',
+        correlated_contracts: 'required',
+        object_execution_model: 'required',
+        contract_management_model: 'required',
+        payment_measure_criteria: 'required',
+        solution_parcel_justification: 'required',
+        supplier_selection_criteria: 'required',
+        funds_suitability: 'required',
+        parts_obligation: 'required',
+        emission: 'required',
+        type: 'required',
     },
     process: {
         search: {},
         data: [],
         headers: [
             { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-            { key: 'ordinators.name', title: 'ORDENADORES' },
+            { key: 'ordinators.name', title: 'ORDENADORES', err: 'Nenhum Ordenador' },
             { key: 'units.title', title: 'ORIGEM' },
             { title: 'OBJETO', sub: [{ key: 'description' }] },
             { key: 'status', title: 'SITUAÇÃO' }
@@ -113,37 +107,16 @@ const attachmentTypes = [
 
 function export_etp(id) {
     http.get(`${page.url}/export/${id}`, emit, async (resp) => {
-        const etp = resp.data
-
-        const merger = new PDFMerger()
-
+        const refTerm = resp.data
         const containerReport = document.createElement('div')
         const instanceReport = createApp(EtpReport, {
+            refTerm,
             qrdata: sysapp,
             organ: page.organ,
-            etp: etp,
             selects: page.selects,
         })
         instanceReport.mount(containerReport)
-
-        const pdf = await exp.generatePDF(containerReport)
-
-        await merger.add(pdf)
-
-        for (const item of etp.attachments) {
-            await axsi.axiosInstanceAuth.request({
-                method: 'GET',
-                url: `/attachments/${ORIGIN_ETPS}/${etp?.protocol}/download/${item.id}`,
-                responseType: 'blob',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            }).then(async res => {
-                await merger.add(res.data)
-            }).catch(e => console.error(e))
-        }
-
-        await merger.save(`ETP-${etp.protocol}`)
+        exp.generatePDF(containerReport)
     })
 }
 
@@ -296,9 +269,9 @@ onMounted(() => {
             <section v-if="!page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>ETPs</h2>
+                        <h2>Termos de Referência</h2>
                         <p>
-                            Listagem das ETPs atreladas ao
+                            Termos de Referência para os processos do
                             <span class="txt-color">{{ page.organ_name }}</span>
                         </p>
                     </div>
@@ -341,10 +314,10 @@ onMounted(() => {
                                 v-model="page.search.necessity" placeholder="Pesquise por partes da necessidade" />
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-status" class="form-label">Situação</label>
-                            <select name="status" class="form-control" id="s-status" v-model="page.search.status">
+                            <label for="s-status" class="form-label">Tipo</label>
+                            <select name="status" class="form-control" id="s-status" v-model="page.search.types">
                                 <option value=""></option>
-                                <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
+                                <option v-for="o in page.selects.types" :key="o.id" :value="o.id">
                                     {{ o.title }}
                                 </option>
                             </select>
@@ -373,7 +346,7 @@ onMounted(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registrar ETP</h2>
+                        <h2>Registrar Termo de Refência</h2>
                         <p>Preencha os dados abaixo para realizar o registro</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
@@ -505,6 +478,17 @@ onMounted(() => {
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
                             <div class="col-sm-12 col-md-4">
+                                <label for="type" class="form-label">Tipo</label>
+                                <select name="type" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.type }" id="type"
+                                    v-model="page.data.type">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.types" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
                                 <label for="comission" class="form-label">Comissão</label>
                                 <select name="comission" class="form-control"
                                     :class="{ 'form-control-alert': page.valids.comission }" id="comission"
@@ -514,45 +498,19 @@ onMounted(() => {
                                         {{ o.title }}
                                     </option>
                                 </select>
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="status" class="form-label">Situação Atual</label>
-                                <select name="status" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.status }" id="status"
-                                    v-model="page.data.status">
-                                    <option value=""></option>
-                                    <option v-for="s in page.selects.status" :value="s.id" :key="s.id">{{
-                                        s.title }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <label for="object_description" class="form-label d-flex justify-content-between">
-                                    Descrição sucinta do objeto
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('object_description')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.object_description" placeholder="Descrição do Objeto"
-                                    identifier="object_description" v-model="page.data.object_description" />
-                            </div>
-                            <div class="col-12">
-                                <label for="object_classification" class="form-label d-flex justify-content-between">
-                                    Classificação do objeto
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('object_classification')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.object_classification"
-                                    placeholder="Classificação do Objeto" identifier="object_classification"
-                                    v-model="page.data.object_classification" />
+
+                                <div id="comissionHelpBlock" class="form-text txt-color-sec">
+                                    Ao selecionar a comissão/equipe de planejamento seus
+                                    integrantes serão vinculados ao documento
+                                </div>
                             </div>
                         </div>
+
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('necessidade') }">
                             <div class="col-12">
                                 <label for="necessity" class="form-label d-flex justify-content-between">
-                                    Necessidade
+                                    Descrição Detalhada da Necessidade
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
                                         @click="generate('necessity')">
                                         <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
@@ -562,7 +520,7 @@ onMounted(() => {
                             </div>
                             <div class="col-12">
                                 <label for="contract_requirements" class="form-label d-flex justify-content-between">
-                                    Descrição dos Requisitos da Contratação
+                                    Requisitos da Contratação
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
                                         @click="generate('contract_requirements')">
                                         <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
@@ -572,23 +530,24 @@ onMounted(() => {
                                     identifier="contract_requirements" v-model="page.data.contract_requirements" />
                             </div>
                             <div class="col-12">
-                                <label for="contract_forecast" class="form-label d-flex justify-content-between">
-                                    Previsão de Realização da Contratação
+                                <label for="correlated_contracts"
+                                    class="form-label d-flex justify-content-between">Contratações Correlatas
+                                    e/ou Interdependentes
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('contract_forecast')">
+                                        @click="generate('correlated_contracts')">
                                         <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                 </label>
-                                <InputRichText :valid="page.valids.contract_forecast"
-                                    placeholder="Previsão de Realização da Contratação" identifier="contract_forecast"
-                                    v-model="page.data.contract_forecast" />
+                                <InputRichText :valid="page.valids.correlated_contracts"
+                                    placeholder="Contratações Correlatas e/ou Interdependentes"
+                                    identifier="correlated_contracts" v-model="page.data.correlated_contracts" />
                             </div>
-
                         </div>
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('solucao') }">
                             <div class="col-12">
                                 <label for="market_survey"
-                                    class="form-label d-flex justify-content-between">Levantamento de Mercado
+                                    class="form-label d-flex justify-content-between">Levantamento de Mercado e
+                                    Justificativa Técnica e Econômica
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
                                         @click="generate('market_survey')">
                                         <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
@@ -598,8 +557,8 @@ onMounted(() => {
                             </div>
                             <div class="col-12">
                                 <label for="solution_full_description"
-                                    class="form-label d-flex justify-content-between">Descrição da Solução como
-                                    um Todo
+                                    class="form-label d-flex justify-content-between">Descrição da Solução como um todo
+                                    e Justificativa da Compra
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
                                         @click="generate('solution_full_description')">
                                         <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
@@ -610,9 +569,56 @@ onMounted(() => {
                                     v-model="page.data.solution_full_description" />
                             </div>
                             <div class="col-12">
+                                <label for="object_execution_model"
+                                    class="form-label d-flex justify-content-between">Modelo de gestão do contrato
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('object_execution_model')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.object_execution_model"
+                                    placeholder="Modelo de gestão do contrato" identifier="object_execution_model"
+                                    v-model="page.data.object_execution_model" />
+                            </div>
+                            <div class="col-12">
+                                <label for="object_execution_model"
+                                    class="form-label d-flex justify-content-between">Modelo de execução do objeto
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('object_execution_model')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.object_execution_model"
+                                    placeholder="Modelo de execução do objeto" identifier="object_execution_model"
+                                    v-model="page.data.object_execution_model" />
+                            </div>
+                            <div class="col-12">
+                                <label for="funds_suitability"
+                                    class="form-label d-flex justify-content-between">Adequação orçamentária
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('funds_suitability')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.funds_suitability"
+                                    placeholder="Adequação orçamentária" identifier="funds_suitability"
+                                    v-model="page.data.funds_suitability" />
+                            </div>
+                            <div class="col-12">
+                                <label for="parts_obligations"
+                                    class="form-label d-flex justify-content-between">Obrigações das partes
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('parts_obligations')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.parts_obligations"
+                                    placeholder="Ogrigações das partes" identifier="parts_obligations"
+                                    v-model="page.data.parts_obligations" />
+                            </div>
+                        </div>
+                        <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
+                            :class="{ 'show active': tabs.is('planejamento') }">
+                            <div class="col-12">
                                 <label for="contract_calculus_memories"
-                                    class="form-label d-flex justify-content-between">Estimativa das Quantidades
-                                    Contratadas
+                                    class="form-label d-flex justify-content-between">Estimativas de Quantidades e
+                                    Valores
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
                                         @click="generate('contract_calculus_memories')">
                                         <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
@@ -635,109 +641,53 @@ onMounted(() => {
                                     identifier="contract_expected_price" v-model="page.data.contract_expected_price" />
                             </div>
                             <div class="col-12">
-                                <label for="solution_parcel_justification"
-                                    class="form-label d-flex justify-content-between">Justificativa para o
-                                    Parcelamento ou Não
+                                <label for="contract_forecast" class="form-label d-flex justify-content-between">
+                                    Alinhamento com o Planejamento Anual
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('solution_parcel_justification')">
+                                        @click="generate('contract_forecast')">
                                         <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                 </label>
-                                <InputRichText :valid="page.valids.solution_parcel_justification"
-                                    placeholder="Justificativa para o Parcelamento ou Não"
-                                    identifier="solution_parcel_justification"
-                                    v-model="page.data.solution_parcel_justification" />
-                            </div>
-                            <div class="col-12">
-                                <label for="correlated_contracts"
-                                    class="form-label d-flex justify-content-between">Contratações Correlatas
-                                    e/ou Interdependentes
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('correlated_contracts')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.correlated_contracts"
-                                    placeholder="Contratações Correlatas e/ou Interdependentes"
-                                    identifier="correlated_contracts" v-model="page.data.correlated_contracts" />
-                            </div>
-                        </div>
-                        <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
-                            :class="{ 'show active': tabs.is('planejamento') }">
-                            <div class="col-12">
-                                <label for="expected_results"
-                                    class="form-label d-flex justify-content-between">Resultados Pretendidos
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('expected_results')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.expected_results"
-                                    placeholder="Resultados Pretendidos" identifier="expected_results"
-                                    v-model="page.data.expected_results" />
-                            </div>
-                            <div class="col-12">
-                                <label for="contract_previous_actions"
-                                    class="form-label d-flex justify-content-between">Providências a Serem
-                                    Tomadas
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('contract_previous_actions')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.contract_previous_actions"
-                                    placeholder="Providências a Serem Tomadas" identifier="contract_previous_actions"
-                                    v-model="page.data.contract_previous_actions" />
-                            </div>
-                            <div class="col-12">
-                                <label for="contract_alignment"
-                                    class="form-label d-flex justify-content-between">Alinhamento de Contrato
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('contract_alignment')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.contract_alignment"
-                                    placeholder="Alinhamento de Contrato" identifier="contract_alignment"
-                                    v-model="page.data.contract_alignment" />
+                                <InputRichText :valid="page.valids.contract_forecast"
+                                    placeholder="Previsão de Realização da Contratação" identifier="contract_forecast"
+                                    v-model="page.data.contract_forecast" />
                             </div>
                             <div class="col-12">
                                 <label for="ambiental_impacts"
-                                    class="form-label d-flex justify-content-between">Possíveis Impactos
+                                    class="form-label d-flex justify-content-between">Previsão de Resultados e Impactos
                                     Ambientais
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
                                         @click="generate('ambiental_impacts')">
                                         <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                 </label>
                                 <InputRichText :valid="page.valids.ambiental_impacts"
-                                    placeholder="Possíveis Impactos Ambientais" identifier="ambiental_impacts"
-                                    v-model="page.data.ambiental_impacts" />
+                                    placeholder="Previsão de Resultados e Impactos Ambientais"
+                                    identifier="ambiental_impacts" v-model="page.data.ambiental_impacts" />
                             </div>
-                        </div>
-                        <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
-                            :class="{ 'show active': tabs.is('viabilidade') }">
-                            <div class="row mb-3 g-3">
-                                <div>
-                                    <h2 class="txt-color text-center m-0">
-                                        <i class="bi bi-check-all me-1"></i>
-                                        Declaração de Viabilidade
-                                    </h2>
-                                    <p class="txt-color-sec small text-center m-0"
-                                        :class="{ 'text-danger': page.valids.viability_declaration }">
-                                        Selecione uma das opções abaixo
-                                    </p>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <input class="btn-check" id="viability-1" type="radio" name="viability" value="1"
-                                        v-model="page.data.viability_declaration">
-                                    <label class="btn btn-action-primary-tls" for="viability-1">Esta equipe de
-                                        planejamento
-                                        declara viável esta contratação com base neste ETP, consoante o inciso
-                                        XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</label>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                    <input class="btn-check" id="viability-2" type="radio" name="viability" value="0"
-                                        v-model="page.data.viability_declaration">
-                                    <label class="btn btn-action-danger-tls" for="viability-2">Esta equipe de
-                                        planejamento
-                                        declara inviável esta contratação com base neste ETP, consoante o inciso
-                                        XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</label>
-                                </div>
+                            <div class="col-12">
+                                <label for="payment_measure_criteria"
+                                    class="form-label d-flex justify-content-between">Critérios de medição e de
+                                    pagamento
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('payment_measure_criteria')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.payment_measure_criteria"
+                                    placeholder="Critérios de medição e de pagamento"
+                                    identifier="payment_measure_criteria"
+                                    v-model="page.data.payment_measure_criteria" />
+                            </div>
+                            <div class="col-12">
+                                <label for="supplier_selection_criteria"
+                                    class="form-label d-flex justify-content-between">Forma e critérios de seleção do
+                                    fornecedor
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('supplier_selection_criteria')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.supplier_selection_criteria"
+                                    placeholder="Forma e critérios de seleção do fornecedor"
+                                    identifier="supplier_selection_criteria"
+                                    v-model="page.data.supplier_selection_criteria" />
                             </div>
                         </div>
                         <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('anexos') }">

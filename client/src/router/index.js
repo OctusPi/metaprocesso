@@ -151,6 +151,12 @@ const router = createRouter({
       component: () => import('../views/RiskMapsView.vue')
     },
     {
+      path: '/refterms',
+      name: 'refterms',
+      meta: { auth: true },
+      component: () => import('../views/RefTermsView.vue')
+    },
+    {
       path: '/forbidden',
       name: 'forbidden',
       component: () => import('../views/ForbiddenView.vue')
