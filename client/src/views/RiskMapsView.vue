@@ -13,6 +13,7 @@ import exp from '@/services/export';
 import Tabs from '@/utils/tabs';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import RiskMapReport from './reports/RiskMapReport.vue';
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -284,8 +285,8 @@ onMounted(() => {
                                 <div class="accordion-item secondary">
                                     <h2 class="accordion-header" id="accordionSearchProcessHeadId">
                                         <button class="w-100 text-center px-2 py-3" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#accordionSearchColapseRegisterId"
-                                            aria-expanded="true" aria-controls="accordionSearchColapseRegisterId">
+                                            data-bs-toggle="collapse" data-bs-target="#accordionSearchForSearch"
+                                            aria-expanded="true" aria-controls="accordionSearchForSearch">
                                             <h2 class="txt-color text-center m-0">
                                                 <i class="bi bi-journal-bookmark me-1"></i>
                                                 Localizar Processo
@@ -297,16 +298,16 @@ onMounted(() => {
                                             </p>
                                         </button>
                                     </h2>
-                                    <div id="accordionSearchColapseRegisterId" class="accordion-collapse collapse"
-                                        :class="{ 'show': main.data.id }"
-                                        aria-labelledby="accordion-processRegisterHeadId"
-                                        data-bs-parent="#accordion-process">
+                                    <div id="accordionSearchForSearch" class="accordion-collapse collapse show"
+                                        aria-labelledby="accordion-processHeadId"
+                                        data-bs-parent="#accordionSearchForSearch">
                                         <div class="accordion-body p-0 m-0">
                                             <div class="p-4 pt-0 mx-2">
                                                 <div class="dashed-separator mb-3"></div>
                                                 <div class="row g-3">
                                                     <div class="col-sm-12 col-md-4">
-                                                        <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                                        <label for="date_s_ini" class="form-label">Data
+                                                            Inicial</label>
                                                         <VueDatePicker auto-apply v-model="main.process.search.date_i"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
@@ -316,7 +317,8 @@ onMounted(() => {
                                                             menu-class-name="dp-custom-menu" />
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
-                                                        <label for="date_s_fin" class="form-label">Data Final</label>
+                                                        <label for="date_s_fin" class="form-label">Data
+                                                            Final</label>
                                                         <VueDatePicker auto-apply v-model="main.process.search.date_f"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
@@ -327,17 +329,22 @@ onMounted(() => {
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
-                                                        <input @keydown.enter.prevent="list_processes" type="text"
-                                                            name="protocol" class="form-control" id="s-protocol"
-                                                            v-model="main.process.search.protocol"
-                                                            placeholder="Número do Protocolo do Processo" />
+                                                        <input type="text" name="protocol" class="form-control"
+                                                            id="s-protocol" v-model="main.process.search.protocol"
+                                                            placeholder="Número do Protocolo do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-unit" class="form-label">Unidades</label>
+                                                        <InputDropMultSelect v-model="main.process.search.units"
+                                                            :options="main.selects.units" identify="units" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-8">
                                                         <label for="s-description" class="form-label">Objeto</label>
-                                                        <input @keydown.enter.prevent="list_processes" type="text"
-                                                            name="description" class="form-control" id="s-description"
-                                                            v-model="main.process.search.description"
-                                                            placeholder="Pesquise por partes do Objeto do Processo" />
+                                                        <input type="text" name="description" class="form-control"
+                                                            id="s-description" v-model="main.process.search.description"
+                                                            placeholder="Pesquise por partes do Objeto do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                     </div>
                                                     <div class="d-flex flex-row-reverse mt-4">
                                                         <button type="button" @click="list_processes"
@@ -418,16 +425,15 @@ onMounted(() => {
                                             </p>
                                         </button>
                                     </h2>
-                                    <div id="accordionSearchColapseRegisterId" class="accordion-collapse collapse"
-                                        :class="{ 'show': main.data.id }"
-                                        aria-labelledby="accordion-processRegisterHeadId"
-                                        data-bs-parent="#accordion-process">
+                                    <div id="accordionSearchColapseRegisterId" class="accordion-collapse collapse show"
+                                        aria-labelledby="accordion-processHeadId" data-bs-parent="#accordion-process">
                                         <div class="accordion-body p-0 m-0">
                                             <div class="p-4 pt-0 mx-2">
                                                 <div class="dashed-separator mb-3"></div>
                                                 <div class="row g-3">
                                                     <div class="col-sm-12 col-md-4">
-                                                        <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                                        <label for="date_s_ini" class="form-label">Data
+                                                            Inicial</label>
                                                         <VueDatePicker auto-apply v-model="main.process.search.date_i"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
@@ -437,7 +443,8 @@ onMounted(() => {
                                                             menu-class-name="dp-custom-menu" />
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
-                                                        <label for="date_s_fin" class="form-label">Data Final</label>
+                                                        <label for="date_s_fin" class="form-label">Data
+                                                            Final</label>
                                                         <VueDatePicker auto-apply v-model="main.process.search.date_f"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
@@ -450,13 +457,20 @@ onMounted(() => {
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
                                                         <input type="text" name="protocol" class="form-control"
                                                             id="s-protocol" v-model="main.process.search.protocol"
-                                                            placeholder="Número do Protocolo do Processo" />
+                                                            placeholder="Número do Protocolo do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-unit" class="form-label">Unidades</label>
+                                                        <InputDropMultSelect v-model="main.process.search.units"
+                                                            :options="main.selects.units" identify="units" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-8">
                                                         <label for="s-description" class="form-label">Objeto</label>
                                                         <input type="text" name="description" class="form-control"
                                                             id="s-description" v-model="main.process.search.description"
-                                                            placeholder="Pesquise por partes do Objeto do Processo" />
+                                                            placeholder="Pesquise por partes do Objeto do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                     </div>
                                                     <div class="d-flex flex-row-reverse mt-4">
                                                         <button type="button" @click="list_processes"

@@ -8,6 +8,7 @@ use App\Models\Dfd;
 use App\Models\Organ;
 use App\Models\Process;
 use App\Models\RiskMap;
+use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Notify;
 use App\Utils\Utils;
@@ -111,6 +112,7 @@ class RiskMaps extends Controller
     public function selects(Request $request)
     {
         return response()->json(array_merge([
+            'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
             'phases' => RiskMap::list_phases(),
             'risk_impacts' => RiskMap::list_impacts(),
