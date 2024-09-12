@@ -18,7 +18,6 @@ use App\Models\PriceRecord;
 use Illuminate\Http\Request;
 use App\Http\Middlewares\Data;
 use App\Http\Controllers\Controller;
-use Log;
 use Mail;
 use Str;
 
@@ -52,6 +51,24 @@ class PriceRecords extends Controller
         }
 
         return $save;
+    }
+
+    public function list(Request $request)
+    {
+        $date_between = $request->has(['date_ini', 'date_fin']) ?
+                        ['date_ini' => [$request->date_ini, $request->date_fin]] :
+                        ['date_ini' => [date('Y') . '-01-01', date('Y-m-d')]];
+
+        $objs_search = Utils::map_search_obj($request->suppliers, 'suppliers', 'id');
+
+        return $this->base_list(
+            $request,
+            ['protocol', 'status'],
+            ['date_ini'],
+            ['process'],
+            $date_between,
+            $objs_search
+        );
     }
 
     /**
@@ -116,6 +133,7 @@ class PriceRecords extends Controller
             'process_types' => Process::list_types(),
             'process_status' => Process::list_status(),
 
+            'suppliers' => Data::find(new Supplier(), order:['name']),
             'supplier_modalities' => Supplier::list_modalitys(),
             'supplier_sizes' => Supplier::list_sizes(),
 

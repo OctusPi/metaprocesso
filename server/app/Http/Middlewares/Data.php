@@ -209,7 +209,7 @@ class Data
         if (method_exists($model, 'rules') && method_exists($model, 'messages')) {
             $validator = Validator::make($data, $model->rules(), $model->messages());
             if ($validator->fails()) {
-                \Log::info($validator->errors());
+                Log::info($validator->errors());
                 return $validator->errors()->first();
             }
         }
