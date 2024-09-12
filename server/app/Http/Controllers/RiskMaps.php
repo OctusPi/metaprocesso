@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Comission;
 use App\Models\ComissionMember;
 use App\Models\Dfd;
-use App\Models\Organ;
 use App\Models\Process;
 use App\Models\RiskMap;
 use App\Models\Unit;
@@ -42,7 +41,7 @@ class RiskMaps extends Controller
      */
     public function list_processes(Request $request)
     {
-        if (!$request->anyFilled('protocol', 'description', 'date_i', 'date_f')) {
+        if (!$request->anyFilled('units', 'protocol', 'description', 'date_i', 'date_f')) {
             return response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 500);
         }
 

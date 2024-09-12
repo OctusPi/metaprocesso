@@ -66,7 +66,7 @@ class Processes extends Controller
         );
 
         $this->model->dfds = $dfds->toArray();
-        $this->model->ordinators = $dfds->pluck('ordinator');
+        $this->model->ordinators = collect($dfds->toArray())->pluck('ordinator')->toArray();
 
         return $this->base_save($request, $this->model->toArray());
     }

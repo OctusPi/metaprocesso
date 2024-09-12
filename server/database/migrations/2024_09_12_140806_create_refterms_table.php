@@ -33,8 +33,8 @@ return new class extends Migration
             $table->text('supplier_selection_criteria');
             $table->text('funds_suitability');
             $table->text('parts_obligation');
-            $table->integer('status');
             $table->date('emission');
+            $table->integer('type');
         });
     }
 

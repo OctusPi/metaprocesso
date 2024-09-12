@@ -13,7 +13,7 @@ class RefTerm extends Model
 {
     use HasFactory;
 
-    protected $table = 'etps';
+    protected $table = 'refterms';
 
     protected $fillable = [
         'id',
@@ -37,7 +37,6 @@ class RefTerm extends Model
         'supplier_selection_criteria',
         'funds_suitability',
         'parts_obligation',
-        'status',
     ];
 
     public function rules(): array
@@ -76,8 +75,16 @@ class RefTerm extends Model
             'supplier_selection_criteria' => 'required',
             'funds_suitability' => 'required',
             'parts_obligation' => 'required',
-            'status' => 'required',
             'emission' => 'required',
+            'type' => 'required'
+        ];
+    }
+
+    public static function list_types(): array
+    {
+        return [
+            ['id' => 1, 'title' => 'Contratação de Serviço'],
+            ['id' => 2, 'title' => 'Aquisição de Materiais'],
         ];
     }
 
@@ -86,17 +93,6 @@ class RefTerm extends Model
         return [
             'required' => 'Campo obrigatório não informado!',
             'unique' => 'Termo já registrado no sistema!'
-        ];
-    }
-
-    public static function list_status(): array
-    {
-        return [
-            ['id' => 0, 'title' => 'Rascunho'],
-            ['id' => 1, 'title' => 'Em Preenchimento'],
-            ['id' => 2, 'title' => 'Pendente'],
-            ['id' => 3, 'title' => 'Finalizado'],
-            ['id' => 4, 'title' => 'Bloqueado'],
         ];
     }
 

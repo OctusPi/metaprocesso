@@ -17,6 +17,7 @@ use App\Http\Controllers\Processes;
 use App\Http\Controllers\Programs;
 use App\Http\Controllers\Proposals;
 use App\Http\Controllers\ProposalsSupplier;
+use App\Http\Controllers\RefTerms;
 use App\Http\Controllers\RiskMaps;
 use App\Http\Controllers\Sectors;
 use App\Http\Controllers\Suppliers;
@@ -85,6 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
     $common('/proposals', Proposals::class);
     $common('/attachments/{origin}/{protocol}', Attachments::class);
     $common('/riskiness', RiskMaps::class);
+    $common('/refterms', RefTerms::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
@@ -122,6 +124,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/list_processes', 'list_processes');
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
+    });
+
+    Route::prefix('/refterms')->controller(RefTerms::class)->group(function(){
+        Route::post('/list_processes', 'list_processes');
+        Route::post('/list_dfds', 'list_dfds');
+        Route::get('/list_dfd_items/{id}', 'list_dfd_items');
+        Route::get('/fetch_etp/{process}', 'fetch_etp');
     });
 
     Route::prefix('/comissionmembers/{comission}')->controller(ComissionMembers::class)->group(function(){
