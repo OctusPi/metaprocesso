@@ -18,7 +18,7 @@
     padding: 10px 34px !important;
     color: var(--color-input-txt) !important;
     font-weight: 600;
-    font-size: .9em;
+    font-size: 1em;
 }
 
 .dp-custom-input-dtpk-alert {
@@ -27,7 +27,7 @@
     color: var(--color-danger-txt) !important;
     padding: 10px 34px !important;
     font-weight: 600;
-    font-size: .9em;
+    font-size: 1em;
 }
 
 .dp-custom-cell {

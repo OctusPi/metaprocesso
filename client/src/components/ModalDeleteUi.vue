@@ -57,7 +57,7 @@ function remove() {
                         Deseja continuar?</p>
                     <div>
                         <input placeholder="Senha de acesso" type="password" name="password" class="form-control"
-                            :class="{ 'form-control-alert': pass.is_out }" id="conf-password" v-model="pass.userpass">
+                            :class="{ 'form-control-alert': pass.is_out }" id="conf-password" v-model="pass.userpass" @keydown.enter.prevent="remove" >
                     </div>
                 </div>
                 <div class="modal-footer border-0">

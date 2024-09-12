@@ -2,10 +2,7 @@
 
 namespace App\Mail;
 
-use \App\Models\Process;
-use App\Models\Supplier;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
@@ -17,7 +14,7 @@ class ProposalRequest extends BaseMail
     /**
      * Create a new message instance.
      */
-    public function __construct(protected Process $process, protected Supplier $supplier, protected $token, protected $code, protected $expiration)
+    public function __construct(protected $process, protected $supplier, protected $token, protected $code, protected $start, protected $expiration)
     {
         parent::__construct();
     }
@@ -40,7 +37,7 @@ class ProposalRequest extends BaseMail
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.changepassrequest',
+            markdown: 'mail.proposalrequest',
             with: [
                 'process' => [
                     'protocol'    => $this->process->protocol,
@@ -56,6 +53,7 @@ class ProposalRequest extends BaseMail
                 'code_validation' => $this->code,
                 'proposal_url' => $this->makeUrl([$this->proposalRoute, $this->token]),
                 'system' => $this->system,
+                'start' => $this->start,
                 'expiration' => $this->expiration,
                 'sender' => $this->sender
             ]
