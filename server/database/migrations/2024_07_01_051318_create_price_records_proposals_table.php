@@ -24,10 +24,12 @@ return new class extends Migration
             $table->foreignId('organ')->constrained('organs');
             $table->foreignId('process')->constrained('processes');
             $table->foreignId('price_record')->constrained('price_records');
-            $table->foreignId('author')->constrained('users');
             $table->foreignId('supplier')->nullable()->constrained('suppliers');
+            $table->foreignId('author')->constrained('users');
             $table->integer('modality');
             $table->json('items')->nullable();
+            $table->longText('logomarca')->nullable();
+            $table->string('attachment')->nullable();
             $table->integer('status');
         });
     }

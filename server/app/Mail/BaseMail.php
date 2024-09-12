@@ -10,6 +10,7 @@ class BaseMail extends Mailable
     protected string $sender;
     protected string $appUrl;
     protected string $renewRoute = 'renew';
+    protected string $proposalRoute = 'proposal_supplier';
 
     public function __construct(){
         $this->system = config('app.name');

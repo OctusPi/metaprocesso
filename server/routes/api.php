@@ -15,6 +15,8 @@ use App\Http\Controllers\Ordinators;
 use App\Http\Controllers\PriceRecords;
 use App\Http\Controllers\Processes;
 use App\Http\Controllers\Programs;
+use App\Http\Controllers\Proposals;
+use App\Http\Controllers\ProposalsSupplier;
 use App\Http\Controllers\RiskMaps;
 use App\Http\Controllers\Sectors;
 use App\Http\Controllers\Suppliers;
@@ -35,6 +37,12 @@ Route::prefix('/auth')->controller(Authentication::class)->group(function () {
     Route::get('/check', 'check');
     Route::get('/auth_renew/{token_renew}', 'auth_renew');
     Route::post('/renew', 'renew');
+});
+
+Route::prefix('/proposal_supplier')->controller(ProposalsSupplier::class)->group(function(){
+    Route::post('/save', 'save');
+    Route::post('/details', 'save');
+    Route::get('/check', 'check');
 });
 
 
@@ -74,6 +82,7 @@ Route::middleware('auth:sanctum')->group(function () {
     $common('/processes', Processes::class);
     $common('/etps', Etps::class);
     $common('/pricerecords', PriceRecords::class);
+    $common('/proposals', Proposals::class);
     $common('/attachments/{origin}/{protocol}', Attachments::class);
     $common('/riskiness', RiskMaps::class);
 
@@ -138,5 +147,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 // fallback 404
 Route::fallback(function () {
-    return Response()->json(Notify::warning('Destino solicitado não existe...'), 404);
+    return response()->json(Notify::warning('Destino solicitado não existe...'), 404);
 });
