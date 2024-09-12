@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Casts\Json;
+use App\Utils\Dates;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -76,6 +79,22 @@ class Proposal extends Model
             'required' => 'Campo obrigatório não informado!',
             'unique'   => 'Já existe uma coleta para esse fornecedor.'
         ];
+    }
+
+    public function dateIni(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
+    }
+
+    public function dateFin(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
     }
 
     public static function list_modalitys():array

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ProposalRequest;
+use App\Models\ComissionMember;
 use App\Models\Dfd;
 use App\Models\Proposal;
 use App\Models\Supplier;
@@ -16,12 +18,40 @@ use App\Models\PriceRecord;
 use Illuminate\Http\Request;
 use App\Http\Middlewares\Data;
 use App\Http\Controllers\Controller;
+use Log;
+use Mail;
+use Str;
 
 class PriceRecords extends Controller
 {
     public function __construct()
     {
         parent::__construct(PriceRecord::class, User::MOD_PRICERECORDS['module']);
+    }
+
+    public function save(Request $request)
+    {
+        $comission_members = Data::find(new ComissionMember(), ['comission' => $request->comission]);
+        if ($comission_members->count() == 0) {
+            return response()->json(Notify::warning('Comissão Selecionada não possui membros ativos...'), 400);
+        }
+
+        $process = json_decode($request->process);
+
+        $save = $this->base_save($request, [
+            'ip' => $request->ip(),
+            'process' => $process->id,
+            'organ' => Data::getOrgan(),
+            'comission_members' => $comission_members->toArray(),
+            'author' => $request->user()->id,
+            'status' => $request->status ?? PriceRecord::S_START
+        ]);
+
+        if($save->status() == 200){
+            $this->processProposals($request);
+        }
+
+        return $save;
     }
 
     /**
@@ -92,5 +122,57 @@ class PriceRecords extends Controller
             'proposal_modalities' => Proposal::list_modalitys(),
             'proposal_status' => Proposal::list_status()
         ], Dfd::make_details()), 200);
+    }
+
+    private function processProposals(Request $request): void
+    {
+        if ($this->model->id) {
+
+            $process = json_decode($request->process);
+            $suppliers = json_decode($request->suppliers);
+
+
+            if (!empty($suppliers)) {
+                foreach ($suppliers as $supplier) {
+
+                    $token = $this->model->id . $supplier->id . Str::random(16);
+                    $hour_send = date('H:i:s');
+
+                    if (
+                        !Proposal::firstWhere([
+                            ['price_record', $this->model->id],
+                            ['supplier', $supplier->id]
+                        ])
+                    ) {
+
+                        $proposal = new Proposal([
+                            'protocol' => $request->protocol,
+                            'ip' => $request->ip(),
+                            'author' => $request->user()->id,
+                            'token' => $token,
+                            'date_ini' => $request->date_ini,
+                            'hour_ini' => $hour_send,
+                            'organ' => Data::getOrgan(),
+                            'process' => $process->id,
+                            'price_record' => $this->model->id,
+                            'supplier' => $supplier->id,
+                            'modality' => Proposal::M_MAIL,
+                            'status' => Proposal::S_START
+                        ]);
+
+                        if ($proposal->save()) {
+                            Mail::to($supplier->email)->send(new ProposalRequest(
+                                $process,
+                                $supplier,
+                                $token,
+                                $request->protocol,
+                                $request->date_ini.' '.$hour_send,
+                                $request->date_fin));
+                        }
+                    }
+
+                }
+            }
+        }
     }
 }
