@@ -13,6 +13,7 @@ import exp from '@/services/export';
 import Tabs from '@/utils/tabs';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import RiskMapReport from './reports/RiskMapReport.vue';
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -284,8 +285,8 @@ onMounted(() => {
                                 <div class="accordion-item secondary">
                                     <h2 class="accordion-header" id="accordionSearchProcessHeadId">
                                         <button class="w-100 text-center px-2 py-3" type="button"
-                                            data-bs-toggle="collapse" data-bs-target="#accordionSearchColapseRegisterId"
-                                            aria-expanded="true" aria-controls="accordionSearchColapseRegisterId">
+                                            data-bs-toggle="collapse" data-bs-target="#accordionSearchForSearch"
+                                            aria-expanded="true" aria-controls="accordionSearchForSearch">
                                             <h2 class="txt-color text-center m-0">
                                                 <i class="bi bi-journal-bookmark me-1"></i>
                                                 Localizar Processo
@@ -297,16 +298,15 @@ onMounted(() => {
                                             </p>
                                         </button>
                                     </h2>
-                                    <div id="accordionSearchColapseRegisterId" class="accordion-collapse collapse"
-                                        :class="{ 'show': main.data.id }"
-                                        aria-labelledby="accordion-processRegisterHeadId"
-                                        data-bs-parent="#accordion-process">
+                                    <div id="accordionSearchForSearch" class="accordion-collapse collapse show"
+                                        aria-labelledby="accordion-processHeadId" data-bs-parent="#accordionSearchForSearch">
                                         <div class="accordion-body p-0 m-0">
                                             <div class="p-4 pt-0 mx-2">
                                                 <div class="dashed-separator mb-3"></div>
                                                 <div class="row g-3">
                                                     <div class="col-sm-12 col-md-4">
-                                                        <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                                        <label for="date_s_ini" class="form-label">Data
+                                                            Inicial</label>
                                                         <VueDatePicker auto-apply v-model="main.process.search.date_i"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
@@ -316,7 +316,8 @@ onMounted(() => {
                                                             menu-class-name="dp-custom-menu" />
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
-                                                        <label for="date_s_fin" class="form-label">Data Final</label>
+                                                        <label for="date_s_fin" class="form-label">Data
+                                                            Final</label>
                                                         <VueDatePicker auto-apply v-model="main.process.search.date_f"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
@@ -327,17 +328,22 @@ onMounted(() => {
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
-                                                        <input @keydown.enter.prevent="list_processes" type="text"
-                                                            name="protocol" class="form-control" id="s-protocol"
-                                                            v-model="main.process.search.protocol"
-                                                            placeholder="Número do Protocolo do Processo" />
+                                                        <input type="text" name="protocol" class="form-control"
+                                                            id="s-protocol" v-model="main.process.search.protocol"
+                                                            placeholder="Número do Protocolo do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-unit" class="form-label">Unidades</label>
+                                                        <InputDropMultSelect v-model="main.process.search.units"
+                                                            :options="main.selects.units" identify="units" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-8">
                                                         <label for="s-description" class="form-label">Objeto</label>
-                                                        <input @keydown.enter.prevent="list_processes" type="text"
-                                                            name="description" class="form-control" id="s-description"
-                                                            v-model="main.process.search.description"
-                                                            placeholder="Pesquise por partes do Objeto do Processo" />
+                                                        <input type="text" name="description" class="form-control"
+                                                            id="s-description" v-model="main.process.search.description"
+                                                            placeholder="Pesquise por partes do Objeto do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                     </div>
                                                     <div class="d-flex flex-row-reverse mt-4">
                                                         <button type="button" @click="list_processes"
@@ -418,16 +424,15 @@ onMounted(() => {
                                             </p>
                                         </button>
                                     </h2>
-                                    <div id="accordionSearchColapseRegisterId" class="accordion-collapse collapse"
-                                        :class="{ 'show': main.data.id }"
-                                        aria-labelledby="accordion-processRegisterHeadId"
-                                        data-bs-parent="#accordion-process">
+                                    <div id="accordionSearchColapseRegisterId" class="accordion-collapse collapse show"
+                                        aria-labelledby="accordion-processHeadId" data-bs-parent="#accordion-process">
                                         <div class="accordion-body p-0 m-0">
                                             <div class="p-4 pt-0 mx-2">
                                                 <div class="dashed-separator mb-3"></div>
                                                 <div class="row g-3">
                                                     <div class="col-sm-12 col-md-4">
-                                                        <label for="date_s_ini" class="form-label">Data Inicial</label>
+                                                        <label for="date_s_ini" class="form-label">Data
+                                                            Inicial</label>
                                                         <VueDatePicker auto-apply v-model="main.process.search.date_i"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
@@ -437,7 +442,8 @@ onMounted(() => {
                                                             menu-class-name="dp-custom-menu" />
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
-                                                        <label for="date_s_fin" class="form-label">Data Final</label>
+                                                        <label for="date_s_fin" class="form-label">Data
+                                                            Final</label>
                                                         <VueDatePicker auto-apply v-model="main.process.search.date_f"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
                                                             model-type="yyyy-MM-dd"
@@ -450,13 +456,20 @@ onMounted(() => {
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
                                                         <input type="text" name="protocol" class="form-control"
                                                             id="s-protocol" v-model="main.process.search.protocol"
-                                                            placeholder="Número do Protocolo do Processo" />
+                                                            placeholder="Número do Protocolo do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-sm-12 col-md-4">
+                                                        <label for="s-unit" class="form-label">Unidades</label>
+                                                        <InputDropMultSelect v-model="main.process.search.units"
+                                                            :options="main.selects.units" identify="units" />
+                                                    </div>
+                                                    <div class="col-sm-12 col-md-8">
                                                         <label for="s-description" class="form-label">Objeto</label>
                                                         <input type="text" name="description" class="form-control"
                                                             id="s-description" v-model="main.process.search.description"
-                                                            placeholder="Pesquise por partes do Objeto do Processo" />
+                                                            placeholder="Pesquise por partes do Objeto do Processo"
+                                                            @keydown.enter.prevent="list_processes" />
                                                     </div>
                                                     <div class="d-flex flex-row-reverse mt-4">
                                                         <button type="button" @click="list_processes"
@@ -475,144 +488,6 @@ onMounted(() => {
                                                     }" />
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade content p-4 pt-1 row m-0 g-3"
-                            :class="{ 'show active': tabs.is('infos') }">
-                            <div class="col-sm-12 col-md-8">
-                                <label for="comission" class="form-label">Comissão</label>
-                                <select name="comission" class="form-control"
-                                    :class="{ 'form-control-alert': main.valids.comission }" id="comission"
-                                    v-model="main.data.comission">
-                                    <option value=""></option>
-                                    <option v-for="o in main.selects.comissions" :key="o.id" :value="o.id">
-                                        {{ o.title }}
-                                    </option>
-                                </select>
-                                <div class="form-text txt-color-sec">
-                                    Ao selecionar a comissão/equipe de planejamento seus
-                                    integrantes serão vinculados ao documento
-                                </div>
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="phase" class="form-label">Fase</label>
-                                <select name="phase" class="form-control" :class="{
-                                    'form-control-alert': main.valids.phase
-                                }" id="phase" v-model="main.data.phase">
-                                    <option value=""></option>
-                                    <option v-for="o in main.selects.phases" :key="o.id" :value="o.id">
-                                        {{ o.title }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-sm-12">
-                                <label class="form-label" for="description">Descrição do mapeamento</label>
-                                <textarea name="description" class="form-control" rows="4" :class="{
-                                    'form-control-alert': main.valids.description
-                                }" id="description" v-model="main.data.description"></textarea>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade content p-4 pt-2 row m-0 g-3"
-                            :class="{ 'show active': tabs.is('risks') }">
-                            <div v-if="!risks.ui.register">
-                                <div role="heading" class="inside-title mb-4">
-                                    <div>
-                                        <h2>Riscos</h2>
-                                        <p>
-                                            Listagem dos riscos encontrados
-                                        </p>
-                                    </div>
-                                    <div class="d-flex gap-2 flex-wrap">
-                                        <button type="button" @click="risksData.ui('register')"
-                                            class="btn btn-action-primary">
-                                            <ion-icon name="add" class="fs-5"></ion-icon>
-                                            Adicionar
-                                        </button>
-                                    </div>
-                                </div>
-                                <div role="list">
-                                    <TableList secondary :header="risks.header" :body="risks.datalist" :actions="[
-                                        Actions.Edit(risksData.update),
-                                        Actions.FastDelete((id) => risksData.removeCascade(id, accomp, 'id', 'accomp_risk')),
-                                        Actions.Create('download', 'Danos', (id) => swithToModal(id, damage, risks, 'risk_damage'), '#' + damage.modal),
-                                        Actions.Create('download', 'Ações', (id) => swithToModal(id, actions, risks, 'risk_actions'), '#' + actions.modal),
-                                    ]" :virtual="{
-                                        test: (inst) => inst.risk_name
-                                    }" :mounts="{
-                                        'risk_impact': [Mounts.Cast(main.selects.risk_impacts)],
-                                        'risk_probability': [Mounts.Cast(main.selects.risk_probabilities)],
-                                        'risk_level': [Mounts.Level()],
-                                    }" />
-                                </div>
-                            </div>
-                            <div v-if="risks.ui.register">
-                                <div role="heading" class="inside-title mb-4">
-                                    <div>
-                                        <h2>Registrar Risco</h2>
-                                        <p>Preencha os dados abaixo para realizar o registro</p>
-                                    </div>
-                                    <div class="d-flex gap-2 flex-wrap">
-                                        <button @click="risksData.ui('register')" class="btn btn-action-tertiary">
-                                            <ion-icon name="arrow-back" class="fs-5"></ion-icon>
-                                            Voltar
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row g-3">
-                                    <div class="col-sm-12 col-md-8">
-                                        <label for="risk_name" class="form-label">Risco</label>
-                                        <input type="text" name="risk_name" class="form-control"
-                                            :class="{ 'form-control-alert': risks.valids.risk_name }" id="risk_name"
-                                            v-model="risks.data.risk_name" placeholder="Nome do risco">
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="risk_treatment" class="form-label">Tratamento</label>
-                                        <input type="text" name="risk_treatment" class="form-control"
-                                            :class="{ 'form-control-alert': risks.valids.risk_treatment }"
-                                            id="risk_treatment" v-model="risks.data.risk_treatment"
-                                            placeholder="Tratamento do risco">
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="risk_impact" class="form-label">Impacto</label>
-                                        <select name="risk_impact" class="form-control"
-                                            :class="{ 'form-control-alert': risks.valids.risk_impact }" id="risk_impact"
-                                            v-model="risks.data.risk_impact">
-                                            <option value=""></option>
-                                            <option v-for="o in main.selects.risk_impacts" :key="o.id" :value="o.id">
-                                                {{ o.title }} ({{ o.value }})
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="risk_probability" class="form-label">Probabilidade</label>
-                                        <select name="risk_probability" class="form-control"
-                                            :class="{ 'form-control-alert': risks.valids.risk_probability }"
-                                            id="risk_probability" v-model="risks.data.risk_probability">
-                                            <option value=""></option>
-                                            <option v-for="o in main.selects.risk_probabilities" :key="o.id"
-                                                :value="o.id">
-                                                {{ o.title }} ({{ o.value }})
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="risk_related" class="form-label">Relacionado ao(à)</label>
-                                        <input type="text" name="risk_related" class="form-control"
-                                            :class="{ 'form-control-alert': risks.valids.risk_related }"
-                                            id="risk_related" v-model="risks.data.risk_related"
-                                            placeholder="Entidade relacionada ao risco">
-                                    </div>
-                                    <div class="d-flex flex-row-reverse gap-2 mt-4">
-                                        <button type="button" @click="risksData.save" class="btn btn-action-primary">
-                                            <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
-                                            Registrar
-                                        </button>
-                                        <button @click="risksData.ui('register')" class="btn btn-action-tertiary">
-                                            <ion-icon name="close-outline" class="fs-5"></ion-icon>
-                                            Cancelar
-                                        </button>
                                     </div>
                                 </div>
                             </div>
