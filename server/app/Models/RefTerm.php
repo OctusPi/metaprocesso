@@ -1,0 +1,130 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Validation\Rule;
+use App\Utils\Dates;
+
+class RefTerm extends Model
+{
+    use HasFactory;
+
+    protected $table = 'etps';
+
+    protected $fillable = [
+        'id',
+        'protocol',
+        'organ',
+        'comission',
+        'process',
+        'etp',
+        'necessity',
+        'contract_forecast',
+        'contract_requirements',
+        'contract_expected_price',
+        'market_survey',
+        'solution_full_description',
+        'ambiental_impacts',
+        'correlated_contracts',
+        'object_execution_model',
+        'contract_management_model',
+        'payment_measure_criteria',
+        'solution_parcel_justification',
+        'supplier_selection_criteria',
+        'funds_suitability',
+        'parts_obligation',
+        'status',
+    ];
+
+    public function rules(): array
+    {
+        return [
+            'process' => [
+                'required',
+                Rule::unique('etps', 'process')
+                    ->ignore($this->id)
+            ],
+            'etp' => [
+                'required',
+                Rule::unique('etps', 'etp')
+                    ->ignore($this->id)
+            ],
+            'protocol' => [
+                'required',
+                Rule::unique('etps', 'protocol')
+                    ->where('organ', $this->organ)
+                    ->ignore($this->id)
+            ],
+            'organ' => 'required',
+            'comission' => 'required',
+            'necessity' => 'required',
+            'contract_forecast' => 'required',
+            'contract_requirements' => 'required',
+            'contract_expected_price' => 'required',
+            'market_survey' => 'required',
+            'solution_full_description' => 'required',
+            'ambiental_impacts' => 'required',
+            'correlated_contracts' => 'required',
+            'object_execution_model' => 'required',
+            'contract_management_model' => 'required',
+            'payment_measure_criteria' => 'required',
+            'solution_parcel_justification' => 'required',
+            'supplier_selection_criteria' => 'required',
+            'funds_suitability' => 'required',
+            'parts_obligation' => 'required',
+            'status' => 'required',
+            'emission' => 'required',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'unique' => 'Termo já registrado no sistema!'
+        ];
+    }
+
+    public static function list_status(): array
+    {
+        return [
+            ['id' => 0, 'title' => 'Rascunho'],
+            ['id' => 1, 'title' => 'Em Preenchimento'],
+            ['id' => 2, 'title' => 'Pendente'],
+            ['id' => 3, 'title' => 'Finalizado'],
+            ['id' => 4, 'title' => 'Bloqueado'],
+        ];
+    }
+
+    public function emission(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
+    }
+
+    public function process(): HasOne
+    {
+        return $this->hasOne(Process::class, 'id', 'process');
+    }
+
+    public function organ(): HasOne
+    {
+        return $this->hasOne(Organ::class, 'id', 'organ');
+    }
+
+    public function comission(): HasOne
+    {
+        return $this->hasOne(Comission::class, 'id', 'comission');
+    }
+
+    public function etp(): HasOne
+    {
+        return $this->hasOne(Etp::class, 'id', 'etp');
+    }
+}
