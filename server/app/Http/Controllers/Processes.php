@@ -95,7 +95,7 @@ class Processes extends Controller
      */
     public function list_dfds(Request $request)
     {
-        if (!$request->units || !is_string($request->units)) {
+        if (!$request->units) {
             return response()->json(Notify::warning('Informe ao menos uma unidade antes de continuar'), 400);
         }
 
@@ -108,12 +108,11 @@ class Processes extends Controller
             $request->all()
         );
 
-        $unit = array_column(json_decode($request->units), 'id');
         $search = array_merge($search, [
             [
                 'column' => 'unit',
                 'operator' => '=',
-                'value' => $unit,
+                'value' => json_decode($request->units),
                 'mode' => 'AND'
             ]
         ]);

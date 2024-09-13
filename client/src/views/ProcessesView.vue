@@ -69,7 +69,7 @@ const tabs = new Tabs([
 ])
 
 function listDfds() {
-    const units = page.data.units
+    const units = page.data.units.map(o => o.id)
     http.post(`${page.url}/list_dfds`, { units, ...page.dfds.search }, emit, (resp) => {
         page.dfds.datalist = resp.data ?? []
     })

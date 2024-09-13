@@ -60,17 +60,18 @@ function applyMounters(instance, header) {
         }
 
         if (props.mounts && props.mounts[attr.key]) {
-            return props.mounts[attr.key].reduce((initial, current) => {
-                const { value, classes } = current(initial.value, mInstance)
-
-                initial.classes.push(...classes)
-
+            const initial = multiplexer(mInstance, attr.key)
+            return props.mounts[attr.key].reduce((prev, current) => {
+                const { value, classes } = current(
+                    prev.value,
+                    mInstance
+                )
+                prev.classes.push(...classes)
                 if (value != null) {
-                    initial.value = value
+                    prev.value = value
                 }
-
-                return initial
-            }, { value: multiplexer(mInstance, attr.key), classes: [] })
+                return prev
+            }, { initial, value: initial, classes: [] })
         }
 
         return { value: multiplexer(mInstance, attr.key), classes: [] }
