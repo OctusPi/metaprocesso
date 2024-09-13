@@ -297,15 +297,17 @@ onMounted(() => {
                     </form>
                 </div>
                 <div role="list" class="container p-0">
-                    <TableList :header="page.header" :body="page.datalist" :actions="[
-                        Actions.Edit(update_dfd),
-                        Actions.Delete(pageData.remove),
-                        Actions.Export('document-text-outline', export_dfd),
-                        Actions.Create('documents-outline', 'Clonar', clone_dfd),
-                    ]" :mounts="{
-                        status: [Mounts.Cast(page.selects.status), Mounts.Status()],
-                        description: [Mounts.Truncate()],
-                    }" />
+                    <TableList :header="page.header" :body="page.datalist" 
+                        :actions="[
+                            Actions.Edit(update_dfd),
+                            Actions.Delete(pageData.remove),
+                            Actions.Export('document-text-outline', export_dfd),
+                            Actions.Create('documents-outline', 'Clonar', clone_dfd),
+                        ]" 
+                        :mounts="{
+                            status: [Mounts.Cast(page.selects.status), Mounts.Status()],
+                            description: [Mounts.Truncate()],
+                        }" />
                 </div>
             </section>
 

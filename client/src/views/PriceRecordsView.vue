@@ -20,7 +20,6 @@ import notifys from '@/utils/notifys';
 import dates from '@/utils/dates'
 import utils from '@/utils/utils';
 
-
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
 const props = defineProps({
@@ -36,7 +35,6 @@ const [page, pageData] = Layout.new(emit, {
         headers: [
             { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { key: 'modality', title: 'TIPO', sub: [{ key: 'type' }] },
-            { key: 'ordinators.name', title: 'ORDENADORES' },
             { key: 'units.title', title: 'ORIGEM' },
             { title: 'OBJETO', sub: [{ key: 'description' }] },
             { key: 'status', title: 'SITUAÇÃO' }
@@ -66,25 +64,25 @@ const [page, pageData] = Layout.new(emit, {
     },
     proposals: {
         selected: 'emails',
-    types: {
-        'emails': { nav: 'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
-        'manual': { nav: 'Inserção Manual', title: 'Inserir Coletas Manualmente', subtitle: 'Adicionar coletas através de banco de preços do TCE ou sites de varejo online.' },
-    },
-    headers: [
-        { title: 'DATA', key: 'date_ini', sub: [{ key: 'hour_ini' }] },
-        { title: 'REPOSTA', key: 'date_fin', sub: [{ key: 'hour_fin' }] },
-        { title: 'FORNECEDOR', key: 'supplier.name', sub: [{ key: 'supplier.cnpj' }] },
-        { title: 'MODALIDADE', key: 'modality' },
-        { title: 'SITUAÇÃO', key: 'status' }
-    ],
-    data: {
-        'emails': [],
-        'manual': []
-    }
+        types: {
+            'emails': { nav: 'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
+            'manual': { nav: 'Inserção Manual', title: 'Inserir Coletas Manualmente', subtitle: 'Adicionar coletas através de banco de preços do TCE ou sites de varejo online.' },
+        },
+        headers: [
+            { title: 'DATA', key: 'date_ini', sub: [{ key: 'hour_ini' }] },
+            { title: 'REPOSTA', key: 'date_fin', sub: [{ key: 'hour_fin' }] },
+            { title: 'FORNECEDOR', key: 'supplier.name', sub: [{ key: 'supplier.cnpj' }] },
+            { title: 'MODALIDADE', key: 'modality' },
+            { title: 'SITUAÇÃO', key: 'status' }
+        ],
+        data: {
+            'emails': [],
+            'manual': []
+        }
     },
     header: [
         { title: 'IDENTIFICAÇÃO', key: 'date_ini', sub: [{ key: 'protocol' }] },
-        { title: 'PROCESSO', key:'process.protocol', sub: [{ key: 'process.description' }] },
+        { title: 'PROCESSO', key: 'process.protocol', sub: [{ key: 'process.description' }] },
         { title: 'FORCECEDORES', key: 'suppliers.name' },
         { title: 'PRAZO COLETA', key: 'date_fin' },
         { title: 'SITUAÇÃO', key: 'status' }
@@ -112,19 +110,17 @@ function prepare_register() {
     page.data.date_ini = dates.getDateNow()
 }
 
+function prepare_update(id) {
+    http.post('proposals/list', { price_record: id }, emit, (resp) => {
+        page.proposals.data = resp.data
+        pageData.update(id)
+    })
+}
+
 function list_processes() {
     http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
         page.process.data = resp.data ?? []
     })
-}
-
-function dfd_details(id) {
-    if (page.data.process.dfds) {
-        page.dfds.data = page.data.process.dfds.find(obj => obj.id === id)
-        http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
-            page.dfds.data.items = resp.data
-        })
-    }
 }
 
 function list_suppliers() {
@@ -146,7 +142,7 @@ function select_supplier(supplier) {
         if (!page.proposals.data.emails.find(o => o.supplier.id == supplier.id)) {
             page.proposals.data.emails.push({
                 date_ini: page.data.date_ini,
-                hour_ini:dates.getHourNow(),
+                hour_ini: dates.getHourNow(),
                 supplier: supplier,
                 modality: 1,
                 status: 0
@@ -162,6 +158,23 @@ function select_supplier(supplier) {
 function remove_supplier(id) {
     page.data.suppliers = page.data.suppliers.filter(s => s.id !== id);
     page.proposals.data.emails = page.proposals.data.emails.filter(o => o.supplier.id !== id)
+
+    if (page.data.id) {
+        http.post('proposals/destroy', {price_record: page.data.id, supplier: id}, emit)
+    }
+}
+
+function dfd_details(id) {
+    if (page.data.process.dfds) {
+        page.dfds.data = page.data.process.dfds.find(obj => obj.id === id)
+        http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
+            page.dfds.data.items = resp.data
+        })
+    }
+}
+
+function view_colects(id) {
+    console.log(id)
 }
 
 function generate(type) {
@@ -254,8 +267,9 @@ onBeforeMount(() => {
                         </div>
                         <div class="col-sm-12 col-md-8">
                             <label for="s-suppliers" class="form-label">Forncedor</label>
-                            <InputDropMultSelect :options="page.selects.suppliers" identify="search_suppliers" label="name" v-model="page.search.suppliers" />
-                                
+                            <InputDropMultSelect :options="page.selects.suppliers" identify="search_suppliers"
+                                label="name" v-model="page.search.suppliers" />
+
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-status" class="form-label">Situação</label>
@@ -276,11 +290,12 @@ onBeforeMount(() => {
                 </div>
                 <div role="list" class="container p-0">
                     <TableList :header="page.header" :body="page.datalist" :actions="[
-                        Actions.Edit(update_dfd),
-                        Actions.Delete(pageData.remove),]"
-                        :mounts="{
-                        status: [Mounts.Cast(page.selects.status), Mounts.Status()],
-                        'process.description': [Mounts.Truncate()],
+                        Actions.Create('documents-outline', 'Coletas', view_colects),
+                        Actions.Edit(prepare_update),
+                        Actions.Delete(pageData.remove)
+                    ]" :mounts="{
+                            status: [Mounts.Cast(page.selects.status), Mounts.Status()],
+                            'process.description': [Mounts.Truncate()]
                         }" />
                 </div>
             </section>
@@ -405,6 +420,8 @@ onBeforeMount(() => {
                                     <TableList :count="false" :header="page.dfds.headers" :body="page.data.process.dfds"
                                         :mounts="{
                                             status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
+                                            description: [Mounts.Truncate(100)]
+
                                         }" :actions="[
                                             Actions.ModalDetails(dfd_details),
                                         ]" />
@@ -556,7 +573,7 @@ onBeforeMount(() => {
                                                     name="type-collect" :value="i" v-model="page.proposals.selected">
                                                 <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
                                                     c.nav
-                                                }}</label>
+                                                    }}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -571,7 +588,8 @@ onBeforeMount(() => {
                                     </div>
 
                                     <div v-else>
-                                        <TableList :header="page.proposals.headers" :body="page.proposals.data.manual" />
+                                        <TableList :header="page.proposals.headers"
+                                            :body="page.proposals.data.manual" />
                                     </div>
 
                                 </div>

@@ -276,7 +276,7 @@ onMounted(() => {
                             :class="{ 'show active': tabs.is('processo') }">
                             <div class="col-sm-12 col-md-4">
                                 <label for="date_hour_ini" class="form-label">Data e Hora de Abertura</label>
-                                <VueDatePicker id="date_hour_ini" time-picker-inline model-type="dd/MM/yyyy HH:mm"
+                                <VueDatePicker id="date_hour_ini" time-picker-inline model-type="dd/MM/yyyy HH:mm" format="dd/MM/yyyy - HH:mm"
                                     v-model="page.data.date_hour_ini" auto-apply
                                     :input-class-name="page.valids.date_hour_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                     locale="pt-br" calendar-class-name="dp-custom-calendar"
