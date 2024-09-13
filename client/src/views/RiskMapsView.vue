@@ -254,14 +254,14 @@ onMounted(() => {
                     <form @submit.prevent="mainData.list" class="row g-3">
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_ini" class="form-label">Data Inicial</label>
-                            <VueDatePicker auto-apply v-model="main.search.date_i" :enable-time-picker="false"
+                            <VueDatePicker auto-apply v-model="main.search.date_ini" :enable-time-picker="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
                                 locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_fin" class="form-label">Data Final</label>
-                            <VueDatePicker auto-apply v-model="main.search.date_f" :enable-time-picker="false"
+                            <VueDatePicker auto-apply v-model="main.search.date_fin" :enable-time-picker="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
                                 locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
@@ -280,7 +280,7 @@ onMounted(() => {
                             <input type="text" name="description" class="form-control" id="s-description"
                                 v-model="main.search.description" placeholder="Descrição" />
                         </div>
-                        <div class="col-sm-12">
+                        <div class="col-sm-12 mt-4">
                             <div class="accordion mb-3" id="accordion-process">
                                 <div class="accordion-item secondary">
                                     <h2 class="accordion-header" id="accordionSearchProcessHeadId">

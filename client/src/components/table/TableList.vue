@@ -58,7 +58,6 @@ function applyMounters(instance, header) {
         if (!attr.key) {
             return { value: null, classes: [] }
         }
-
         if (props.mounts && props.mounts[attr.key]) {
             const initial = multiplexer(mInstance, attr.key)
             return props.mounts[attr.key].reduce((prev, current) => {
@@ -73,8 +72,8 @@ function applyMounters(instance, header) {
                 return prev
             }, { initial, value: initial, classes: [] })
         }
-
-        return { value: multiplexer(mInstance, attr.key), classes: [] }
+        const initial = multiplexer(mInstance, attr.key)
+        return { initial, value: initial, classes: [] }
     })
 }
 
@@ -125,11 +124,12 @@ watch(() => props.body, (newval) => {
                             <div>
                                 <div v-if="userHeader[j].key" class="small txt-color-sec" :class="mounted.classes">
                                     {{ getValue(mounted.value, userHeader[j]) }}
+                                    <title>Tesrse</title>
                                 </div>
                             </div>
                             <div>
                                 <span v-for="(submounted, k) in applyMounters(instance, userHeader[j].sub ?? [])"
-                                    :key="k" class="inline-block small me-1" :class="submounted.classes">
+                                    :key="k" class="inline-block small me-1" :title="submounted.value" :class="submounted.classes">
                                     {{ userHeader[j].sub[k].title }}
                                     {{ getValue(submounted.value, userHeader[j].sub[k]) }}
                                 </span>

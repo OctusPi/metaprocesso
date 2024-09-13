@@ -25,11 +25,19 @@ class RiskMaps extends Controller
 
     public function list(Request $request)
     {
+        $date_between = [
+            'date_version' => [
+                $request->date_ini ?: date('Y') . '-01-01',
+                $request->date_fin ?: date('Y-m-d')
+            ]
+        ];
+
         return $this->base_list(
             $request,
             ['organ', 'date_version', 'phase', 'description', 'process'],
             ['date_version'],
-            ['process', 'comission']
+            ['process', 'comission'],
+            $date_between
         );
     }
 
