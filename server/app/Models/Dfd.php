@@ -214,7 +214,7 @@ class Dfd extends Model
             ['id' => self::STATUS_RASCUNHO, 'title' => 'Rascunho'],
             ['id' => self::STATUS_ENVIADO, 'title' => 'Enviado'],
             ['id' => self::STATUS_PENDENTE, 'title' => 'Pendente'],
-            ['id' => self::STATUS_BLOQUEADO, 'title' => 'Bloqueado'],
+            ['id' => self::STATUS_BLOQUEADO, 'title' => 'Aprovisionado'],
             ['id' => self::STATUS_PROCESSADO, 'title' => 'Processado']
         ];
     }

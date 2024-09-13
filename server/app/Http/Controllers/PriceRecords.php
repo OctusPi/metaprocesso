@@ -3,35 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ProposalRequest;
-use App\Models\ComissionMember;
-use App\Models\Dfd;
-use App\Models\Proposal;
-use App\Models\Supplier;
-use App\Models\Unit;
-use App\Models\User;
-use App\Utils\Utils;
-use App\Utils\Notify;
-use App\Models\DfdItem;
-use App\Models\Process;
-use App\Models\Comission;
-use App\Models\PriceRecord;
+use App\Models\{ ComissionMember, Dfd, Proposal, Supplier, Unit, User, DfdItem, Process, Comission, PriceRecord };
+use App\Utils\{Utils, Notify};
 use Illuminate\Http\Request;
 use App\Http\Middlewares\Data;
 use App\Http\Controllers\Controller;
 use Mail;
 use Str;
 
+/**
+ * Controller para gerenciamento de Price Records.
+ */
 class PriceRecords extends Controller
 {
+    /**
+     * Construtor do controller, inicializa a classe com o model PriceRecord.
+     */
     public function __construct()
     {
         parent::__construct(PriceRecord::class, User::MOD_PRICERECORDS['module']);
     }
 
+    /**
+     * Salva o registro de preço no banco de dados.
+     *
+     * @param Request $request Requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON indicando sucesso ou falha.
+     */
     public function save(Request $request)
     {
         $comission_members = Data::find(new ComissionMember(), ['comission' => $request->comission]);
-        if ($comission_members->count() == 0) {
+
+        if ($comission_members->isEmpty()) {
             return response()->json(Notify::warning('Comissão Selecionada não possui membros ativos...'), 400);
         }
 
@@ -46,18 +49,24 @@ class PriceRecords extends Controller
             'status' => $request->status ?? PriceRecord::S_START
         ]);
 
-        if($save->status() == 200){
+        if ($save->status() == 200) {
             $this->processProposals($request);
         }
 
         return $save;
     }
 
+    /**
+     * Lista registros de preços.
+     *
+     * @param Request $request Requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse Lista de registros de preços.
+     */
     public function list(Request $request)
     {
         $date_between = $request->has(['date_ini', 'date_fin']) ?
-                        ['date_ini' => [$request->date_ini, $request->date_fin]] :
-                        ['date_ini' => [date('Y') . '-01-01', date('Y-m-d')]];
+            ['date_ini' => [$request->date_ini, $request->date_fin]] :
+            ['date_ini' => [date('Y') . '-01-01', date('Y-m-d')]];
 
         $objs_search = Utils::map_search_obj($request->suppliers, 'suppliers', 'id');
 
@@ -72,10 +81,30 @@ class PriceRecords extends Controller
     }
 
     /**
-     * Lista processos associados a um Etp.
+     * Retorna detalhes de um registro de preço.
      *
-     * @param Request $request Dados da requisição.
-     * @return \Illuminate\Http\JsonResponse Resposta JSON com a lista de processos.
+     * @param Request $request Requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse Detalhes do registro.
+     */
+    public function details(Request $request)
+    {
+        $price_record = Data::findOne(new PriceRecord(), ['id' => $request->id]);
+
+        if ($price_record) {
+            $process = Data::findOne(new Process(), ['id' => $price_record->process], null, ['organ']);
+            $data = $price_record->toArray();
+            $data['process'] = $process->toArray();
+            return response()->json($data);
+        }
+
+        return response()->json(Notify::warning('Registro não localizado'), 404);
+    }
+
+    /**
+     * Lista processos.
+     *
+     * @param Request $request Requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse Lista de processos.
      */
     public function list_processes(Request $request)
     {
@@ -87,15 +116,15 @@ class PriceRecords extends Controller
         $betw = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
         $objs = Utils::map_search_obj($request->units, 'units', 'id');
 
-        $query = Data::find(new Process(), $search, null, ['organ', 'comission'], $betw, $objs);
+        $query = Data::find(new Process(), $search, ['date_hour_ini'], ['organ'], $betw, $objs);
         return response()->json($query, 200);
     }
 
     /**
      * Lista itens de DFD associados a um processo.
      *
-     * @param Request $request Dados da requisição.
-     * @return \Illuminate\Database\Eloquent\Collection|null Resposta JSON com a lista de itens DFD.
+     * @param Request $request Requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse Lista de itens DFD.
      */
     public function list_dfd_items(Request $request)
     {
@@ -105,22 +134,22 @@ class PriceRecords extends Controller
     /**
      * Lista fornecedores associados a uma coleta de preços.
      *
-     * @param Request $request Dados da requisição.
-     * @return \Illuminate\Database\Eloquent\Collection|null Resposta JSON com a lista de itens DFD.
+     * @param Request $request Requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse Lista de fornecedores.
      */
     public function list_suppliers(Request $request)
     {
         return response()->json(Data::find(new Supplier(), [
             ['column' => 'name', 'operator' => 'LIKE', 'value' => "%$request->supplier%", 'mode' => 'OR'],
-            ['column' => 'cnpj', 'operatot' => 'LIKE', 'value' => "%$request->supplier%", 'mode' => 'OR']
+            ['column' => 'cnpj', 'operator' => 'LIKE', 'value' => "%$request->supplier%", 'mode' => 'OR']
         ], ['name']));
     }
 
     /**
      * Retorna seleções de dados para uso em formulários ou filtros.
      *
-     * @param Request $request Dados da requisição, incluindo chave para especificar a seleção.
-     * @return \Illuminate\Http\JsonResponse Resposta JSON com os dados solicitados.
+     * @param Request $request Requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse Seleções de dados.
      */
     public function selects(Request $request)
     {
@@ -128,41 +157,40 @@ class PriceRecords extends Controller
             'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'status' => PriceRecord::list_status(),
-
             'process_modalities' => Process::list_modalitys(),
             'process_types' => Process::list_types(),
             'process_status' => Process::list_status(),
-
-            'suppliers' => Data::find(new Supplier(), order:['name']),
+            'suppliers' => Data::find(new Supplier(), order: ['name']),
             'supplier_modalities' => Supplier::list_modalitys(),
             'supplier_sizes' => Supplier::list_sizes(),
-
             'proposal_modalities' => Proposal::list_modalitys(),
             'proposal_status' => Proposal::list_status()
         ], Dfd::make_details()), 200);
     }
 
+    /**
+     * Processa as propostas associadas ao registro de preço.
+     *
+     * @param Request $request Requisição HTTP.
+     * @return void
+     */
     private function processProposals(Request $request): void
     {
-        if ($this->model->id) {
+        $price_record = $request->id ?? $this->model->id;
 
-            $process = json_decode($request->process);
+        if ($price_record) {
             $suppliers = json_decode($request->suppliers);
-
+            $process = json_decode($request->process);
 
             if (!empty($suppliers)) {
                 foreach ($suppliers as $supplier) {
-
-                    $token = $this->model->id . $supplier->id . Str::random(16);
+                    $token = $price_record . $supplier->id . Str::random(16);
                     $hour_send = date('H:i:s');
 
-                    if (
-                        !Proposal::firstWhere([
-                            ['price_record', $this->model->id],
-                            ['supplier', $supplier->id]
-                        ])
-                    ) {
-
+                    if (!Proposal::firstWhere([
+                        ['price_record', $price_record],
+                        ['supplier', $supplier->id]
+                    ])) {
                         $proposal = new Proposal([
                             'protocol' => $request->protocol,
                             'ip' => $request->ip(),
@@ -172,7 +200,7 @@ class PriceRecords extends Controller
                             'hour_ini' => $hour_send,
                             'organ' => Data::getOrgan(),
                             'process' => $process->id,
-                            'price_record' => $this->model->id,
+                            'price_record' => $price_record,
                             'supplier' => $supplier->id,
                             'modality' => Proposal::M_MAIL,
                             'status' => Proposal::S_START
@@ -184,11 +212,11 @@ class PriceRecords extends Controller
                                 $supplier,
                                 $token,
                                 $request->protocol,
-                                $request->date_ini.' '.$hour_send,
-                                $request->date_fin));
+                                $request->date_ini . ' ' . $hour_send,
+                                $request->date_fin
+                            ));
                         }
                     }
-
                 }
             }
         }
