@@ -95,15 +95,41 @@ class Processes extends Controller
      */
     public function list_dfds(Request $request)
     {
-        if (empty($request->except('organ', 'units'))) {
+        if (!$request->units || !is_string($request->units)) {
+            return response()->json(Notify::warning('Informe ao menos uma unidade antes de continuar'), 400);
+        }
+
+        if (!$request->anyFilled('date_i', 'date_f', 'protocol', 'description')) {
             return response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 400);
         }
 
-        $search = Utils::map_search(['protocol', 'organ', 'description'], $request->all());
-        $betw = $request->date_i && $request->date_f ? ['date_ini' => [$request->date_i, $request->date_f]] : null;
+        $search = Utils::map_search(
+            ['protocol', 'description', 'unit'],
+            $request->all()
+        );
 
-        $query = Data::find(new Dfd(), $search, ['date_ini'], ['organ', 'unit', 'comission', 'demandant', 'ordinator'], $betw);
-        return response()->json($query, 200);
+        $unit = array_column(json_decode($request->units), 'id');
+        $search = array_merge($search, [
+            [
+                'column' => 'unit',
+                'operator' => '=',
+                'value' => $unit,
+                'mode' => 'AND'
+            ]
+        ]);
+
+        $between = [];
+        if ($request->date_i && $request->date_f) {
+            $between['date_ini'] = [$request->date_i, $request->date_f];
+        }
+
+        return response()->json(Data::find(
+            new Dfd(),
+            $search,
+            ['date_ini'],
+            ['unit', 'comission', 'demandant', 'ordinator'],
+            $between,
+        ), 200);
     }
 
     /**

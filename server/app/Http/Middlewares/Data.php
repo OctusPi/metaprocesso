@@ -186,6 +186,7 @@ class Data
             });
         }
 
+
         // Aplicando filtros adicionais
         array_filter([
             $between ? fn() => $query->whereBetween(key($between), current($between)) : null,
@@ -193,6 +194,7 @@ class Data
             $order ? fn() => $query->orderBy(...$order) : null,
             $with ? fn() => $query->with($with) : null,
         ], fn($clause) => $clause && $clause());
+        Log::info($query->toSql());
 
         return $query;
     }

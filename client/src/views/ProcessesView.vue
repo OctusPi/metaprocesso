@@ -69,7 +69,8 @@ const tabs = new Tabs([
 ])
 
 function listDfds() {
-    http.post(`${page.url}/list_dfds`, page.dfds.search, emit, (resp) => {
+    const units = page.data.units
+    http.post(`${page.url}/list_dfds`, { units, ...page.dfds.search }, emit, (resp) => {
         page.dfds.datalist = resp.data ?? []
     })
 }
@@ -393,15 +394,17 @@ onMounted(() => {
                                                     </div>
                                                     <div class="col-sm-12 col-md-4">
                                                         <label for="s-protocol" class="form-label">Protocolo</label>
-                                                        <input @keydown.enter.prevent="listDfds" type="text" name="protocol" class="form-control"
-                                                            id="s-protocol" v-model="page.dfds.search.protocol"
+                                                        <input @keydown.enter.prevent="listDfds" type="text"
+                                                            name="protocol" class="form-control" id="s-protocol"
+                                                            v-model="page.dfds.search.protocol"
                                                             placeholder="Número do Protocolo" />
                                                     </div>
                                                     <div class="col-sm-12">
                                                         <label for="s-description" class="form-label">Descrição
                                                             do objeto</label>
-                                                        <input @keydown.enter.prevent="listDfds" type="text" name="description" class="form-control"
-                                                            id="s-description" v-model="page.dfds.search.description"
+                                                        <input @keydown.enter.prevent="listDfds" type="text"
+                                                            name="description" class="form-control" id="s-description"
+                                                            v-model="page.dfds.search.description"
                                                             placeholder="Pesquise por partes do Objeto do DFD" />
                                                     </div>
 
@@ -442,7 +445,7 @@ onMounted(() => {
                                         <div class="col-md-6">
                                             <h4>Unidades</h4>
                                             <span class="p-0 m-0 small" v-for="u in page.data.units" :key="u.id">
-                                                    {{ `${u.title ?? '***'}; ` }}
+                                                {{ `${u.title ?? '***'}; ` }}
                                             </span>
                                         </div>
                                         <div class="col-md-6">
@@ -480,7 +483,7 @@ onMounted(() => {
                                             <h4>Ano PCA</h4>
                                             <p>{{ page.data.year_pca ?? '*****' }}</p>
                                         </div>
-                                    
+
                                         <div class="col-md-3">
                                             <h4>Modalidade</h4>
                                             <p>
@@ -510,7 +513,7 @@ onMounted(() => {
                                                 }}
                                             </p>
                                         </div>
-                                    
+
                                         <div class="col-md-12">
                                             <h4>Descrição do Processo</h4>
                                             <p>{{ page.data.description ?? '*****' }}</p>
