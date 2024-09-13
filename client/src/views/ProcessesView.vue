@@ -169,15 +169,23 @@ onMounted(() => {
                 <!-- Search -->
                 <div v-if="page.ui.search" role="search" class="content container p-4 mb-4">
                     <form @submit.prevent="pageData.list" class="row g-3">
-                        <div class="col-sm-12 col-md-8">
+                        <div class="col-sm-12 col-md-4">
                             <label for="s-unit" class="form-label">Unidades</label>
                             <InputDropMultSelect v-model="page.search.units" :options="page.selects.units"
                                 identify="units" />
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-date_hour_ini" class="form-label">Data de Abertura</label>
-                            <VueDatePicker id="s-date_hour_ini" auto-apply v-model="page.search.date_hour_ini"
-                                :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy 00:00"
+                            <label for="s-date_ini" class="form-label">Data Inicial</label>
+                            <VueDatePicker id="s-date_ini" auto-apply v-model="page.search.date_ini"
+                                :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
+                                menu-class-name="dp-custom-menu" />
+                        </div>
+                        <div class="col-sm-12 col-md-4">
+                            <label for="s-date_f" class="form-label">Data Final</label>
+                            <VueDatePicker id="s-date_fin" auto-apply v-model="page.search.date_fin"
+                                :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
                                 input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                 calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
                                 menu-class-name="dp-custom-menu" />

@@ -79,11 +79,23 @@ class Processes extends Controller
      */
     public function list(Request $request)
     {
+
+        $date_between = [
+            'date_hour_ini' => [
+                $request->date_ini ?: date('Y') . '-01-01',
+                $request->date_fin ?: date('Y-m-d')
+            ]
+        ];
+
+        $objs = Utils::map_search_obj($request->units, 'units', 'id');
+
         return $this->base_list(
             $request,
-            ['organ', 'units', 'protocol', 'date_hour_ini', 'status', 'description'],
+            ['protocol', 'date_hour_ini', 'status', 'description'],
             ['date_hour_ini'],
-            ['organ', 'comission']
+            ['organ', 'comission'],
+            $date_between,
+            $objs
         );
     }
 
