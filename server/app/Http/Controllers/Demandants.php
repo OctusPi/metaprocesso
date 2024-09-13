@@ -31,7 +31,7 @@ class Demandants extends Controller
     {
         $selections = [
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
-            'sectors' => Utils::map_select(Data::find(new Sector(), [], ['name'])),
+            'sectors' => Data::find(new Sector(), [], ['name']),
             'status' => Demandant::list_status(),
         ];
 

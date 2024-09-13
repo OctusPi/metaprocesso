@@ -94,7 +94,7 @@ onMounted(() => {
                             <select name="sector" class="form-control" id="s-sector" v-model="page.search.sector">
                                 <option value=""></option>
                                 <option v-for="o in page.selects.sectors" :key="o.id" :value="o.id">
-                                    {{ o.title }}
+                                    {{ o.name }}
                                 </option>
                             </select>
                         </div>
@@ -169,7 +169,7 @@ onMounted(() => {
                                 <select name="sector" class="form-control" id="sector" v-model="page.data.sector">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.sectors" :value="s.id" :key="s.id">
-                                        {{ s.title }}
+                                        {{ s.name }}
                                     </option>
                                 </select>
                             </div>
