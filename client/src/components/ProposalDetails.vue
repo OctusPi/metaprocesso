@@ -44,7 +44,7 @@ watch(() => props.selects, (newval) => {
                     <h1 class="modal-title fs-6 p-0 m-0 d-flex align-items-center gap-2"
                         :id="'#' + props.modal + 'Label'">
                         <ion-icon name="document-attach" class="icon-dfd" />
-                        DFD {{ page.data.protocol }}
+                        Coleta {{ page.data.protocol }}
                     </h1>
                     <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-action-close ms-auto">
                         <ion-icon name="close" class="fs-4"></ion-icon>
