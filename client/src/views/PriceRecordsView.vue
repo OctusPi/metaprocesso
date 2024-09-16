@@ -101,7 +101,7 @@ const tabs = new Tabs([
     { id: 'dfds', title: 'DFDs' },
     { id: 'infos', title: 'Informações' },
     { id: 'suppliers', title: 'Fornecedores' },
-    { id: 'page.proposals', title: 'Coletas' }
+    { id: 'proposals', title: 'Coletas' }
 ])
 
 function prepare_register() {
@@ -174,7 +174,11 @@ function dfd_details(id) {
 }
 
 function view_colects(id) {
-    console.log(id)
+    http.post('proposals/list', { price_record: id }, emit, (resp) => {
+        page.proposals.data = resp.data
+        pageData.update(id)
+        tabs.navigate('proposals')
+    })
 }
 
 function generate(type) {
@@ -555,7 +559,7 @@ onBeforeMount(() => {
 
                             <!-- tab coletas -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
-                                :class="{ 'show active': tabs.is('page.proposals') }">
+                                :class="{ 'show active': tabs.is('proposals') }">
 
                                 <div v-if="page.data.process">
                                     <div class="d-flex align-items-center justify-content-between">
@@ -580,8 +584,14 @@ onBeforeMount(() => {
                                     <div class="dashed-separator mt-2 mb-3"></div>
 
                                     <div v-if="page.proposals.selected === 'emails'">
-                                        <TableList secondary :count="false" :header="page.proposals.headers"
-                                            :body="page.proposals.data.emails" :mounts="{
+                                        <TableList secondary :count="false" 
+                                            :header="page.proposals.headers"
+                                            :body="page.proposals.data.emails"
+                                            :actions="[
+                                                Actions.Create('eye-outline', 'Visualizar', view_proposal),
+                                                Actions.Create('send-outline', 'Reenviar', resend_colect),
+                                            ]"
+                                            :mounts="{
                                                 modality: [Mounts.Cast(page.selects.proposal_modalities)],
                                                 status: [Mounts.Cast(page.selects.proposal_status), Mounts.Status()]
                                             }" />
