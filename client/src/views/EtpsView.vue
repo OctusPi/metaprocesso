@@ -95,6 +95,8 @@ const tabs = new Tabs([
     { id: 'necessidade', title: 'Necessidade' },
     { id: 'solucao', title: 'Solução' },
     { id: 'planejamento', title: 'Planejamento' },
+    { id: 'viabilidade', title: 'Viabilidade' },
+    { id: 'anexos', title: 'Anexos' },
 ])
 
 function list_processes() {
