@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, toRaw } from "vue"
+import Mounts from "@/services/mounts"
 
 const props = defineProps({
     body: { type: Array, default: () => [] },
@@ -48,7 +49,7 @@ function orderBy(e, key) {
 }
 
 function applyMounters(instance, header) {
-    const mInstance = {...instance, _virtual: {}}
+    const mInstance = { ...instance, _virtual: {} }
 
     Object.keys(props.virtual).forEach((key) => {
         mInstance._virtual[key] = props.virtual[key](instance)
@@ -58,8 +59,11 @@ function applyMounters(instance, header) {
         if (!attr.key) {
             return { value: null, classes: [] }
         }
+
+        const initial = multiplexer(mInstance, attr.key)
+        const title = Mounts.StripHTML()(initial)
+
         if (props.mounts && props.mounts[attr.key]) {
-            const initial = multiplexer(mInstance, attr.key)
             return props.mounts[attr.key].reduce((prev, current) => {
                 const { value, classes } = current(
                     prev.value,
@@ -70,17 +74,16 @@ function applyMounters(instance, header) {
                     prev.value = value
                 }
                 return prev
-            }, { initial, value: initial, classes: [] })
+            }, { title: title.value, value: initial, classes: [] })
         }
-        const initial = multiplexer(mInstance, attr.key)
-        return { initial, value: initial, classes: [] }
+        return { title: title.value, value: initial, classes: [] }
     })
 }
 
 function getValue(value, header) {
     return value && value != ''
-    ? value
-    : header.err || '-'
+        ? value
+        : header.err || '-'
 }
 
 function checkInput(e) {
@@ -122,14 +125,16 @@ watch(() => props.body, (newval) => {
                         </td>
                         <td v-for="(mounted, j) in applyMounters(instance, userHeader)" :key="j" class="align-middle">
                             <div>
-                                <div v-if="userHeader[j].key" class="small txt-color-sec" :class="mounted.classes">
+                                <div v-if="userHeader[j].key" class="small txt-color-sec" :class="mounted.classes"
+                                    :title="mounted.title">
                                     {{ getValue(mounted.value, userHeader[j]) }}
-                                    <title>Tesrse</title>
                                 </div>
                             </div>
                             <div>
                                 <span v-for="(submounted, k) in applyMounters(instance, userHeader[j].sub ?? [])"
-                                    :key="k" class="inline-block small me-1" :title="submounted.value" :class="submounted.classes">
+                                    :key="k" class="inline-block small me-1"
+                                    :title="submounted.title"
+                                    :class="submounted.classes">
                                     {{ userHeader[j].sub[k].title }}
                                     {{ getValue(submounted.value, userHeader[j].sub[k]) }}
                                 </span>
