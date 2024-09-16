@@ -34,9 +34,12 @@ class RefTerms extends Controller
      */
     public function list(Request $request)
     {
-        $date_between = $request->has(['date_i', 'date_f']) ?
-            ['emission' => [$request->date_i, $request->date_f]] :
-            ['emission' => [date('Y') . '-01-01', date('Y-m-d')]];
+        $date_between = [
+            'date_hour_ini' => [
+                $request->date_ini ?: date('Y') . '-01-01',
+                $request->date_fin ?: date('Y-m-d')
+            ]
+        ];
 
         return $this->base_list(
             $request,

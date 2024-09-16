@@ -86,9 +86,11 @@ const tabs = new Tabs([
     { id: 'process', title: 'Processo' },
     { id: 'dfds', title: 'DFDs' },
     { id: 'info', title: 'Informações' },
-    { id: 'necessidade', title: 'Necessidade' },
     { id: 'solucao', title: 'Solução' },
-    { id: 'planejamento', title: 'Planejamento' },
+    { id: 'exec', title: 'Execução' },
+    { id: 'pagamentos', title: 'Pagamentos' },
+    { id: 'gestao', title: 'Gestão' },
+    { id: 'fiscalizacao', title: 'Fiscalização' },
 ])
 
 function list_processes() {
@@ -296,14 +298,14 @@ onMounted(() => {
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_ini" class="form-label">Data Inicial</label>
-                            <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false"
+                            <VueDatePicker auto-apply v-model="page.search.date_ini" :enable-time-picker="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
                                 locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_fin" class="form-label">Data Final</label>
-                            <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
+                            <VueDatePicker auto-apply v-model="page.search.date_fin" :enable-time-picker="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
                                 locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
@@ -498,16 +500,11 @@ onMounted(() => {
                                         {{ o.title }}
                                     </option>
                                 </select>
-
                                 <div id="comissionHelpBlock" class="form-text txt-color-sec">
                                     Ao selecionar a comissão/equipe de planejamento seus
                                     integrantes serão vinculados ao documento
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
-                            :class="{ 'show active': tabs.is('necessidade') }">
                             <div class="col-12">
                                 <label for="necessity" class="form-label d-flex justify-content-between">
                                     Descrição Detalhada da Necessidade
@@ -528,18 +525,6 @@ onMounted(() => {
                                 <InputRichText :valid="page.valids.contract_requirements"
                                     placeholder="Descrição dos Requisitos da Contratação"
                                     identifier="contract_requirements" v-model="page.data.contract_requirements" />
-                            </div>
-                            <div class="col-12">
-                                <label for="correlated_contracts"
-                                    class="form-label d-flex justify-content-between">Contratações Correlatas
-                                    e/ou Interdependentes
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('correlated_contracts')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.correlated_contracts"
-                                    placeholder="Contratações Correlatas e/ou Interdependentes"
-                                    identifier="correlated_contracts" v-model="page.data.correlated_contracts" />
                             </div>
                         </div>
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
@@ -569,66 +554,6 @@ onMounted(() => {
                                     v-model="page.data.solution_full_description" />
                             </div>
                             <div class="col-12">
-                                <label for="object_execution_model"
-                                    class="form-label d-flex justify-content-between">Modelo de gestão do contrato
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('object_execution_model')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.object_execution_model"
-                                    placeholder="Modelo de gestão do contrato" identifier="object_execution_model"
-                                    v-model="page.data.object_execution_model" />
-                            </div>
-                            <div class="col-12">
-                                <label for="object_execution_model"
-                                    class="form-label d-flex justify-content-between">Modelo de execução do objeto
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('object_execution_model')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.object_execution_model"
-                                    placeholder="Modelo de execução do objeto" identifier="object_execution_model"
-                                    v-model="page.data.object_execution_model" />
-                            </div>
-                            <div class="col-12">
-                                <label for="funds_suitability"
-                                    class="form-label d-flex justify-content-between">Adequação orçamentária
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('funds_suitability')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.funds_suitability"
-                                    placeholder="Adequação orçamentária" identifier="funds_suitability"
-                                    v-model="page.data.funds_suitability" />
-                            </div>
-                            <div class="col-12">
-                                <label for="parts_obligations"
-                                    class="form-label d-flex justify-content-between">Obrigações das partes
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('parts_obligations')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.parts_obligations"
-                                    placeholder="Ogrigações das partes" identifier="parts_obligations"
-                                    v-model="page.data.parts_obligations" />
-                            </div>
-                        </div>
-                        <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
-                            :class="{ 'show active': tabs.is('planejamento') }">
-                            <div class="col-12">
-                                <label for="contract_calculus_memories"
-                                    class="form-label d-flex justify-content-between">Estimativas de Quantidades e
-                                    Valores
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('contract_calculus_memories')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.contract_calculus_memories"
-                                    placeholder="Estimativa das Quantidades Contratadas"
-                                    identifier="contract_calculus_memories"
-                                    v-model="page.data.contract_calculus_memories" />
-                            </div>
-                            <div class="col-12">
                                 <label for="contract_expected_price"
                                     class="form-label d-flex justify-content-between">Estimativa do Preço da
                                     Contratação
@@ -639,6 +564,22 @@ onMounted(() => {
                                 <InputRichText :valid="page.valids.contract_expected_price"
                                     placeholder="Estimativa do Preço da Contratação"
                                     identifier="contract_expected_price" v-model="page.data.contract_expected_price" />
+                            </div>
+                        </div>
+                        <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
+                            :class="{ 'show active': tabs.is('exec') }">
+                            <div class="col-12">
+                                <label for="supplier_selection_criteria"
+                                    class="form-label d-flex justify-content-between">Forma e critérios de seleção do
+                                    fornecedor
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('supplier_selection_criteria')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.supplier_selection_criteria"
+                                    placeholder="Forma e critérios de seleção do fornecedor"
+                                    identifier="supplier_selection_criteria"
+                                    v-model="page.data.supplier_selection_criteria" />
                             </div>
                             <div class="col-12">
                                 <label for="contract_forecast" class="form-label d-flex justify-content-between">
@@ -663,6 +604,20 @@ onMounted(() => {
                                     placeholder="Previsão de Resultados e Impactos Ambientais"
                                     identifier="ambiental_impacts" v-model="page.data.ambiental_impacts" />
                             </div>
+                        </div>
+                        <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
+                            :class="{ 'show active': tabs.is('pagamentos') }">
+                            <div class="col-12">
+                                <label for="funds_suitability"
+                                    class="form-label d-flex justify-content-between">Adequação orçamentária
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('funds_suitability')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.funds_suitability"
+                                    placeholder="Adequação orçamentária" identifier="funds_suitability"
+                                    v-model="page.data.funds_suitability" />
+                            </div>
                             <div class="col-12">
                                 <label for="payment_measure_criteria"
                                     class="form-label d-flex justify-content-between">Critérios de medição e de
@@ -676,24 +631,56 @@ onMounted(() => {
                                     identifier="payment_measure_criteria"
                                     v-model="page.data.payment_measure_criteria" />
                             </div>
+                        </div>
+                        <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
+                            :class="{ 'show active': tabs.is('gestao') }">
                             <div class="col-12">
-                                <label for="supplier_selection_criteria"
-                                    class="form-label d-flex justify-content-between">Forma e critérios de seleção do
-                                    fornecedor
+                                <label for="object_execution_model"
+                                    class="form-label d-flex justify-content-between">Modelo de gestão do contrato
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('supplier_selection_criteria')">
+                                        @click="generate('object_execution_model')">
                                         <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                 </label>
-                                <InputRichText :valid="page.valids.supplier_selection_criteria"
-                                    placeholder="Forma e critérios de seleção do fornecedor"
-                                    identifier="supplier_selection_criteria"
-                                    v-model="page.data.supplier_selection_criteria" />
+                                <InputRichText :valid="page.valids.object_execution_model"
+                                    placeholder="Modelo de gestão do contrato" identifier="object_execution_model"
+                                    v-model="page.data.object_execution_model" />
+                            </div>
+                            <div class="col-12">
+                                <label for="correlated_contracts"
+                                    class="form-label d-flex justify-content-between">Contratações Correlatas
+                                    e/ou Interdependentes
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('correlated_contracts')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.correlated_contracts"
+                                    placeholder="Contratações Correlatas e/ou Interdependentes"
+                                    identifier="correlated_contracts" v-model="page.data.correlated_contracts" />
                             </div>
                         </div>
-                        <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('anexos') }">
-                            <AttachmentsCmp origin-name="ETP" @callAlert="(data) => emit('callAlert', data)"
-                                @callRemove="(data) => emit('callRemove', data)" :origin="ORIGIN_ETPS"
-                                :protocol="page.data.protocol" :types="attachmentTypes" />
+                        <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
+                            :class="{ 'show active': tabs.is('fiscalizacao') }">
+                            <div class="col-12">
+                                <label for="parts_obligation"
+                                    class="form-label d-flex justify-content-between">Obrigações das partes
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('parts_obligation')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.parts_obligation" placeholder="Ogrigações das partes"
+                                    identifier="parts_obligation" v-model="page.data.parts_obligation" />
+                            </div>
+                            <div class="col-12">
+                                <label for="object_execution_model"
+                                    class="form-label d-flex justify-content-between">Modelo de execução do objeto
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('object_execution_model')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.object_execution_model"
+                                    placeholder="Modelo de execução do objeto" identifier="object_execution_model"
+                                    v-model="page.data.object_execution_model" />
+                            </div>
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
