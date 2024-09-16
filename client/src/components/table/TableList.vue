@@ -80,6 +80,10 @@ function applyMounters(instance, header) {
     })
 }
 
+function getTitle(item) {
+    return item.classes.includes('has-title') ? item.title : null
+}
+
 function getValue(value, header) {
     return value && value != ''
         ? value
@@ -126,14 +130,14 @@ watch(() => props.body, (newval) => {
                         <td v-for="(mounted, j) in applyMounters(instance, userHeader)" :key="j" class="align-middle">
                             <div>
                                 <div v-if="userHeader[j].key" class="small txt-color-sec" :class="mounted.classes"
-                                    :title="mounted.title">
+                                    :title="getTitle(mounted)">
                                     {{ getValue(mounted.value, userHeader[j]) }}
                                 </div>
                             </div>
                             <div>
                                 <span v-for="(submounted, k) in applyMounters(instance, userHeader[j].sub ?? [])"
                                     :key="k" class="inline-block small me-1"
-                                    :title="submounted.title"
+                                    :title="getTitle(submounted)"
                                     :class="submounted.classes">
                                     {{ userHeader[j].sub[k].title }}
                                     {{ getValue(submounted.value, userHeader[j].sub[k]) }}
