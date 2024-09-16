@@ -225,7 +225,7 @@ onMounted(() => {
                         status: [Mounts.Cast(page.selects.status), Mounts.Status()],
                         type: [Mounts.Cast(page.selects.types)],
                         modality: [Mounts.Cast(page.selects.modalities)],
-                        description: [Mounts.Truncate(200)],
+                        description: [Mounts.Truncate()],
                     }" />
                 </div>
             </section>

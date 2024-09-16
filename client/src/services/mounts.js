@@ -46,7 +46,7 @@ export default class Mounts {
             }
             return {
                 value: String(address).slice(0, num - 3) + '...',
-                classes: []
+                classes: ['cursor-help', 'has-title']
             }
         }
     }
@@ -67,7 +67,6 @@ export default class Mounts {
             let colorClass = 'tls-grey'
 
             switch(address) {
-                case 'Rascunho':
                 case 'Inativo':
                 case 'Baixa':
                 case 'Deserto':
