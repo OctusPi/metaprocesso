@@ -8,6 +8,7 @@ use App\Utils\{Utils, Notify};
 use Illuminate\Http\Request;
 use App\Http\Middlewares\Data;
 use App\Http\Controllers\Controller;
+use Log;
 use Mail;
 use Str;
 
@@ -50,7 +51,7 @@ class PriceRecords extends Controller
         ]);
 
         if ($save->status() == 200) {
-            $this->processProposals($request);
+            $this->process_collects($request);
         }
 
         return $save;
@@ -168,13 +169,43 @@ class PriceRecords extends Controller
         ], Dfd::make_details()), 200);
     }
 
+    public function send_collect(Request $request){
+        $proposal = Data::findOne(new Proposal(), ['id' => $request->id]);
+
+        if(is_null($proposal)){
+            return response()->json(Notify::warning('Coleta não localizada...'), 404);
+        }
+
+        if($proposal->status == Proposal::S_FINISHED){
+            return response()->json(Notify::warning('Coleta já preenchida pelo fornecedor...'), 400);
+        }
+
+        $process  = json_decode(json_encode(Process::with('organ')->find($proposal->process)?->toArray()));
+        $supplier  = json_decode(json_encode(Supplier::find($proposal->supplier)?->toArray()));
+        $price_rec = json_decode(json_encode(PriceRecord::find($proposal->price_record)?->toArray()));
+
+        $send = Mail::to($supplier->email)->send(new ProposalRequest(
+            $process,
+            $supplier,
+            $proposal->token,
+            $proposal->protocol,
+            $proposal->date_ini.' '.$proposal->hour_ini,
+            $price_rec->date_fin
+        ));
+
+        $code = !is_null($send) ? 200 : 500;
+        $msg  = !is_null($send) ? Notify::success("Solicitação de coleta reenviada...") : Notify::error('Falha ao reenviar solicitação...');
+
+        return response()->json($msg, $code);
+    }
+
     /**
      * Processa as propostas associadas ao registro de preço.
      *
      * @param Request $request Requisição HTTP.
      * @return void
      */
-    private function processProposals(Request $request): void
+    private function process_collects(Request $request): void
     {
         $price_record = $request->id ?? $this->model->id;
 

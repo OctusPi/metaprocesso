@@ -181,6 +181,10 @@ function view_colects(id) {
     })
 }
 
+function resend_collect(id) {
+    http.get(`${page.url}/send_collect/${id}`, emit);
+}
+
 function generate(type) {
 
     if (!page.data?.process && !page.data?.suppliers) {
@@ -589,7 +593,7 @@ onBeforeMount(() => {
                                             :body="page.proposals.data.emails"
                                             :actions="[
                                                 Actions.Create('eye-outline', 'Visualizar', view_proposal),
-                                                Actions.Create('send-outline', 'Reenviar', resend_colect),
+                                                Actions.Create('send-outline', 'Reenviar', resend_collect),
                                             ]"
                                             :mounts="{
                                                 modality: [Mounts.Cast(page.selects.proposal_modalities)],

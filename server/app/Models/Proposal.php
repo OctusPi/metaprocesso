@@ -50,26 +50,26 @@ class Proposal extends Model
         'items' => Json::class
     ];
 
-    public function rules():array
+    public function rules(): array
     {
         return [
-            'protocol'     => 'required',
-            'ip'           => 'required',
-            'author'       => 'required',
-            'token'        => 'required',
-            'date_ini'     => 'required',
-            'hour_ini'     => 'required',
-            'organ'        => 'required',
-            'process'      => 'required',
+            'protocol' => 'required',
+            'ip' => 'required',
+            'author' => 'required',
+            'token' => 'required',
+            'date_ini' => 'required',
+            'hour_ini' => 'required',
+            'organ' => 'required',
+            'process' => 'required',
             'price_record' => 'required',
-            'supplier'     => [
+            'supplier' => [
                 'requried',
                 Rule::unique('price_records_proposals', 'supplier')->where(function ($query) {
                     return $query->where('supplier', '!=', null)->where('price_record', $this->price_record);
                 })->ignore($this->id)
             ],
             'modality' => 'required',
-            'status'   => 'required'
+            'status' => 'required'
         ];
     }
 
@@ -77,7 +77,7 @@ class Proposal extends Model
     {
         return [
             'required' => 'Campo obrigatório não informado!',
-            'unique'   => 'Já existe uma coleta para esse fornecedor.'
+            'unique' => 'Já existe uma coleta para esse fornecedor.'
         ];
     }
 
@@ -97,7 +97,7 @@ class Proposal extends Model
         );
     }
 
-    public static function list_modalitys():array
+    public static function list_modalitys(): array
     {
         return [
             ['id' => self::M_MAIL, 'title' => 'Solicitação por E-mail'],
@@ -107,7 +107,7 @@ class Proposal extends Model
         ];
     }
 
-    public static function list_status():array
+    public static function list_status(): array
     {
         return [
             ['id' => self::S_WAITING, 'title' => 'A Enviar'],
@@ -123,12 +123,12 @@ class Proposal extends Model
         return $this->hasOne(Organ::class, 'id', 'organ');
     }
 
-    public function process():HasOne
+    public function process(): HasOne
     {
         return $this->hasOne(Process::class, 'id', 'process');
     }
 
-    public function pricerecord():HasOne
+    public function price_record(): HasOne
     {
         return $this->hasOne(PriceRecord::class, 'id', 'price_record');
     }
@@ -137,4 +137,5 @@ class Proposal extends Model
     {
         return $this->hasOne(Supplier::class, 'id', 'supplier');
     }
+
 }

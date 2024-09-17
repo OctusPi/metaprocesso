@@ -10,6 +10,7 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
 - [Composer](https://getcomposer.org/)
 - [Node.js](https://nodejs.org/) >= 20.x
 - [NPM](https://www.npmjs.com/) ou [Yarn](https://yarnpkg.com/)
+- [MySQL](https://www.mysql.com/)
 
 
 Clone o repositório do projeto:
