@@ -1,7 +1,7 @@
 <script setup>
 
 defineProps({
-    process:{type:Object, required:true}
+    data:{type:Object, required:true}
 })
 
 function close_menu() {
@@ -10,6 +10,8 @@ function close_menu() {
         menu.style.display = 'none'
     }
 }
+
+
 </script>
 
 <template>
@@ -21,17 +23,20 @@ function close_menu() {
         </div>
         <div class="nav-items">
             <ul class="navbar-nav">
-                <li>
-                    <span class="strong">Processo: </span> {{ process.protocol }}
+                <li class="mb-3">
+                    <span class="strong d-block">Processo: </span> {{ data.protocol }}
                 </li>
-                <li>
-                    <span class="strong">Orgão: </span>{{ process.protocol }}
+                <li class="mb-3">
+                    <span class="strong d-block">Solicitante: </span>{{ data.organ }}
                 </li>
-                <li>
-                    <span class="strong">Data Solicitação: </span>{{ process.protocol }}
+                <li class="mb-3">
+                    <span class="strong d-block">Data Solicitação: </span>{{ data.date_ini}}
                 </li>
-                <li>
-                    <span class="strong">Objeto: </span>{{ process.protocol }}
+                <li class="mb-3">
+                    <span class="strong d-block">Prazo Resposta: </span>{{ data.date_fin}}
+                </li>
+                <li class="mb-3">
+                    <span class="strong d-block">Objeto: </span>{{ data.description }}
                 </li>
             </ul>
         </div>
@@ -47,6 +52,10 @@ function close_menu() {
 
 .hide-menu:hover {
     color: var(--color-base);
+}
+
+.strong{
+    font-weight: 600 !important;
 }
 
 @media(max-width:760px) {

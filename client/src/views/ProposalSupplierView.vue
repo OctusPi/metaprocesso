@@ -14,13 +14,14 @@ const route = useRoute()
 const [page] = Layout.new(emit, {
     url: '/proposal_supplier',
     auth_view: false,
-    datalist: []
+    proposal: {}
 })
 
 onBeforeMount(() => {
     http.get(`${page.url}/check/${route.params.token}`, emit, (resp) => {
         if (http.success(resp)) {
             page.auth_view = true
+            page.proposal = resp.data
         }
     })
 })
@@ -28,16 +29,22 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <div class="page">
-        
-      <NavProposalUi :process="{}" />
+    <div class="page">
+
+        <NavProposalUi :data="{
+            protocol: page.proposal?.process.protocol,
+            organ: page.proposal?.organ.name,
+            date_ini: `${page.proposal?.date_ini} - ${page.proposal?.hour_ini}`,
+            date_fin: page.proposal?.price_record.date_fin,
+            description: page.proposal?.process.description
+        }" />
 
         <main class="main">
 
-            <HeaderProposalUi :supplier="{}" />
-            
+            <HeaderProposalUi :supplier="page.proposal.supplier ?? {}" />
+
             <section class="main-section container-fluid p-4">
-                
+
                 <div v-if="page.auth_view">
                     <div role="heading" class="inside-title mb-4">
                         <div>

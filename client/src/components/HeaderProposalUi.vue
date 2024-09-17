@@ -23,20 +23,30 @@ function open_menu() {
                 <img src="@/assets/imgs/logo.svg" alt="logomarca" class="logo-header" />
                 <ion-icon name="chevron-forward-outline" class="fs-6"></ion-icon>
             </div>
-            <div class="search-bar flex-grow-1 me-2">
-                <h1 class="p-0 m-0">{{ supplier.name }}</h1>
-                <p class="p-0 m-0">{{ supplier.cnpj }}</p>
-
+            <div class="search-bar d-flex align-items-center flex-grow-1 me-2">
+                <ion-icon name="storefront-outline" class="fs-4 me-2"></ion-icon>
+                <div>
+                    <h1 class="p-0 m-0">{{ `${supplier.name} - ${supplier.cnpj}` }}</h1>
+                    <p class="p-0 m-0 small">{{ `${supplier.address} - ${supplier.phone}` }}</p>
+                </div>
             </div>
-            <div class="user-actions">
-                <h1 class="p-0 m-0">{{ data_now[0] }}</h1>
-                <p class="p-0 m-0">{{ data_now[1] }}</p>
+            <div class="user-actions d-flex align-items-center">
+                <ion-icon name="calendar-outline" class="fs-4 me-2"></ion-icon>
+                <div>
+                    <h1 class="p-0 m-0">{{ data_now[0] }}</h1>
+                    <p class="p-0 m-0 small">{{ data_now[1] }}</p>
+                </div>
             </div>
         </div>
     </header>
 </template>
 
 <style scoped>
+
+h1{
+    font-size: 0.9rem;
+}
+
 .logo-header{
     height: 34px;
 }
@@ -56,7 +66,7 @@ function open_menu() {
         cursor: pointer;
     }
 
-    .app-title-header-main:hover{
+    .app-title-header-main:hover {
         color: var(--color-base);
     }
 }

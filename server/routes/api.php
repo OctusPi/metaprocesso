@@ -42,7 +42,6 @@ Route::prefix('/auth')->controller(Authentication::class)->group(function () {
 
 Route::prefix('/proposal_supplier')->controller(ProposalsSupplier::class)->group(function(){
     Route::post('/save', 'save');
-    Route::post('/details', 'save');
     Route::get('/check/{token}', 'check');
 });
 

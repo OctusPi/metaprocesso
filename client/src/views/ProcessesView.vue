@@ -122,9 +122,9 @@ function generate() {
     }
 
     const payload = (`
-        Elabore uma descrição em plain text para um processo administrativo
-        de tipo ${base.type} e modalidade ${base.modality}
-        baseada no input ${base.description}
+        Elabore uma descrição sucinta para um objeto de contratação
+        de empresa especializada em fornecimento de ${base.type} na modalidade ${base.modality}
+        tendo como objetivo ${base.description} para o órgão ${page.organ_name}. Elabore em plain text, em apenas um parágrafo.
     `)
 
     gpt.generate(`${page.url}/generate`, payload, emit, (resp) => {
