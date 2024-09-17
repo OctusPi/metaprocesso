@@ -5,7 +5,7 @@ Prezado(a) **{{ $supplier['name'] }}**,
 
 Estamos solicitando uma cotação de preço para a aquisição dos itens descritos abaixo, conforme os dados do processo:
 
-- **Protocolo**: {{ $process['protocol'] }}
+- **Processo**: {{ $process['protocol'] }}
 - **Data da Solicitação**: {{ $start }}
 - **Requisitante**: {{ $process['organ'] }}
 - **Objeto**: {{ $process['description'] }}

@@ -70,7 +70,7 @@ const [page, pageData] = Layout.new(emit, {
         },
         headers: [
             { title: 'DATA', key: 'date_ini', sub: [{ key: 'hour_ini' }] },
-            { title: 'REPOSTA', key: 'date_fin', sub: [{ key: 'hour_fin' }] },
+            { title: 'RESPOSTA', key: 'date_fin', sub: [{ key: 'hour_fin' }] },
             { title: 'FORNECEDOR', key: 'supplier.name', sub: [{ key: 'supplier.cnpj' }] },
             { title: 'MODALIDADE', key: 'modality' },
             { title: 'SITUAÇÃO', key: 'status' }

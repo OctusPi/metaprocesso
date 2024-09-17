@@ -140,7 +140,7 @@ const router = createRouter({
       component: () => import('../views/ProposalView.vue')
     },
     {
-      path: '/proposal_supplier/{token}',
+      path: '/proposal_supplier/:token',
       name: 'proposal_supplier',
       component: () => import('../views/ProposalSupplierView.vue')
     },
