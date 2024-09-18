@@ -15,7 +15,6 @@ import Tabs from '@/utils/tabs';
 import InputRichText from '@/components/inputs/InputRichText.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
-import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import EtpReport from './reports/EtpReport.vue';
 import exp from '@/services/export';
@@ -591,6 +590,18 @@ onMounted(() => {
                                 <InputRichText :valid="page.valids.contract_forecast"
                                     placeholder="Previsão de Realização da Contratação" identifier="contract_forecast"
                                     v-model="page.data.contract_forecast" />
+                            </div>
+                            <div class="col-12">
+                                <label for="solution_parcel_justification"
+                                    class="form-label d-flex justify-content-between">Justificação do Parcelamento
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('solution_parcel_justification')">
+                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                </label>
+                                <InputRichText :valid="page.valids.solution_parcel_justification"
+                                    placeholder="Justificação do Parcelamento"
+                                    identifier="solution_parcel_justification"
+                                    v-model="page.data.solution_parcel_justification" />
                             </div>
                             <div class="col-12">
                                 <label for="ambiental_impacts"

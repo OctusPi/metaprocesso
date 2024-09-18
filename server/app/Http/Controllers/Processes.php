@@ -49,13 +49,14 @@ class Processes extends Controller
             return response()->json(Notify::warning("A comissão não possui membros ativos!"), 403);
         }
 
-        $this->model->fill($request->all());
-
-        if (empty($request->id)) {
-            $this->model->author = $request->user()->id;
-            $this->model->ip = $request->ip();
+        if (!$request->id) {
             $this->model->protocol = Utils::randCode(6, str_pad(Data::getOrgan(), 3, '0', STR_PAD_LEFT), date('dmY'));
         }
+
+        $this->model->fill($request->all());
+
+        $this->model->author = $request->user()->id;
+        $this->model->ip = $request->ip();
 
         $this->model->comission_members = $comission->comissionmembers->toArray();
         $this->model->comission_address = $comission->toArray()['organ']['address'];
@@ -207,7 +208,7 @@ class Processes extends Controller
         }
 
         $dfds = Dfd::whereIn('id', $collection->pluck('id'))
-            ->with('organ', 'unit', 'comission', 'demandant', 'ordinator');
+            ->with('unit', 'comission', 'demandant', 'ordinator');
 
         if ($status != Process::S_FRACASSADO) {
             $dfds->update([
