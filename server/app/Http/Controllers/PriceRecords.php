@@ -118,7 +118,8 @@ class PriceRecords extends Controller
         $objs = Utils::map_search_obj($request->units, 'units', 'id');
 
         $query = Data::find(new Process(), $search, ['date_hour_ini'], ['organ'], $betw, $objs);
-        return response()->json($query, 200);
+
+        return response()->json($query);
     }
 
     /**

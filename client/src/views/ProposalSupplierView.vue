@@ -29,7 +29,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <div class="page">
+    <div class="page" v-if="page.auth_view">
 
         <NavProposalUi :data="{
             protocol: page.proposal?.process.protocol,
@@ -45,7 +45,7 @@ onBeforeMount(() => {
 
             <section class="main-section container-fluid p-4">
 
-                <div v-if="page.auth_view">
+                <div>
                     <div role="heading" class="inside-title mb-4">
                         <div>
                             <h2>Registro de Coleta</h2>
@@ -55,12 +55,10 @@ onBeforeMount(() => {
                         </div>
                     </div>
 
-                    <div class="container p-4">
-                        Conteudo da View
+                    <div class="container content p-4">
+                        {{ page.proposal.items }}
                     </div>
                 </div>
-
-                <div v-else>asas</div>
 
             </section>
 
