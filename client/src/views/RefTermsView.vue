@@ -18,7 +18,6 @@ import DfdDetails from '@/components/DfdDetails.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import EtpReport from './reports/EtpReport.vue';
 import exp from '@/services/export';
-const ORIGIN_ETPS = "1";
 
 const sysapp = inject('sysapp')
 
@@ -35,7 +34,7 @@ const [page, pageData] = Layout.new(emit, {
         { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
         { key: 'comission.name', title: 'ORIGEM' },
         { title: 'NECESSIDADE', sub: [{ key: 'necessity' }] },
-        { key: 'status', title: 'STATUS' },
+        { key: 'type', title: 'TIPO' },
     ],
     rules: {
         comission: 'required',
@@ -50,7 +49,6 @@ const [page, pageData] = Layout.new(emit, {
         object_execution_model: 'required',
         contract_management_model: 'required',
         payment_measure_criteria: 'required',
-        solution_parcel_justification: 'required',
         supplier_selection_criteria: 'required',
         funds_suitability: 'required',
         parts_obligation: 'required',
@@ -106,7 +104,7 @@ const attachmentTypes = [
     { id: ATTACHMENT_MARKET, title: 'Levantamento de Mercado' },
 ]
 
-function export_etp(id) {
+function export_refterm(id) {
     http.get(`${page.url}/export/${id}`, emit, async (resp) => {
         const refTerm = resp.data
         const containerReport = document.createElement('div')
@@ -189,12 +187,6 @@ function generate(type) {
         case 'solution_full_description':
             setValuesAndPayload(type, `
             Crie uma descrição completa da solução para o Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
-        `);
-            break;
-        case 'solution_parcel_justification':
-            setValuesAndPayload(type, `
-            Crie uma justificativa para as parcelas da solução descrita no Estudo Técnico preliminar do órgão ${base.organ?.name}
             baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
         `);
             break;
@@ -335,9 +327,9 @@ onMounted(() => {
                     <TableList :header="page.header" :body="page.datalist" :actions="[
                         Actions.Edit((id) => { pageData.update(id) }),
                         Actions.Delete(pageData.remove),
-                        Actions.Export('document-text-outline', export_etp),
+                        Actions.Export('document-text-outline', export_refterm),
                     ]" :mounts="{
-                        status: [Mounts.Cast(page.selects.status), Mounts.Status()],
+                        type: [Mounts.Cast(page.selects.types)],
                         necessity: [Mounts.StripHTML(), Mounts.Truncate(200)],
                     }" />
                 </div>
@@ -592,18 +584,6 @@ onMounted(() => {
                                     v-model="page.data.contract_forecast" />
                             </div>
                             <div class="col-12">
-                                <label for="solution_parcel_justification"
-                                    class="form-label d-flex justify-content-between">Justificação do Parcelamento
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('solution_parcel_justification')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                </label>
-                                <InputRichText :valid="page.valids.solution_parcel_justification"
-                                    placeholder="Justificação do Parcelamento"
-                                    identifier="solution_parcel_justification"
-                                    v-model="page.data.solution_parcel_justification" />
-                            </div>
-                            <div class="col-12">
                                 <label for="ambiental_impacts"
                                     class="form-label d-flex justify-content-between">Previsão de Resultados e Impactos
                                     Ambientais
@@ -646,15 +626,15 @@ onMounted(() => {
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('gestao') }">
                             <div class="col-12">
-                                <label for="object_execution_model"
+                                <label for="contract_management_model"
                                     class="form-label d-flex justify-content-between">Modelo de gestão do contrato
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('object_execution_model')">
+                                        @click="generate('contract_management_model')">
                                         <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                 </label>
-                                <InputRichText :valid="page.valids.object_execution_model"
-                                    placeholder="Modelo de gestão do contrato" identifier="object_execution_model"
-                                    v-model="page.data.object_execution_model" />
+                                <InputRichText :valid="page.valids.contract_management_model"
+                                    placeholder="Modelo de gestão do contrato" identifier="contract_management_model"
+                                    v-model="page.data.contract_management_model" />
                             </div>
                             <div class="col-12">
                                 <label for="correlated_contracts"

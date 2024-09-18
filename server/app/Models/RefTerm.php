@@ -33,10 +33,11 @@ class RefTerm extends Model
         'object_execution_model',
         'contract_management_model',
         'payment_measure_criteria',
-        'solution_parcel_justification',
         'supplier_selection_criteria',
         'funds_suitability',
         'parts_obligation',
+        'emission',
+        'type',
     ];
 
     public function rules(): array
@@ -44,17 +45,19 @@ class RefTerm extends Model
         return [
             'process' => [
                 'required',
-                Rule::unique('etps', 'process')
+                Rule::unique('refterms', 'process')
+                    ->where('organ', $this->organ)
                     ->ignore($this->id)
             ],
             'etp' => [
                 'required',
-                Rule::unique('etps', 'etp')
+                Rule::unique('refterms', 'etp')
+                    ->where('organ', $this->organ)
                     ->ignore($this->id)
             ],
             'protocol' => [
                 'required',
-                Rule::unique('etps', 'protocol')
+                Rule::unique('refterms', 'protocol')
                     ->where('organ', $this->organ)
                     ->ignore($this->id)
             ],
@@ -71,7 +74,6 @@ class RefTerm extends Model
             'object_execution_model' => 'required',
             'contract_management_model' => 'required',
             'payment_measure_criteria' => 'required',
-            'solution_parcel_justification' => 'required',
             'supplier_selection_criteria' => 'required',
             'funds_suitability' => 'required',
             'parts_obligation' => 'required',

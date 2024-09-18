@@ -26,6 +26,19 @@ class RefTerms extends Controller
         parent::__construct(RefTerm::class, User::MOD_REFTERM['module']);
     }
 
+    public function save(Request $request)
+    {
+        $etp = Data::findOne(new Etp(), ['process' => $request->process]);
+        if (!$etp) {
+            return response()->json(Notify::warning('O processo não possui nenhum ETP atrelado...'), 400);
+        }
+        return $this->base_save($request, [
+            'ip' => $request->ip(),
+            'user' => $request->user()->id,
+            'etp' => $etp->id,
+        ]);
+    }
+
     /**
      * Lista os setores com base nos critérios de filtragem.
      *
@@ -48,6 +61,17 @@ class RefTerms extends Controller
             ['comission', 'process'],  // Relações para carregamento adiantado
             $date_between
         );
+    }
+
+    /**
+     * Pega os detalhes de um dado termo
+     *
+     * @param Request $request Dados da requisição para filtragem.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON com a lista de termos.
+     */
+    public function details(Request $request)
+    {
+        return $this->base_details($request, ['process']);
     }
 
     /**
