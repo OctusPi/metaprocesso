@@ -35,7 +35,7 @@ class RefTerms extends Controller
     public function list(Request $request)
     {
         $date_between = [
-            'date_hour_ini' => [
+            'emission' => [
                 $request->date_ini ?: date('Y') . '-01-01',
                 $request->date_fin ?: date('Y-m-d')
             ]
