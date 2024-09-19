@@ -670,6 +670,11 @@ tbody tr:last-child td:first-child {
     height: 1.3rem;
 }
 
+.input-table{
+    width: 100px !important;
+    border: 1px dashed var(--color-border-hover);
+}
+
 .cursor-help {
     cursor: help;
 }

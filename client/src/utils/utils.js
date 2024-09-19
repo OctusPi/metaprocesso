@@ -79,6 +79,20 @@ function reduceArrays(a, b, k = 'id') {
     return Array.from(map.values())
 }
 
+function currencyToFloat(currency){
+    if(!currency){
+        return 0
+    }
+    return parseFloat(currency.replace('.', '').replace(',', '.')).toFixed(2)
+}
+
+function floatToCurrency(value){
+    return Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(value)
+}
+
 export default {
     load,
     dateNow,
@@ -87,5 +101,7 @@ export default {
     truncate,
     stripHTML,
     dateProtocol,
-    reduceArrays
+    reduceArrays,
+    currencyToFloat,
+    floatToCurrency
 }
