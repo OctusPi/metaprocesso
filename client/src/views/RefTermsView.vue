@@ -307,8 +307,8 @@ onMounted(() => {
                                 v-model="page.search.necessity" placeholder="Pesquise por partes da necessidade" />
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-status" class="form-label">Tipo</label>
-                            <select name="status" class="form-control" id="s-status" v-model="page.search.types">
+                            <label for="s-type" class="form-label">Tipo</label>
+                            <select name="type" class="form-control" id="s-status" v-model="page.search.type">
                                 <option value=""></option>
                                 <option v-for="o in page.selects.types" :key="o.id" :value="o.id">
                                     {{ o.title }}
