@@ -16,8 +16,8 @@ import InputRichText from '@/components/inputs/InputRichText.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
-import EtpReport from './reports/EtpReport.vue';
 import exp from '@/services/export';
+import ReftermReport from './reports/ReftermReport.vue';
 
 const sysapp = inject('sysapp')
 
@@ -96,26 +96,31 @@ function list_processes() {
     })
 }
 
-const ATTACHMENT_MEMORY = 1;
-const ATTACHMENT_MARKET = 2;
-
-const attachmentTypes = [
-    { id: ATTACHMENT_MEMORY, title: 'Memória de Cálculo' },
-    { id: ATTACHMENT_MARKET, title: 'Levantamento de Mercado' },
-]
+function fetchEtp(e) {
+    http.post(`${page.url}/fetch_etp/${e.target._value?.id}`, {}, emit, (res) => {
+        page.data.necessity = res.data.necessity
+        page.data.contract_forecast = res.data.contract_forecast
+        page.data.contract_requirements = res.data.contract_requirements
+        page.data.contract_expected_price = res.data.contract_expected_price
+        page.data.market_survey = res.data.market_survey
+        page.data.solution_full_description = res.data.solution_full_description
+        page.data.ambiental_impacts = res.data.ambiental_impacts
+        page.data.correlated_contracts = res.data.correlated_contracts
+    })
+}
 
 function export_refterm(id) {
     http.get(`${page.url}/export/${id}`, emit, async (resp) => {
-        const refTerm = resp.data
+        const refterm = resp.data
         const containerReport = document.createElement('div')
-        const instanceReport = createApp(EtpReport, {
-            refTerm,
+        const instanceReport = createApp(ReftermReport, {
+            refterm,
             qrdata: sysapp,
             organ: page.organ,
             selects: page.selects,
         })
         instanceReport.mount(containerReport)
-        exp.generatePDF(containerReport)
+        exp.exportPDF(containerReport)
     })
 }
 
@@ -138,87 +143,6 @@ function generate(type) {
     }
 
     switch (type) {
-        case 'object_description':
-            setValuesAndPayload(type, `
-            Crie uma descrição concisa para um Estudo Técnico preliminar pelo órgão ${base.organ?.name}
-            baseado no descrição do processo '${base.process?.description} em plain text
-        `);
-            break;
-        case 'object_classification':
-            setValuesAndPayload(type, `
-            Classifique o objeto de um Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
-        `);
-            break;
-        case 'necessity':
-            setValuesAndPayload(type, `
-            Descreva a necessidade da criação de um Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
-        `);
-            break;
-        case 'contract_forecast':
-            setValuesAndPayload(type, `
-            Descreva uma data de previsão por extenso, com base na complexidade o Estudo Técnico preliminar descrito
-            no texto '${base.object_description}' em plain text
-        `);
-            break;
-        case 'contract_requirements':
-            setValuesAndPayload(type, `
-            Elabore os requisitos para o Estudo técnico preliminar descrito no texto '${base.object_description}' em plain text
-        `);
-            break;
-        case 'market_survey':
-            setValuesAndPayload(type, `
-            Crie uma descrição para a pesquisa de mercado do Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
-        `);
-            break;
-        case 'contract_calculus_memories':
-            setValuesAndPayload(type, `
-            Crie uma descrição para as memórias de cálculos do contrato relacionadas ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
-        `);
-            break;
-        case 'contract_expected_price':
-            setValuesAndPayload(type, `
-            Crie uma descrição para o preço esperado do contrato com base no Estudo Técnico preliminar descrito no texto '${base.object_description}' em plain text
-        `);
-            break;
-        case 'solution_full_description':
-            setValuesAndPayload(type, `
-            Crie uma descrição completa da solução para o Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
-        `);
-            break;
-        case 'correlated_contracts':
-            setValuesAndPayload(type, `
-            Crie uma descrição dos contratos correlacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
-        `);
-            break;
-        case 'contract_alignment':
-            setValuesAndPayload(type, `
-            Crie uma descrição para o alinhamento do contrato com o Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
-        `);
-            break;
-        case 'expected_results':
-            setValuesAndPayload(type, `
-            Crie uma descrição dos resultados esperados com base no Estudo Técnico preliminar descrito no texto '${base.object_description}' em plain text
-        `);
-            break;
-        case 'contract_previous_actions':
-            setValuesAndPayload(type, `
-            Crie uma descrição das ações anteriores relacionadas ao contrato e ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
-        `);
-            break;
-        case 'ambiental_impacts':
-            setValuesAndPayload(type, `
-            Crie uma descrição dos possíveis impactos ambientais relacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description} e na descrição '${base.object_description}' em plain text
-        `);
-            break;
         default:
             break;
     }
@@ -428,8 +352,10 @@ onMounted(() => {
                                                 </div>
                                             </div>
                                             <div class="p-4 pt-0 mx-2">
-                                                <TableListRadio secondary identify="process" v-model="page.data.process"
-                                                    :header="page.process.headers" :body="page.process.data" :mounts="{
+                                                <TableListRadio secondary
+                                                    @onChange="fetchEtp" identify="process"
+                                                    v-model="page.data.process" :header="page.process.headers"
+                                                    :body="page.process.data" :mounts="{
                                                         status: [Mounts.Cast(page.selects.process_status), Mounts.Status()],
                                                         description: [Mounts.Truncate(200)],
                                                     }" />

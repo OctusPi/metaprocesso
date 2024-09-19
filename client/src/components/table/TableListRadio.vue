@@ -3,6 +3,8 @@ import { onMounted, ref, watch } from "vue"
 import TableList from "./TableList.vue";
 import utils from "@/utils/utils";
 
+const emit = defineEmits(['onChange'])
+
 const props = defineProps({
     body: { type: Array, default: () => [] },
     header: { type: Array, default: () => [] },
@@ -37,7 +39,7 @@ onMounted(() => {
         :smaller="props.smaller" :sent="props.sent">
         <template #select="{ instance }">
             <input class="form-check-input" type="radio" :value="props.only ? instance[props.only] : instance"
-                :name="props.identify + '_check'" v-model="model">
+                :name="props.identify + '_check'" v-model="model" @change="(e) => emit('onChange', e)">
         </template>
     </TableList>
 </template>

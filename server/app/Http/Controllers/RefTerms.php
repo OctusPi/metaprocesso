@@ -123,6 +123,18 @@ class RefTerms extends Controller
         return response()->json($etp, 200);
     }
 
+
+    /**
+     * Exporta os dados do dado Termo
+     *
+     * @param Request $request Dados da requisição.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON com dados de seleção.
+     */
+    public function export(Request $request)
+    {
+        return $this->base_details($request, ['process', 'comission']);
+    }
+
     /**
      * Fornece dados de seleção para uso em formulários ou interfaces.
      *
