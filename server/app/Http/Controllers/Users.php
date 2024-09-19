@@ -91,9 +91,9 @@ class Users extends Controller
         try {
             return response()->json([
                 'profiles' => $profiles,
-                'organs' => Utils::map_select(Data::find(new Organ(), order: ['name'])),
-                'units' => Utils::map_select(Data::find(new Unit(), order: ['name'])),
-                'sectors' => Utils::map_select(Data::find(new Sector(), order: ['name'])),
+                'organs' => Data::find(new Organ(), order: ['name']),
+                'units' => Data::find(new Unit(), order: ['name']),
+                'sectors' => Data::find(new Sector(), order: ['name']),
                 'status' => User::list_status(),
                 'modules' => $request->user()->profile != User::PRF_ADMIN
                     ? $request->user()->modules
