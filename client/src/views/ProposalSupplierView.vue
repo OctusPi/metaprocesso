@@ -55,8 +55,24 @@ onBeforeMount(() => {
                         </div>
                     </div>
 
-                    <div class="container content p-4">
-                        {{ page.proposal.items }}
+                    <div class="container content p-0">
+                        <div class="tablelist">
+                            <div class="table-responsive-md">
+                                <table class="m-0 table-borderless table-striped table-hover table">
+                                    <thead>
+                                        <tr>
+                                            <th>ITEM</th>
+                                            <th>QUANTIDADE</th>
+                                            <th>VALOR UNITÁRIO</th>
+                                            <th>TOTAL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

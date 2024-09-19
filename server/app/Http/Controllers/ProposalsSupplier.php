@@ -53,12 +53,12 @@ class ProposalsSupplier extends Controller
     private function dfdItems(?array $dfds):array
     {
         $items = array_map(function ($id) {
-            return DfdItem::where('dfd', '=', $id)->get()->toArray();
+            return DfdItem::where('dfd', '=', $id)->with('item')->get()->toArray();
         }, array_column($dfds, 'id'));
 
         $result = array_reduce($items, function ($carry, $subArray) {
             foreach ($subArray as $item) {
-                $key = $item['item'];
+                $key = $item['item']['id'] ;
                 if (isset($carry[$key])) {
                     $carry[$key]['quantity'] += $item['quantity'];
                 } else {
