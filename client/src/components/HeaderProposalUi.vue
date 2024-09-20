@@ -45,6 +45,8 @@ function open_menu() {
 
 h1{
     font-size: 0.9rem;
+    color: var(--color-text);
+
 }
 
 .logo-header{

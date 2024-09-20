@@ -33,7 +33,7 @@ function close_menu() {
                     <span class="strong d-block">Data Solicitação: </span>{{ data.date_ini}}
                 </li>
                 <li class="mb-3">
-                    <span class="strong d-block">Prazo Resposta: </span>{{ data.date_fin}}
+                    <span class="strong d-block">Prazo Resposta: </span>{{ data.date_fin}} - 00:00:00
                 </li>
                 <li class="mb-3">
                     <span class="strong d-block">Objeto: </span>{{ data.description }}
@@ -56,6 +56,7 @@ function close_menu() {
 
 .strong{
     font-weight: 600 !important;
+    color: var(--color-text)
 }
 
 @media(max-width:760px) {

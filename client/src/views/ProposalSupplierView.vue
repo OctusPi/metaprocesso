@@ -20,6 +20,15 @@ const [page, pageData] = Layout.new(emit, {
     proposal: {}
 })
 
+function sendProposal() {
+    console.log(pageData)
+
+}
+
+function sendPatialProposal() {
+    console.log('partial')
+}
+
 onBeforeMount(() => {
     http.get(`${page.url}/check/${route.params.token}`, emit, (resp) => {
         if (http.success(resp)) {
@@ -32,6 +41,45 @@ onBeforeMount(() => {
 </script>
 
 <template>
+
+    <div class="modal fade" id="modalConfirmProposal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content box content p-4">
+
+                <div class="modal-body py-0">
+                    <div class="text-center text-success">
+                        <ion-icon name="checkmark-done-outline" class="fs-1" />
+                    </div>
+                    <p class="text-center px-3">Confirmar envio de proposta? A coleta será finalizada e não será
+                        possível realizar novas edições.</p>
+                    <div class="row">
+                        <div class="col">
+                            <label for="representation" class="form-label">Código de validação</label>
+                            <input placeholder="000-000000-0000" type="text" name="code" class="form-control"
+                                :class="{ 'form-control-alert': page.valids.logomarca }" id="code-validation"
+                                v-model="page.data.code" @keydown.enter.prevent="sendProposal">
+                            <div id="codeHelpBlock" class="form-text txt-color-sec">
+                                Informe o código de validação recebido pelo e-mail.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-action-tertiary" data-bs-dismiss="modal">
+                        <ion-icon name="close" />
+                        Cancelar
+                    </button>
+                    <button @click="sendProposal" type="button" class="btn btn-action-quaternary"
+                        :data-bs-dismiss="page.data.code ? 'modal' : null">
+                        <ion-icon name="checkmark-done-outline" />
+                        Confirmar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="page" v-if="page.auth_view">
 
         <NavProposalUi :data="{
@@ -52,7 +100,8 @@ onBeforeMount(() => {
                         <div>
                             <h2>Registro de Coleta</h2>
                             <p>
-                                Preencha os dados para enviar sua proposta de preços, adicione a logo da sua empresa, baixe a proposta assine e anexe ao envio.
+                                Preencha os dados para enviar sua proposta de preços, adicione a logo da sua empresa,
+                                baixe a proposta assine e anexe ao envio.
                             </p>
                         </div>
                     </div>
@@ -101,59 +150,52 @@ onBeforeMount(() => {
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="container content p-4 pt-1">
-                        <form class="form-row" @submit.prevent="pageData.save()">
+                        <form class="form-row" @submit.prevent="() => false">
                             <div class="row m-0 g-3">
-                                <div class="col-sm-12 col-md-8">
+                                <div class="col-sm-12 col-md-3">
                                     <label for="representation" class="form-label">Nome do Representante</label>
                                     <input type="text" name="representation" class="form-control" id="representation"
                                         placeholder="Nome completo do representante" v-model="page.data.representation">
-                                        
+
                                 </div>
-                                <div class="col-sm-12 col-md-4">
+                                <div class="col-sm-12 col-md-3">
                                     <label for="cpf" class="form-label">CPF do Representante</label>
                                     <input type="text" name="cpf" class="form-control" id="cpf"
                                         placeholder="000.000.000-00" v-maska:[masks.maskcpf] v-model="page.data.cpf">
-                                        
+
                                 </div>
-                                <div class="col-sm-12 col-md-4">
-                                    <label for="code" class="form-label">Código Validação</label>
-                                    <input type="text" name="code" class="form-control" id="code"
-                                        placeholder="00000" v-model="page.data.code">
-                                        <div id="codeHelpBlock" class="form-text txt-color-sec">
-                                        Código de valição recebido pelo e-mail
-                                    </div>
-                                </div>
-                                <div class="col-sm-12 col-md-4">
+                                <div class="col-sm-12 col-md-3">
                                     <FileInput label="Selecionar logomarca" identify="logomarca"
                                         v-model="page.data.logomarca" :valid="page.valids.logomarca" />
-                                        <div id="logomarcaHelpBlock" class="form-text txt-color-sec">
+                                    <div id="logomarcaHelpBlock" class="form-text txt-color-sec">
                                         Logomarca ou timbre da empresa
                                     </div>
                                 </div>
-                                <div class="col-sm-12 col-md-4">
+                                <div class="col-sm-12 col-md-3">
                                     <FileInput label="Anexar documento assinado" identify="document"
                                         v-model="page.data.document" :valid="page.valids.document" />
-                                        <div id="codeHelpBlock" class="form-text txt-color-sec">
-                                        Anexe a proposta com assinatura escrita ou digital do representante
+                                    <div id="docHelpBlock" class="form-text txt-color-sec">
+                                        Anexar proposta assinada pelo representante
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex flex-row-reverse gap-2 mt-4">
-                            <button class="btn btn-action-primary">
-                                <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
-                                Enviar Proposta
-                            </button>
-                            <button type="button" class="btn btn-action-quaternary">
-                                <ion-icon name="sparkles-outline" class="fs-5"></ion-icon>
-                                Salvar Parcialmente
-                            </button>
-                            <button type="button" class="btn btn-action-tertiary">
-                                <ion-icon name="cloud-download-outline" class="fs-5"></ion-icon>
-                                Download Proposta
-                            </button>
-                        </div>
+                                <button type="button" class="btn btn-action-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modalConfirmProposal">
+                                    <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
+                                    Enviar Proposta
+                                </button>
+                                <button type="button" class="btn btn-action-quaternary" @click="sendPatialProposal">
+                                    <ion-icon name="sparkles-outline" class="fs-5"></ion-icon>
+                                    Salvar Parcialmente
+                                </button>
+                                <button type="button" class="btn btn-action-tertiary">
+                                    <ion-icon name="cloud-download-outline" class="fs-5"></ion-icon>
+                                    Download Proposta
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
