@@ -272,6 +272,16 @@
     background-color: var(--color-input-active);
 }
 
+.btn-action-quaternary{
+    background-color: var(--color-base-trans-hover);
+    color: var(--color-base);
+}
+
+.btn-action-quaternary:hover{
+    background-color: var(--color-base-tls);
+    color: var(--color-base);
+}
+
 .btn-action-primary-tls,
 .btn-action-danger-tls {
     background-color: var(--color-input-focus) !important;
@@ -670,7 +680,7 @@ tbody tr:last-child td:first-child {
     height: 1.3rem;
 }
 
-.input-table{
+.input-table {
     width: 100px !important;
     border: 1px dashed var(--color-border-hover);
 }

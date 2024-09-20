@@ -47,13 +47,12 @@ onBeforeMount(() => {
             <HeaderProposalUi :supplier="page.proposal.supplier ?? {}" />
 
             <section class="main-section container-fluid p-4">
-
                 <div>
                     <div role="heading" class="inside-title mb-4">
                         <div>
                             <h2>Registro de Coleta</h2>
                             <p>
-                                Preencha os dados para enviar sua proposta de preços
+                                Preencha os dados para enviar sua proposta de preços, adicione a logo da sua empresa, baixe a proposta assine e anexe ao envio.
                             </p>
                         </div>
                     </div>
@@ -66,8 +65,9 @@ onBeforeMount(() => {
                                         <tr>
                                             <th>CÓDIGO</th>
                                             <th>ITEM</th>
-                                            <th>QUANTIDADE</th>
-                                            <th>VALOR UNITÁRIO</th>
+                                            <th>UNIT.</th>
+                                            <th class="text-center">QUANT.</th>
+                                            <th>VALOR UNIT.</th>
                                             <th class="pe-2">TOTAL</th>
                                         </tr>
                                     </thead>
@@ -81,6 +81,10 @@ onBeforeMount(() => {
                                                 <div class="small">{{ i.item.description }}</div>
                                             </td>
                                             <td class="align-middle">
+                                                <div class="small txt-color-sec">{{ i.item.und }}</div>
+                                                <div class="small">{{ i.item.volume }}</div>
+                                            </td>
+                                            <td class="align-middle text-center">
                                                 <div class="small">{{ i.quantity }}</div>
                                             </td>
                                             <td class="align-middle">
@@ -97,37 +101,53 @@ onBeforeMount(() => {
                             </div>
                         </div>
                     </div>
-
-                    <div role="heading" class="inside-title mb-4">
-                        <div>
-                            <h2>Enviar Proposta</h2>
-                            <p>
-                                Adicione a sua logomarca, faça o download da proposta, adicione sua assinatura escrita
-                                ou digital e anexe o documento assinado.
-                            </p>
-                        </div>
-                    </div>
+                    
                     <div class="container content p-4 pt-1">
                         <form class="form-row" @submit.prevent="pageData.save()">
                             <div class="row m-0 g-3">
+                                <div class="col-sm-12 col-md-8">
+                                    <label for="representation" class="form-label">Nome do Representante</label>
+                                    <input type="text" name="representation" class="form-control" id="representation"
+                                        placeholder="Nome completo do representante" v-model="page.data.representation">
+                                        
+                                </div>
+                                <div class="col-sm-12 col-md-4">
+                                    <label for="cpf" class="form-label">CPF do Representante</label>
+                                    <input type="text" name="cpf" class="form-control" id="cpf"
+                                        placeholder="000.000.000-00" v-maska:[masks.maskcpf] v-model="page.data.cpf">
+                                        
+                                </div>
                                 <div class="col-sm-12 col-md-4">
                                     <label for="code" class="form-label">Código Validação</label>
                                     <input type="text" name="code" class="form-control" id="code"
                                         placeholder="00000" v-model="page.data.code">
+                                        <div id="codeHelpBlock" class="form-text txt-color-sec">
+                                        Código de valição recebido pelo e-mail
+                                    </div>
                                 </div>
                                 <div class="col-sm-12 col-md-4">
                                     <FileInput label="Selecionar logomarca" identify="logomarca"
                                         v-model="page.data.logomarca" :valid="page.valids.logomarca" />
+                                        <div id="logomarcaHelpBlock" class="form-text txt-color-sec">
+                                        Logomarca ou timbre da empresa
+                                    </div>
                                 </div>
                                 <div class="col-sm-12 col-md-4">
                                     <FileInput label="Anexar documento assinado" identify="document"
                                         v-model="page.data.document" :valid="page.valids.document" />
+                                        <div id="codeHelpBlock" class="form-text txt-color-sec">
+                                        Anexe a proposta com assinatura escrita ou digital do representante
+                                    </div>
                                 </div>
                             </div>
                             <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
                                 Enviar Proposta
+                            </button>
+                            <button type="button" class="btn btn-action-quaternary">
+                                <ion-icon name="sparkles-outline" class="fs-5"></ion-icon>
+                                Salvar Parcialmente
                             </button>
                             <button type="button" class="btn btn-action-tertiary">
                                 <ion-icon name="cloud-download-outline" class="fs-5"></ion-icon>

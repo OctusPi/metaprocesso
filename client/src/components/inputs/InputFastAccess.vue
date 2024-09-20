@@ -46,7 +46,7 @@ function search_item() {
         <div class="container-list" v-if="comp.list.length">
             <ul class="fast-link">
                 <li v-for="i in comp.list" :key="i.title">
-                    <RouterLink :to="i.href" class="d-flex align-items-center">
+                    <RouterLink :to="i.href" class="d-flex align-items-center item-link">
                         <ion-icon :name="i.icon" class="fs-5 me-2 txt-color-sec"></ion-icon>
                         <div>
                             <p class="p-0 m-0 txt-color">{{ i.title }}</p>
@@ -93,5 +93,10 @@ function search_item() {
 
 .fast-link li:hover{
     background-color: var(--color-base-trans-hover);
+    color: var(--color-base) !important;
+}
+
+.fast-link li:hover a *{
+    color: var(--color-base) !important;
 }
 </style>
