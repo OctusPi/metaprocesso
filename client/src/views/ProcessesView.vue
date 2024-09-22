@@ -45,6 +45,9 @@ const [page, pageData] = Layout.new(emit, {
         description: 'required',
         status: 'required',
         dfds: 'required',
+        acquisition: 'required',
+        acquisition_type: 'required',
+        installment_type: 'required',
     },
     dfds: {
         search: {},
@@ -99,11 +102,12 @@ watch(() => page.ui.register, (newdata) => {
     }
 })
 
-function generate() {
+function generate(key) {
     const base = {
         description: page.data.description,
         type: page.selects.types.find(o => o.id === page.data.type),
         modality: page.selects.modalities.find(o => o.id === page.data.modality),
+        installment: page.selects.installment_types.find(o => o.id === page.data.installment_type),
     }
 
     if (!base.type) {
@@ -121,11 +125,24 @@ function generate() {
         return
     }
 
-    const payload = (`
-        Elabore uma descrição sucinta para um objeto de contratação
-        de empresa especializada em fornecimento de ${base.type} na modalidade ${base.modality}
-        tendo como objetivo ${base.description} para o órgão ${page.organ_name}. Retorne o resultado em plain text.
-    `)
+    let payload;
+
+    switch (key) {
+        case 'description':
+            payload = (`
+                Elabore uma descrição sucinta para um objeto de contratação
+                de empresa especializada em fornecimento de ${base.type} na modalidade ${base.modality}
+                tendo como objetivo ${base.description} para o órgão ${page.organ_name}. Retorne o resultado em plain text.
+            `)
+            break
+        case 'installment_justification':
+            payload = (`
+                Elabore uma descrição sucinta para o parcelamento do tipo ${base.installment} de um objeto de contratação
+                de empresa especializada em fornecimento de ${base.type} na modalidade ${base.modality}
+                tendo como objetivo ${base.description} para o órgão ${page.organ_name}. Retorne o resultado em plain text.
+            `)
+
+    }
 
     gpt.generate(`${page.url}/generate`, payload, emit, (resp) => {
         page.data.description = resp.data?.choices[0]?.message?.content
@@ -284,8 +301,8 @@ onMounted(() => {
                             :class="{ 'show active': tabs.is('processo') }">
                             <div class="col-sm-12 col-md-4">
                                 <label for="date_hour_ini" class="form-label">Data e Hora de Abertura</label>
-                                <VueDatePicker id="date_hour_ini" time-picker-inline model-type="dd/MM/yyyy HH:mm" format="dd/MM/yyyy - HH:mm"
-                                    v-model="page.data.date_hour_ini" auto-apply
+                                <VueDatePicker id="date_hour_ini" time-picker-inline model-type="dd/MM/yyyy HH:mm"
+                                    format="dd/MM/yyyy - HH:mm" v-model="page.data.date_hour_ini" auto-apply
                                     :input-class-name="page.valids.date_hour_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                     locale="pt-br" calendar-class-name="dp-custom-calendar"
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
@@ -334,6 +351,26 @@ onMounted(() => {
                                     </option>
                                 </select>
                             </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="acquisition" class="form-label">Estilo da Aquisição</label>
+                                <select name="acquisition" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.acquisition }" id="acquisition"
+                                    v-model="page.data.acquisition">
+                                    <option v-for="o in page.selects.acquisitions" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-8">
+                                <label for="acquisition_type" class="form-label">Tipo da Aquisição</label>
+                                <select name="acquisition_type" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.acquisition_type }" id="acquisition_type"
+                                    v-model="page.data.acquisition_type">
+                                    <option v-for="o in page.selects.acquisition_types" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
                             <div class="col-sm-12 col-md-12">
                                 <label for="description" class="form-label d-flex justify-content-between">
                                     Descrição
@@ -346,6 +383,21 @@ onMounted(() => {
                                 <textarea name="description" class="form-control" rows="4" :class="{
                                     'form-control-alert': page.valids.description
                                 }" id="description" v-model="page.data.description"></textarea>
+                            </div>
+                            <div class="col-sm-12 col-md-12">
+                                <label for="installment_justification"
+                                    class="form-label d-flex justify-content-between">
+                                    Justificação do Parcelamento
+                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        @click="generate('installment_justification')">
+                                        <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>
+                                        Gerar com I.A
+                                    </a>
+                                </label>
+                                <textarea name="installment_justification" class="form-control" rows="4" :class="{
+                                    'form-control-alert': page.valids.installment_justification
+                                }" id="installment_justification"
+                                    v-model="page.data.installment_justification"></textarea>
                             </div>
                         </div>
 

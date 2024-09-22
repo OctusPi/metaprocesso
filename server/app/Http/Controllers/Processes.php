@@ -55,6 +55,7 @@ class Processes extends Controller
 
         $this->model->fill($request->all());
 
+        $this->model->dfds = json_decode($request->dfds);
         $this->model->author = $request->user()->id;
         $this->model->ip = $request->ip();
 
@@ -66,8 +67,11 @@ class Processes extends Controller
             collect($this->model->dfds)
         );
 
+
         $this->model->dfds = $dfds->toArray();
-        $this->model->ordinators = collect($dfds->toArray())->pluck('ordinator')->toArray();
+        $this->model->ordinators = collect($dfds->toArray())
+            ->pluck('ordinator')
+            ->toArray();
 
         return $this->base_save($request, $this->model->toArray());
     }
@@ -191,6 +195,8 @@ class Processes extends Controller
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'types' => Process::list_types(),
             'status' => Process::list_status(),
+            'acquisition_types' => Process::list_acquisition_types(),
+            'acquisitions' => Process::list_acquisitions(),
         ], Dfd::make_details()), 200);
     }
 
