@@ -42,48 +42,13 @@ const organ = ref(props.organ)
 
     <main>
         <div class="text-center mt-4">
-            <h1>ESTUDO TÉCNICO PRELIMINAR (ETP)</h1>
+            <h1>TERMO DE REFERÊNCIA (TR)</h1>
             <p>PROCESSO {{ refterm.process.protocol }}</p>
         </div>
         <div class="term-content">
             <div class="mt-4">
-                <h1 class="term-title">DESCRIÇÃO DO OBJETO</h1>
-                <div v-html="refterm.object_description"></div>
-            </div>
-
-            <div class="mt-4">
-                <h1 class="term-title">CLASSIFICAÇÃO DO OBJETO</h1>
-                <div v-html="refterm.object_classification"></div>
-            </div>
-
-            <div class="mt-4">
-                <h1 class="term-title">DESCRIÇÃO DA NECESSIDADE</h1>
+                <h1 class="term-title">DESCRIÇÃO DA NECESSIDADE DE CONTRATAÇÃO</h1>
                 <div v-html="refterm.necessity"></div>
-            </div>
-
-            <div class="mt-4">
-                <h1 class="term-title">DEMONSTRAÇÃO DA PREVISÃO DA CONTRATAÇÃO NO PLANO DE CONTRATAÇÕES ANUAL</h1>
-                <div v-html="refterm.contract_forecast"></div>
-            </div>
-
-            <div class="mt-4">
-                <h1 class="term-title">DESCRIÇÃO DOS REQUISITOS DA CONTRATAÇÃO</h1>
-                <div v-html="refterm.contract_requirements"></div>
-            </div>
-
-            <div class="mt-4">
-                <h1 class="term-title">LEVANTAMENTO DE MERCADO</h1>
-                <div v-html="refterm.market_survey"></div>
-            </div>
-
-            <div class="mt-4">
-                <h1 class="term-title">ESTIMATIVA DAS QUANTIDADES A SEREM CONTRATADAS (MEMÓRIAS DE CÁLCULO)</h1>
-                <div v-html="refterm.contract_calculus_memories"></div>
-            </div>
-
-            <div class="mt-4">
-                <h1 class="term-title">ESTIMATIVA DO VALOR DA CONTRATAÇÃO</h1>
-                <div v-html="refterm.contract_expected_price"></div>
             </div>
 
             <div class="mt-4">
@@ -92,18 +57,53 @@ const organ = ref(props.organ)
             </div>
 
             <div class="mt-4">
-                <h1 class="term-title">JUSTIFICATIVA PARA O PARCELAMENTO OU NÃO DA SOLUÇÃO</h1>
-                <div v-html="refterm.solution_parcel_justification"></div>
+                <h1 class="term-title">CLASSIFICAÇÃO DO OBJETO</h1>
+                <div v-html="refterm.object_classification"></div>
             </div>
 
             <div class="mt-4">
-                <h1 class="term-title">CONTRATAÇÕES CORRELATAS E/OU INTERDEPENDENTE</h1>
+                <h1 class="term-title">DEMONSTRAÇÃO DA PREVISÃO DA CONTRATAÇÃO NO PLANO DE CONTRATAÇÕES ANUAL</h1>
+                <div v-html="refterm.contract_forecast"></div>
+            </div>
+
+            <div class="mt-4">
+                <h1 class="term-title">MODELO DE EXECUÇÃO DO OBJETO</h1>
+                <div v-html="refterm.object_execution_model"></div>
+            </div>
+
+            <div class="mt-4">
+                <h1 class="term-title">PAPÉIS E RESPONSABILIDADES</h1>
+                <div v-html="refterm.parts_obligation"></div>
+            </div>
+
+            <div class="mt-4">
+                <h1 class="term-title">MODELO DE GESTÃO DO CONTRATO</h1>
+                <div v-html="refterm.contract_management_model"></div>
+            </div>
+
+            <div class="mt-4">
+                <h1 class="term-title">CRITÉRIOS DE MEDIÇÃO E DE PAGAMENTO</h1>
+                <div v-html="refterm.payment_measure_criteria"></div>
+            </div>
+
+            <div class="mt-4">
+                <h1 class="term-title">FORMA E CRITÉRIOS DE SELEÇÃO DO FORNECEDOR E FORMA DE FORNECIMENTO</h1>
+                <div v-html="refterm.supplier_selection_criteria"></div>
+            </div>
+
+            <div class="mt-4">
+                <h1 class="term-title">ADEQUAÇÃO ORÇAMENTÁRIA</h1>
+                <div v-html="refterm.funds_suitability"></div>
+            </div>
+
+            <div class="mt-4">
+                <h1 class="term-title">ESTIMATIVA DO VALOR DA CONTRATAÇÃO</h1>
+                <div v-html="refterm.contract_expected_price"></div>
+            </div>
+
+            <div class="mt-4">
+                <h1 class="term-title">CONTRATAÇÕES CORRELATAS E/OU INTERDEPENDENTES</h1>
                 <div v-html="refterm.correlated_contracts"></div>
-            </div>
-
-            <div class="mt-4">
-                <h1 class="term-title">ALINHAMENTO ENTRE A CONTRATAÇÃO E O PLANEJAMENTO</h1>
-                <div v-html="refterm.contract_alignment"></div>
             </div>
 
             <div class="mt-4">
@@ -112,23 +112,8 @@ const organ = ref(props.organ)
             </div>
 
             <div class="mt-4">
-                <h1 class="term-title">PROVIDÊNCIAS A SEREM ADOTADAS PREVIAMENTE À CELEBRAÇÃO DO CONTRATO</h1>
-                <div v-html="refterm.contract_previous_actions"></div>
-            </div>
-
-            <div class="mt-4">
                 <h1 class="term-title">POSSÍVEIS IMPACTOS AMBIENTAIS E TRATAMENTOS</h1>
                 <div v-html="refterm.ambiental_impacts"></div>
-            </div>
-
-            <div class="mt-4">
-                <h1 class="term-title">DECLARAÇÃO DE VIABILIDADE</h1>
-                <p v-if="refterm.viability_declaration">Esta equipe de
-                    planejamento declara viável esta contratação com base neste ETP, consoante o inciso
-                    XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</p>
-                <p v-else>
-                    Esta equipe de planejamento declara inviável esta contratação com base neste ETP, consoante o inciso
-                    XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</p>
             </div>
         </div>
 

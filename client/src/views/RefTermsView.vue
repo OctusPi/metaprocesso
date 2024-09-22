@@ -120,7 +120,7 @@ function export_refterm(id) {
             selects: page.selects,
         })
         instanceReport.mount(containerReport)
-        exp.exportPDF(containerReport)
+        exp.exportPDF(containerReport, `TermoDeReferencia-${id}`)
     })
 }
 
