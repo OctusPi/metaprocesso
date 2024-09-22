@@ -18,9 +18,9 @@ class ComissionMemberFactory extends Factory
         return [
             'responsibility' => fake()->randomElement(ComissionMember::list_responsabilities())['id'],
             'status' => fake()->randomElement(ComissionMember::list_status())['id'],
-            'comission' => Comission::inRandomOrder()->first()->id,
-            'organ' => Organ::inRandomOrder()->first()->id,
-            'unit' => Unit::inRandomOrder()->first()->id,
+            'comission' => Comission::latest()->first()->id,
+            'organ' => Organ::latest()->first()->id,
+            'unit' => Unit::latest()->first()->id,
             'start_term' => fake()->date('d/m/Y'),
             'name' => fake()->company(),
         ];

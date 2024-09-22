@@ -14,10 +14,10 @@ class CatalogFactory extends Factory
     public function definition(): array
     {
         return [
-            'comission' => Comission::inRandomOrder()->first()->id,
-            'organ' => Organ::inRandomOrder()->first()->id,
+            'comission' => Comission::latest()->first()->id,
+            'organ' => Organ::latest()->first()->id,
             'name' => fake()->name(),
-            'description' => fake()->text(100)
+            'description' => fake()->text(200)
         ];
     }
 }

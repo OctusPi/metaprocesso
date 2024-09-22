@@ -16,8 +16,8 @@ class OrdinatorFactory extends Factory
     {
         return [
             'status' => fake()->randomElement(Ordinator::list_status())['id'],
-            'organ' => Organ::inRandomOrder()->first()->id,
-            'unit' => Unit::inRandomOrder()->first()->id,
+            'organ' => Organ::latest()->first()->id,
+            'unit' => Unit::latest()->first()->id,
             'cpf' => fake()->numerify('###.###.###-##'),
             'start_term' => fake()->date('d/m/Y'),
             'name' => fake()->name(),

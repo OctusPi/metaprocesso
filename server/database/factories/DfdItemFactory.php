@@ -17,11 +17,11 @@ class DfdItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'dfd' => Dfd::inRandomOrder()->first()->id,
-            'item' => CatalogItem::inRandomOrder()->first()->id,
+            'dfd' => Dfd::latest()->first()->id,
+            'item' => CatalogItem::latest()->first()->id,
             'quantity' => fake()->randomNumber(5),
-            'program' => Program::inRandomOrder()->first()->id,
-            'dotation' => Dotation::inRandomOrder()->first()->id
+            'program' => Program::latest()->first()->id,
+            'dotation' => Dotation::latest()->first()->id
         ];
     }
 }

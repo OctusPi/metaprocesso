@@ -33,6 +33,10 @@ return new class extends Migration
             $table->string('winner_value')->nullable();
             $table->json('dfds');
             $table->index('date_hour_ini');
+            $table->integer('acquisition');
+            $table->integer('acquisition_type');
+            $table->integer('installment_type');
+            $table->text('installment_justification')->nullable();
         });
     }
 

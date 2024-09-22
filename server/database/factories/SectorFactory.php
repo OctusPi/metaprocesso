@@ -14,8 +14,8 @@ class SectorFactory extends Factory
     public function definition(): array
     {
         return [
-            'organ' => Organ::inRandomOrder()->first()->id,
-            'unit' =>  Unit::inRandomOrder()->first()->id,
+            'organ' => Organ::latest()->first()->id,
+            'unit' =>  Unit::latest()->first()->id,
             'name' => fake()->company()
         ];
     }

@@ -16,11 +16,11 @@ class DotationFactory extends Factory
     {
         return [
             'status' => fake()->randomElement(Dotation::list_status())['id'],
-            'organ' => Organ::inRandomOrder()->first()->id,
-            'unit' => Unit::inRandomOrder()->first()->id,
-            'description' => fake()->text(100),
+            'organ' => Organ::latest()->first()->id,
+            'unit' => Unit::latest()->first()->id,
+            'description' => fake()->text(200),
             'name' => fake()->company(),
-            'law' => fake()->word(),
+            'law' => fake()->text(200),
         ];
     }
 }

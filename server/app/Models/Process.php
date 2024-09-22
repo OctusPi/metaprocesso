@@ -43,6 +43,13 @@ class Process extends Model
     public const M_CARPOOL = 9;
     public const M_CALL = 10;
 
+    public const ACQUISITION_SERVICE = 1;
+    public const ACQUISITION_ACQUISITION = 2;
+
+    public const INSTALLMENT_NONE = 1;
+    public const INSTALLMENT_LOT = 2;
+    public const INSTALLMENT_ITEM = 3;
+
     protected $table = 'processes';
 
     protected $fillable = [
@@ -64,7 +71,10 @@ class Process extends Model
         'status',
         'initial_value',
         'winner_value',
-        'dfds'
+        'acquisition',
+        'acquisition_type',
+        'installment_justification',
+        'installment_type',
     ];
 
     protected $casts = [
@@ -97,7 +107,10 @@ class Process extends Model
             'author' => 'required',
             'description' => 'required',
             'status' => 'required',
-            'dfds' => 'required'
+            'dfds' => 'required',
+            'acquisition' => 'required',
+            'acquisition_type' => 'required',
+            'installment_type' => 'required',
         ];
     }
 
@@ -168,6 +181,29 @@ class Process extends Model
             ['id' => self::M_CALL, 'title' => 'Chamada'],
         ];
     }
+
+    public static function list_acquisitions(): array
+    {
+        return [
+            ['id' => self::ACQUISITION_SERVICE, 'title' => 'Serviço'],
+            ['id' => self::ACQUISITION_ACQUISITION, 'title' => 'Aquisição'],
+        ];
+    }
+
+    public static function list_acquisition_types(): array
+    {
+        return Dfd::list_acquisitions();
+    }
+
+    public static function list_installments(): array
+    {
+        return [
+            ['id' => self::INSTALLMENT_NONE, 'title' => 'Sem parcelamento'],
+            ['id' => self::INSTALLMENT_LOT, 'title' => 'Parcelamento por lote'],
+            ['id' => self::INSTALLMENT_ITEM, 'title' => 'Parcelamento por item'],
+        ];
+    }
+
 
     public static function list_status(): array
     {

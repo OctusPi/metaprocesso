@@ -15,12 +15,12 @@ class ProgramFactory extends Factory
     public function definition(): array
     {
         return [
-            'status' => fake()->randomElement(Program::list_status())['id'],
-            'organ' => Organ::inRandomOrder()->first()->id,
-            'unit' =>  Unit::inRandomOrder()->first()->id,
+            'status' => Program::S_ACTIVE,
+            'organ' => Organ::latest()->first()->id,
+            'unit' => Unit::latest()->first()->id,
             'name' => fake()->company(),
-            'law' => fake()->text(255),
-            'description' => fake()->text(100),
+            'law' => fake()->text(200),
+            'description' => fake()->text(200),
         ];
     }
 }
