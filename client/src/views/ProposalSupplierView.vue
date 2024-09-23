@@ -12,15 +12,23 @@ import NavProposalUi from '@/components/NavProposalUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import FileInput from '@/components/inputs/FileInput.vue';
 import ProposalReport from './reports/ProposalReport.vue';
+import forms from '@/services/forms';
+import notifys from '@/utils/notifys';
 
 const sysapp = inject('sysapp')
 const emit = defineEmits(['callAlert', 'callUpdate'])
 const route = useRoute()
 
+
 const [page, pageData] = Layout.new(emit, {
     url: '/proposal_supplier',
     auth_view: false,
-    proposal: {}
+    proposal: {},
+    rules: {
+        logomarca:'required',
+        representation: 'required',
+        cpf: 'required'
+    }
 })
 
 function sendProposal() {
@@ -57,6 +65,14 @@ function checkProposal(){
 }
 
 function exportProposal(){
+    const checkform = forms.checkform(page.data, page.rules)
+    if(!checkform.isvalid){
+        emit('callAlert', notifys.warning(checkform.message))
+        return
+    }
+
+    console.log(page.data)
+
     const containerReport = document.createElement('div')
     const instanceReport = createApp(ProposalReport, {
         qrdata:sysapp, 
@@ -197,13 +213,15 @@ onBeforeMount(() => {
                                 <div class="col-sm-12 col-md-3">
                                     <label for="representation" class="form-label">Nome do Representante</label>
                                     <input type="text" name="representation" class="form-control" id="representation"
-                                        placeholder="Nome completo do representante" v-model="page.data.representation">
+                                        placeholder="Nome completo do representante" v-model="page.data.representation" 
+                                        :class="{ 'form-control-alert': page.valids.representation }">
 
                                 </div>
                                 <div class="col-sm-12 col-md-3">
                                     <label for="cpf" class="form-label">CPF do Representante</label>
                                     <input type="text" name="cpf" class="form-control" id="cpf"
-                                        placeholder="000.000.000-00" v-maska:[masks.maskcpf] v-model="page.data.cpf">
+                                        placeholder="000.000.000-00" v-maska:[masks.maskcpf] v-model="page.data.cpf"
+                                        :class="{ 'form-control-alert': page.valids.cpf }" >
 
                                 </div>
                                 <div class="col-sm-12 col-md-3">

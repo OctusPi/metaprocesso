@@ -63,7 +63,7 @@ defineProps({
             </p>
         </div>
         <div class="mb-3">
-            <table class="m-0 table-borderless table-striped table-hover table">
+            <table class="w-100">
                 <thead>
                     <tr>
                         <th>CÓDIGO</th>
@@ -118,7 +118,7 @@ defineProps({
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">
+                    <td colspan="3" class="wrapper">
                         <h3>Justificativa dos quantitativos demandados</h3>
                         <p class="small">
                             De acordo com o princípio da vinculação ao instrumento convocatório, estabelecido no art. 3º
