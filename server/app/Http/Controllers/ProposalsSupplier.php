@@ -5,13 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\DfdItem;
 use App\Utils\Dates;
 use App\Utils\Notify;
-use App\Models\Process;
 use App\Models\Proposal;
 use App\Models\PriceRecord;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use App\Http\Middlewares\Data;
-use Log;
 
 class ProposalsSupplier extends Controller
 {

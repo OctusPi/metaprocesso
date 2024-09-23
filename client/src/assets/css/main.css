@@ -685,6 +685,11 @@ tbody tr:last-child td:first-child {
     border: 1px dashed var(--color-border-hover);
 }
 
+.input-table:focus
+{
+    border: 1px dashed var(--color-border-hover) !important;
+}
+
 .cursor-help {
     cursor: help;
 }

@@ -1,16 +1,19 @@
 <script setup>
-import { onBeforeMount } from 'vue';
+import { createApp, inject, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router';
 import Layout from '@/services/layout';
 import http from '@/services/http';
 import masks from '@/utils/masks';
 import utils from '@/utils/utils';
+import exp from '@/services/export';
 
 import HeaderProposalUi from '@/components/HeaderProposalUi.vue';
 import NavProposalUi from '@/components/NavProposalUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import FileInput from '@/components/inputs/FileInput.vue';
+import ProposalReport from './reports/ProposalReport.vue';
 
+const sysapp = inject('sysapp')
 const emit = defineEmits(['callAlert', 'callUpdate'])
 const route = useRoute()
 
@@ -21,21 +24,58 @@ const [page, pageData] = Layout.new(emit, {
 })
 
 function sendProposal() {
-    console.log(pageData)
-
+    handleLogo();
+    page.data.items = page.proposal.items ?? page.proposal?.dfd_items
+    pageData.save({status:4}, () => {
+        checkProposal()
+    })
 }
 
 function sendPatialProposal() {
-    console.log('partial')
+    handleLogo();
+    page.data.items = page.proposal.items ?? page.proposal?.dfd_items
+    pageData.save({status:3})
 }
 
-onBeforeMount(() => {
+function handleLogo(){
+    if(page.data.logomarca != null && typeof page.data.logomarca == 'object'){
+        const reader = new FileReader()
+        reader.readAsDataURL(page.data.logomarca)
+        reader.onloadend = () => {
+            page.data.logomarca = reader.result
+        }
+    }
+}
+
+function checkProposal(){
     http.get(`${page.url}/check/${route.params.token}`, emit, (resp) => {
         if (http.success(resp)) {
             page.auth_view = true
             page.proposal = resp.data
         }
     })
+}
+
+function exportProposal(){
+    const containerReport = document.createElement('div')
+    const instanceReport = createApp(ProposalReport, {
+        qrdata:sysapp, 
+        organ: page.organ,
+        supplier:page.proposal.supplier,
+        process: page.proposal.process,
+        collect: page.proposal.price_record,
+        items: page.proposal.items ?? page.proposal.dfd_items,
+        representation:{
+            name:page.data.representation,
+            cpf: page.data.cpf
+        }
+     })
+    instanceReport.mount(containerReport)
+    exp.exportPDF(containerReport, `Coleta-${page.proposal.protocol}`)
+}
+
+onBeforeMount(() => {
+    checkProposal()
 })
 
 </script>
@@ -168,7 +208,7 @@ onBeforeMount(() => {
                                 </div>
                                 <div class="col-sm-12 col-md-3">
                                     <FileInput label="Selecionar logomarca" identify="logomarca"
-                                        v-model="page.data.logomarca" :valid="page.valids.logomarca" />
+                                        v-model="page.data.logomarca" :valid="page.valids.logomarca" accept="image/*" />
                                     <div id="logomarcaHelpBlock" class="form-text txt-color-sec">
                                         Logomarca ou timbre da empresa
                                     </div>
@@ -191,7 +231,7 @@ onBeforeMount(() => {
                                     <ion-icon name="sparkles-outline" class="fs-5"></ion-icon>
                                     Salvar Parcialmente
                                 </button>
-                                <button type="button" class="btn btn-action-tertiary">
+                                <button type="button" class="btn btn-action-tertiary" @click="exportProposal">
                                     <ion-icon name="cloud-download-outline" class="fs-5"></ion-icon>
                                     Download Proposta
                                 </button>

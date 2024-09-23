@@ -5,6 +5,7 @@ const props = defineProps({
     identify: { type: String, required: true },
     valid: { type: Boolean, default: false },
     label: { type: String, default: () => 'Arquivo' },
+    accept:{type: String, default: 'application/pdf'}
 });
 
 const model = defineModel({ default: null })
@@ -39,7 +40,7 @@ watch(() => props.valid, (newVal) => {
                 {{ (name && name != "null") ? name : `Selecionar Arquivo` }}
         </div>
         <input :id="props.identify" type="file" name="document" class="d-none" @change="handleFile"
-            accept="application/pdf">
+            :accept="props.accept">
         </label>
     </div>
     </div>
