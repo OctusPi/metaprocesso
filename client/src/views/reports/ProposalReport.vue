@@ -1,8 +1,8 @@
 <script setup>
+import { onBeforeMount, ref } from 'vue';
 import QrcodeVue from 'qrcode.vue';
 import utils from '@/utils/utils'
 import dates from '@/utils/dates'
-import { onMounted, ref } from 'vue';
 
 const props = defineProps({
     qrdata: { type: Object, default: () => { } },
@@ -15,7 +15,7 @@ const props = defineProps({
 
 let globalValue = ref(0)
 
-onMounted(() => {
+onBeforeMount(() => {
     props.items.forEach(element => {
         globalValue.value += parseFloat((parseInt(element.quantity) * utils.currencyToFloat(element.value)).toFixed(2))
     });
@@ -63,7 +63,7 @@ onMounted(() => {
         <div class="my-4">
             <h1>Processo: {{ process.protocol }}</h1>
             <p>Data Solicitação: {{ process.date_ini }}</p>
-            <p>Prazo Resposta: {{ process.date_fin }} 00:00:00</p>
+            <p>Prazo Resposta: {{ process.date_fin }} - 00:00:00</p>
             <p class="text-justify">Objeto: {{ process.description }}</p>
         </div>
 
@@ -157,7 +157,8 @@ onMounted(() => {
             <div class="col text-center">
                 <p>___________________________________</p>
                 <p>{{ representation.name }}</p>
-                <p>CPF Representante: {{ representation.cpf }}</p>
+                <p>{{ representation.cpf }}</p>
+                <p>CPF Representante</p>
             </div>
 
         </div>

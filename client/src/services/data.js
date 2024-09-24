@@ -41,7 +41,7 @@ class Data {
         }
     }
 
-    save = (over = null, onSave = () => {}) => {
+    save = (over = null, onSave = () => {}, onList = true) => {
         const validation = forms.checkform(
             this.page.data,
             {
@@ -60,8 +60,13 @@ class Data {
         if (over)  data = Object.assign(data, over)
 
         http.post(`${this.page.url}/save`, data, this.emit, () => {
-            this.list();
-            onSave()
+            if(onList){
+                this.list();
+            }
+
+            if(onSave){
+                onSave()
+            }
         })
     }
 

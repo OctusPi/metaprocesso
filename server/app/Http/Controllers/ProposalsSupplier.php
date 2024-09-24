@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DfdItem;
 use App\Utils\Dates;
 use App\Utils\Notify;
+use App\Utils\Uploads;
+use App\Models\DfdItem;
 use App\Models\Proposal;
 use App\Models\PriceRecord;
 use Illuminate\Http\Request;
@@ -25,7 +26,7 @@ class ProposalsSupplier extends Controller
         }
 
         if($proposal->status == Proposal::S_FINISHED){
-            return response()->json(Notify::warning('Solicitação de coleta de preço já enviada...'), 403);
+            return response()->json(Notify::success('Solicitação de coleta de preço já enviada...'), 403);
         }
 
         $price_record = PriceRecord::with('organ')->find($proposal->price_record);
@@ -45,6 +46,36 @@ class ProposalsSupplier extends Controller
         return response()->json($proposal);
     }
 
+    public function save(Request $request)
+    {
+        $instance = $this->model::find($request->id);
+
+        if(is_null($instance)){
+            return response()->json(Notify::warning('Solicitação de coleta não localizada...'), 404);
+        }
+
+        if($request->status == Proposal::S_FINISHED){
+            if(is_null($request->document)){
+                return response()->json(Notify::warning('É necessário anexar a proposta assinada para confirmar o envio...'),400);
+            }
+
+            if(is_null($request->code) || $request->code != $instance->protocol){
+                return response()->json(Notify::warning('Código de validação incorreto...'),403);
+            }
+        }
+
+        // Gerencia o upload de documentos
+        $upload = new Uploads($request, ['document' => ['nullable' => true]]);
+        if ($request->id && $request->hasFile('document')) {
+            $upload->remove($instance->document);
+        }
+
+        if ($instance->update($upload->mergeUploads($request->all()))) {
+            return response()->json(Notify::success('Proposta salva com sucesso'),200);
+        } else {
+            return response()->json(Notify::error('Falha ao gravar proposta'),500);
+        }
+    }
 
     private function dfdItems(?array $dfds):array
     {

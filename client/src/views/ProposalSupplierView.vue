@@ -33,15 +33,17 @@ const [page, pageData] = Layout.new(emit, {
 })
 
 function sendProposal() {
-    page.data.items = page.proposal.items ?? page.proposal?.dfd_items
-    pageData.save({status:4}, () => {
-        checkProposal()
-    })
+    pageData.save({
+        status:4, 
+        items:page.proposal.items ?? page.proposal.dfd_items
+    }, checkProposal, false)
 }
 
 function sendPatialProposal() {
-    page.data.items = page.proposal.items ?? page.proposal?.dfd_items
-    pageData.save({status:3})
+    pageData.save({
+        status:3, 
+        items:page.proposal.items ?? page.proposal.dfd_items
+    }, null, false)
 }
 
 function checkProposal(){
@@ -49,7 +51,17 @@ function checkProposal(){
         if (http.success(resp)) {
             page.auth_view = true
             page.proposal = resp.data
+            page.data = {
+                id: resp.data?.id,
+                logomarca:resp.data?.logomarca,
+                representation:resp.data?.representation,
+                cpf:resp.data?.cpf
+            }
         }
+    }, () => {
+        page.auth_view = false
+        page.proposal = {}
+        page.data = {}
     })
 }
 

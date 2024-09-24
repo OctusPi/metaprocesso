@@ -43,6 +43,8 @@ class Proposal extends Model
         'supplier',
         'modality',
         'items',
+        'logomarca',
+        'document',
         'representation',
         'cpf',
         'status'
