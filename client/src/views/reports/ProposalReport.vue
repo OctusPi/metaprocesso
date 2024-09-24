@@ -2,15 +2,23 @@
 import QrcodeVue from 'qrcode.vue';
 import utils from '@/utils/utils'
 import dates from '@/utils/dates'
+import { onMounted, ref } from 'vue';
 
-defineProps({
+const props = defineProps({
     qrdata: { type: Object, default: () => { } },
-    organ: { type: Object, required: true },
     supplier: { type: Object, required: true },
+    logomarca: { type: String },
     representation:{ type: Object, required: true },
     process: { type: Object, required: true },
-    collect: { type: Object, required: true },
     items: { type: Object, required: true }
+})
+
+let globalValue = ref(0)
+
+onMounted(() => {
+    props.items.forEach(element => {
+        globalValue.value += parseFloat((parseInt(element.quantity) * utils.currencyToFloat(element.value)).toFixed(2))
+    });
 })
 
 </script>
@@ -19,7 +27,7 @@ defineProps({
     <div class="d-flex align-items-center justify-content-between">
         <div class="d-flex align-items-center">
             <div class="ct-logo me-2">
-                <img :src="supplier.logomarca" class="h-logo">
+                <img :src="logomarca" class="h-logo">
             </div>
             <div class="h-info">
                 <h1>{{ supplier.name }}</h1>
@@ -42,16 +50,21 @@ defineProps({
     <main>
         <div class="my-4">
             <h1 class="text-center">COTAÇÃO DE PREÇOS</h1>
-            <h2 class="text-center">{{ `${process.protocol ?? '*****'} - ${process.date_ini} - ${process.ip ?? '*****'}`
-                }}</h2>
         </div>
 
         <div class="my-4">
-            <h1>Solicitante:{{ organ.name }}</h1>
-            <p>Processo: {{ process.protocol }}</p>
-            <p>Data Solicitação: {{ collect.data_ini }}</p>
-            <p>Prazo Resposta: {{ collect.data_fin }}</p>
-            <p>Objeto: {{ collect.data_fin }}</p>
+            <h1 class="mb-3">Solicitante: {{ process.organ.name }}</h1>
+            <p>Fornecedor: {{ supplier.name }}</p>
+            <p>CNPJ: {{ supplier.cnpj }}</p>
+            <p>Endereço: {{ supplier.address }}</p>
+            <p>Contato: {{ supplier.phone }} {{ supplier.email }}</p>
+        </div>
+
+        <div class="my-4">
+            <h1>Processo: {{ process.protocol }}</h1>
+            <p>Data Solicitação: {{ process.date_ini }}</p>
+            <p>Prazo Resposta: {{ process.date_fin }} 00:00:00</p>
+            <p class="text-justify">Objeto: {{ process.description }}</p>
         </div>
 
 
@@ -91,7 +104,7 @@ defineProps({
                             <div class="small">{{ i.quantity }}</div>
                         </td>
                         <td class="align-middle">
-                            {{ i.value }}
+                            <div class="small">R$ {{ i.value }}</div>
                         </td>
                         <td class="align-middle">
                             <div class="small">{{ utils.floatToCurrency((i.quantity *
@@ -114,13 +127,13 @@ defineProps({
                 <tr>
                     <td colspan="3">
                         <h3>Valor Global</h3>
-                        <p>{{ '*****' }}</p>
+                        <p>{{ utils.floatToCurrency(globalValue) }}</p>
                     </td>
                 </tr>
                 <tr>
                     <td colspan="3" class="wrapper">
-                        <h3>Justificativa dos quantitativos demandados</h3>
-                        <p class="small">
+                        <h3>Validade da Proposta</h3>
+                        <p class="small text-justify">
                             De acordo com o princípio da vinculação ao instrumento convocatório, estabelecido no art. 3º
                             da Lei nº 8.666/1993, que rege as licitações e contratos administrativos, as condições
                             previamente fixadas no edital ou no documento de convocação da coleta de preços devem ser
@@ -150,7 +163,7 @@ defineProps({
         </div>
 
         <!-- City and Date -->
-        <p class="mt-4 text-center">{{ `${organ.postalcity ?? '*****'}, ${dates.dateTxtNow()}` }}</p>
+        <p class="mt-4 text-center">{{ `${process.organ.postalcity ?? '*****'}, ${dates.dateTxtNow()}` }}</p>
     </main>
 </template>
 

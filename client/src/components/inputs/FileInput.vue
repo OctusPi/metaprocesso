@@ -5,7 +5,7 @@ const props = defineProps({
     identify: { type: String, required: true },
     valid: { type: Boolean, default: false },
     label: { type: String, default: () => 'Arquivo' },
-    accept:{type: String, default: 'application/pdf'}
+    accept: { type: String, default: 'application/pdf' }
 });
 
 const model = defineModel({ default: null })
@@ -35,14 +35,14 @@ watch(() => props.valid, (newVal) => {
         <div class="d-flex gap-1">
             <label :for="props.identify" class="form-control upload-label m-0" :class="{ 'form-control-alert': valid }">
                 <div class="d-flex no-wrap align-items-center gap-2 overflow-hidden">
-                <ion-icon v-if="model" name="cloud-done-outline" class="upload-icon fs-5" />
-                <ion-icon v-else name="cloud-upload-outline" class="upload-icon fs-5" />
-                {{ (name && name != "null") ? name : `Selecionar Arquivo` }}
+                    <ion-icon v-if="model" name="cloud-done-outline" class="upload-icon fs-5" />
+                    <ion-icon v-else name="cloud-upload-outline" class="upload-icon fs-5" />
+                    {{ (name && name != "null") ? name : `Selecionar Arquivo` }}
+                </div>
+                <input :id="props.identify" type="file" name="document" class="d-none" @change="handleFile"
+                    :accept="props.accept">
+            </label>
         </div>
-        <input :id="props.identify" type="file" name="document" class="d-none" @change="handleFile"
-            :accept="props.accept">
-        </label>
-    </div>
     </div>
 </template>
 

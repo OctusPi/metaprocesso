@@ -68,3 +68,7 @@ th, td {
 .wrapper{
     white-space: normal !important;
 }
+
+.text-justify{
+    text-align: justify;
+}

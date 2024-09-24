@@ -1,5 +1,5 @@
 <script setup>
-import { createApp, inject, onBeforeMount } from 'vue';
+import { createApp, inject, onBeforeMount, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Layout from '@/services/layout';
 import http from '@/services/http';
@@ -23,6 +23,7 @@ const route = useRoute()
 const [page, pageData] = Layout.new(emit, {
     url: '/proposal_supplier',
     auth_view: false,
+    data_logo:null,
     proposal: {},
     rules: {
         logomarca:'required',
@@ -32,7 +33,6 @@ const [page, pageData] = Layout.new(emit, {
 })
 
 function sendProposal() {
-    handleLogo();
     page.data.items = page.proposal.items ?? page.proposal?.dfd_items
     pageData.save({status:4}, () => {
         checkProposal()
@@ -40,19 +40,8 @@ function sendProposal() {
 }
 
 function sendPatialProposal() {
-    handleLogo();
     page.data.items = page.proposal.items ?? page.proposal?.dfd_items
     pageData.save({status:3})
-}
-
-function handleLogo(){
-    if(page.data.logomarca != null && typeof page.data.logomarca == 'object'){
-        const reader = new FileReader()
-        reader.readAsDataURL(page.data.logomarca)
-        reader.onloadend = () => {
-            page.data.logomarca = reader.result
-        }
-    }
 }
 
 function checkProposal(){
@@ -65,21 +54,27 @@ function checkProposal(){
 }
 
 function exportProposal(){
-    const checkform = forms.checkform(page.data, page.rules)
+    const checkform = forms.checkform(page.data, {
+        fields: page.rules,
+        valids: page.valids
+    })
     if(!checkform.isvalid){
         emit('callAlert', notifys.warning(checkform.message))
         return
     }
 
-    console.log(page.data)
-
     const containerReport = document.createElement('div')
     const instanceReport = createApp(ProposalReport, {
         qrdata:sysapp, 
-        organ: page.organ,
+        logomarca:page.data.logomarca,
         supplier:page.proposal.supplier,
-        process: page.proposal.process,
-        collect: page.proposal.price_record,
+        process: {
+            protocol: page.proposal?.process.protocol,
+            organ: page.proposal?.organ,
+            date_ini: `${page.proposal?.date_ini} - ${page.proposal?.hour_ini}`,
+            date_fin: page.proposal?.price_record.date_fin,
+            description: page.proposal?.process.description
+        },
         items: page.proposal.items ?? page.proposal.dfd_items,
         representation:{
             name:page.data.representation,
@@ -89,6 +84,16 @@ function exportProposal(){
     instanceReport.mount(containerReport)
     exp.exportPDF(containerReport, `Coleta-${page.proposal.protocol}`)
 }
+
+watch(() => page.data_logo, (new_value) => {
+    if(new_value != null){
+        const reader = new FileReader()
+        reader.readAsDataURL(new_value)
+        reader.onloadend = () => {
+            page.data.logomarca = reader.result
+        }
+    }
+})
 
 onBeforeMount(() => {
     checkProposal()
@@ -226,7 +231,7 @@ onBeforeMount(() => {
                                 </div>
                                 <div class="col-sm-12 col-md-3">
                                     <FileInput label="Selecionar logomarca" identify="logomarca"
-                                        v-model="page.data.logomarca" :valid="page.valids.logomarca" accept="image/*" />
+                                        v-model="page.data_logo" :valid="page.valids.logomarca" accept="image/*" />
                                     <div id="logomarcaHelpBlock" class="form-text txt-color-sec">
                                         Logomarca ou timbre da empresa
                                     </div>
