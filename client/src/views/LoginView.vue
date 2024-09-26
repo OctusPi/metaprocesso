@@ -74,15 +74,16 @@ onMounted(() => {
                 <p class="small txt-color-sec p-0 m-0">Perfil: {{ user.profile }}</p>
                 <p class="small txt-color-sec p-0 m-0">Ultimo Acesso: {{ user.last_login }}</p>
 
-                <div class="d-flex justify-content-between mt-4">
-                    <RouterLink to="/home" class="btn btn-sm btn-primary">
-                        <ion-icon name="log-in-outline" class="fs-6 me-1"></ion-icon>
-                        <span>Partiu!</span>
-                    </RouterLink>
-                    <button type="button" class="btn btn-sm btn-warning" @click="logout">
+                <div class="d-flex justify-content-center mt-4">
+                    <button type="button" class="btn btn-sm btn-action-quaternary mx-2" @click="logout">
                         <span>Sair...</span>
                         <ion-icon name="log-out-outline" class="fs-6 ms-1"></ion-icon>
                     </button>
+                    <RouterLink to="/home" class="btn btn-sm btn-action-primary mx-2">
+                        <ion-icon name="log-in-outline" class="fs-6 me-1"></ion-icon>
+                        <span>Partiu!</span>
+                    </RouterLink>
+                    
                 </div>
             </div>
 
