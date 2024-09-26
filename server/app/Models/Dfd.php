@@ -92,7 +92,6 @@ class Dfd extends Model
             'priority'  => 'required',
             'date_ini'  => 'required',
             'year_pca'  => 'required',
-            'comission_members' => 'required',
             'acquisition_type'  => 'required',
             'suggested_hiring'  => 'required',
             'description'       => 'required',
