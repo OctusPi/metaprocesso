@@ -67,7 +67,7 @@ watch(() => props.selects, (newval) => {
                                 <div class="col-md-4">
                                     <h4>Orgão</h4>
                                     <p>
-                                        {{ page.data.organ?.name }}
+                                        {{ page.organ_name }}
                                     </p>
                                 </div>
                                 <div class="col-md-4">
