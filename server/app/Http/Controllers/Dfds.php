@@ -101,8 +101,11 @@ class Dfds extends Controller
         $dfd = $this->base_details($request, ['unit', 'ordinator', 'demandant', 'comission']);
 
         if($dfd->status() == 200){
+            $data  = $dfd->getData(true) ?? [];
             $items = Data::find(new DfdItem(), ['dfd' => $request->id], with:['item']) ?? [];
-            $group = array_merge($dfd->getData(true) ?? [], ['items' => $items]);
+            $programs  = Data::find(new Program(), ['unit' => $data['unit']['id']], ['name']);
+            $dotations = Data::find(new Dotation(), ['unit' => $data['unit']['id']], ['name']);
+            $group = array_merge($data, ['items' => $items, 'programs' => $programs, 'dotations' => $dotations]);
             return response()->json($group);
         }
 
