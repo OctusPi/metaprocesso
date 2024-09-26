@@ -836,10 +836,10 @@ onMounted(() => {
                                     <div>
                                         <TableList secondary :count="false" :header="items.header"
                                             :body="page.data.items ?? []" :mounts="{
-                                                'item.type': [Mounts.Cast(page.selects.items_types)],
-                                                'dotation': [Mounts.Cast(page.selects.dotations)],
-                                                'program': [Mounts.Cast(page.selects.programs)],
-                                            }" />
+                                        'item.type': [Mounts.Cast(page.selects.items_types)],
+                                        'dotation': [Mounts.Cast(page.selects.dotations, 'id', 'name')],
+                                        'program': [Mounts.Cast(page.selects.programs, 'id', 'name')],
+                                    }" />
                                     </div>
                                 </div>
 
