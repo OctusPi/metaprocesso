@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\CatalogSubCategoryItem;
-use App\Models\Organ;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -18,7 +17,7 @@ class CatalogSubCategories extends Controller
     {
         return $this->base_list(
             $request,
-            ['name', 'organ'],
+            ['name'],
             ['name']
         );
     }
