@@ -13,6 +13,7 @@ const statusMethods = {
             id: 'dfds',
             width: "100%",
             height: 180,
+            offsetX: -2,
             fontFamily: 'Inter, Helvetica, Arial',
             sparkline: {
                 enabled: true
