@@ -235,13 +235,13 @@ const items = ref({
         <table>
         <tbody>
             <tr>
-                <td colspan="3">
+                <td colspan="3" class="wrapper">
                     <h3>Justificativa da necessidade da contratação</h3>
                     <p>{{ dfd.justification ?? '*****' }}</p>
                 </td>
             </tr>
             <tr>
-                <td colspan="3">
+                <td colspan="3" class="wrapper">
                     <h3>Justificativa dos quantitativos demandados</h3>
                     <p>
                         {{
