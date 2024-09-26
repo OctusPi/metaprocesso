@@ -198,7 +198,10 @@ function export_dfd(id) {
     http.get(`${page.url}/export/${id}`, emit, (resp) => {
         const dfd = resp.data
         const containerReport = document.createElement('div')
-        const instanceReport = createApp(DfdReport, {qrdata:sysapp, organ: page.organ, dfd: dfd, selects: page.selects })
+        const instanceReport = createApp(DfdReport, {qrdata:sysapp, organ: page.organ, dfd: dfd, selects: Object.assign(page.selects, {
+            programs: dfd.programs ?? [],
+            dotations: dfd.dotations ?? []
+        }) })
         instanceReport.mount(containerReport)
         exp.exportPDF(containerReport, `DFD-${dfd.protocol}`)
     })

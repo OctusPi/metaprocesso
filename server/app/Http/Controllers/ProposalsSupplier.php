@@ -87,7 +87,7 @@ class ProposalsSupplier extends Controller
         }
 
         $dataToUpdate = array_merge($request->all(), [
-            'date_fim' => date('d/m/Y'),
+            'date_fin' => date('d/m/Y'),
             'hour_fin' => date('H:i:s')
         ]);
 

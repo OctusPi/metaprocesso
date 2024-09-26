@@ -63,20 +63,20 @@ const items = ref({
         <table>
             <tbody>
             <tr>
-                <td colspan="3">
+                <td colspan="3" class="wrapper">
                     <h3>Orgão</h3>
                     <p>{{ catalog.organ.name ?? '*****' }}</p>
                     <p>{{ catalog.organ.cnpj ?? '*****' }}</p>
                 </td>
             </tr>
             <tr>
-                <td colspan="3">
+                <td colspan="3" class="wrapper">
                     <h3>Comissão/Equipe de Planejamento</h3>
                     <p>{{ catalog.comission.name ?? '*****' }}</p>
                 </td>
             </tr>
             <tr>
-                <td colspan="3">
+                <td colspan="3" class="wrapper">
                     <h3>Descrição do Catálogo</h3>
                     <p>{{ catalog.name ?? '*****' }}</p>
                 </td>

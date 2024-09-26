@@ -113,21 +113,21 @@ function actions(risk, act) {
         <table>
             <tbody>
                 <tr>
-                    <td colspan="3">
+                    <td colspan="3" class="wrapper">
                         <h3>Orgão</h3>
                         <p>{{ riskmap.organ.name ?? '*****' }}</p>
                         <p>{{ riskmap.organ.cnpj ?? '*****' }}</p>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">
+                    <td colspan="3" class="wrapper">
                         <h3>Unidade</h3>
                         <p>{{ riskmap.unit.name ?? '*****' }}</p>
                         <p>{{ riskmap.unit.cnpj ?? '*****' }}</p>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">
+                    <td colspan="3" class="wrapper">
                         <h3>Comissão/Equipe de Planejamento</h3>
                         <p>{{ riskmap.comission.name ?? '*****' }}</p>
                     </td>
@@ -147,7 +147,7 @@ function actions(risk, act) {
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="3">
+                    <td colspan="3" class="wrapper">
                         <h3>Integrantes da Comissão</h3>
                         <p class="p-0 m-0 small" v-for="m in riskmap.comission.comission_members" :key="m.id">
                             {{ `${utils.getTxt(selects.responsibilitys, m.responsibility)}

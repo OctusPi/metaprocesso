@@ -82,14 +82,14 @@ const items = ref({
         <table>
         <tbody>
             <tr>
-                <td colspan="3">
+                <td colspan="3" class="wrapper">
                     <h3>Orgão</h3>
                     <p>{{ organ.name ?? '*****' }}</p>
                     <p>{{ organ.cnpj ?? '*****' }}</p>
                 </td>
             </tr>
             <tr>
-                <td colspan="3">
+                <td colspan="3" class="wrapper">
                     <h3>Unidade</h3>
                     <p>{{ dfd.unit.name ?? '*****' }}</p>
                     <p>{{ dfd.unit.cnpj ?? '*****' }}</p>
@@ -112,7 +112,7 @@ const items = ref({
                 </td>
             </tr>
             <tr>
-                <td colspan="3">
+                <td colspan="3" class="wrapper">
                     <h3>Integrantes da Comissão</h3>
                     <p class="p-0 m-0 small" v-for="m in dfd.comission_members" :key="m.id">
                         {{ `${utils.getTxt(selects.responsibilitys, m.responsibility)}
@@ -188,7 +188,7 @@ const items = ref({
                 </td>
             </tr>
             <tr>
-                <td colspan="3">
+                <td colspan="3" class="wrapper">
                     <h3>Vinculo ou Dependência</h3>
                     <p class="txt-very-small p-0 m-0">
                         Dependência com o
@@ -203,7 +203,7 @@ const items = ref({
                 </td>
             </tr>
             <tr>
-                <td colspan="3">
+                <td colspan="3" class="wrapper">
                     <h3>Descrição sucinta do Objeto</h3>
                     <p>{{ dfd.description ?? '*****' }}</p>
                 </td>
