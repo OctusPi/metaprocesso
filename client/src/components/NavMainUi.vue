@@ -6,7 +6,6 @@ const router = useRoute();
 const menu = auth.get_user()?.navigation;
 
 const menuitens = {
-    dashboard: { href: '/home', icon: 'grid-outline', title: 'Dashboard', description: 'Dashboard' },
     management: {
         href: '/management', icon: 'apps', title: 'Gestão', description: 'Dados Administrativos e Estruturais', sub: {
             organs: { href: '/organs', icon: 'business', title: 'Orgãos', description: 'Dados do Orgão' },

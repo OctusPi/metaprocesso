@@ -2,12 +2,21 @@
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import NavMainUi from '@/components/NavMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
+import { onMounted, reactive } from 'vue';
+import http from '@/services/http';
 
-const dfds = {
-    chartOptions: {
+const emit = defineEmits('callAlert')
+
+const statusMethods = {
+    chartOptions: (categories) => ({
         chart: {
+            id: 'dfds',
             width: "100%",
+            height: 180,
             fontFamily: 'Inter, Helvetica, Arial',
+            sparkline: {
+                enabled: true
+            },
             toolbar: {
                 show: false
             }
@@ -18,7 +27,7 @@ const dfds = {
         plotOptions: {
             bar: {
                 borderRadius: 8,
-                barHeight: "80%",
+                barHeight: "65%",
                 borderRadiusApplication: 'end',
                 horizontal: true,
             }
@@ -36,7 +45,7 @@ const dfds = {
             }
         },
         xaxis: {
-            categories: [],
+            categories: categories,
             labels: {
                 show: false
             },
@@ -47,14 +56,42 @@ const dfds = {
                 show: false,
             },
         }
-    },
-    series: [
+    }),
+    series: (series) => [
         {
             name: "Quantidade",
-            data: []
+            data: series
         },
     ]
 }
+
+const dfds = reactive({
+    chartOptions: statusMethods.chartOptions([]),
+    series: statusMethods.series([]),
+})
+
+const processes = reactive({
+    chartOptions: statusMethods.chartOptions([]),
+    series: statusMethods.series([]),
+})
+
+const prices = reactive({
+    chartOptions: statusMethods.chartOptions([]),
+    series: statusMethods.series([]),
+})
+
+onMounted(() => {
+    http.post('/home/list', {}, emit, (res) => {
+        dfds.series = statusMethods.series(Object.values(res.data.dfds))
+        dfds.chartOptions = statusMethods.chartOptions(Object.keys(res.data.dfds))
+
+        processes.series = statusMethods.series(Object.values(res.data.processes))
+        processes.chartOptions = statusMethods.chartOptions(Object.keys(res.data.processes))
+
+        prices.series = statusMethods.series(Object.values(res.data.prices))
+        prices.chartOptions = statusMethods.chartOptions(Object.keys(res.data.prices))
+    })
+})
 
 </script>
 
@@ -70,27 +107,61 @@ const dfds = {
                         <p> Panorama resultados ano corrente</p>
                     </div>
                 </div>
-                <div class="container p-4">
+                <div class="container p-0 p-md-4">
                     <div class="row">
-                        <div class="col-4 content">
-                            <div class="p-4 pb-0">
-                                <div class="chart-heading">
-                                    <span>
-                                        <ion-icon name="document" />
-                                    </span>
-                                    <div>
-                                        <h1 class="m-0">DFDS</h1>
-                                        <p class="m-0">DFDS por status</p>
+                        <div class="col-12 col-lg-4 mb-3">
+                            <div class="content">
+                                <div class="p-4">
+                                    <div class="chart-heading">
+                                        <span>
+                                            <ion-icon name="document" />
+                                        </span>
+                                        <div>
+                                            <h1 class="m-0">DFDS</h1>
+                                            <p class="m-0">DFDS por status</p>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="pb-4">
+                                    <apexchart type="bar" :options="dfds.chartOptions" :series="dfds.series" />
+                                </div>
                             </div>
-                            <apexchart type="bar" :options="dfds.chartOptions" :series="dfds.series" />
                         </div>
-                        <div class="col-4">
-                            Teste
+                        <div class="col-12 col-lg-4 mb-3">
+                            <div class="content">
+                                <div class="p-4">
+                                    <div class="chart-heading">
+                                        <span>
+                                            <ion-icon name="document-text" />
+                                        </span>
+                                        <div>
+                                            <h1 class="m-0">Processos</h1>
+                                            <p class="m-0">Processos por status</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pb-4">
+                                    <apexchart type="bar" :options="processes.chartOptions" :series="processes.series" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-4">
-                            Teste
+                        <div class="col-12 col-lg-4 mb-3">
+                            <div class="content">
+                                <div class="p-4">
+                                    <div class="chart-heading">
+                                        <span>
+                                            <ion-icon name="pricetags" />
+                                        </span>
+                                        <div>
+                                            <h1 class="m-0">Coletas de Preços</h1>
+                                            <p class="m-0">Coletas por Status</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pb-4">
+                                    <apexchart type="bar" :options="prices.chartOptions" :series="prices.series" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

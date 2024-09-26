@@ -25,10 +25,10 @@ use App\Http\Controllers\Units;
 use App\Http\Controllers\Users;
 use App\Http\Controllers\Organs;
 use App\Http\Controllers\Dfds;
+use App\Http\Controllers\Dashboard;
 use Illuminate\Support\Facades\Route;
 use App\Utils\Notify;
 use App\Http\Controllers\Authentication;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 
 // open
@@ -41,7 +41,7 @@ Route::prefix('/auth')->controller(Authentication::class)->group(function () {
     Route::post('/renew', 'renew');
 });
 
-Route::prefix('/proposal_supplier')->controller(ProposalsSupplier::class)->group(function(){
+Route::prefix('/proposal_supplier')->controller(ProposalsSupplier::class)->group(function () {
     Route::post('/save', 'save');
     Route::get('/check/{token}', 'check');
 });
@@ -93,12 +93,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth_organ', 'auth_organ');
     });
 
-    Route::prefix('/dfds')->controller(Dfds::class)->group(function(){
+    Route::prefix('/dfds')->controller(Dfds::class)->group(function () {
         Route::post('/items', 'items');
         Route::post('/generate', 'generate');
     });
 
-    Route::prefix('/etps')->controller(Etps::class)->group(function(){
+    Route::prefix('/etps')->controller(Etps::class)->group(function () {
         Route::post('/list_processes', 'list_processes');
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
@@ -107,7 +107,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
-    Route::prefix('/pricerecords')->controller(PriceRecords::class)->group(function(){
+    Route::prefix('/pricerecords')->controller(PriceRecords::class)->group(function () {
         Route::post('/list_processes', 'list_processes');
         Route::post('/list_suppliers', 'list_suppliers');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
@@ -116,47 +116,42 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    Route::prefix('/processes')->controller(Processes::class)->group(function(){
+    Route::prefix('/processes')->controller(Processes::class)->group(function () {
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
         Route::post('/generate', 'generate');
     });
 
-    Route::prefix('/riskiness')->controller(Etps::class)->group(function(){
+    Route::prefix('/riskiness')->controller(Etps::class)->group(function () {
         Route::post('/list_processes', 'list_processes');
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
     });
 
-    Route::prefix('/refterms')->controller(RefTerms::class)->group(function(){
+    Route::prefix('/refterms')->controller(RefTerms::class)->group(function () {
         Route::post('/list_processes', 'list_processes');
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
         Route::post('/fetch_etp/{process}', 'fetch_etp');
     });
 
-    Route::prefix('/comissionmembers/{comission}')->controller(ComissionMembers::class)->group(function(){
+    Route::prefix('/comissionmembers/{comission}')->controller(ComissionMembers::class)->group(function () {
         Route::get('/comission', 'comission');
     });
 
-    Route::prefix('/catalogitems/{catalog}')->controller(CatalogItems::class)->group(function(){
+    Route::prefix('/catalogitems/{catalog}')->controller(CatalogItems::class)->group(function () {
         Route::get('/catalog', 'catalog');
     });
 
-    Route::prefix('/catalogsubcategories')->controller(CatalogSubCategories::class)->group(function(){
+    Route::prefix('/catalogsubcategories')->controller(CatalogSubCategories::class)->group(function () {
         Route::post('/{organ}/list', 'list');
         Route::post('/{organ}/save', 'save');
         Route::post('/{organ}/fastdestroy', 'fast_delete');
         Route::get('/{organ}/details/{id}', 'details');
     });
 
-    Route::prefix('/attachments/{origin}/{protocol}')->controller(Attachments::class)->group(function(){
+    Route::prefix('/attachments/{origin}/{protocol}')->controller(Attachments::class)->group(function () {
         Route::get('/download_png/{id}', 'download_as_png');
-    });
-
-    Route::prefix('/dashboard')->controller(Dashboard::class)->group(function(){
-        Route::get('', 'index');
-        Route::post('', 'fill');
     });
 });
 
