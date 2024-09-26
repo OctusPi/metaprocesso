@@ -27,7 +27,7 @@ const statusMethods = {
         plotOptions: {
             bar: {
                 borderRadius: 8,
-                barHeight: "65%",
+                barHeight: "70%",
                 borderRadiusApplication: 'end',
                 horizontal: true,
             }
