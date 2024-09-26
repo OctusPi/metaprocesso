@@ -50,7 +50,7 @@ class Dfds extends Controller
         $this->model = $request->id ? Data::findOne(new Dfd(), ['id' => $request->id]) : $this->model;
 
         if ($this->model && $this->model->status >= Dfd::STATUS_BLOQUEADO) {
-            return response()->json(Notify::warning('Não é possível editar DFDs bloqueado pelo Processo!'), 403);
+            return response()->json(Notify::warning('Não é possível editar DFDs aprovisionados pelo Processo!'), 403);
         }
 
         $protocol = $request->id ? $request->protocol : Utils::randCode(6, str_pad($request->unit, 3, '0', STR_PAD_LEFT), date('dmY'));
@@ -58,7 +58,8 @@ class Dfds extends Controller
         $data = [
             'ip' => $request->ip(),
             'protocol' => $protocol,
-            'author' => $request->user()->id
+            'author' => $request->user()->id,
+            'comission_members' => ComissionMember::where('comission', $request->comission)->get()->toArray()
         ];
 
         $save = $this->base_save($request, $data);
