@@ -15,7 +15,7 @@ import TableList from '@/components/table/TableList.vue';
 import ListCatGov from '@/components/ListCatGov.vue';
 
 const route = useRoute()
-const emit  = defineEmits(['callAlert', 'callUpdate'])
+const emit = defineEmits(['callAlert', 'callUpdate'])
 const props = defineProps({
     datalist: { type: Array, default: () => [] }
 })
@@ -43,7 +43,7 @@ const [page, pageData] = Layout.new(emit, {
 })
 
 const [groups, groupsData] = Layout.new(emit, {
-    url: `/catalogsubcategories/${page.catalog.organ?.id}`,
+    url: `/catalogsubcategories/${page.organ?.id}`,
     data: {},
     header: [{ key: 'name', title: 'GRUPO' }],
     formRules: { name: 'required' },
@@ -219,8 +219,8 @@ onBeforeMount(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registrar Comissão</h2>
-                        <p>Registro das comissões do sistema</p>
+                        <h2>Registrar Item do Catálogo</h2>
+                        <p>Preencha os dados abaixo para realizar o registro</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
@@ -389,7 +389,7 @@ onBeforeMount(() => {
                                 ]" />
                             </div>
                         </div>
-                        <div v-if="!groups.ui.register" class="modal-footer border-0 p-0">
+                        <div v-if="!groups.ui.register" class="modal-footer border-0 p-0 mt-4">
                             <button @click="groupsData.ui('register')" class="btn btn-action-primary">
                                 <ion-icon name="add" class="fs-5"></ion-icon>
                                 Adicionar

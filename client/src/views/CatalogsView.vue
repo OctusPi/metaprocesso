@@ -136,7 +136,7 @@ onMounted(() => {
                 <div role="heading" class="inside-title mb-4">
                     <div>
                         <h2>Registrar Catálogo</h2>
-                        <p>Registro dos catálogos do sistema</p>
+                        <p>Registro de um catálogo de items</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
                         <button @click="pageData.ui('register')" class="btn btn-action-secondary">
