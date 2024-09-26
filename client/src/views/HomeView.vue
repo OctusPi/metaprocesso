@@ -12,23 +12,21 @@ const statusMethods = {
         chart: {
             id: 'dfds',
             width: "100%",
-            height: 180,
-            offsetX: -2,
+            height: 220,
+            offsetX: -8,
             fontFamily: 'Inter, Helvetica, Arial',
-            sparkline: {
-                enabled: true
-            },
             toolbar: {
                 show: false
             }
         },
+        colors: ['var(--color-base)'],
         grid: {
             show: false
         },
         plotOptions: {
             bar: {
                 borderRadius: 8,
-                barHeight: "70%",
+                barHeight: "80%",
                 borderRadiusApplication: 'end',
                 horizontal: true,
             }
@@ -47,15 +45,7 @@ const statusMethods = {
         },
         xaxis: {
             categories: categories,
-            labels: {
-                show: false
-            },
-            axisBorder: {
-                show: false,
-            },
-            axisTicks: {
-                show: false,
-            },
+            stepSize: 1
         }
     }),
     series: (series) => [
@@ -112,7 +102,7 @@ onMounted(() => {
                     <div class="row">
                         <div class="col-12 col-lg-4 mb-3">
                             <div class="content">
-                                <div class="p-4">
+                                <div class="p-4 pb-0">
                                     <div class="chart-heading">
                                         <span>
                                             <ion-icon name="document" />
@@ -123,7 +113,7 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="pb-4">
+                                <div>
                                     <apexchart type="bar" :options="dfds.chartOptions" :series="dfds.series" />
                                 </div>
                             </div>
@@ -142,7 +132,8 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div class="pb-4">
-                                    <apexchart type="bar" :options="processes.chartOptions" :series="processes.series" />
+                                    <apexchart type="bar" :options="processes.chartOptions"
+                                        :series="processes.series" />
                                 </div>
                             </div>
                         </div>
