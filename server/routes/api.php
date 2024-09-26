@@ -28,6 +28,7 @@ use App\Http\Controllers\Dfds;
 use Illuminate\Support\Facades\Route;
 use App\Utils\Notify;
 use App\Http\Controllers\Authentication;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 
 
 // open
@@ -151,6 +152,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('/attachments/{origin}/{protocol}')->controller(Attachments::class)->group(function(){
         Route::get('/download_png/{id}', 'download_as_png');
+    });
+
+    Route::prefix('/dashboard')->controller(Dashboard::class)->group(function(){
+        Route::get('', 'index');
+        Route::post('', 'fill');
     });
 });
 

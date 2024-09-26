@@ -13,11 +13,12 @@ import { vMaska } from "maska"
 import App from './App.vue'
 import router from './router'
 import VueDatePicker from '@vuepic/vue-datepicker';
-
+import VueApexCharts from 'vue3-apexcharts'
 
 const app = createApp(App)
 
 app.use(router)
+app.use(VueApexCharts)
 app.directive('maska', vMaska)
 app.component('VueDatePicker', VueDatePicker);
 

@@ -739,3 +739,31 @@ tbody tr:last-child td:first-child {
         display: none;
     }
 }
+
+.chart-heading {
+    display: flex;
+    align-items: center;
+}
+
+.chart-heading span {
+    display: flex;
+    padding: .8rem;
+    font-size: 1.35em;
+    border-radius: 12px;
+    background-color: var(--color-base-tls);
+    color: var(--color-base);
+}
+
+.chart-heading div {
+    text-align: end;
+    width: 100%;
+}
+
+.chart-heading h1 {
+    color: var(--color-text);
+    font-weight: 800;
+}
+
+.chart-heading p {
+    font-size: .9em;
+}

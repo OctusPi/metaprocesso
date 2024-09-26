@@ -6,6 +6,7 @@ const router = useRoute();
 const menu = auth.get_user()?.navigation;
 
 const menuitens = {
+    dashboard: { href: '/home', icon: 'grid-outline', title: 'Dashboard', description: 'Dashboard' },
     management: {
         href: '/management', icon: 'apps', title: 'Gestão', description: 'Dados Administrativos e Estruturais', sub: {
             organs: { href: '/organs', icon: 'business', title: 'Orgãos', description: 'Dados do Orgão' },
@@ -41,8 +42,8 @@ function close_menu() {
 
 <template>
     <nav class="main-nav p-4" id="nav-primary">
-        <div class="app-title d-flex align-items-center ms-2">
-            <RouterLink to="/home"><img src="@/assets/imgs/logo.svg" alt="logomarca" /></RouterLink>
+        <div class="app-title d-flex align-items-center ms-2 cursor-pointer" @click="$router.replace('/home')">
+            <img src="@/assets/imgs/logo.svg" alt="logomarca" />
             <h1 class="fs-5 p-0 m-0 ms-2">Metaprocesso</h1>
             <ion-icon name="chevron-back-outline" class="fs-6 hide-menu ms-2" @click="close_menu"></ion-icon>
         </div>
@@ -65,7 +66,9 @@ function close_menu() {
                                     <div class="accordion-body">
                                         <ul class="accordion-submenu">
                                             <li v-for="(subItem, subKey) in item.sub" :key="subKey" class="subitems">
-                                                <RouterLink class="navmain-item" :class="{ 'active-nav': router.path === subItem.href }" :to="subItem.href">
+                                                <RouterLink class="navmain-item"
+                                                    :class="{ 'active-nav': router.path === subItem.href }"
+                                                    :to="subItem.href">
                                                     <ion-icon :name="subItem.icon" class="navmain-icon"></ion-icon>
                                                     <span class="navmain-title">{{ subItem.title }}</span>
                                                 </RouterLink>
@@ -131,7 +134,7 @@ function close_menu() {
     font-size: 1.1rem !important;
 }
 
-.active-nav{
+.active-nav {
     color: var(--color-base) !important;
 }
 
