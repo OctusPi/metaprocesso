@@ -175,6 +175,10 @@
     color: var(--color-text);
 }
 
+.txt-blue {
+    color: var(--color-base);
+}
+
 .txt-color-sec {
     color: var(--color-text-sec);
 }
