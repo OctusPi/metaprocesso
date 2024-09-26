@@ -284,7 +284,15 @@ onBeforeMount(() => {
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
-                                <label for="subcategory" class="form-label">Agrupamento</label>
+                                <label for="subcategory" class="form-label d-flex justify-content-between">
+                                    Grupo
+                                    <a @click="groupsData.list" data-bs-toggle="modal"
+                                        :data-bs-target="'#' + groups.modal"
+                                        class="txt-blue cursor-pointer m-0 p-0 d-flex align-items-center">
+                                        <ion-icon name="add" class="fs-5"></ion-icon>
+                                        Adicionar
+                                    </a>
+                                </label>
                                 <select name="subcategory" class="form-control" id="subcategory"
                                     :class="{ 'form-control-alert': page.valids.subcategory }"
                                     v-model="page.data.subcategory">
