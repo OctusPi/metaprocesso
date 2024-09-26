@@ -170,17 +170,17 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="organs" class="form-label">Orgãos</label>
                                 <InputDropMultSelect v-model="page.data.organs" :options="page.selects.organs"
-                                    identify="organs" />
+                                    identify="organs" label="name" />
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="units" class="form-label">Unidades</label>
                                 <InputDropMultSelect v-model="page.data.units" :options="page.selects.units"
-                                    identify="units" />
+                                    identify="units" label="name" />
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="sectors" class="form-label">Setores</label>
                                 <InputDropMultSelect v-model="page.data.sectors" :options="page.selects.sectors"
-                                    identify="sectors" />
+                                    identify="sectors" label="name" />
                             </div>
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
