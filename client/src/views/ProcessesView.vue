@@ -361,12 +361,24 @@ onMounted(() => {
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-sm-12 col-md-8">
+                            <div class="col-sm-12 col-md-4">
                                 <label for="acquisition_type" class="form-label">Tipo da Aquisição</label>
                                 <select name="acquisition_type" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.acquisition_type }" id="acquisition_type"
-                                    v-model="page.data.acquisition_type">
+                                    :class="{ 'form-control-alert': page.valids.acquisition_type }"
+                                    id="acquisition_type" v-model="page.data.acquisition_type">
+                                    <option value=""></option>
                                     <option v-for="o in page.selects.acquisition_types" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="installment_type" class="form-label">Tipo do parcelamento</label>
+                                <select name="installment_type" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.installment_type }"
+                                    id="installment_type" v-model="page.data.installment_type">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.installment_types" :key="o.id" :value="o.id">
                                         {{ o.title }}
                                     </option>
                                 </select>
@@ -384,7 +396,8 @@ onMounted(() => {
                                     'form-control-alert': page.valids.description
                                 }" id="description" v-model="page.data.description"></textarea>
                             </div>
-                            <div class="col-sm-12 col-md-12">
+                            <div v-if="page.data.installment_type && page.data.installment_type != page.selects._types.INSTALLMENT_NONE"
+                                class="col-sm-12 col-md-12">
                                 <label for="installment_justification"
                                     class="form-label d-flex justify-content-between">
                                     Justificação do Parcelamento

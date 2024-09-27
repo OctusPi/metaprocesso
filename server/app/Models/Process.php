@@ -195,7 +195,7 @@ class Process extends Model
         return Dfd::list_acquisitions();
     }
 
-    public static function list_installments(): array
+    public static function list_installments_types(): array
     {
         return [
             ['id' => self::INSTALLMENT_NONE, 'title' => 'Sem parcelamento'],
