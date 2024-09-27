@@ -185,6 +185,10 @@ function resend_collect(id) {
     http.get(`${page.url}/send_collect/${id}`, emit);
 }
 
+function view_proposal(id){
+    console.log(id)
+}
+
 function generate(type) {
 
     if (!page.data?.process && !page.data?.suppliers) {

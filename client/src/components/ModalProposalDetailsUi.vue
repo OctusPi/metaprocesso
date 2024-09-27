@@ -8,13 +8,13 @@ import layout from '@/services/layout';
 import TableListStatus from './table/TableListStatus.vue';
 
 const props = defineProps({
-    dfd: { type: Object, default: () => ({}) },
-    selects: { type: Object, default: () => ({}) },
-    modal: { type: String, default: 'modalDetails' }
+    proposal: { type: Object, default: () => {} },
+    selects: { type: Object, default: () => {} },
+    modal: { type: String, default: 'modalProposalDetails' }
 })
 
 const [page, ] = layout.new(null, {
-    data: props.dfd ?? {},
+    data: props.proposal ?? {},
     items_headers: [
         { key: 'item.code', title: 'COD', sub: [{ key: 'item.type' }] },
         { key: 'item.name', title: 'ITEM' },
@@ -25,7 +25,7 @@ const [page, ] = layout.new(null, {
     ]
 })
 
-watch(() => props.dfd, (newval) => {
+watch(() => props.proposal, (newval) => {
     page.data = newval
 })
 
@@ -55,10 +55,10 @@ watch(() => props.selects, (newval) => {
                     <div class="box-revisor mb-4">
                         <div class="box-revisor-title d-flex mb-4">
                             <div class="txt-revisor-title">
-                                <h3>Origem da Demanda</h3>
+                                <h3>Origem da Coleta</h3>
                                 <p>
                                     Dados referentes a origem e responsabilidade pela
-                                    Demanda
+                                    solicitação de coleta
                                 </p>
                             </div>
                         </div>
@@ -67,17 +67,17 @@ watch(() => props.selects, (newval) => {
                                 <div class="col-md-4">
                                     <h4>Orgão</h4>
                                     <p>
-                                        {{ page.data.organ?.name }}
+                                        {{ page.data.organ_name }}
                                     </p>
                                 </div>
                                 <div class="col-md-4">
-                                    <h4>Unidade</h4>
+                                    <h4>Unidades</h4>
                                     <p>
                                         {{ page.data.unit?.name }}
                                     </p>
                                 </div>
                                 <div class="col-md-4">
-                                    <h4>Ordenador de Despesas</h4>
+                                    <h4>Demandantes</h4>
                                     <p>
                                         {{ page.data.ordinator?.name }}
                                     </p>
@@ -85,43 +85,47 @@ watch(() => props.selects, (newval) => {
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
-                                    <h4>Demadantes</h4>
+                                    <h4>Processo</h4>
                                     <p>
                                         {{ page.data.demandant?.name }}
                                     </p>
                                 </div>
                                 <div class="col-md-4">
-                                    <h4>Comissão / Equipe de Planejamento</h4>
+                                    <h4>Tipo de Processo</h4>
                                     <p>
                                         {{ page.data.comission?.name }}
                                     </p>
                                 </div>
-                                <div class="col-md-4 mb-4">
-                                    <h4>Integrantes da Comissão</h4>
-                                    <span class="p-0 m-0 small" v-for="m in page.data.comission_members" :key="m.id">
-                                        {{ `${utils.getTxt(page.selects.responsibilitys, m.responsibility)}
-                                        : ${m.name}; ` }}
-                                    </span>
+                                <div class="col-md-4">
+                                    <h4>Modalidade Processo</h4>
+                                    <p>
+                                        {{ page.data.comission?.name }}
+                                    </p>
+                                </div>
+                                <div class="col-md-12 mb-4">
+                                    <h4>Descrição do Objeto</h4>
+                                    <p>
+                                        {{ page.data.comission?.name }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Infos -->
+                    <!-- Supplier -->
                     <div class="box-revisor mb-4">
                         <div class="box-revisor-title d-flex mb-4">
                             <div class="txt-revisor-title">
-                                <h3>Informações Gerais</h3>
+                                <h3>Fornecedor</h3>
                                 <p>
-                                    Dados de prioridade, previsão de contratação e
-                                    detalhamento de Objeto
+                                    Detalhamento do fornecedor da solicitação de coleta de preço
                                 </p>
                             </div>
                         </div>
                         <div class="box-revisor-content">
                             <div class="row">
                                 <div class="col-md-3">
-                                    <h4>Data Envio</h4>
+                                    <h4>Empresa</h4>
                                     <p>{{ page.data.date_ini }}</p>
                                 </div>
                                 <div class="col-md-3">
