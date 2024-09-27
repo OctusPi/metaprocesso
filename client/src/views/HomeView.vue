@@ -186,8 +186,8 @@ onMounted(() => {
                                 </div>
                                 <div v-else class="d-flex justify-content-center align-items-center h-100">
                                     <div class="text-center p-4">
-                                        <ion-icon name="pricetags" class="fs-4" />
-                                        <p>Sem coletas recentes</p>
+                                        <ion-icon name="docuement" class="fs-4" />
+                                        <p>Sem DFDs recentes</p>
                                     </div>
                                 </div>
                             </div>
@@ -211,8 +211,8 @@ onMounted(() => {
                                 </div>
                                 <div v-else class="d-flex justify-content-center align-items-center h-100">
                                     <div class="text-center p-4">
-                                        <ion-icon name="pricetags" class="fs-4" />
-                                        <p>Sem coletas recentes</p>
+                                        <ion-icon name="document-text" class="fs-4" />
+                                        <p>Sem processos recentes</p>
                                     </div>
                                 </div>
                             </div>
