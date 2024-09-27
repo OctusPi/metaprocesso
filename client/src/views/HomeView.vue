@@ -35,6 +35,7 @@ function populateDfds(dataset) {
                 borderColor: 'var(--color-input-focus)',
                 position: 'front',
                 strokeDashArray: 7,
+                sort: true
             },
             plotOptions: {
                 bar: {

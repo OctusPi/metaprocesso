@@ -428,8 +428,22 @@
 }
 
 .modal-listage {
-    max-height: 500px;
-    overflow: scroll;
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+.modal-listage::-webkit-scrollbar {
+    width: 5px;
+}
+
+.modal-listage::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background-color: var(--color-background);
+}
+
+.modal-listage::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: var(--color-input-focus); 
 }
 
 .search-list-items {
