@@ -61,6 +61,7 @@ function close_menu() {
                                     </button>
                                 </h2>
                                 <div :id="`collapseOne_${key}`" class="accordion-collapse collapse"
+                                    :class="{'show':Object.keys(item.sub).includes(router.path.replace('/', ''))}"
                                     :data-bs-parent="`#accordion_${key}`">
                                     <div class="accordion-body">
                                         <ul class="accordion-submenu">
