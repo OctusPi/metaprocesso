@@ -762,8 +762,20 @@ tbody tr:last-child td:first-child {
 .chart-heading h1 {
     color: var(--color-text);
     font-weight: 800;
+    margin: 0;
 }
 
 .chart-heading p {
     font-size: .9em;
+    margin: 0;
 }
+
+.apexcharts-xaxis-label,
+.apexcharts-yaxis-label,
+.apexcharts-text {
+    fill: var(--color-text);
+}
+
+.apexcharts-xaxis-tick {
+    stroke: var(--color-input-focus);
+} 

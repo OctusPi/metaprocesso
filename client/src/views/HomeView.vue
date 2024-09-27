@@ -2,85 +2,137 @@
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import NavMainUi from '@/components/NavMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
-import { onMounted, reactive } from 'vue';
+import { onMounted, ref } from 'vue';
 import http from '@/services/http';
 
 const emit = defineEmits('callAlert')
 
-const statusMethods = {
-    chartOptions: (categories) => ({
-        chart: {
-            id: 'dfds',
-            width: "100%",
-            height: 220,
-            offsetX: -8,
-            fontFamily: 'Inter, Helvetica, Arial',
-            toolbar: {
-                show: false
-            }
-        },
-        colors: ['var(--color-base)'],
-        grid: {
-            show: false
-        },
-        plotOptions: {
-            bar: {
-                borderRadius: 8,
-                barHeight: "80%",
-                borderRadiusApplication: 'end',
-                horizontal: true,
-            }
-        },
-        dataLabels: {
-            enabled: true,
-            textAnchor: 'middle',
-            formatter: function (_, opt) {
-                return opt.w.globals.labels[opt.dataPointIndex]
+const dfds = ref({})
+const processes = ref({})
+const prices = ref({})
+
+function populateDfds(dataset) {
+    const keys = Object.keys(dataset)
+    const values = Object.values(dataset)
+    dfds.value = {
+        total: values.length,
+        series: [{
+            name: 'Quantidade',
+            data: values
+        }],
+        chartOptions: {
+            chart: {
+                id: 'dfds',
+                height: 260,
+                offsetX: -4,
+                width: "100%",
+                animations: {
+                    enabled: false,
+                },
+                fontFamily: 'Inter, Helvetica, Arial',
+                toolbar: {
+                    show: false
+                }
             },
-        },
-        yaxis: {
-            labels: {
-                show: false
+            colors: ['var(--color-base)'],
+            grid: {
+                borderColor: 'var(--color-input-focus)',
+                position: 'front',
+                strokeDashArray: 7,
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 8,
+                    barHeight: "80%",
+                    borderRadiusApplication: 'end',
+                    horizontal: true,
+                }
+            },
+            dataLabels: {
+                enabled: false,
+                textAnchor: 'start',
+                formatter: function (_, opt) {
+                    return opt.w.globals.labels[opt.dataPointIndex]
+                },
+            },
+            yaxis: {
+                labels: {
+                    color: 'var(--color-input-focus)',
+                    show: true
+                },
+            },
+            xaxis: {
+                categories: keys,
+                stepSize: 1,
+                axisBorder: {
+                    show: true,
+                    color: 'var(--color-input-focus)',
+                }
             }
-        },
-        xaxis: {
-            categories: categories,
-            stepSize: 1
         }
-    }),
-    series: (series) => [
-        {
-            name: "Quantidade",
-            data: series
-        },
-    ]
+    }
 }
 
-const dfds = reactive({
-    chartOptions: statusMethods.chartOptions([]),
-    series: statusMethods.series([]),
-})
+function populateProcesses(dataset) {
+    const keys = Object.keys(dataset)
+    const values = Object.values(dataset)
+    processes.value = {
+        total: values.length,
+        series: values,
+        chartOptions: {
+            chart: {
+                width: 380,
+                type: 'polarArea'
+            },
+            labels: keys,
+        },
+    }
+}
 
-const processes = reactive({
-    chartOptions: statusMethods.chartOptions([]),
-    series: statusMethods.series([]),
-})
-
-const prices = reactive({
-    chartOptions: statusMethods.chartOptions([]),
-    series: statusMethods.series([]),
-})
+function populatePrices(dataset) {
+    const keys = Object.keys(dataset)
+    const values = Object.values(dataset)
+    prices.value = {
+        total: values.length,
+        series: [{
+            name: 'Quantidade',
+            data: values,
+        }],
+        chartOptions: {
+            chart: {
+                id: 'prices',
+                height: 270,
+                width: "100%",
+                animations: {
+                    enabled: false,
+                },
+                sparkline: {
+                    enabled: true
+                },
+                fontFamily: 'Inter, Helvetica, Arial',
+                toolbar: {
+                    show: false
+                }
+            },
+            colors: ['var(--color-base)'],
+            fill: {
+                colors: ['var(--color-base-tls)']
+            },
+            xaxis: {
+                categories: keys,
+                labels: {
+                    show: true
+                }
+            }
+        },
+    }
+}
 
 onMounted(() => {
     http.post('/home/list', {}, emit, (res) => {
-        dfds.series = statusMethods.series(Object.values(res.data.dfds))
-        dfds.chartOptions = statusMethods.chartOptions(Object.keys(res.data.dfds))
-
-        processes.series = statusMethods.series(Object.values(res.data.processes))
-        processes.chartOptions = statusMethods.chartOptions(Object.keys(res.data.processes))
-
-        prices.series = statusMethods.series(Object.values(res.data.prices))
-        prices.chartOptions = statusMethods.chartOptions(Object.keys(res.data.prices))
+        populateDfds(res.data.dfds)
+        populateProcesses(res.data.dfds)
+        populatePrices(res.data.dfds)
     })
 })
 
@@ -101,57 +153,68 @@ onMounted(() => {
                 <div class="container p-0 p-md-4">
                     <div class="row">
                         <div class="col-12 col-lg-4 mb-3">
-                            <div class="content">
+                            <div class="content h-100 d-flex flex-column">
+                                <div class="p-4 pb-0">
+                                    <div class="chart-heading">
+                                        <span>
+                                            <ion-icon name="pricetags" />
+                                        </span>
+                                        <div>
+                                            <h1>Coletas de Preços</h1>
+                                            <p>Coletas por situação</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="px-2" v-if="dfds.total > 0">
+                                    <apexchart type="bar" :options="dfds.chartOptions" :series="dfds.series" />
+                                </div>
+                                <div v-else class="d-flex justify-content-center align-items-center h-100">
+                                    <div class="text-center p-4">
+                                        <ion-icon name="pricetags" class="fs-4" />
+                                        <p class="">Sem coletas recentes</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-12 col-lg-4 mb-3">
+                            <div class="content h-100">
                                 <div class="p-4 pb-0">
                                     <div class="chart-heading">
                                         <span>
                                             <ion-icon name="document" />
                                         </span>
                                         <div>
-                                            <h1 class="m-0">DFDS</h1>
-                                            <p class="m-0">DFDS por status</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <apexchart type="bar" :options="dfds.chartOptions" :series="dfds.series" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-4 mb-3">
-                            <div class="content">
-                                <div class="p-4">
-                                    <div class="chart-heading">
-                                        <span>
-                                            <ion-icon name="document-text" />
-                                        </span>
-                                        <div>
                                             <h1 class="m-0">Processos</h1>
-                                            <p class="m-0">Processos por status</p>
+                                            <p class="m-0">Processos por situação</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="pb-4">
-                                    <apexchart type="bar" :options="processes.chartOptions"
-                                        :series="processes.series" />
-                                </div>
+                                <apexchart v-if="processes.total > 0" type="donut" :options="processes.chartOptions"
+                                    :series="processes.series" />
+
                             </div>
-                        </div>
+                        </div> -->
                         <div class="col-12 col-lg-4 mb-3">
-                            <div class="content">
-                                <div class="p-4">
+                            <div class="content h-100 d-flex flex-column">
+                                <div class="p-4 pb-0">
                                     <div class="chart-heading">
                                         <span>
                                             <ion-icon name="pricetags" />
                                         </span>
                                         <div>
-                                            <h1 class="m-0">Coletas de Preços</h1>
-                                            <p class="m-0">Coletas por Status</p>
+                                            <h1>Coletas de Preços</h1>
+                                            <p>Coletas por situação</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="pb-4">
-                                    <apexchart type="bar" :options="prices.chartOptions" :series="prices.series" />
+                                <div v-if="prices.total > 0">
+                                    <apexchart type="radar" :options="prices.chartOptions" :series="prices.series" />
+                                </div>
+                                <div v-else class="d-flex justify-content-center align-items-center h-100">
+                                    <div class="text-center p-4">
+                                        <ion-icon name="pricetags" class="fs-4" />
+                                        <p class="">Sem coletas recentes</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
