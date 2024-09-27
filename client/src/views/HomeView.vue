@@ -84,16 +84,19 @@ function populateProcesses(dataset) {
                 toolbar: {
                     show: false
                 },
+                animations: {
+                    enabled: false
+                },
                 sparkline: {
                     enabled: true
                 }
             },
             theme: {
-              monochrome: {
-                enabled: true,
-                shadeTo: 'light',
-                shadeIntensity: 0.6
-              }
+                monochrome: {
+                    enabled: true,
+                    shadeTo: 'light',
+                    shadeIntensity: 0.6
+                }
             },
             legend: {
                 show: true,
@@ -165,7 +168,7 @@ onMounted(() => {
                 <div class="container p-0 p-md-4">
                     <div class="row">
                         <div class="col-12 col-lg-4 mb-3">
-                            <div class="content h-100 d-flex flex-column">
+                            <div class="content h-100 d-flex flex-column block">
                                 <div class="p-4 pb-0">
                                     <div class="chart-heading">
                                         <span>
@@ -178,7 +181,8 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div class="px-2" v-if="dfds.total > 0">
-                                    <apexchart height="260" type="bar" :options="dfds.chartOptions" :series="dfds.series" />
+                                    <apexchart height="260" type="bar" :options="dfds.chartOptions"
+                                        :series="dfds.series" />
                                 </div>
                                 <div v-else class="d-flex justify-content-center align-items-center h-100">
                                     <div class="text-center p-4">
@@ -189,7 +193,7 @@ onMounted(() => {
                             </div>
                         </div>
                         <div class="col-12 col-lg-4 mb-3">
-                            <div class="content h-100 d-flex flex-column">
+                            <div class="content h-100 d-flex flex-column block">
                                 <div class="p-4 pb-0">
                                     <div class="chart-heading">
                                         <span>
@@ -214,7 +218,7 @@ onMounted(() => {
                             </div>
                         </div>
                         <div class="col-12 col-lg-4 mb-3">
-                            <div class="content h-100 d-flex flex-column">
+                            <div class="content h-100 d-flex flex-column block">
                                 <div class="p-4 pb-0">
                                     <div class="chart-heading">
                                         <span>
@@ -227,7 +231,8 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div v-if="prices.total > 0">
-                                    <apexchart height="270" type="radar" :options="prices.chartOptions" :series="prices.series" />
+                                    <apexchart height="270" type="radar" :options="prices.chartOptions"
+                                        :series="prices.series" />
                                 </div>
                                 <div v-else class="d-flex justify-content-center align-items-center h-100">
                                     <div class="text-center p-4">
@@ -245,3 +250,11 @@ onMounted(() => {
         </main>
     </div>
 </template>
+
+<style scoped>
+
+.block {
+    min-height: 320px;
+}
+
+</style>
