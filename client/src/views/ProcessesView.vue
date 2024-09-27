@@ -387,7 +387,7 @@ onMounted(() => {
                                 <label for="description" class="form-label d-flex justify-content-between">
                                     Descrição
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('dfd_description')">
+                                        @click="generate('description')">
                                         <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>
                                         Gerar com I.A
                                     </a>
