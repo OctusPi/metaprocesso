@@ -23,12 +23,8 @@ function populateDfds(dataset) {
         chartOptions: {
             chart: {
                 id: 'dfds',
-                height: 260,
                 offsetX: -4,
                 width: "100%",
-                animations: {
-                    enabled: false,
-                },
                 fontFamily: 'Inter, Helvetica, Arial',
                 toolbar: {
                     show: false
@@ -81,10 +77,29 @@ function populateProcesses(dataset) {
         series: values,
         chartOptions: {
             chart: {
-                width: 380,
-                type: 'polarArea'
+                id: 'processes',
+                width: "100%",
+                type: 'polarArea',
+                fontFamily: 'Inter, Helvetica, Arial',
+                toolbar: {
+                    show: false
+                },
+                sparkline: {
+                    enabled: true
+                }
             },
-            labels: keys,
+            theme: {
+              monochrome: {
+                enabled: true,
+                shadeTo: 'light',
+                shadeIntensity: 0.6
+              }
+            },
+            legend: {
+                show: true,
+                fontSize: '11px',
+            },
+            labels: keys
         },
     }
 }
@@ -101,11 +116,7 @@ function populatePrices(dataset) {
         chartOptions: {
             chart: {
                 id: 'prices',
-                height: 270,
                 width: "100%",
-                animations: {
-                    enabled: false,
-                },
                 sparkline: {
                     enabled: true
                 },
@@ -121,7 +132,8 @@ function populatePrices(dataset) {
             xaxis: {
                 categories: keys,
                 labels: {
-                    show: true
+                    show: true,
+                    offsetY: 4
                 }
             }
         },
@@ -131,8 +143,8 @@ function populatePrices(dataset) {
 onMounted(() => {
     http.post('/home/list', {}, emit, (res) => {
         populateDfds(res.data.dfds)
-        populateProcesses(res.data.dfds)
-        populatePrices(res.data.dfds)
+        populateProcesses(res.data.processes)
+        populatePrices(res.data.prices)
     })
 })
 
@@ -147,7 +159,7 @@ onMounted(() => {
                 <div role="heading" class="inside-title mb-4">
                     <div>
                         <h2>Dashboard</h2>
-                        <p> Panorama resultados ano corrente</p>
+                        <p>Panorama resultados ano corrente</p>
                     </div>
                 </div>
                 <div class="container p-0 p-md-4">
@@ -157,43 +169,50 @@ onMounted(() => {
                                 <div class="p-4 pb-0">
                                     <div class="chart-heading">
                                         <span>
-                                            <ion-icon name="pricetags" />
+                                            <ion-icon name="document" />
                                         </span>
                                         <div>
-                                            <h1>Coletas de Preços</h1>
-                                            <p>Coletas por situação</p>
+                                            <h1>DFDs</h1>
+                                            <p>DFDs por situação</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="px-2" v-if="dfds.total > 0">
-                                    <apexchart type="bar" :options="dfds.chartOptions" :series="dfds.series" />
+                                    <apexchart height="260" type="bar" :options="dfds.chartOptions" :series="dfds.series" />
                                 </div>
                                 <div v-else class="d-flex justify-content-center align-items-center h-100">
                                     <div class="text-center p-4">
                                         <ion-icon name="pricetags" class="fs-4" />
-                                        <p class="">Sem coletas recentes</p>
+                                        <p>Sem coletas recentes</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- <div class="col-12 col-lg-4 mb-3">
-                            <div class="content h-100">
+                        <div class="col-12 col-lg-4 mb-3">
+                            <div class="content h-100 d-flex flex-column">
                                 <div class="p-4 pb-0">
                                     <div class="chart-heading">
                                         <span>
-                                            <ion-icon name="document" />
+                                            <ion-icon name="document-text" />
                                         </span>
                                         <div>
-                                            <h1 class="m-0">Processos</h1>
-                                            <p class="m-0">Processos por situação</p>
+                                            <h1>Processos</h1>
+                                            <p>Processos por situação</p>
                                         </div>
                                     </div>
                                 </div>
-                                <apexchart v-if="processes.total > 0" type="donut" :options="processes.chartOptions"
-                                    :series="processes.series" />
-
+                                <div class="p-2" v-if="dfds.total > 0">
+                                    <apexchart height="230" type="polarArea" :options="processes.chartOptions"
+                                        :series="processes.series" />
+                                </div>
+                                <div v-else class="d-flex justify-content-center align-items-center h-100">
+                                    <div class="text-center p-4">
+                                        <ion-icon name="pricetags" class="fs-4" />
+                                        <p>Sem coletas recentes</p>
+                                    </div>
+                                </div>
                             </div>
-                        </div> -->
+                        </div>
                         <div class="col-12 col-lg-4 mb-3">
                             <div class="content h-100 d-flex flex-column">
                                 <div class="p-4 pb-0">
@@ -208,7 +227,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div v-if="prices.total > 0">
-                                    <apexchart type="radar" :options="prices.chartOptions" :series="prices.series" />
+                                    <apexchart height="270" type="radar" :options="prices.chartOptions" :series="prices.series" />
                                 </div>
                                 <div v-else class="d-flex justify-content-center align-items-center h-100">
                                     <div class="text-center p-4">
