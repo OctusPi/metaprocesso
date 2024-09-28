@@ -9,6 +9,7 @@ import FooterMainUi from '@/components/FooterMainUi.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import TabNav from '@/components/TabNav.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
+import ModalProposalDetailsUi from '@/components/ModalProposalDetailsUi.vue';
 
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
@@ -596,7 +597,7 @@ onBeforeMount(() => {
                                             :header="page.proposals.headers"
                                             :body="page.proposals.data.emails"
                                             :actions="[
-                                                Actions.Create('eye-outline', 'Visualizar', view_proposal),
+                                                Actions.Create('eye-outline', 'Visualizar', view_proposal, '#modalProposalDetails'),
                                                 Actions.Create('send-outline', 'Reenviar', resend_collect),
                                             ]"
                                             :mounts="{
@@ -645,6 +646,7 @@ onBeforeMount(() => {
             </section>
 
             <DfdDetails :dfd="page.dfds.data" :selects="page.selects" />
+            <ModalProposalDetailsUi />
 
             <FooterMainUi />
         </main>

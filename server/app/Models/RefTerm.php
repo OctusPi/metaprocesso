@@ -107,23 +107,23 @@ class RefTerm extends Model
         );
     }
 
-    public function process(): BelongsTo
+    public function process(): HasOne
     {
-        return $this->belongsTo(Process::class, 'id', 'process');
+        return $this->hasOne(Process::class, 'id', 'process');
     }
 
-    public function organ(): BelongsTo
+    public function organ(): HasOne
     {
-        return $this->belongsTo(Organ::class, 'id', 'organ');
+        return $this->hasOne(Organ::class, 'id', 'organ');
     }
 
-    public function comission(): BelongsTo
+    public function comission(): HasOne
     {
-        return $this->belongsTo(Comission::class, 'id', 'comission');
+        return $this->hasOne(Comission::class, 'id', 'comission');
     }
 
-    public function etp(): BelongsTo
+    public function etp(): HasOne
     {
-        return $this->belongsTo(Etp::class, 'id', 'etp');
+        return $this->hasOne(Etp::class, 'id', 'etp');
     }
 }

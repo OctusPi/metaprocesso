@@ -1,11 +1,6 @@
 <script setup>
 import { watch } from 'vue';
-import TableList from './table/TableList.vue';
-import Mounts from '@/services/mounts';
-import dates from '@/utils/dates';
-import utils from '@/utils/utils';
 import layout from '@/services/layout';
-import TableListStatus from './table/TableListStatus.vue';
 
 const props = defineProps({
     proposal: { type: Object, default: () => {} },
@@ -51,14 +46,14 @@ watch(() => props.selects, (newval) => {
                     </button>
                 </div>
                 <div class="modal-body border-0">
-                    <!-- origin -->
+
+                    <!-- organ -->
                     <div class="box-revisor mb-4">
                         <div class="box-revisor-title d-flex mb-4">
                             <div class="txt-revisor-title">
-                                <h3>Origem da Coleta</h3>
+                                <h3>Vinculo</h3>
                                 <p>
-                                    Dados referentes a origem e responsabilidade pela
-                                    solicitação de coleta
+                                    Dados do orgão e unidades vinculadas ao processo
                                 </p>
                             </div>
                         </div>
@@ -67,40 +62,58 @@ watch(() => props.selects, (newval) => {
                                 <div class="col-md-4">
                                     <h4>Orgão</h4>
                                     <p>
-                                        {{ page.data.organ_name }}
+                                        nome orgao
                                     </p>
+                                    <p class="p-0 m-0 form-text">cnpj orgao</p>
                                 </div>
                                 <div class="col-md-4">
                                     <h4>Unidades</h4>
                                     <p>
-                                        {{ page.data.unit?.name }}
+                                        Nome unidades
                                     </p>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-4">
                                     <h4>Demandantes</h4>
                                     <p>
-                                        {{ page.data.ordinator?.name }}
+                                        nome dos demandantes
                                     </p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- origin -->
+                    <div class="box-revisor mb-4">
+                        <div class="box-revisor-title d-flex mb-4">
+                            <div class="txt-revisor-title">
+                                <h3>Processo</h3>
+                                <p>
+                                    Dados do processo que originou a coleta de preço
+                                </p>
+                            </div>
+                        </div>
+                        <div class="box-revisor-content">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <h4>Processo</h4>
+                                    <h4>Protocolo</h4>
                                     <p>
-                                        {{ page.data.demandant?.name }}
+                                        num protocol
                                     </p>
+                                    <p class="p-0 m-0 form-text">data abertura</p>
                                 </div>
                                 <div class="col-md-4">
-                                    <h4>Tipo de Processo</h4>
+                                    <h4>Modalidade</h4>
                                     <p>
-                                        {{ page.data.comission?.name }}
+                                        tipo modalidade
                                     </p>
+                                    <p class="p-0 m-0 form-text">tipo de aquisicao</p>
                                 </div>
                                 <div class="col-md-4">
-                                    <h4>Modalidade Processo</h4>
+                                    <h4>Coleta de Preço / Parcelamento</h4>
                                     <p>
-                                        {{ page.data.comission?.name }}
+                                        Se é coleta de preço
                                     </p>
+                                    <p class="p-0 m-0 form-text">se tem parcelamento</p>
                                 </div>
                                 <div class="col-md-12 mb-4">
                                     <h4>Descrição do Objeto</h4>
@@ -112,100 +125,59 @@ watch(() => props.selects, (newval) => {
                         </div>
                     </div>
 
+                    <!-- dfds -->
+                    <div class="box-revisor mb-4">
+                        <div class="box-revisor-title d-flex mb-4">
+                            <div class="txt-revisor-title">
+                                <h3>Lista de DFDs</h3>
+                                <p>
+                                    Listagem dos DFDs atrelados ao processo
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <!-- list dfds -->
+                            <div>
+                                <!-- <TableList secondary :count="false" :order="false" :header="page.items_headers"
+                                    :body="page.data.items" :mounts="{
+                                        'item.type': [Mounts.Cast(page.selects.items_types)],
+                                    }" /> -->
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Supplier -->
                     <div class="box-revisor mb-4">
                         <div class="box-revisor-title d-flex mb-4">
                             <div class="txt-revisor-title">
                                 <h3>Fornecedor</h3>
                                 <p>
-                                    Detalhamento do fornecedor da solicitação de coleta de preço
+                                    Dados do fornecedor responsável por responder a solicitação
                                 </p>
                             </div>
                         </div>
                         <div class="box-revisor-content">
                             <div class="row">
-                                <div class="col-md-3">
-                                    <h4>Empresa</h4>
-                                    <p>{{ page.data.date_ini }}</p>
-                                </div>
-                                <div class="col-md-3">
-                                    <h4>Previsão Contratação</h4>
+                                <div class="col-md-4">
+                                    <h4>Fornecedor</h4>
                                     <p>
-                                        {{
-                                            dates.getMonthYear(page.data.estimated_date)
-                                        }}
+                                        nome fornec
                                     </p>
+                                    <p class="p-0 m-0 form-text">cnpj fornec</p>
                                 </div>
-                                <div class="col-md-2">
-                                    <h4>Ano PCA</h4>
-                                    <p>{{ page.data.year_pca ?? '*****' }}</p>
-                                </div>
-                                <div class="col-md-2">
-                                    <h4>Prioridade</h4>
+                                <div class="col-md-4">
+                                    <h4>Representante</h4>
                                     <p>
-                                        <TableListStatus :data="utils.getTxt(
-                                            page.selects.prioritys_dfd,
-                                            page.data.priority
-                                        )" />
+                                        nome represe
                                     </p>
+                                    <p class="p-0 m-0 form-text">cpf repres</p>
                                 </div>
-                                <div class="col-md-2">
-                                    <h4>Valor Estimado</h4>
-                                    <p>R${{ page.data.estimated_value ?? '*****' }}</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <h4>Tipo de Aquisição</h4>
+                                <div class="col-md-4 mb-4">
+                                    <h4>Contato</h4>
                                     <p>
-                                        {{
-                                            utils.getTxt(
-                                                page.selects.acquisitions_dfd,
-                                                page.data.acquisition_type
-                                            )
-                                        }}
+                                        telefone email fornec
                                     </p>
-                                </div>
-                                <div class="col-md-3">
-                                    <h4>Forma Sugerida</h4>
-                                    <p>
-                                        {{
-                                            utils.getTxt(
-                                                page.selects.hirings_dfd,
-                                                page.data.suggested_hiring
-                                            )
-                                        }}
-                                    </p>
-                                </div>
-                                <div class="col-md-3">
-                                    <h4>Vinculo ou Dependência</h4>
-                                    <p class="txt-very-small p-0 m-0">
-                                        Dependência com o
-                                        objeto de outro documento de formalização de
-                                        demanda
-                                    </p>
-                                    <p>
-                                        {{
-                                            page.data.bonds ? 'Sim Possui' : 'Não Possui'
-                                        }}
-                                    </p>
-                                </div>
-                                <div class="col-md-3">
-                                    <h4>Registro de Preço</h4>
-                                    <p class="txt-very-small p-0 m-0">
-                                        Indique se a demanda se trata de registro de preços.
-                                    </p>
-                                    <p>
-                                        {{
-                                            page.data.price_taking ? 'Sim' : 'Não'
-                                        }}
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h4>Descrição sucinta do Objeto</h4>
-                                    <p>{{ page.data.description ?? '*****' }}</p>
+                                    <p class="p-0 m-0 form-text">endereco</p>
                                 </div>
                             </div>
                         </div>
@@ -215,50 +187,41 @@ watch(() => props.selects, (newval) => {
                     <div class="box-revisor mb-4">
                         <div class="box-revisor-title d-flex mb-4">
                             <div class="txt-revisor-title">
-                                <h3>Lista de Itens</h3>
+                                <h3>Coleta</h3>
                                 <p>
-                                    Lista de materiais ou serviços vinculados a Demanda
-                                </p>
-                            </div>
-                        </div>
-                        <div>
-                            <!-- list items -->
-                            <div>
-                                <TableList secondary :count="false" :order="false" :header="page.items_headers"
-                                    :body="page.data.items" :mounts="{
-                                        'item.type': [Mounts.Cast(page.selects.items_types)],
-                                    }" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- details -->
-                    <div class="box-revisor mb-4">
-                        <div class="box-revisor-title d-flex mb-4">
-                            <div class="txt-revisor-title">
-                                <h3>Detalhamento da Necessidade</h3>
-                                <p>
-                                    Justificativas para necessidade e quantitativo de
-                                    itens demandados
+                                    Informações da coleta lisgatem de itens e valores
                                 </p>
                             </div>
                         </div>
                         <div class="box-revisor-content">
                             <div class="row">
-                                <div class="col-md-12">
-                                    <h4>Justificativa da necessidade da contratação</h4>
-                                    <p>{{ page.data.justification ?? '*****' }}</p>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <h4>Justificativa dos quantitativos demandados</h4>
+                                <div class="col-md-4">
+                                    <h4>Modalidade Coleta</h4>
                                     <p>
-                                        {{
-                                            page.data.justification_quantity ?? '*****'
-                                        }}
+                                        email/inserçao manual
                                     </p>
                                 </div>
+                                <div class="col-md-4">
+                                    <h4>Data Inicio Coletas</h4>
+                                    <p>
+                                        data inicial
+                                    </p>
+                                </div>
+                                <div class="col-md-4 mb-4">
+                                    <h4>Prazo final</h4>
+                                    <p>
+                                        data final
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <!-- list items -->
+                            <div>
+                                <!-- <TableList secondary :count="false" :order="false" :header="page.items_headers"
+                                    :body="page.data.items" :mounts="{
+                                        'item.type': [Mounts.Cast(page.selects.items_types)],
+                                    }" /> -->
                             </div>
                         </div>
                     </div>
