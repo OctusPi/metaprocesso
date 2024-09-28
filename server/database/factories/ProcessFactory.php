@@ -40,7 +40,7 @@ class ProcessFactory extends Factory
             'acquisition' => fake()->randomElement(Process::list_acquisitions())['id'],
             'acquisition_type' => fake()->randomElement(Process::list_acquisition_types())['id'],
             'installment_justification' => fake()->text(200),
-            'installment_type' => fake()->randomElement(Process::list_installments())['id'],
+            'installment_type' => fake()->randomElement(Process::list_installments_types())['id'],
         ];
     }
 }

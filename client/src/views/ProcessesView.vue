@@ -436,7 +436,7 @@ onMounted(() => {
                                             </p>
                                         </button>
                                     </h2>
-                                    <div id="accordion-dfds-collapse" class="accordion-collapse collapse"
+                                    <div id="accordion-dfds-collapse" class="accordion-collapse collapse show"
                                         :class="[page.data.dfds && 'show']" aria-labelledby="accordion-dfds-header"
                                         data-bs-parent="#accordion-dfds">
                                         <div class="accordion-body">
