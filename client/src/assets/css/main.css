@@ -439,7 +439,7 @@
 
 .modal-listage::-webkit-scrollbar-track {
     border-radius: 10px;
-    background-color: var(--color-background);
+    background-color: var(--color-background-soft);
 }
 
 .modal-listage::-webkit-scrollbar-thumb {
