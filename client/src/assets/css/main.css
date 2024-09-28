@@ -430,6 +430,7 @@
 .modal-listage {
     max-height: 400px;
     overflow-y: scroll;
+    border-radius: 12px;
 }
 
 .modal-listage::-webkit-scrollbar {

@@ -68,9 +68,16 @@ class Home extends Controller
             });
 
         return response()->json([
-            'dfds' => $dfds,
-            'processes' => $processes,
-            'prices' => $prices,
+            'dfds_chart' => $dfds,
+            'processes_chart' => $processes,
+            'prices_chart' => $prices,
+            'processes' => [
+                'datalist' => Data::find(new Process(), [], ['date_hour_ini']),
+                'selects' => [
+                    'types' => Process::list_types(),
+                    'modalities' => Process::list_modalitys(),
+                ]
+            ],
         ]);
     }
 }

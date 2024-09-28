@@ -4,17 +4,19 @@ import NavMainUi from '@/components/NavMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import { onMounted, ref } from 'vue';
 import http from '@/services/http';
+import TableList from '@/components/table/TableList.vue';
+import Mounts from '@/services/mounts';
 
 const emit = defineEmits('callAlert')
 
-const dfds = ref({})
-const processes = ref({})
-const prices = ref({})
+const dfdsChart = ref({})
+const processesChart = ref({})
+const pricesChart = ref({})
 
 function populateDfds(dataset) {
     const keys = Object.keys(dataset)
     const values = Object.values(dataset)
-    dfds.value = {
+    dfdsChart.value = {
         total: values.length,
         series: [{
             name: 'Quantidade',
@@ -22,7 +24,7 @@ function populateDfds(dataset) {
         }],
         chartOptions: {
             chart: {
-                id: 'dfds',
+                id: 'dfdsChart',
                 offsetX: -4,
                 width: "100%",
                 fontFamily: 'Inter, Helvetica, Arial',
@@ -73,12 +75,12 @@ function populateDfds(dataset) {
 function populateProcesses(dataset) {
     const keys = Object.keys(dataset)
     const values = Object.values(dataset)
-    processes.value = {
+    processesChart.value = {
         total: values.length,
         series: values,
         chartOptions: {
             chart: {
-                id: 'processes',
+                id: 'processesChart',
                 width: "100%",
                 type: 'polarArea',
                 fontFamily: 'Inter, Helvetica, Arial',
@@ -111,7 +113,7 @@ function populateProcesses(dataset) {
 function populatePrices(dataset) {
     const keys = Object.keys(dataset)
     const values = Object.values(dataset)
-    prices.value = {
+    pricesChart.value = {
         total: values.length,
         series: [{
             name: 'Quantidade',
@@ -119,7 +121,7 @@ function populatePrices(dataset) {
         }],
         chartOptions: {
             chart: {
-                id: 'prices',
+                id: 'pricesChart',
                 width: "100%",
                 sparkline: {
                     enabled: true
@@ -144,11 +146,23 @@ function populatePrices(dataset) {
     }
 }
 
+const processes = ref({
+    datalist: [],
+    selects: {},
+    header: [
+        { key: 'date_hour_ini', title: 'Protocolo', sub: [{ key: 'protocol' }] },
+        { key: 'modality', title: 'CLASSIFICAÇÃO', sub: [{ key: 'type' }] },
+        { title: 'OBJETO', sub: [{ key: 'description' }] },
+    ],
+})
+
 onMounted(() => {
     http.post('/home/list', {}, emit, (res) => {
-        populateDfds(res.data.dfds)
-        populateProcesses(res.data.processes)
-        populatePrices(res.data.prices)
+        populateDfds(res.data.dfds_chart)
+        populateProcesses(res.data?.processes_chart)
+        populatePrices(res.data?.prices_chart)
+        processes.value.datalist = res.data?.processes?.datalist
+        processes.value.selects = res.data?.processes?.selects
     })
 })
 
@@ -181,9 +195,9 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="px-2 my-auto" v-if="dfds.total > 0">
-                                    <apexchart height="260" type="bar" :options="dfds.chartOptions"
-                                        :series="dfds.series" />
+                                <div class="px-2 my-auto" v-if="dfdsChart.total > 0">
+                                    <apexchart height="260" type="bar" :options="dfdsChart.chartOptions"
+                                        :series="dfdsChart.series" />
                                 </div>
                                 <div v-else class="d-flex justify-content-center align-items-center h-100">
                                     <div class="text-center p-4">
@@ -206,9 +220,9 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="p-2 my-auto" v-if="dfds.total > 0">
-                                    <apexchart height="230" type="polarArea" :options="processes.chartOptions"
-                                        :series="processes.series" />
+                                <div class="p-2 my-auto" v-if="dfdsChart.total > 0">
+                                    <apexchart height="230" type="polarArea" :options="processesChart.chartOptions"
+                                        :series="processesChart.series" />
                                 </div>
                                 <div v-else class="d-flex justify-content-center align-items-center h-100">
                                     <div class="text-center p-4">
@@ -231,9 +245,9 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="my-auto" v-if="prices.total > 0">
-                                    <apexchart height="270" type="radar" :options="prices.chartOptions"
-                                        :series="prices.series" />
+                                <div class="my-auto" v-if="pricesChart.total > 0">
+                                    <apexchart height="270" type="radar" :options="pricesChart.chartOptions"
+                                        :series="pricesChart.series" />
                                 </div>
                                 <div v-else class="d-flex justify-content-center align-items-center h-100">
                                     <div class="text-center p-4">
@@ -241,6 +255,17 @@ onMounted(() => {
                                         <p class="">Sem coletas recentes</p>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-lg-8">
+                            <div class="modal-listage listage">
+                                <TableList :header="processes.header" :body="processes.datalist" :mounts="{
+                                    type: [Mounts.Cast(processes.selects.types)],
+                                    modality: [Mounts.Cast(processes.selects.modalities)],
+                                    description: [Mounts.Truncate()],
+                                }" />
                             </div>
                         </div>
                     </div>
@@ -253,9 +278,11 @@ onMounted(() => {
 </template>
 
 <style scoped>
-
 .block {
     min-height: 320px;
 }
 
+.listage {
+    max-height: 320px !important;
+}
 </style>
