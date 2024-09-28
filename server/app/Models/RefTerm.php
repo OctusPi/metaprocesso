@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Validation\Rule;
 use App\Utils\Dates;
@@ -106,23 +107,23 @@ class RefTerm extends Model
         );
     }
 
-    public function process(): HasOne
+    public function process(): BelongsTo
     {
-        return $this->hasOne(Process::class, 'id', 'process');
+        return $this->belongsTo(Process::class, 'id', 'process');
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class, 'id', 'organ');
     }
 
-    public function comission(): HasOne
+    public function comission(): BelongsTo
     {
-        return $this->hasOne(Comission::class, 'id', 'comission');
+        return $this->belongsTo(Comission::class, 'id', 'comission');
     }
 
-    public function etp(): HasOne
+    public function etp(): BelongsTo
     {
-        return $this->hasOne(Etp::class, 'id', 'etp');
+        return $this->belongsTo(Etp::class, 'id', 'etp');
     }
 }

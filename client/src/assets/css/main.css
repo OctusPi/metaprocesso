@@ -801,3 +801,11 @@ tbody tr:last-child td:first-child {
 .vue-apexcharts {
     max-height: 0 !important;
 }
+
+.table-checked {
+    font-family: bootstrap-icons, 'Courier New', Courier, monospace;
+}
+
+.table-checked::after{
+    content: "Renan";
+ }

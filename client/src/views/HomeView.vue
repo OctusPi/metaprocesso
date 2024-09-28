@@ -154,6 +154,15 @@ const processes = ref({
         { key: 'modality', title: 'CLASSIFICAÇÃO', sub: [{ key: 'type' }] },
         { title: 'OBJETO', sub: [{ key: 'description' }] },
     ],
+    complete_header: [
+        { key: 'date_hour_ini', title: 'PROTOCOLO', sub: [{ key: 'protocol' }] },
+        { key: 'dfds.protocol', title: 'DFDS' },
+        { key: 'etp', title: 'ETP', isBool: true },
+        { key: 'pricerecords', title: 'COLETA', isBool: true },
+        { key: 'riskmaps', title: 'MAPAS', isBool: true },
+        { key: 'refterm', title: 'T. REFERÊNCIA', isBool: true },
+        { key: 'proposal', title: 'PUBLICAÇÃO ', isBool: true },
+    ],
 })
 
 const users = ref({
@@ -192,7 +201,7 @@ onMounted(() => {
                 </div>
                 <div class="container p-0 p-md-4">
                     <div class="row">
-                        <div class="col-12 col-lg-4 mb-3">
+                        <div class="col-12 col-lg-4 mb-4">
                             <div class="content h-100 d-flex flex-column block">
                                 <div class="p-4 pb-0">
                                     <div class="chart-heading">
@@ -217,7 +226,7 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-lg-4 mb-3">
+                        <div class="col-12 col-lg-4 mb-4">
                             <div class="content h-100 d-flex flex-column block">
                                 <div class="p-4 pb-0">
                                     <div class="chart-heading">
@@ -242,7 +251,7 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-lg-4 mb-3">
+                        <div class="col-12 col-lg-4 mb-4">
                             <div class="content h-100 d-flex flex-column block">
                                 <div class="p-4 pb-0">
                                     <div class="chart-heading">
@@ -269,7 +278,7 @@ onMounted(() => {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-12 col-lg-8">
+                        <div class="col-12 col-lg-8 mb-4">
                             <div class="content">
                                 <div class="p-4">
                                     <div class="chart-heading">
@@ -292,7 +301,7 @@ onMounted(() => {
                                 </div>
                             </div>
                         </div>
-                        <div class="col-12 col-lg-4">
+                        <div class="col-12 col-lg-4 mb-4">
                             <div class="content">
                                 <div class="p-4">
                                     <div class="chart-heading">
@@ -308,6 +317,27 @@ onMounted(() => {
                                 <div class="modal-listage listage h-100"
                                     :class="[users.datalist.length < 1 && 'd-flex align-items-center justify-content-center']">
                                     <TableList :header="users.header" :body="users.datalist" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="content">
+                                <div class="p-4">
+                                    <div class="chart-heading">
+                                        <span>
+                                            <ion-icon name="document-text" />
+                                        </span>
+                                        <div>
+                                            <h1>Processos em Andamento</h1>
+                                            <p>Listagem dos Processos em Andamento</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-listage listage h-100"
+                                    :class="[processes.datalist.length < 1 && 'd-flex align-items-center justify-content-center']">
+                                    <TableList :header="processes.complete_header" :body="processes.datalist" />
                                 </div>
                             </div>
                         </div>

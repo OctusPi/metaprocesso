@@ -131,16 +131,29 @@ watch(() => props.body, (newval) => {
                             <div>
                                 <div v-if="userHeader[j].key" class="small txt-color-sec" :class="mounted.classes"
                                     :title="getTitle(mounted)">
-                                    {{ getValue(mounted.value, userHeader[j]) }}
+                                    <template v-if="!userHeader[j].isBool">
+                                        {{ getValue(mounted.value, userHeader[j]) }}
+                                    </template>
+                                    <template v-else>
+                                        <ion-icon v-if="mounted.value && mounted.value != ''" name="checkmark-outline"
+                                            class="fs-5 text-success" />
+                                        <ion-icon v-else name="close-outline" class="fs-5 text-danger" />
+                                    </template>
                                 </div>
                             </div>
                             <div>
                                 <span v-for="(submounted, k) in applyMounters(instance, userHeader[j].sub ?? [])"
-                                    :key="k" class="inline-block small me-1"
-                                    :title="getTitle(submounted)"
+                                    :key="k" class="inline-block small me-1" :title="getTitle(submounted)"
                                     :class="submounted.classes">
-                                    {{ userHeader[j].sub[k].title }}
-                                    {{ getValue(submounted.value, userHeader[j].sub[k]) }}
+                                    <template v-if="!userHeader[j].sub[k].isBool">
+                                        {{ userHeader[j].sub[k].title }}
+                                        {{ getValue(submounted.value, userHeader[j].sub[k]) }}
+                                    </template>
+                                    <template v-else>
+                                        <ion-icon v-if="submounted.value && submounted.value != ''"
+                                            name="checkmark-outline" class="fs-5 text-success" />
+                                        <ion-icon v-else name="close-outline" class="fs-5 text-danger" />
+                                    </template>
                                 </span>
                             </div>
                         </td>
@@ -167,7 +180,6 @@ watch(() => props.body, (newval) => {
                 </tbody>
             </table>
         </div>
-
         <div v-else class="text-center p-4 txt-color-sec">
             <ion-icon name="ellipsis-horizontal-outline" class="fs-4"></ion-icon>
             <p class="p-0 m-0 small">Não foram localizados registros...</p>

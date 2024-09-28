@@ -66,7 +66,7 @@ export default class Mounts {
         return (address) => {
             let colorClass = 'tls-grey'
 
-            switch(address) {
+            switch (address) {
                 case 'Inativo':
                 case 'Baixa':
                 case 'Deserto':

@@ -72,7 +72,13 @@ class Home extends Controller
             'processes_chart' => $processes,
             'prices_chart' => $prices,
             'processes' => [
-                'datalist' => Data::find(new Process(), [], ['date_hour_ini']),
+                'datalist' => Data::find(new Process(), [], ['date_hour_ini'], [
+                    'pricerecords',
+                    'etp',
+                    'proposal',
+                    'riskmaps',
+                    'refterm',
+                ]),
                 'selects' => [
                     'types' => Process::list_types(),
                     'modalities' => Process::list_modalitys(),

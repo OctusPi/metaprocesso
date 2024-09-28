@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use App\Utils\Dates;
 use App\Casts\Json;
@@ -130,39 +131,44 @@ class Process extends Model
         );
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class, 'id', 'organ');
     }
 
-    public function comission(): HasOne
+    public function comission(): BelongsTo
     {
-        return $this->hasOne(Comission::class, 'id', 'comission');
+        return $this->belongsTo(Comission::class, 'id', 'comission');
     }
 
-    public function author(): HasOne
+    public function author(): BelongsTo
     {
-        return $this->hasOne(User::class, 'id', 'author');
+        return $this->belongsTo(User::class, 'id', 'user');
     }
 
-    public function etp(): BelongsTo
+    public function etp(): HasOne
     {
-        return $this->belongsTo(Etp::class);
+        return $this->hasOne(Etp::class, 'process');
     }
 
-    public function pricerecord(): BelongsTo
+    public function pricerecords(): HasMany
     {
-        return $this->belongsTo(PriceRecord::class);
+        return $this->hasMany(PriceRecord::class, 'process');
     }
 
-    public function proposal(): BelongsTo
+    public function proposal(): HasOne
     {
-        return $this->belongsTo(Proposal::class);
+        return $this->hasOne(Proposal::class, 'process');
     }
 
-    public function riskmaps(): BelongsTo
+    public function riskmaps(): HasMany
     {
-        return $this->belongsTo(RiskMap::class);
+        return $this->hasMany(RiskMap::class, 'process');
+    }
+
+    public function refterm(): HasOne
+    {
+        return $this->hasOne(RefTerm::class, 'process');
     }
 
     public static function list_modalitys(): array
