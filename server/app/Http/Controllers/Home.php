@@ -78,6 +78,9 @@ class Home extends Controller
                     'modalities' => Process::list_modalitys(),
                 ]
             ],
+            'users' => [
+                'datalist' => Data::find(new User(), [], ['lastlogin']),
+            ],
         ]);
     }
 }
