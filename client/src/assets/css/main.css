@@ -796,3 +796,7 @@ tbody tr:last-child td:first-child {
 .apexcharts-xaxis-tick {
     stroke: var(--color-input-focus);
 }
+
+.vue-apexcharts {
+    max-height: 0 !important;
+}

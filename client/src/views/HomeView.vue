@@ -181,13 +181,13 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="px-2" v-if="dfds.total > 0">
+                                <div class="px-2 my-auto" v-if="dfds.total > 0">
                                     <apexchart height="260" type="bar" :options="dfds.chartOptions"
                                         :series="dfds.series" />
                                 </div>
                                 <div v-else class="d-flex justify-content-center align-items-center h-100">
                                     <div class="text-center p-4">
-                                        <ion-icon name="docuement" class="fs-4" />
+                                        <ion-icon name="document" class="fs-4" />
                                         <p>Sem DFDs recentes</p>
                                     </div>
                                 </div>
@@ -206,7 +206,7 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="p-2" v-if="dfds.total > 0">
+                                <div class="p-2 my-auto" v-if="dfds.total > 0">
                                     <apexchart height="230" type="polarArea" :options="processes.chartOptions"
                                         :series="processes.series" />
                                 </div>
@@ -231,7 +231,7 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-                                <div v-if="prices.total > 0">
+                                <div class="my-auto" v-if="prices.total > 0">
                                     <apexchart height="270" type="radar" :options="prices.chartOptions"
                                         :series="prices.series" />
                                 </div>
