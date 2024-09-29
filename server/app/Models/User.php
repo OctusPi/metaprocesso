@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -154,34 +154,38 @@ class User extends Authenticatable
         ];
     }
 
-    public function dfd(): BelongsTo
+    public function processes():HasMany
     {
-        return $this->belongsTo(Dfd::class);
+        return $this->hasMany(Process::class, 'author_id');
     }
 
-    public function etp(): BelongsTo
+    public function dfds():HasMany
     {
-        return $this->belongsTo(Etp::class);
+        return $this->hasMany(Dfd::class, 'author_id');
     }
 
-    public function proccess(): BelongsTo
+    public function etps():HasMany
     {
-        return $this->belongsTo(Process::class);
+        return $this->hasMany(Etp::class, 'author_id');
     }
 
-    public function pricerecord(): BelongsTo
+    public function priceRecords(): HasMany
     {
-        return $this->belongsTo(PriceRecord::class);
+        return $this->hasMany(PriceRecord::class, 'author_id');
     }
 
-    public function proposal(): BelongsTo
+    public function proposals(): HasMany
     {
-        return $this->belongsTo(Proposal::class);
+        return $this->hasMany(Proposal::class, 'author_id');
     }
 
-    public function riskmap(): BelongsTo
+    public function riskMaps(): HasMany
     {
-        return $this->belongsTo(RiskMap::class);
+        return $this->hasMany(RiskMap::class, 'author_id');
     }
 
+    public function refTerms(): HasMany
+    {
+        return $this->hasMany(RefTerm::class, 'author_id');
+    }
 }

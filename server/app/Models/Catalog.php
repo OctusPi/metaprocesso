@@ -6,7 +6,7 @@ use App\Models\Organ;
 use App\Models\Comission;
 use App\Models\CatalogItem;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -17,8 +17,8 @@ class Catalog extends Model
     protected $table = 'catalogs';
     protected $fillable = [
         'id',
-        'organ',
-        'comission',
+        'organ_id',
+        'comission_id',
         'name',
         'description'
     ];
@@ -27,8 +27,8 @@ class Catalog extends Model
     {
         return [
             'name'      => 'required',
-            'organ'     => 'required',
-            'comission' => 'required'
+            'organ_id'     => 'required',
+            'comission_id' => 'required'
         ];
     }
 
@@ -39,19 +39,19 @@ class Catalog extends Model
         ];
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 
-    public function comission(): HasOne
+    public function comission(): BelongsTo
     {
-        return $this->hasOne(Comission::class, 'id', 'comission');
+        return $this->belongsTo(Comission::class);
     }
 
-    public function catalogitem():BelongsTo
+    public function catalogItems():HasMany
     {
-        return $this->belongsTo(CatalogItem::class);
+        return $this->hasMany(CatalogItem::class);
     }
 
 }

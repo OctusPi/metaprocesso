@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Sector extends Model
 {
@@ -15,8 +15,8 @@ class Sector extends Model
 
     protected $fillable = [
         'id',
-        'organ',
-        'unit',
+        'organ_id',
+        'unit_id',
         'name',
         'description'
     ];
@@ -25,8 +25,8 @@ class Sector extends Model
     {
         return [
             'name'  => 'required',
-            'organ' => 'required',
-            'unit'  => 'required'
+            'organ_id' => 'required',
+            'unit_id'  => 'required'
         ];
     }
 
@@ -37,18 +37,18 @@ class Sector extends Model
         ];
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 
-    public function unit(): HasOne
+    public function unit(): BelongsTo
     {
-        return $this->hasOne(Unit::class, 'id', 'unit');
+        return $this->belongsTo(Unit::class);
     }
 
-    public function demandant():BelongsTo
+    public function demandants():HasMany
     {
-        return $this->belongsTo(Demandant::class);
+        return $this->hasMany(Demandant::class);
     }
 }

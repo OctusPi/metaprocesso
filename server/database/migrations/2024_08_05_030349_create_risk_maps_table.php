@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('risk_maps', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('author')->constrained('users');
-            $table->foreignId('process')->constrained('processes');
-            $table->foreignId('comission')->constrained('comissions');
-            $table->foreignId('organ')->constrained('organs');
+            $table->foreignId('author_id')->constrained('users');
+            $table->foreignId('process_id')->constrained('processes');
+            $table->foreignId('comission_id')->constrained('comissions');
+            $table->foreignId('organ_id')->constrained('organs');
             $table->date('date_version');
             $table->string('version', 10);
             $table->integer('phase');

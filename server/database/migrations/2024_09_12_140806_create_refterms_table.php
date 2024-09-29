@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('refterms', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('process')->constrained('processes');
-            $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('comission')->constrained('comissions');
-            $table->foreignId('etp')->constrained('etps');
+            $table->foreignId('process_id')->constrained('processes');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('comission_id')->constrained('comissions');
+            $table->foreignId('etp_id')->constrained('etps');
+            $table->foreignId('author_id')->constrained('users');
             $table->string('protocol')->unique();
             $table->text('necessity');
             $table->text('contract_forecast');

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('demandants', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('unit')->constrained('units');
-            $table->foreignId('sector')->nullable()->constrained('sectors');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('unit_id')->constrained('units');
+            $table->foreignId('sector_id')->nullable()->constrained('sectors');
             $table->string('name');
             $table->string('cpf', 20);
             $table->string('registration',20)->nullable();

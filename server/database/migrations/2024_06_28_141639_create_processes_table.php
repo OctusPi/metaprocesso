@@ -20,13 +20,13 @@ return new class extends Migration
             $table->integer('year_pca');
             $table->integer('type');
             $table->integer('modality');
-            $table->foreignId('organ')->constrained('organs');
+            $table->foreignId('organ_id')->constrained('organs');
             $table->json('units');
             $table->json('ordinators');
-            $table->foreignId('comission')->constrained('comissions');
+            $table->foreignId('comission_id')->constrained('comissions');
             $table->json('comission_members');
             $table->string('comission_address');
-            $table->foreignId('author')->constrained('users');
+            $table->foreignId('author_id')->constrained('users');
             $table->text('description');
             $table->integer('status');
             $table->string('initial_value')->nullable();

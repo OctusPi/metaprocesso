@@ -61,13 +61,13 @@ class Process extends Model
         'year_pca',
         'type',
         'modality',
-        'organ',
+        'organ_id',
         'units',
         'ordinators',
-        'comission',
+        'comission_id',
         'comission_members',
         'comission_address',
-        'author',
+        'author_id',
         'description',
         'status',
         'initial_value',
@@ -91,7 +91,7 @@ class Process extends Model
             'protocol' => [
                 'required',
                 Rule::unique('processes', 'protocol')
-                    ->where('organ', $this->organ)
+                    ->where('organ_id', $this->organ_id)
                     ->ignore($this->id)
             ],
             'ip' => 'required',
@@ -99,13 +99,13 @@ class Process extends Model
             'year_pca' => 'required',
             'type' => 'required',
             'modality' => 'required',
-            'organ' => 'required',
+            'organ_id' => 'required',
             'units' => 'required',
             'ordinators' => 'required',
-            'comission' => 'required',
+            'comission_id' => 'required',
             'comission_members' => 'required',
             'comission_address' => 'required',
-            'author' => 'required',
+            'author_id' => 'required',
             'description' => 'required',
             'status' => 'required',
             'dfds' => 'required',
@@ -196,43 +196,43 @@ class Process extends Model
         ];
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 
-    public function comission(): HasOne
+    public function comission(): BelongsTo
     {
-        return $this->hasOne(Comission::class, 'id', 'comission');
+        return $this->belongsTo(Comission::class);
     }
 
-    public function author(): HasOne
+    public function author(): BelongsTo
     {
-        return $this->hasOne(User::class, 'id', 'author');
+        return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function etp(): BelongsTo
+    public function etp(): HasOne
     {
-        return $this->belongsTo(Etp::class, 'process');
+        return $this->hasOne(Etp::class);
     }
 
-    public function pricerecord(): BelongsTo
+    public function priceRecord(): HasOne
     {
-        return $this->belongsTo(PriceRecord::class);
+        return $this->hasOne(PriceRecord::class);
     }
 
-    public function proposal(): BelongsTo
+    public function proposals(): HasMany
     {
-        return $this->belongsTo(Proposal::class, 'process');
+        return $this->hasMany(Proposal::class);
     }
 
-    public function riskmaps(): BelongsTo
+    public function riskMaps(): HasMany
     {
-        return $this->belongsTo(RiskMap::class, 'process');
+        return $this->hasMany(RiskMap::class);
     }
 
-    public function refterm(): BelongsTo
+    public function refTerm(): HasOne
     {
-        return $this->belongsTo(RefTerm::class, 'process');
+        return $this->hasOne(RefTerm::class);
     }
 }

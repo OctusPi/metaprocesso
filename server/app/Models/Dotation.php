@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,8 +16,8 @@ class Dotation extends Model
     protected $fillable = [
         'id',
         'name',
-        'organ',
-        'unit',
+        'organ_id',
+        'unit_id',
         'law',
         'description',
         'status',
@@ -27,8 +27,8 @@ class Dotation extends Model
     {
         return [
             'name' => 'required',
-            'organ' => 'required',
-            'unit' => 'required',
+            'organ_id' => 'required',
+            'unit_id' => 'required',
             'status' => 'required'
         ];
     }
@@ -48,20 +48,19 @@ class Dotation extends Model
         ];
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 
-    public function unit(): HasOne
+    public function unit(): BelongsTo
     {
-        return $this->hasOne(Unit::class, 'id', 'unit');
+        return $this->belongsTo(Unit::class);
     }
 
-    public function dfditem(): BelongsTo
+    public function dfdItems():HasMany
     {
-        return $this->belongsTo(DfdItem::class);
+        return $this->hasMany(DfdItem::class);
     }
-
 
 }

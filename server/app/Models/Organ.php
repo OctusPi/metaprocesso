@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -60,88 +61,108 @@ class Organ extends Model
         ];
     }
 
-    public function dfd(): BelongsTo
+    public function units():HasMany
     {
-        return $this->belongsTo(Dfd::class);
+        return $this->hasMany(Unit::class);
     }
 
-    public function demandant(): BelongsTo
+    public function sectors():HasMany
     {
-        return $this->belongsTo(Demandant::class);
+        return $this->hasMany(Sector::class);
     }
 
-    public function comission(): BelongsTo
+    public function programs():HasMany
     {
-        return $this->belongsTo(Comission::class);
+        return $this->hasMany(Program::class);
     }
 
-    public function comissionend(): BelongsTo
+    public function dotations():HasMany
     {
-        return $this->belongsTo(ComissionEnd::class);
+        return $this->hasMany(Dotation::class);
     }
 
-    public function comissionmember(): BelongsTo
+    public function suppliers():HasMany
     {
-        return $this->belongsTo(ComissionMember::class);
+        return $this->hasMany(Supplier::class);
     }
 
-    public function catalog(): BelongsTo
+    public function demandants():HasMany
     {
-        return $this->belongsTo(Catalog::class);
+        return $this->hasMany(Demandant::class);
     }
 
-    public function catalogitem(): BelongsTo
+    public function ordinators():HasMany
     {
-        return $this->belongsTo(CatalogItem::class);
+        return $this->hasMany(Ordinator::class);
     }
 
-    public function catalogsubcategoryitem(): BelongsTo
+    public function comissions():HasMany
     {
-        return $this->belongsTo(CatalogSubCategoryItem::class);
+        return $this->hasMany(Comission::class);
     }
 
-    public function ordinator(): BelongsTo
+    public function comissionMembers(): HasMany
     {
-        return $this->belongsTo(Ordinator::class);
+        return $this->hasMany(ComissionMember::class);
     }
 
-    public function program(): BelongsTo
+    public function comissionEnds(): HasMany
     {
-        return $this->belongsTo(Program::class);
+        return $this->hasMany(ComissionEnd::class);
     }
 
-    public function dotation(): BelongsTo
+    public function catalogs(): HasMany
     {
-        return $this->belongsTo(Dotation::class);
+        return $this->hasMany(Catalog::class);
     }
 
-    public function sector(): BelongsTo
+    public function catalogSubCategoryItems(): HasMany
     {
-        return $this->belongsTo(Sector::class);
+        return $this->hasMany(CatalogSubCategoryItem::class);
     }
 
-    public function etp(): BelongsTo
+    public function catalogItems():HasMany
     {
-        return $this->belongsTo(Etp::class);
+        return $this->hasMany(CatalogItem::class);
     }
 
-    public function proccess(): BelongsTo
+    public function dfds():HasMany
     {
-        return $this->belongsTo(Process::class);
+        return $this->hasMany(Dfd::class);
     }
 
-    public function pricerecord(): BelongsTo
+    public function attachments():HasMany
     {
-        return $this->belongsTo(PriceRecord::class);
+        return $this->hasMany(Attachment::class);
     }
 
-    public function proposal(): BelongsTo
+    public function processes():HasMany
     {
-        return $this->belongsTo(Proposal::class);
+        return $this->hasMany(Process::class);
     }
 
-    public function riskmap(): BelongsTo
+    public function etps(): HasMany
     {
-        return $this->belongsTo(RiskMap::class);
+        return $this->hasMany(Etp::class);
+    }
+
+    public function priceRecords(): HasMany
+    {
+        return $this->hasMany(PriceRecord::class);
+    }
+
+    public function proposals(): HasMany
+    {
+        return $this->hasMany(Proposal::class);
+    }
+
+    public function riskMaps(): HasMany
+    {
+        return $this->hasMany(RiskMap::class);
+    }
+
+    public function refTerms(): HasMany
+    {
+        return $this->hasMany(RefTerm::class);
     }
 }

@@ -21,11 +21,11 @@ return new class extends Migration
             $table->time('hour_ini');
             $table->date('date_fin')->nullable();
             $table->time('hour_fin')->nullable();
-            $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('process')->constrained('processes');
-            $table->foreignId('price_record')->constrained('price_records');
-            $table->foreignId('supplier')->nullable()->constrained('suppliers');
-            $table->foreignId('author')->constrained('users');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('process_id')->constrained('processes');
+            $table->foreignId('pricerecord_id')->constrained('price_records');
+            $table->foreignId('supplier_id')->nullable()->constrained('suppliers');
+            $table->foreignId('author_id')->constrained('users');
             $table->integer('modality');
             $table->json('items')->nullable();
             $table->longText('logomarca')->nullable();

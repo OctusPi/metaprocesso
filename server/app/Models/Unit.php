@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Unit extends Model
 {
@@ -15,7 +15,7 @@ class Unit extends Model
 
     protected $fillable = [
         'id',
-        'organ',
+        'organ_id',
         'name',
         'cnpj',
         'phone',
@@ -34,7 +34,7 @@ class Unit extends Model
     public function rules(): array
     {
         return [
-            'organ' => 'required',
+            'organ_id' => 'required',
             'name' => 'required',
             'cnpj' => 'required'
         ];
@@ -47,53 +47,53 @@ class Unit extends Model
         ];
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 
-    public function dfd(): BelongsTo
+    public function sectors():HasMany
     {
-        return $this->belongsTo(Dfd::class);
+        return $this->hasMany(Sector::class);
     }
 
-    public function comission(): BelongsTo
+    public function programs():HasMany
     {
-        return $this->belongsTo(Comission::class);
+        return $this->hasMany(Program::class);
     }
 
-    public function comissionend(): BelongsTo
+    public function dotations():HasMany
     {
-        return $this->belongsTo(ComissionEnd::class);
+        return $this->hasMany(Dotation::class);
     }
 
-    public function comissionmember(): BelongsTo
+    public function demandants():HasMany
     {
-        return $this->belongsTo(ComissionMember::class);
+        return $this->hasMany(Demandant::class);
     }
 
-    public function demandant(): BelongsTo
+    public function ordinators():HasMany
     {
-        return $this->belongsTo(Demandant::class);
+        return $this->hasMany(Ordinator::class);
     }
 
-    public function ordinator(): BelongsTo
+    public function comissions():HasMany
     {
-        return $this->belongsTo(Ordinator::class);
+        return $this->hasMany(Comission::class);
     }
 
-    public function program(): BelongsTo
+    public function comissionMembers(): HasMany
     {
-        return $this->belongsTo(Program::class);
+        return $this->hasMany(ComissionMember::class);
     }
 
-    public function sector(): BelongsTo
+    public function comissionEnds(): HasMany
     {
-        return $this->belongsTo(Sector::class);
+        return $this->hasMany(ComissionEnd::class);
     }
 
-    public function riskmap(): BelongsTo
+    public function dfds():HasMany
     {
-        return $this->belongsTo(RiskMap::class);
+        return $this->hasMany(Dfd::class);
     }
 }

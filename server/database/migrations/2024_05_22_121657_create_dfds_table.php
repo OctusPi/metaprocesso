@@ -16,11 +16,11 @@ return new class extends Migration
             $table->timestamps();
             $table->string('protocol')->unique();
             $table->string('ip')->nullable();
-            $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('unit')->constrained('units');
-            $table->foreignId('demandant')->constrained('demandants');
-            $table->foreignId('ordinator')->constrained('ordinators');
-            $table->foreignId('comission')->constrained('comissions');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('unit_id')->constrained('units');
+            $table->foreignId('demandant_id')->constrained('demandants');
+            $table->foreignId('ordinator_id')->constrained('ordinators');
+            $table->foreignId('comission_id')->constrained('comissions');
             $table->json('comission_members')->nullable();
             $table->date('date_ini');
             $table->string('year_pca', 5);
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->boolean('bonds')->default(false); 
             $table->boolean('price_taking')->default(false);
             $table->integer('status');
-            $table->foreignId('author')->constrained('users');
+            $table->foreignId('author_id')->constrained('users');
         });
     }
 

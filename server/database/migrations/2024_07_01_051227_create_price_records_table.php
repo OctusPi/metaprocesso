@@ -18,13 +18,13 @@ return new class extends Migration
             $table->string('ip');
             $table->date('date_ini');
             $table->date('date_fin')->nullable();
-            $table->foreignId('process')->constrained('processes');
-            $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('comission')->constrained('comissions');
+            $table->foreignId('process_id')->constrained('processes');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('comission_id')->constrained('comissions');
             $table->json('comission_members')->nullable();
             $table->json('suppliers')->nullable();
             $table->text('suppliers_justification')->nullable();
-            $table->foreignId('author')->constrained('users');
+            $table->foreignId('author_id')->constrained('users');
             $table->integer('status');
         });
     }

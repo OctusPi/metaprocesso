@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use App\Models\DfdItem;
+use Illuminate\Validation\Rule;
 use App\Models\CatalogSubCategoryItem;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Validation\Rule;
 
 class CatalogItem extends Model
 {
@@ -41,8 +41,8 @@ class CatalogItem extends Model
     protected $table = 'catalog_items';
     protected $fillable = [
         'id',
-        'organ',
-        'catalog',
+        'organ_id',
+        'catalog_id',
         'code',
         'name',
         'description',
@@ -51,19 +51,19 @@ class CatalogItem extends Model
         'origin',
         'type',
         'category',
-        'subcategory',
+        'subcategory_id',
         'status',
     ];
 
     public function rules(): array
     {
         return [
-            'organ' => 'required',
-            'catalog' => 'required',
+            'organ_id' => 'required',
+            'catalog_id' => 'required',
             'code' => [
                 'required',
                 Rule::unique('catalog_items', 'code')->where(function ($query) {
-                    return $query->where('organ', $this->organ)->where('catalog', $this->catalog);
+                    return $query->where('organ_id', $this->organ_id)->where('catalog_id', $this->catalog_id);
             })->ignore($this->id)],
             'name' => 'required',
             'description' => 'required',
@@ -129,23 +129,23 @@ class CatalogItem extends Model
         ];
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 
-    public function catalog(): HasOne
+    public function catalog(): BelongsTo
     {
-        return $this->hasOne(Catalog::class, 'id', 'catalog');
+        return $this->belongsTo(Catalog::class);
     }
 
-    public function subcategory(): HasOne
+    public function subcategory(): BelongsTo
     {
-        return $this->hasOne(CatalogSubCategoryItem::class, 'id', 'subcategory');
+        return $this->belongsTo(CatalogSubCategoryItem::class);
     }
-
-    public function dfditem(): BelongsTo
+    
+    public function dfdItems():HasMany
     {
-        return $this->belongsTo(DfdItem::class);
+        return $this->hasMany(DfdItem::class);
     }
 }

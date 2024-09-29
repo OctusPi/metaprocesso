@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('catalog_items', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('catalog')->constrained('catalogs');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('catalog_id')->constrained('catalogs');
             $table->string('code', 50);
             $table->string('name');
             $table->text('description');
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('origin');
             $table->integer('type');
             $table->integer('category');
-            $table->foreignId('subcategory')->nullable()->constrained('catalog_items_subcategories')->nullOnDelete();
+            $table->foreignId('subcategory_id')->nullable()->constrained('catalog_items_subcategories')->nullOnDelete();
             $table->integer('status');
         });
     }

@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->string('address');
             $table->integer('modality');
             $table->integer('size');
-            $table->foreignId('organ')->constrained('organs');
+            $table->foreignId('organ_id')->constrained('organs');
         });
     }
 

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Validation\Rule;
 use App\Utils\Dates;
+use Illuminate\Validation\Rule;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Etp extends Model
 {
@@ -21,10 +22,10 @@ class Etp extends Model
         'protocol',
         'emission',
         'status',
-        'process',
-        'organ',
-        'comission',
-        'user',
+        'process_id',
+        'organ_id',
+        'comission_id',
+        'author_id',
         'object_description',
         'object_classification',
         'necessity',
@@ -46,21 +47,21 @@ class Etp extends Model
     public function rules(): array
     {
         return [
-            'process' => [
+            'process_id' => [
                 'required',
-                Rule::unique('etps', 'process')
+                Rule::unique('etps', 'process_id')
                     ->ignore($this->id)
             ],
             'protocol' => [
                 'required',
                 Rule::unique('etps', 'protocol')
-                    ->where('organ', $this->organ)
+                    ->where('organ_id', $this->organ_id)
                     ->ignore($this->id)
             ],
             'ip' => 'required',
-            'organ' => 'required',
-            'comission' => 'required',
-            'user' => 'required',
+            'organ_id' => 'required',
+            'comission_id' => 'required',
+            'author_id' => 'required',
             'object_description' => 'required',
             'object_classification' => 'required',
             'necessity' => 'required',
@@ -107,23 +108,28 @@ class Etp extends Model
         );
     }
 
-    public function process(): HasOne
+    public function process(): BelongsTo
     {
-        return $this->hasOne(Process::class, 'id', 'process');
+        return $this->belongsTo(Process::class);
+    }
+    
+    public function organ(): BelongsTo
+    {
+        return $this->belongsTo(Organ::class);
     }
 
-    public function organ(): HasOne
+    public function comission(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Comission::class);
     }
 
-    public function comission(): HasOne
+    public function author(): BelongsTo
     {
-        return $this->hasOne(Comission::class, 'id', 'comission');
+        return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function user(): HasOne
+    public function refTerms(): HasMany
     {
-        return $this->hasOne(User::class, 'id', 'user');
+        return $this->hasMany(RefTerm::class);
     }
 }

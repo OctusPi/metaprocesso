@@ -15,7 +15,6 @@ use App\Models\ComissionEnd;
 use App\Models\ComissionMember;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,8 +32,8 @@ class Comission extends Model
 
     protected $fillable = [
         'id',
-        'organ',
-        'unit',
+        'organ_id',
+        'unit_id',
         'name',
         'type',
         'document',
@@ -47,8 +46,8 @@ class Comission extends Model
     public function rules(): array
     {
         return [
-            'organ' => 'required',
-            'unit' => 'required',
+            'organ_id' => 'required',
+            'unit_id' => 'required',
             'name' => 'required',
             'type' => 'required',
             'start_term' => 'required',
@@ -121,53 +120,58 @@ class Comission extends Model
         return '';
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 
-    public function unit(): HasOne
+    public function unit(): BelongsTo
     {
-        return $this->hasOne(Unit::class, 'id', 'unit');
+        return $this->belongsTo(Unit::class);
     }
 
-    public function catalog(): BelongsTo
+    public function comissionMembers(): HasMany
     {
-        return $this->belongsTo(Catalog::class);
+        return $this->hasMany(ComissionMember::class);
     }
 
-    public function dfd(): BelongsTo
+    public function comissionEnds(): HasMany
     {
-        return $this->belongsTo(Dfd::class);
+        return $this->hasMany(ComissionEnd::class);
     }
 
-    public function comissionend(): BelongsTo
+    public function catalogs(): HasMany
     {
-        return $this->belongsTo(ComissionEnd::class);
+        return $this->hasMany(Catalog::class);
     }
 
-    public function comissionmembers(): HasMany
+    public function dfds():HasMany
     {
-        return $this->hasMany(ComissionMember::class, 'comission', 'id');
+        return $this->hasMany(Dfd::class);
     }
 
-    public function etp(): BelongsTo
+    public function processes():HasMany
     {
-        return $this->belongsTo(Etp::class);
+        return $this->hasMany(Process::class);
+    }
+    
+    public function etps(): HasMany
+    {
+        return $this->hasMany(Etp::class);
     }
 
-    public function proccess(): BelongsTo
+    public function priceRecords(): HasMany
     {
-        return $this->belongsTo(Process::class);
+        return $this->hasMany(PriceRecord::class);
     }
 
-    public function pricerecord():BelongsTo
+    public function riskMaps(): HasMany
     {
-        return $this->belongsTo(PriceRecord::class);
+        return $this->hasMany(RiskMap::class);
     }
 
-    public function riskmaps(): BelongsTo
+    public function refTerms(): HasMany
     {
-        return $this->belongsTo(RiskMap::class);
+        return $this->hasMany(RefTerm::class);
     }
 }

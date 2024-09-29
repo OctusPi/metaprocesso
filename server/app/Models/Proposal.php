@@ -7,7 +7,7 @@ use App\Utils\Dates;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Proposal extends Model
@@ -31,16 +31,16 @@ class Proposal extends Model
         'id',
         'protocol',
         'ip',
-        'author',
+        'author_id',
         'token',
         'date_ini',
         'hour_ini',
         'date_fin',
         'hour_fin',
-        'organ',
-        'process',
-        'price_record',
-        'supplier',
+        'organ_id',
+        'process_id',
+        'pricerecord_id',
+        'supplier_id',
         'modality',
         'items',
         'logomarca',
@@ -59,17 +59,17 @@ class Proposal extends Model
         return [
             'protocol' => 'required',
             'ip' => 'required',
-            'author' => 'required',
+            'author_id' => 'required',
             'token' => 'required',
             'date_ini' => 'required',
             'hour_ini' => 'required',
-            'organ' => 'required',
-            'process' => 'required',
-            'price_record' => 'required',
-            'supplier' => [
+            'organ_id' => 'required',
+            'process_id' => 'required',
+            'pricerecord_id' => 'required',
+            'supplier_id' => [
                 'requried',
-                Rule::unique('price_records_proposals', 'supplier')->where(function ($query) {
-                    return $query->where('supplier', '!=', null)->where('price_record', $this->price_record);
+                Rule::unique('price_records_proposals', 'supplier_id')->where(function ($query) {
+                    return $query->where('supplier', '!=', null)->where('pricerecord_id', $this->pricerecord_id);
                 })->ignore($this->id)
             ],
             'modality' => 'required',
@@ -122,24 +122,28 @@ class Proposal extends Model
         ];
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 
-    public function process(): HasOne
+    public function process(): BelongsTo
     {
-        return $this->hasOne(Process::class, 'id', 'process');
+        return $this->belongsTo(Process::class);
     }
 
-    public function price_record(): HasOne
+    public function pricerecord(): BelongsTo
     {
-        return $this->hasOne(PriceRecord::class, 'id', 'price_record');
+        return $this->belongsTo(PriceRecord::class);
     }
 
-    public function supplier(): HasOne
+    public function supplier(): BelongsTo
     {
-        return $this->hasOne(Supplier::class, 'id', 'supplier');
+        return $this->belongsTo(Supplier::class);
     }
 
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'author_id');
+    }
 }

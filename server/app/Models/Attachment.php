@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Utils\Dates;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Attachment extends Model
 {
@@ -17,7 +17,7 @@ class Attachment extends Model
     protected $table = 'attachments';
     protected $fillable = [
         'id',
-        'organ',
+        'organ_id',
         'origin',
         'protocol',
         'type',
@@ -46,5 +46,10 @@ class Attachment extends Model
         return Attribute::make(
             get: fn(?string $value) => Dates::convert($value, Dates::TZ, Dates::PTBR),
         );
+    }
+
+    public function organ(): BelongsTo
+    {
+        return $this->belongsTo(Organ::class);
     }
 }

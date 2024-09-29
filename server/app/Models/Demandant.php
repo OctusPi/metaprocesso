@@ -6,7 +6,7 @@ use App\Utils\Dates;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -18,9 +18,9 @@ class Demandant extends Model
 
     protected $fillable = [
         'id',
-        'organ',
-        'unit',
-        'sector',
+        'organ_id',
+        'unit_id',
+        'sector_id',
         'name',
         'cpf',
         'registration',
@@ -33,13 +33,13 @@ class Demandant extends Model
     public function rules():array
     {
         return [
-            'organ' => 'required',
-            'unit' => 'required',
+            'organ_id' => 'required',
+            'unit_id' => 'required',
             'name' => 'required',
             'cpf' => [
                 'required',
                 Rule::unique('demandants', 'cpf')->where(function ($query) {
-                    return $query->where('unit', $this->unit);
+                    return $query->where('unit_id', $this->unit_id);
             })->ignore($this->id)],
             'start_term' => 'required',
             'status'     => 'required',
@@ -78,23 +78,23 @@ class Demandant extends Model
         ];
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 
-    public function unit(): HasOne
+    public function unit(): BelongsTo
     {
-        return $this->hasOne(Unit::class, 'id', 'unit');
+        return $this->belongsTo(Unit::class);
     }
 
-    public function sector(): HasOne
+    public function sector(): BelongsTo
     {
-        return $this->hasOne(Sector::class, 'id', 'sector');
+        return $this->belongsTo(Sector::class);
     }
 
-    public function dfd():BelongsTo
+    public function dfds():HasMany
     {
-        return $this->belongsTo(Dfd::class);
+        return $this->hasMany(Dfd::class);
     }
 }

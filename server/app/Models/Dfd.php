@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use App\Casts\Json;
 use App\Utils\Dates;
+use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Validation\Rule;
-use App\Casts\Json;
 
 class Dfd extends Model
 {
@@ -49,11 +50,11 @@ class Dfd extends Model
         'id',
         'protocol',
         'ip',
-        'organ',
-        'unit',
-        'demandant',
-        'ordinator',
-        'comission',
+        'organ_id',
+        'unit_id',
+        'demandant_id',
+        'ordinator_id',
+        'comission_id',
         'comission_members',
         'date_ini',
         'year_pca',
@@ -68,7 +69,7 @@ class Dfd extends Model
         'bonds',
         'price_taking',
         'status',
-        'author'
+        'author_id'
     ];
 
     protected $casts = [
@@ -84,11 +85,11 @@ class Dfd extends Model
                 Rule::unique('dfds', 'protocol')->where(function ($query) {
                     return $query->where('unit', $this->unit);
             })->ignore($this->id)],
-            'organ'     => 'required',
-            'unit'      => 'required',
-            'demandant' => 'required',
-            'ordinator' => 'required',
-            'comission' => 'required',
+            'organ_id'     => 'required',
+            'unit_id'      => 'required',
+            'demandant_id' => 'required',
+            'ordinator_id' => 'required',
+            'comission_id' => 'required',
             'priority'  => 'required',
             'date_ini'  => 'required',
             'year_pca'  => 'required',
@@ -231,38 +232,38 @@ class Dfd extends Model
         ];
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 
-    public function unit(): HasOne
+    public function unit(): BelongsTo
     {
-        return $this->hasOne(Unit::class, 'id', 'unit');
+        return $this->belongsTo(Unit::class);
     }
 
-    public function demandant(): HasOne
+    public function demandant(): BelongsTo
     {
-        return $this->hasOne(Demandant::class, 'id', 'demandant');
+        return $this->belongsTo(Demandant::class);
     }
 
-    public function ordinator(): HasOne
+    public function ordinator(): BelongsTo
     {
-        return $this->hasOne(Ordinator::class, 'id', 'ordinator');
+        return $this->belongsTo(Ordinator::class);
     }
 
-    public function comission(): HasOne
+    public function comission(): BelongsTo
     {
-        return $this->hasOne(Comission::class, 'id', 'comission');
+        return $this->belongsTo(Comission::class);
     }
 
-    public function author(): HasOne
+    public function author(): BelongsTo
     {
-        return $this->hasOne(User::class, 'id', 'author');
+        return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function dfditem():BelongsTo
+    public function dfdItems():HasMany
     {
-        return $this->belongsTo(DfdItem::class);
+        return $this->hasMany(DfdItem::class);
     }
 }

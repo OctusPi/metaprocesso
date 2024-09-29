@@ -7,7 +7,7 @@ use App\Utils\Dates;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -27,13 +27,13 @@ class PriceRecord extends Model
         'ip',
         'date_ini',
         'date_fin',
-        'process',
-        'organ',
-        'comission',
+        'process_id',
+        'organ_id',
+        'comission_id',
         'comission_members',
         'suppliers',
         'suppliers_justification',
-        'author',
+        'author_id',
         'status'
     ];
 
@@ -49,10 +49,10 @@ class PriceRecord extends Model
             'ip'        => 'required',
             'date_ini'  => 'required',
             'date_fin'  => 'required',
-            'process'   => ['required', Rule::unique('price_records', 'process')->ignore($this->id)],
-            'organ'     => 'required',
-            'comission' => 'required',
-            'author'    => 'required',
+            'process_id'   => ['required', Rule::unique('price_records', 'process_id')->ignore($this->id)],
+            'organ_id'     => 'required',
+            'comission_id' => 'required',
+            'author_id'    => 'required',
             'status'    => 'required',
         ];
     }
@@ -90,28 +90,28 @@ class PriceRecord extends Model
         ];
     }
 
-    public function organ(): HasOne
+    public function process(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Process::class);
+    }
+    
+    public function organ(): BelongsTo
+    {
+        return $this->belongsTo(Organ::class);
     }
 
-    public function process():HasOne
+    public function comission(): BelongsTo
     {
-        return $this->hasOne(Process::class, 'id', 'process');
+        return $this->belongsTo(Comission::class);
     }
 
-    public function comission(): HasOne
+    public function author(): BelongsTo
     {
-        return $this->hasOne(Comission::class, 'id', 'comission');
+        return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function author(): HasOne
+    public function proposals(): HasMany
     {
-        return $this->hasOne(User::class, 'id', 'author');
-    }
-
-    public function proposal():BelongsTo
-    {
-        return $this->belongsTo(Proposal::class);
+        return $this->hasMany(Proposal::class);
     }
 }

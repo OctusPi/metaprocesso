@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class DfdItem extends Model
@@ -15,22 +16,22 @@ class DfdItem extends Model
 
     protected $fillable = [
         'id',
-        'dfd',
-        'item',
+        'dfd_id',
+        'item_id',
         'quantity',
-        'program',
-        'dotation',
+        'program_id',
+        'dotation_id',
     ];
 
     public function rules():array
     {
         return [
-            'dfd' => 'required',
+            'dfd_id' => 'required',
             'quantity' => 'required',
-            'item' => [
+            'item_id' => [
                 'required',
-                Rule::unique('dfds_items', 'item')->where(function ($query) {
-                    return $query->where('dfd', $this->dfd);
+                Rule::unique('dfds_items', 'item_id')->where(function ($query) {
+                    return $query->where('dfd_id', $this->dfd_id);
             })->ignore($this->id)],
         ];
     }
@@ -43,23 +44,23 @@ class DfdItem extends Model
         ];
     }
 
-    public function dfd():HasOne
+    public function dfd(): BelongsTo
     {
-        return $this->hasOne(Dfd::class, 'id', 'dfd');
+        return $this->belongsTo(Dfd::class);
     }
 
-    public function item():HasOne
+    public function item(): BelongsTo
     {
-        return $this->hasOne(CatalogItem::class, 'id', 'item');
+        return $this->belongsTo(CatalogItem::class);
     }
 
-    public function program():HasOne
+    public function program(): BelongsTo
     {
-        return $this->hasOne(Program::class, 'id', 'program');
+        return $this->belongsTo(Program::class);
     }
 
-    public function dotation():HasOne
+    public function dotation(): BelongsTo
     {
-        return $this->hasOne(Dotation::class, 'id', 'dotation');
+        return $this->belongsTo(Dotation::class);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -24,7 +25,7 @@ class Supplier extends Model
         'address',
         'modality',
         'size',
-        'organ'
+        'organ_id'
     ];
 
     public function rules(): array
@@ -38,7 +39,7 @@ class Supplier extends Model
             'email' => 'required',
             'phone' => 'required',
             'modality' => 'required',
-            'organ' => 'required'
+            'organ_id' => 'required'
         ];
     }
 
@@ -48,11 +49,6 @@ class Supplier extends Model
             'required' => 'Campo obrigatório não informado!',
             'unique'   => 'Fornecedor já registrado...'
         ];
-    }
-
-    public function proposal(): BelongsTo
-    {
-        return $this->belongsTo(Proposal::class);
     }
 
     public static function list_modalitys(): array
@@ -72,5 +68,15 @@ class Supplier extends Model
             ['id' => 2, 'title' => 'Porte 2'],
             ['id' => 3, 'title' => 'Porte 3'],
         ];
+    }
+
+    public function organ(): BelongsTo
+    {
+        return $this->belongsTo(Organ::class);
+    }
+
+    public function proposal(): HasOne
+    {
+        return $this->hasOne(Proposal::class);
     }
 }

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('comissions_ends', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('organ')->constrained('organs');
-            $table->foreignId('unit')->constrained('units');
-            $table->foreignId('comission')->constrained('comissions');
+            $table->foreignId('organ_id')->constrained('organs');
+            $table->foreignId('unit_id')->constrained('units');
+            $table->foreignId('comission_id')->constrained('comissions');
             $table->string('document')->nullable();
             $table->string('description')->nullable();
             $table->date('end_term');

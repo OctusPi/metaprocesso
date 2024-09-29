@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Validation\Rule;
 use App\Utils\Dates;
 
@@ -19,10 +18,10 @@ class RefTerm extends Model
     protected $fillable = [
         'id',
         'protocol',
-        'organ',
-        'comission',
-        'process',
-        'etp',
+        'organ_id',
+        'comission_id',
+        'process_id',
+        'etp_id',
         'necessity',
         'contract_forecast',
         'contract_requirements',
@@ -39,31 +38,32 @@ class RefTerm extends Model
         'parts_obligation',
         'emission',
         'type',
+        'author_id'
     ];
 
     public function rules(): array
     {
         return [
-            'process' => [
+            'process_id' => [
                 'required',
-                Rule::unique('refterms', 'process')
-                    ->where('organ', $this->organ)
+                Rule::unique('refterms', 'process_id')
+                    ->where('organ_id', $this->organ_id)
                     ->ignore($this->id)
             ],
-            'etp' => [
+            'etp_id' => [
                 'required',
-                Rule::unique('refterms', 'etp')
-                    ->where('organ', $this->organ)
+                Rule::unique('refterms', 'etp_id')
+                    ->where('organ_id', $this->organ_id)
                     ->ignore($this->id)
             ],
             'protocol' => [
                 'required',
                 Rule::unique('refterms', 'protocol')
-                    ->where('organ', $this->organ)
+                    ->where('organ_id', $this->organ_id)
                     ->ignore($this->id)
             ],
-            'organ' => 'required',
-            'comission' => 'required',
+            'organ_id' => 'required',
+            'comission_id' => 'required',
             'necessity' => 'required',
             'contract_forecast' => 'required',
             'contract_requirements' => 'required',
@@ -79,7 +79,8 @@ class RefTerm extends Model
             'funds_suitability' => 'required',
             'parts_obligation' => 'required',
             'emission' => 'required',
-            'type' => 'required'
+            'type' => 'required',
+            'author_id' => 'required'
         ];
     }
 
@@ -107,23 +108,28 @@ class RefTerm extends Model
         );
     }
 
-    public function process(): HasOne
+    public function author():BelongsTo
     {
-        return $this->hasOne(Process::class, 'id', 'process');
+        return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function organ(): HasOne
+    public function process():BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Process::class);
     }
 
-    public function comission(): HasOne
+    public function comission():BelongsTo
     {
-        return $this->hasOne(Comission::class, 'id', 'comission');
+        return $this->belongsTo(Comission::class);
     }
 
-    public function etp(): HasOne
+    public function etp():BelongsTo
     {
-        return $this->hasOne(Etp::class, 'id', 'etp');
+        return $this->belongsTo(Etp::class);
+    }
+
+    public function organ():BelongsTo
+    {
+        return $this->belongsTo(Organ::class);
     }
 }

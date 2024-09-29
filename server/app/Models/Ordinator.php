@@ -8,7 +8,7 @@ use App\Models\Organ;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -20,8 +20,8 @@ class Ordinator extends Model
 
     protected $fillable = [
         'id',
-        'organ',
-        'unit',
+        'organ_id',
+        'unit_id',
         'name',
         'cpf',
         'registration',
@@ -34,13 +34,13 @@ class Ordinator extends Model
     public function rules():array
     {
         return [
-            'organ' => 'required',
-            'unit' => 'required',
+            'organ_id' => 'required',
+            'unit_id' => 'required',
             'name' => 'required',
             'cpf' => [
                 'required',
                 Rule::unique('ordinators', 'cpf')->where(function ($query) {
-                    return $query->where('unit', $this->unit);
+                    return $query->where('unit_id', $this->unit_id);
             })->ignore($this->id)],
             'start_term' => 'required',
             'status'     => 'required',
@@ -79,18 +79,18 @@ class Ordinator extends Model
         ];
     }
 
-    public function organ(): HasOne
+    public function organ(): BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 
-    public function unit(): HasOne
+    public function unit(): BelongsTo
     {
-        return $this->hasOne(Unit::class, 'id', 'unit');
+        return $this->belongsTo(Unit::class);
     }
 
-    public function dfd():BelongsTo
+    public function dfds():HasMany
     {
-        return $this->belongsTo(Dfd::class);
+        return $this->hasMany(Dfd::class);
     }
 }

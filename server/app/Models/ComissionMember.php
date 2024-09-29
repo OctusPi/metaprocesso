@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Utils\Dates;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ComissionMember extends Model
 {
@@ -16,9 +16,9 @@ class ComissionMember extends Model
 
     protected $fillable = [
         'id',
-        'organ',
-        'unit',
-        'comission',
+        'organ_id',
+        'unit_id',
+        'comission_id',
         'name',
         'responsibility',
         'document',
@@ -36,6 +36,9 @@ class ComissionMember extends Model
             'responsibility' => 'required',
             'start_term' => 'required',
             'status' => 'required',
+            'organ_id' => 'required',
+            'unit_id' => 'required',
+            'comission_id' => 'required'
         ];
     }
 
@@ -62,21 +65,6 @@ class ComissionMember extends Model
         );
     }
 
-    public function organ(): HasOne
-    {
-        return $this->hasOne(Organ::class, 'id', 'organ');
-    }
-
-    public function unit(): HasOne
-    {
-        return $this->hasOne(Unit::class, 'id', 'unit');
-    }
-
-    public function comission(): HasOne
-    {
-        return $this->hasOne(Comission::class, 'id', 'comission');
-    }
-
     public static function list_responsabilities(): array
     {
         return [
@@ -91,5 +79,20 @@ class ComissionMember extends Model
             ['id' => 0, 'title' => 'Inativo'],
             ['id' => 1, 'title' => 'Ativo'],
         ];
+    }
+
+    public function organ(): BelongsTo
+    {
+        return $this->belongsTo(Organ::class);
+    }
+
+    public function unit(): BelongsTo
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
+    public function comission(): BelongsTo
+    {
+        return $this->belongsTo(Comission::class);
     }
 }

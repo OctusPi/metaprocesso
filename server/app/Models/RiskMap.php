@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use \App\Casts\Json;
 use App\Utils\Dates;
@@ -18,10 +18,10 @@ class RiskMap extends Model
 
     protected $fillable = [
         'id',
-        'process',
-        'comission',
-        'organ',
-        'author',
+        'process_id',
+        'comission_id',
+        'organ_id',
+        'author_id',
         'date_version',
         'version',
         'phase',
@@ -40,10 +40,10 @@ class RiskMap extends Model
     public function rules(): array
     {
         return [
-            'process' => ['required', Rule::unique('risk_maps', 'process')->ignore($this->id)],
-            'comission' => 'required',
-            'organ' => 'required',
-            'author' => 'required',
+            'process_id' => ['required', Rule::unique('risk_maps', 'process_id')->ignore($this->id)],
+            'comission_id' => 'required',
+            'organ_id' => 'required',
+            'author_id' => 'required',
             'date_version' => 'required',
             'version' => 'required',
             'phase' => 'required',
@@ -105,23 +105,23 @@ class RiskMap extends Model
         ];
     }
 
-    public function process(): HasOne
+    public function author():BelongsTo
     {
-        return $this->hasOne(Process::class, 'id', 'process');
+        return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function comission(): HasOne
+    public function process():BelongsTo
     {
-        return $this->hasOne(Comission::class, 'id', 'comission');
+        return $this->belongsTo(Process::class);
     }
 
-    public function author(): HasOne
+    public function comission():BelongsTo
     {
-        return $this->hasOne(User::class, 'id', 'author');
+        return $this->belongsTo(Comission::class);
     }
 
-    public function organ(): HasOne
+    public function organ():BelongsTo
     {
-        return $this->hasOne(Organ::class, 'id', 'organ');
+        return $this->belongsTo(Organ::class);
     }
 }
