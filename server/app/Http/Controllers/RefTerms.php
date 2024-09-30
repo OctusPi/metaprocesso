@@ -28,7 +28,7 @@ class RefTerms extends Controller
 
     public function save(Request $request)
     {
-        $etp = Data::findOne(new Etp(), ['process_id' => $request->process]);
+        $etp = Data::findOne(new Etp(), ['process_id' => $request->process_id]);
         if (!$etp) {
             return response()->json(Notify::warning('O processo não possui nenhum ETP atrelado...'), 400);
         }

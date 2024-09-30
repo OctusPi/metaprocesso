@@ -18,6 +18,7 @@ import DfdDetails from '@/components/DfdDetails.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import exp from '@/services/export';
 import ReftermReport from './reports/ReftermReport.vue';
+import notifys from '@/utils/notifys';
 
 const sysapp = inject('sysapp')
 
@@ -107,6 +108,8 @@ function fetchEtp(e) {
         page.data.ambiental_impacts = res.data.ambiental_impacts
         page.data.correlated_contracts = res.data.correlated_contracts
         page.data.etp_id = res.data.id
+    }, () => {
+        page.data.process = null
     })
 }
 
@@ -129,7 +132,6 @@ function generate(type) {
     const base = {
         organ: page.organ,
         comission: page.selects.comissions?.find(o => o.id === page.data.comission_id),
-        object_description: page.data.object_description,
         process: page.process
     }
 
@@ -144,6 +146,108 @@ function generate(type) {
     }
 
     switch (type) {
+        case 'necessity':
+            setValuesAndPayload(type, `
+                Crie uma descrição concisa para a necessidade de um Termo de Referência de um processo usando a breve descrição "${page.data.necessity}"
+                para o órgão ${base.organ?.name} baseado na descrição do processo '${base.process?.description}'
+                e no texto prévio "${page.data.necessity ?? ''}" em plain text
+            `);
+            break;
+        case 'contract_forecast':
+            setValuesAndPayload(type, `
+                Elabore detalhadamente uma previsão de contratação para o processo descrito no texto "${page.data.necessity}"
+                e no texto prévio "${page.data.contract_forecast ?? ''}" em plain text
+            `);
+            break;
+        case 'contract_requirements':
+            setValuesAndPayload(type, `
+                Elabore detalhadamente os requerimentos de contrato para o processo descrito no texto "${page.data.necessity}"
+                e no texto prévio "${page.data.contract_requirements ?? ''}" em plain text
+            `);
+            break;
+        case 'contract_expected_price':
+            setValuesAndPayload(type, `
+                Elabore detalhadamente um levantamento de preço para o processo descrito
+                no texto "${page.data.necessity}"
+                e no texto prévio "${page.data.necessity ?? ''}" em plain text
+            `);
+            break;
+        case 'market_survey':
+            setValuesAndPayload(type, `
+                Elabore detalhadamente uma pesquisa de mercado para suprir as necessidades
+                do processo descrito no texto "${page.data.necessity}"
+                e no texto prévio "${page.data.market_survey ?? ''}" em plain text
+            `);
+            break;
+        case 'solution_full_description':
+            setValuesAndPayload(type, `
+                Elabore detalhadamente uma descrição completa para a solução do processo descrito em "${page.data.necessity}
+                e no texto prévio "${page.data.solution_full_description ?? ''}" em plain text"
+            `);
+            break;
+        case 'ambiental_impacts':
+            setValuesAndPayload(type, `
+                Elabore detalhadamente um levantamento de possíveis impactos ambientais
+                na execução do processo descrito em "${page.data.necessity}"
+                e no texto prévio "${page.data.ambiental_impacts ?? ''}" em plain text
+            `);
+            break;
+        case 'correlated_contracts':
+            if (!page.data.correlated_contracts) {
+                emit('callAlert', notifys.info('Digite o contrato correlato'))
+                return
+            }
+            setValuesAndPayload(type, `
+                Elabore detalhadamente uma descrição de correlação entre o processo descrito em "${page.data.necessity}"
+                descritos no texto "${page.data.correlated_contracts}"
+                e no texto prévio "${page.data.correlated_contracts ?? ''}" em plain text
+            `);
+            break;
+        case 'object_execution_model':
+            if (!page.data.object_execution_model) {
+                emit('callAlert', notifys.info('Digite uma breve descrição'))
+                return
+            }
+            setValuesAndPayload(type, `
+                Elabore detalhadamente o modelo de execução do objeto baseado no texto "${page.data.object_execution_model}"
+                e no contrato descrito em ${page.data.necessity}
+                e no texto prévio "${page.data.object_execution_model ?? ''}" em plain text
+            `);
+            break;
+        case 'contract_management_model':
+            setValuesAndPayload(type, `
+                Elabore uma descrição de um modelo de gerenciamento de contrato para o contrato descrito em "${page.data.necessity}
+                e no texto prévio "${page.data.contract_management_model ?? ''}" em plain text"
+            `);
+            break;
+        case 'payment_measure_criteria':
+            setValuesAndPayload(type, `
+                Elabore uma critério de medida para o pagamento do contrato descrito no texto "${page.data.necessity}
+                e no texto prévio "${page.data.payment_measure_criteria ?? ''}" em plain text"
+            `);
+            break;
+        case 'supplier_selection_criteria':
+            setValuesAndPayload(type, `
+                Elabore uma critério de seleção para o fornecedor do contrato descrito no texto "${page.data.necessity}
+                e no texto prévio "${page.data.supplier_selection_criteria ?? ''}" em plain text"
+            `);
+            break;
+        case 'funds_suitability':
+            setValuesAndPayload(type, `
+                Elabore uma critério de seleção para o fornecedor do contrato descrito no texto "${page.data.necessity}
+                e no texto prévio "${page.data.funds_suitability ?? ''}" em plain text"
+            `);
+            break;
+        case 'parts_obligation':
+            if (!page.data.solution_full_description) {
+                emit('callAlert', notifys.info('Antes, digite a descrição da solução completa'))
+                return
+            }
+            setValuesAndPayload(type, `
+                Elabore uma descrição da obrigação das partes para o fornecedor do contrato descrito no texto "${page.data.solution_full_description}
+                e no texto prévio "${page.data.parts_obligation ?? ''}" em plain text"
+            `);
+            break;
         default:
             break;
     }
@@ -353,8 +457,7 @@ onMounted(() => {
                                                 </div>
                                             </div>
                                             <div class="p-4 pt-0 mx-2">
-                                                <TableListRadio secondary
-                                                    @onChange="fetchEtp" identify="process"
+                                                <TableListRadio secondary @onChange="fetchEtp" identify="process"
                                                     v-model="page.data.process" :header="page.process.headers"
                                                     :body="page.process.data" :mounts="{
                                                         status: [Mounts.Cast(page.selects.process_status), Mounts.Status()],

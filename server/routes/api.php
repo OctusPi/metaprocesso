@@ -132,6 +132,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
         Route::post('/fetch_etp/{process_id}', 'fetch_etp');
+        Route::post('/generate', 'generate');
     });
 
     Route::prefix('/comissionmembers/{comission}')->controller(ComissionMembers::class)->group(function () {

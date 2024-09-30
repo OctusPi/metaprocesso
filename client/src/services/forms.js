@@ -89,6 +89,7 @@ function checkform(data, rules){
                 }
             });
         }
+        console.log(rules)
 
         return {
             isvalid: checks.every((v) => v == true),
