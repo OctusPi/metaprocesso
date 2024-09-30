@@ -25,7 +25,6 @@ use App\Http\Controllers\Units;
 use App\Http\Controllers\Users;
 use App\Http\Controllers\Organs;
 use App\Http\Controllers\Dfds;
-use App\Http\Controllers\Dashboard;
 use Illuminate\Support\Facades\Route;
 use App\Utils\Notify;
 use App\Http\Controllers\Authentication;
@@ -77,7 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
     $common('/programs', Programs::class);
     $common('/dotations', Dotations::class);
     $common('/catalogs', Catalogs::class);
-    $common('/catalogitems/{catalog}', CatalogItems::class);
+    $common('/catalogitems/{catalog_id}', CatalogItems::class);
     $common('/suppliers', Suppliers::class);
     $common('/dfds', Dfds::class);
     $common('/processes', Processes::class);
@@ -132,7 +131,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/list_processes', 'list_processes');
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
-        Route::post('/fetch_etp/{process}', 'fetch_etp');
+        Route::post('/fetch_etp/{process_id}', 'fetch_etp');
     });
 
     Route::prefix('/comissionmembers/{comission}')->controller(ComissionMembers::class)->group(function () {

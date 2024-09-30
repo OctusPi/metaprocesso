@@ -187,7 +187,7 @@ onBeforeMount(() => {
                         <div class="col-sm-12 col-md-4">
                             <label for="s-subcategory" class="form-label">Grupo</label>
                             <select name="subcategory" class="form-control" id="s-subcategory"
-                                v-model="page.search.subcategory">
+                                v-model="page.search.subcategory_id">
                                 <option value=""></option>
                                 <option v-for="o in page.selects.groups" :key="o.id" :value="o.id">
                                     {{ o.title }}
@@ -294,8 +294,7 @@ onBeforeMount(() => {
                                     </a>
                                 </label>
                                 <select name="subcategory" class="form-control" id="subcategory"
-                                    :class="{ 'form-control-alert': page.valids.subcategory }"
-                                    v-model="page.data.subcategory">
+                                    v-model="page.data.subcategory_id">
                                     <option></option>
                                     <option v-for="c in page.selects.groups" :key="c.id" :value="c.id">
                                         {{ c.title }}

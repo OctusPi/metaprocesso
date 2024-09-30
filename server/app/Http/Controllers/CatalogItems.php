@@ -22,7 +22,7 @@ class CatalogItems extends Controller
     {
         return $this->base_list(
             $request,
-            ['catalog', 'name', 'description', 'status', 'type', 'category', 'subcategory'],
+            ['catalog_id', 'name', 'description', 'status', 'type', 'category', 'subcategory_id'],
             ['name'],
             ['subcategory']
         );
@@ -30,10 +30,10 @@ class CatalogItems extends Controller
 
     public function save(Request $request)
     {
-        $catalog = Catalog::find($request->catalog);
+        $catalog = Catalog::find($request->catalog_id);
 
         if ($catalog) {
-            return $this->base_save($request, ['catalog' => $catalog->id]);
+            return $this->base_save($request, ['catalog_id' => $catalog->id]);
         }
 
         return response()->json(Notify::warning("Catálogo não localizado!"), 404);

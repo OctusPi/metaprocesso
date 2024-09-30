@@ -31,10 +31,10 @@ const [main, mainData] = Layout.new(emit, {
         { key: 'phase', title: 'FASE' }
     ],
     rules: {
-        comission: 'required',
+        comission_id: 'required',
         phase: 'required',
         description: 'required',
-        process: 'required',
+        process: 'required'
     },
     process: {
         search: {},
@@ -403,7 +403,7 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
                     <form @submit.prevent="mainData.save({
-                        process: main.data.process.id,
+                        process_id: main.data.process.id,
                         riskiness: risks.datalist,
                         accompaniments: accomp.datalist
                     })">
@@ -498,8 +498,8 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-8">
                                 <label for="comission" class="form-label">Comissão</label>
                                 <select name="comission" class="form-control"
-                                    :class="{ 'form-control-alert': main.valids.comission }" id="comission"
-                                    v-model="main.data.comission">
+                                    :class="{ 'form-control-alert': main.valids.comission_id }" id="comission"
+                                    v-model="main.data.comission_id">
                                     <option value=""></option>
                                     <option v-for="o in main.selects.comissions" :key="o.id" :value="o.id">
                                         {{ o.title }}
@@ -623,7 +623,7 @@ onMounted(() => {
                                             <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
                                             Registrar
                                         </button>
-                                        <button @click="risksData.ui('register')" class="btn btn-action-tertiary">
+                                        <button type="button" @click="risksData.ui('register')" class="btn btn-action-tertiary">
                                             <ion-icon name="close-outline" class="fs-5"></ion-icon>
                                             Cancelar
                                         </button>

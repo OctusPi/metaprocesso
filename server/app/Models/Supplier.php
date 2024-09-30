@@ -33,7 +33,7 @@ class Supplier extends Model
         return [
             'name' => 'required',
             'cnpj' => ['required', Rule::unique('suppliers', 'cnpj')->where(function($query){
-                return $query->where('organ', $this->organ);
+                return $query->where('organ_id', $this->organ_id);
             })->ignore($this->id)],
             'address' => 'required',
             'email' => 'required',

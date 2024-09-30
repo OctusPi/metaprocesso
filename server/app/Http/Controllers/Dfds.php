@@ -82,7 +82,7 @@ class Dfds extends Controller
         $dfd = $this->base_details($request);
 
         if($dfd->status() == 200){
-            $items = Data::find(new DfdItem(), ['dfd' => $request->id], with:['item']) ?? [];
+            $items = Data::find(new DfdItem(), ['dfd_id' => $request->id], with:['item']) ?? [];
             $group = array_merge($dfd->getData(true) ?? [], ['items' => $items]);
             return response()->json($group);
         }
@@ -102,10 +102,8 @@ class Dfds extends Controller
 
         if($dfd->status() == 200){
             $data  = $dfd->getData(true) ?? [];
-            $items = Data::find(new DfdItem(), ['dfd' => $request->id], with:['item']) ?? [];
-            $programs  = Data::find(new Program(), ['unit' => $data['unit']['id']], ['name']);
-            $dotations = Data::find(new Dotation(), ['unit' => $data['unit']['id']], ['name']);
-            $group = array_merge($data, ['items' => $items, 'programs' => $programs, 'dotations' => $dotations]);
+            $items = Data::find(new DfdItem(), ['dfd_id' => $request->id], with:['item', 'program', 'dotation']) ?? [];
+            $group = array_merge($data, ['items' => $items]);
             return response()->json($group);
         }
 
@@ -127,7 +125,7 @@ class Dfds extends Controller
             return response()->json(Notify::warning('Não é possível APAGAR DFDs bloqueado pelo Processo!'), 403);
         }
 
-        DfdItem::where('dfd', $request->id)->delete();
+        DfdItem::where('dfd_id', $request->id)->delete();
 
         return $this->base_delete($request);
 
@@ -156,13 +154,13 @@ class Dfds extends Controller
         if($request->key == 'filter'){
             [$unit_id, $comission_id] = array_pad(explode(',', $request->search), 2, null);
 
-            $selections['ordinators'] = Data::find(new Ordinator(), ['unit' => $unit_id], ['name']);
-            $selections['demandants'] = Data::find(new Demandant(), ['unit' => $unit_id], ['name']);
-            $selections['programs'] = Data::find(new Program(), ['unit' => $unit_id], ['name']);
-            $selections['dotations'] = Data::find(new Dotation(), ['unit' => $unit_id], ['name']);
+            $selections['ordinators'] = Data::find(new Ordinator(), ['unit_id' => $unit_id], ['name']);
+            $selections['demandants'] = Data::find(new Demandant(), ['unit_id' => $unit_id], ['name']);
+            $selections['programs'] = Data::find(new Program(), ['unit_id' => $unit_id], ['name']);
+            $selections['dotations'] = Data::find(new Dotation(), ['unit_id' => $unit_id], ['name']);
 
             $selections['comission_members'] = $comission_id
-            ? Data::find(new ComissionMember(), ['comission' => $comission_id])
+            ? Data::find(new ComissionMember(), ['comission_id' => $comission_id])
             : null;
         }
 
@@ -183,7 +181,7 @@ class Dfds extends Controller
     {
         if (!$this->model->id) return;
 
-        $currentItems = Data::find(new DfdItem(), ['dfd' => $this->model->id])->pluck('id');
+        $currentItems = Data::find(new DfdItem(), ['dfd_id' => $this->model->id])->pluck('id');
         $newItems = collect(json_decode($request->items, true))->keyBy('id');
 
         foreach ($currentItems as $itemId) {
@@ -197,11 +195,11 @@ class Dfds extends Controller
             DfdItem::updateOrCreate(
                 [
                     'id'       => is_numeric($itemData['id']) && !$request->clone ? $itemData['id'] : null,
-                    'dfd'      => $this->model->id,
-                    'item'     => $itemData['item']['id'],
+                    'dfd_id'      => $this->model->id,
+                    'item_id'     => $itemData['item']['id'],
                     'quantity' => $itemData['quantity'],
-                    'program'  => $itemData['program'] ?? null,
-                    'dotation' => $itemData['dotation'] ?? null
+                    'program_id'  => $itemData['program_id'] ?? null,
+                    'dotation_id' => $itemData['dotation_id'] ?? null
                 ]
             );
         }

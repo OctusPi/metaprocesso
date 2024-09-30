@@ -83,7 +83,7 @@ class Dfd extends Model
             'protocol' => [
                 'required',
                 Rule::unique('dfds', 'protocol')->where(function ($query) {
-                    return $query->where('unit', $this->unit);
+                    return $query->where('unit_id', $this->unit_id);
             })->ignore($this->id)],
             'organ_id'     => 'required',
             'unit_id'      => 'required',

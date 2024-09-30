@@ -29,7 +29,7 @@ class Programs extends Controller
     {
         return $this->base_list(
             $request,
-            ['unit', 'name', 'law'],  // Campos para filtragem
+            ['unit_id', 'name', 'law'],  // Campos para filtragem
             ['name'],  // Campo para ordenação
             ['organ', 'unit']  // Relações para carregamento adiantado
         );

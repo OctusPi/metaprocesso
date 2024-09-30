@@ -55,8 +55,9 @@ class RiskMaps extends Controller
 
         $search = Utils::map_search(['protocol', 'description'], $request->all());
         $betw = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
+        $objs = Utils::map_search_obj($request->units, 'units', 'id');
 
-        $query = Data::find(new Process(), $search, null, ['organ', 'comission'], $betw);
+        $query = Data::find(new Process(), $search, ['date_hour_ini'], ['organ', 'comission'], $betw, $objs);
         return response()->json($query, 200);
     }
 
@@ -77,14 +78,14 @@ class RiskMaps extends Controller
 
     public function save(Request $request)
     {
-        $comission = Data::findOne(new Comission(), ['id' => $request->comission]);
+        $comission = Data::findOne(new Comission(), ['id' => $request->comission_id]);
         if (!$comission) {
             return Response()->json(Notify::warning("Comissão não existe!"), 404);
         }
 
         $preload = [
-            'author' => $request->user()->id,
-            'comission_members' => $comission->comissionmembers->toArray(),
+            'author_id' => $request->user()->id,
+            'comission_members' => Data::find(new ComissionMember(), ['comission_id' => $request->comission_id])?->toArray(),
             'date_version' => Dates::nowWithFormat(Dates::PTBR),
         ];
 

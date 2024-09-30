@@ -30,7 +30,7 @@ class Etps extends Controller
     {
         return $this->base_save($request, [
             'ip' => $request->ip(),
-            'user' => $request->user()->id,
+            'author_id' => $request->user()->id,
         ]);
     }
 
@@ -97,7 +97,7 @@ class Etps extends Controller
      */
     public function export(Request $request)
     {
-        $etp = $this->base_details($request, ['process', 'comission', 'user']);
+        $etp = $this->base_details($request, ['process', 'comission', 'author']);
 
         if ($etp->status() == 200) {
             $data = $etp->getData(true);
@@ -123,7 +123,7 @@ class Etps extends Controller
     public function list_dfd_items(Request $request)
     {
         return response()->json(
-            Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']),
+            Data::find(new DfdItem(), ['dfd_id' => $request->id], null, ['item', 'dotation', 'program']),
             200
         );
     }

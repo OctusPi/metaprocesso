@@ -1,16 +1,13 @@
 <script setup>
-import { createApp, onMounted, watch } from 'vue';
+import { onMounted, watch } from 'vue';
 
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
-import http from '@/services/http';
-import exp from '@/services/export';
 import masks from '@/utils/masks';
 
 import NavMainUi from '@/components/NavMainUi.vue';
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
-import CatalogReport from './reports/CatalogReport.vue';
 import TableList from '@/components/table/TableList.vue';
 import Mounts from '@/services/mounts';
 
@@ -39,16 +36,6 @@ const [page, pageData] = Layout.new(emit, {
         modality: 'required'
     }
 })
-
-
-function export_catalog(id) {
-    http.get(`${page.url}/export/${id}`, emit, (resp) => {
-        const containerReport = document.createElement('div')
-        const instanceReport = createApp(CatalogReport, { catalog: resp.data, selects: page.selects })
-        instanceReport.mount(containerReport)
-        exp.exportPDF(containerReport, `CATÁLOGO-${resp.data.name}`)
-    })
-}
 
 watch(() => props.datalist, (newdata) => {
     page.datalist = newdata
@@ -138,8 +125,7 @@ onMounted(() => {
                 <div role="list" class="container p-0">
                     <TableList :header="page.header" :body="page.datalist" :actions="[
                         Actions.Edit(pageData.update),
-                        Actions.Delete(pageData.remove),
-                        Actions.Export('document-text-outline', export_catalog),
+                        Actions.Delete(pageData.remove)
                     ]" :mounts="{
                         modality: [Mounts.Cast(page.selects.modalities)],
                         size: [Mounts.Cast(page.selects.sizes)]

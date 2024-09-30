@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ComissionMember;
 use App\Models\Dfd;
 use App\Models\DfdItem;
 use App\Models\Unit;
@@ -43,10 +44,11 @@ class Processes extends Controller
             }
         }
 
-        $comission = Data::findOne(new Comission(), ['id' => $request->comission], with: ['organ']);
+        $comission = Data::findOne(new Comission(), ['id' => $request->comission_id], with: ['organ']);
+        $comissionmembers = Data::find(new ComissionMember(), ['comission_id' => $request->comission_id]);
 
-        if ($comission->comissionmembers->count() < 1) {
-            return response()->json(Notify::warning("A comissão não possui membros ativos!"), 403);
+        if($comissionmembers->isEmpty()){
+            return response()->json(Notify::warning('Comissão selecionada não possuí membros ativos'), 400);
         }
 
         if (!$request->id) {
@@ -56,11 +58,11 @@ class Processes extends Controller
         $this->model->fill($request->all());
 
         $this->model->dfds = json_decode($request->dfds);
-        $this->model->author = $request->user()->id;
+        $this->model->author_id = $request->user()->id;
         $this->model->ip = $request->ip();
 
-        $this->model->comission_members = $comission->comissionmembers->toArray();
-        $this->model->comission_address = $comission->toArray()['organ']['address'];
+        $this->model->comission_members = $comissionmembers->toArray();
+        $this->model->comission_address = $comission->organ->address;
 
         $dfds = $this->update_dfds(
             $this->model->status,
@@ -126,7 +128,7 @@ class Processes extends Controller
 
         $search = array_merge($search, [
             [
-                'column' => 'unit',
+                'column' => 'unit_id',
                 'operator' => '=',
                 'value' => json_decode($request->units),
                 'mode' => 'AND'
@@ -156,7 +158,7 @@ class Processes extends Controller
     public function list_dfd_items(Request $request)
     {
         return response()->json(
-            Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']),
+            Data::find(new DfdItem(), ['dfd_id' => $request->id], null, ['item', 'dotation', 'program']),
             200
         );
     }

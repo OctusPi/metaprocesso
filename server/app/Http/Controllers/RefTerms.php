@@ -28,14 +28,14 @@ class RefTerms extends Controller
 
     public function save(Request $request)
     {
-        $etp = Data::findOne(new Etp(), ['process' => $request->process]);
+        $etp = Data::findOne(new Etp(), ['process_id' => $request->process]);
         if (!$etp) {
             return response()->json(Notify::warning('O processo não possui nenhum ETP atrelado...'), 400);
         }
         return $this->base_save($request, [
             'ip' => $request->ip(),
-            'user' => $request->user()->id,
-            'etp' => $etp->id,
+            'author_id' => $request->user()->id,
+            'etp_id' => $etp->id,
         ]);
     }
 
@@ -56,7 +56,7 @@ class RefTerms extends Controller
 
         return $this->base_list(
             $request,
-            ['protocol', 'process', 'necessity', 'type'],  // Campos para filtragem
+            ['protocol', 'necessity', 'type'],  // Campos para filtragem
             ['protocol'],  // Campo para ordenação
             ['comission', 'process'],  // Relações para carregamento adiantado
             $date_between
@@ -88,8 +88,9 @@ class RefTerms extends Controller
 
         $search = Utils::map_search(['protocol', 'description'], $request->all());
         $betw = $request->date_i && $request->date_f ? ['date_hour_ini' => [$request->date_i, $request->date_f]] : null;
+        $objs = Utils::map_search_obj($request->units, 'units', 'id');
 
-        $query = Data::find(new Process, $search, null, ['organ', 'comission'], $betw);
+        $query = Data::find(new Process, $search, ['date_hour_ini'], ['organ', 'comission'], $betw, $objs);
         return response()->json($query, 200);
     }
 
@@ -103,7 +104,7 @@ class RefTerms extends Controller
     public function list_dfd_items(Request $request)
     {
         return response()->json(
-            Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']),
+            Data::find(new DfdItem(), ['dfd_id' => $request->id], null, ['item', 'dotation', 'program']),
             200
         );
     }
@@ -116,7 +117,7 @@ class RefTerms extends Controller
      */
     public function fetch_etp(Request $request)
     {
-        $etp = Data::findOne(new Etp(), ['process' => $request->process]);
+        $etp = Data::findOne(new Etp(), ['process_id' => $request->process]);
         if (!$etp) {
             return response()->json(Notify::warning('O processo não possui um ETP relacionado!'), 404);
         }

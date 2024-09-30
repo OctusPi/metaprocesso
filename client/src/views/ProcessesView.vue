@@ -41,7 +41,7 @@ const [page, pageData] = Layout.new(emit, {
         type: 'required',
         modality: 'required',
         units: 'required',
-        comission: 'required',
+        comission_id: 'required',
         description: 'required',
         status: 'required',
         dfds: 'required',
@@ -282,8 +282,8 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="comission" class="form-label">Comissão</label>
                                 <select name="comission" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.comission }" id="comission"
-                                    v-model="page.data.comission">
+                                    :class="{ 'form-control-alert': page.valids.comission_id }" id="comission"
+                                    v-model="page.data.comission_id">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
                                         {{ o.title }}
@@ -525,7 +525,7 @@ onMounted(() => {
                                             <h4>Comissão</h4>
                                             <p>{{ utils.getTxt(
                                                 page.selects.comissions,
-                                                page.data.comission
+                                                page.data.comission_id
                                             ) }}</p>
                                         </div>
                                     </div>

@@ -32,7 +32,7 @@ const [page, pageData] = Layout.new(emit, {
     },
     rules: {
         name: 'required',
-        comission: 'required'
+        comission_id: 'required'
     }
 })
 
@@ -105,7 +105,7 @@ onMounted(() => {
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-name" class="form-label">Comissão</label>
-                            <select name="type" class="form-control" id="type" v-model="page.search.comission">
+                            <select name="type" class="form-control" id="type" v-model="page.search.comission_id">
                                 <option value=""></option>
                                 <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
                                     {{ s.title }}
@@ -158,8 +158,8 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-6">
                                 <label for="comission" class="form-label">Comissão</label>
                                 <select name="comission" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.comission }" id="comission"
-                                    v-model="page.data.comission">
+                                    :class="{ 'form-control-alert': page.valids.comission_id }" id="comission"
+                                    v-model="page.data.comission_id">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
                                         {{ s.title }}

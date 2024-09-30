@@ -32,7 +32,7 @@ class Ordinators extends Controller
     {
         return $this->base_list(
             $request,
-            ['unit', 'name', 'status'],
+            ['unit_id', 'name', 'status'],
             ['name'],
             ['organ', 'unit']
         );

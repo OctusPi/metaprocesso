@@ -43,7 +43,7 @@ const [page, pageData] = Layout.new(emit, {
     ],
     rules: {
         process: 'required',
-        comission: 'required',
+        comission_id: 'required',
         protocol: 'required',
         emission: 'required',
         status: 'required',
@@ -81,7 +81,7 @@ const [page, pageData] = Layout.new(emit, {
             { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { key: 'demandant.name', title: 'DEMANDANTE' },
             { key: 'ordinator.name', title: 'ORDENADOR' },
-            { key: 'unit.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
+            { key: 'unit.name', title: 'ORIGEM' },
             { title: 'OBJETO', sub: [{ key: 'description' }] },
             { key: 'status', title: 'SITUAÇÃO' }
         ],
@@ -152,7 +152,7 @@ function export_etp(id) {
 function generate(type) {
     const base = {
         organ: page.organ,
-        comission: page.selects.comissions?.find(o => o.id === page.data.comission),
+        comission: page.selects.comissions?.find(o => o.id === page.data.comission_id),
         object_description: page.data.object_description,
         process: page.process
     }
@@ -387,7 +387,7 @@ onMounted(() => {
                 </div>
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
-                    <form @submit.prevent="pageData.save({ process: page.data.process?.id })">
+                    <form @submit.prevent="pageData.save({ process_id: page.data.process?.id })">
                         <!-- tab processo -->
                         <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
                             <div class="accordion mb-3" id="accordion-process">
@@ -467,7 +467,7 @@ onMounted(() => {
                                                 <TableListRadio secondary identify="process" v-model="page.data.process"
                                                     :header="page.process.headers" :body="page.process.data" :mounts="{
                                                         status: [Mounts.Cast(page.selects.process_status), Mounts.Status()],
-                                                        description: [Mounts.Truncate(200)],
+                                                        description: [Mounts.Truncate(100)],
                                                     }" />
                                             </div>
                                         </div>
@@ -481,6 +481,7 @@ onMounted(() => {
                                 <TableList :count="false" :header="page.dfd.headers" :body="page.data.process.dfds"
                                     :mounts="{
                                         status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
+                                        description: [Mounts.Truncate(100)]
                                     }" :actions="[
                                         Actions.ModalDetails(dfd_details),
                                     ]" />
@@ -509,8 +510,8 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="comission" class="form-label">Comissão</label>
                                 <select name="comission" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.comission }" id="comission"
-                                    v-model="page.data.comission">
+                                    :class="{ 'form-control-alert': page.valids.comission_id }" id="comission"
+                                    v-model="page.data.comission_id">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
                                         {{ o.title }}

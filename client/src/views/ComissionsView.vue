@@ -31,7 +31,7 @@ const [page, pageData] = Layout.new(emit, {
     ],
     rules: {
         name: 'required',
-        unit: 'required',
+        unit_id: 'required',
         type: 'required',
         status: 'required',
         start_term: 'required'
@@ -43,16 +43,16 @@ const [extinct, extinctData] = Layout.new(emit, {
     rules: {
         end_term: 'required',
         description: 'required',
-        unit: 'required',
-        comission: 'required',
+        unit_id: 'required',
+        comission_id: 'required',
     },
 })
 
 function extinction(id) {
     http.get(`/comissions/details/${id}`, emit, (response) => {
-        extinct.data.comission = response.data.id
-        extinct.data.organ = response.data.organ
-        extinct.data.unit = response.data.unit
+        extinct.data.comission_id = response.data.id
+        extinct.data.organ_id = response.data.organ_id
+        extinct.data.unit_id = response.data.unit_id
         extinct.data.end_term = utils.dateNow()
         pageData.ui('prepare')
     })
@@ -171,8 +171,8 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="unit" class="form-label">Unidade</label>
                                 <select name="unit" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.unit }" id="unit"
-                                    v-model="page.data.unit">
+                                    :class="{ 'form-control-alert': page.valids.unit_id }" id="unit"
+                                    v-model="page.data.unit_id">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
                                         {{ s.title }}

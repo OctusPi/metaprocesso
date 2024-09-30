@@ -31,7 +31,7 @@ class ComissionsEnds extends Controller
 
     public function save(Request $request)
     {
-        $comission = Data::findOne(new Comission(), ['id' => $request->comission]);
+        $comission = Data::findOne(new Comission(), ['id' => $request->comission_id]);
 
         if (!$comission) {
             return response()->json(Notify::warning('Comissão não existe'), 404);
@@ -48,10 +48,12 @@ class ComissionsEnds extends Controller
             $upload->remove($instance->document);
         }
 
-        $comission->status = Comission::STATUS_EXTINGUED;
-        $comission->end_term = $request->end_term;
-
-        $comission->save();
+        $comission->update(
+            [
+                'status' => Comission::STATUS_EXTINGUED,
+                'end_term' => $request->end_term
+            ]
+        );
 
         return $this->base_save($request, $upload->mergeUploads([]));
     }

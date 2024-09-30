@@ -39,10 +39,10 @@ const [page, pageData] = Layout.new(emit, {
         { key: 'status', title: 'SITUAÇÃO' }
     ],
     rules: {
-        unit: 'required',
-        ordinator: 'required',
-        demandant: 'required',
-        comission: 'required',
+        unit_id: 'required',
+        ordinator_id: 'required',
+        demandant_id: 'required',
+        comission_id: 'required',
         date_ini: 'required',
         estimated_date: 'required',
         year_pca: 'required',
@@ -63,13 +63,13 @@ const items = ref({
         { key: 'item.name', title: 'ITEM' },
         { key: 'item.description', title: 'DESCRIÇÃO' },
         { key: 'item.und', title: 'UDN', sub: [{ key: 'item.volume' }] },
-        { key: 'program', title: 'VINC.', sub: [{ key: 'dotation' }] },
+        { key: 'program_id', title: 'VINC.', sub: [{ key: 'dotation_id' }] },
         { key: 'quantity', title: 'QUANT.' }
     ],
     selected_item: {
         item: null,
-        program: null,
-        dotation: null,
+        program_id: null,
+        dotation_id: null,
         quantity: 0
     }
 })
@@ -130,7 +130,7 @@ function generate(type) {
     const slc = page.selects
     const base = {
         organ: page.organ,
-        unit: slc?.units.find((o) => o.id === dfd.unit),
+        unit: slc?.units.find((o) => o.id === dfd.unit_id),
         type: slc?.acquisitions.find((o) => o.id === dfd.acquisition_type),
         items: JSON.stringify(dfd.items),
         description: dfd.description,
@@ -180,7 +180,7 @@ function generate(type) {
 }
 
 function rescue_members() {
-    http.get(`${page.url}/selects/filter/${page.data.unit},${page.data.comission}`, emit, (resp) => {
+    http.get(`${page.url}/selects/filter/${page.data.unit_id},${page.data.comission_id}`, emit, (resp) => {
         page.selects = resp.data
         page.data.comission_members = resp.data.comission_members
     })
@@ -189,7 +189,7 @@ function rescue_members() {
 function update_dfd(id) {
     http.get(`${page.url}/details/${id}`, emit, (response) => {
         page.data = response.data
-        pageData.selects('filter', `${page.data.unit},${page.data.comission}`)
+        pageData.selects('filter', `${page.data.unit_id},${page.data.comission}`)
         pageData.ui('update')
     })
 }
@@ -198,10 +198,7 @@ function export_dfd(id) {
     http.get(`${page.url}/export/${id}`, emit, (resp) => {
         const dfd = resp.data
         const containerReport = document.createElement('div')
-        const instanceReport = createApp(DfdReport, {qrdata:sysapp, organ: page.organ, dfd: dfd, selects: Object.assign(page.selects, {
-            programs: dfd.programs ?? [],
-            dotations: dfd.dotations ?? []
-        }) })
+        const instanceReport = createApp(DfdReport, {qrdata:sysapp, organ: page.organ, dfd: dfd, selects: page.selects})
         instanceReport.mount(containerReport)
         exp.exportPDF(containerReport, `DFD-${dfd.protocol}`)
     })
@@ -212,7 +209,7 @@ function clone_dfd(id) {
         response.data.id = null
         page.data = response.data
         page.data.clone = true
-        pageData.selects('filter', `${page.data.unit},${page.data.comission}`)
+        pageData.selects('filter', `${page.data.unit_id},${page.data.comission_id}`)
         pageData.ui('update')
     })
 }
@@ -279,7 +276,7 @@ onMounted(() => {
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-unit" class="form-label">Unidade</label>
-                            <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit">
+                            <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit_id">
                                 <option value=""></option>
                                 <option v-for="o in page.selects.units" :key="o.id" :value="o.id">
                                     {{ o.title }}
@@ -338,9 +335,9 @@ onMounted(() => {
                                 <div class="col-sm-12 col-md-8">
                                     <label for="unit" class="form-label">Unidade</label>
                                     <select name="unit" class="form-control"
-                                        :class="{ 'form-control-alert': page.valids.unit }" id="unit"
-                                        @change="pageData.selects('filter', `${page.data.unit},${page.data.comission}`)"
-                                        v-model="page.data.unit">
+                                        :class="{ 'form-control-alert': page.valids.unit_id }" id="unit"
+                                        @change="pageData.selects('filter', `${page.data.unit_id},${page.data.comission_id}`)"
+                                        v-model="page.data.unit_id">
                                         <option value=""></option>
                                         <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
                                             {{ s.title }}
@@ -350,8 +347,8 @@ onMounted(() => {
                                 <div class="col-sm-12 col-md-4">
                                     <label for="ordinator" class="form-label">Ordenador</label>
                                     <select name="ordinator" class="form-control"
-                                        :class="{ 'form-control-alert': page.valids.ordinator }" id="ordinator"
-                                        v-model="page.data.ordinator">
+                                        :class="{ 'form-control-alert': page.valids.ordinator_id }" id="ordinator"
+                                        v-model="page.data.ordinator_id">
                                         <option value=""></option>
                                         <option v-for="s in page.selects.ordinators" :value="s.id" :key="s.id">
                                             {{ s.name }}
@@ -362,8 +359,8 @@ onMounted(() => {
                                     <label for="comission" class="form-label">Comissão/Equipe de
                                         Planejamento</label>
                                     <select name="comission" class="form-control"
-                                        :class="{ 'form-control-alert': page.valids.comission }" id="comission"
-                                        @change="rescue_members" v-model="page.data.comission">
+                                        :class="{ 'form-control-alert': page.valids.comission_id }" id="comission"
+                                        @change="rescue_members" v-model="page.data.comission_id">
                                         <option value=""></option>
                                         <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
                                             {{ s.title }}
@@ -377,8 +374,8 @@ onMounted(() => {
                                 <div class="col-sm-12 col-md-4">
                                     <label for="demandant" class="form-label">Demandante</label>
                                     <select name="demandant" class="form-control"
-                                        :class="{ 'form-control-alert': page.valids.demandant }" id="demandant"
-                                        v-model="page.data.demandant">
+                                        :class="{ 'form-control-alert': page.valids.demandant_id }" id="demandant"
+                                        v-model="page.data.demandant_id">
                                         <option value=""></option>
                                         <option v-for="s in page.selects.demandants" :value="s.id" :key="s.id">
                                             {{ s.name }}
@@ -579,7 +576,7 @@ onMounted(() => {
                                         <div class="col-sm-12 col-md-4">
                                             <label for="item-program" class="form-label">Programa</label>
                                             <select name="item-program" class="form-control" id="item-program"
-                                                v-model="items.selected_item.program">
+                                                v-model="items.selected_item.program_id">
                                                 <option value=""></option>
                                                 <option v-for="p in page.selects.programs" :key="p.id" :value="p.id">
                                                     {{ p.name }}
@@ -589,7 +586,7 @@ onMounted(() => {
                                         <div class="col-sm-12 col-md-4">
                                             <label for="item-dotation" class="form-label">Dotação</label>
                                             <select name="item-dotation" class="form-control" id="item-dotation"
-                                                v-model="items.selected_item.dotation">
+                                                v-model="items.selected_item.dotation_id">
                                                 <option value=""></option>
                                                 <option v-for="d in page.selects.dotations" :key="d.id" :value="d.id">
                                                     {{ d.name }}
@@ -617,8 +614,8 @@ onMounted(() => {
                                         Actions.FastDelete(delete_item),
                                     ]" :body="page.data.items" :mounts="{
                                         'item.type': [Mounts.Cast(page.selects.items_types)],
-                                        'dotation': [Mounts.Cast(page.selects.dotations, 'id', 'name')],
-                                        'program': [Mounts.Cast(page.selects.programs, 'id', 'name')],
+                                        'dotation_id': [Mounts.Cast(page.selects.dotations, 'id', 'name')],
+                                        'program_id': [Mounts.Cast(page.selects.programs, 'id', 'name')],
                                     }" />
                                 </div>
                             </div>
@@ -676,7 +673,7 @@ onMounted(() => {
                                                     {{
                                                         utils.getTxt(
                                                             page.selects.units,
-                                                            page.data.unit
+                                                            page.data.unit_id
                                                         )
                                                     }}
                                                 </p>
@@ -687,7 +684,7 @@ onMounted(() => {
                                                     {{
                                                         utils.getTxt(
                                                             page.selects.comissions,
-                                                            page.data.comission
+                                                            page.data.comission_id
                                                         )
                                                     }}
                                                 </p>
@@ -698,7 +695,7 @@ onMounted(() => {
                                                     {{
                                                         utils.getTxt(
                                                             page.selects.ordinators,
-                                                            page.data.ordinator,
+                                                            page.data.ordinator_id,
                                                             'id', 'name'
                                                         )
                                                     }}
@@ -712,7 +709,7 @@ onMounted(() => {
                                                     {{
                                                         utils.getTxt(
                                                             page.selects.demandants,
-                                                            page.data.demandant, 'id', 'name'
+                                                            page.data.demandant_id, 'id', 'name'
                                                         )
                                                     }}
                                                 </p>
@@ -840,8 +837,8 @@ onMounted(() => {
                                         <TableList secondary :count="false" :header="items.header"
                                             :body="page.data.items ?? []" :mounts="{
                                         'item.type': [Mounts.Cast(page.selects.items_types)],
-                                        'dotation': [Mounts.Cast(page.selects.dotations, 'id', 'name')],
-                                        'program': [Mounts.Cast(page.selects.programs, 'id', 'name')],
+                                        'dotation_id': [Mounts.Cast(page.selects.dotations, 'id', 'name')],
+                                        'program_id': [Mounts.Cast(page.selects.programs, 'id', 'name')],
                                     }" />
                                     </div>
                                 </div>

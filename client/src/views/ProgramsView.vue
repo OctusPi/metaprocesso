@@ -24,7 +24,7 @@ const [page, pageData] = Layout.new(emit, {
     ],
     rules: {
         name: 'required',
-        unit: 'required',
+        unit_id: 'required',
         status: 'required'
     }
 })
@@ -77,7 +77,7 @@ onMounted(() => {
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-unit" class="form-label">Unidade</label>
-                            <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit">
+                            <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit_id">
                                 <option value=""></option>
                                 <option v-for="o in page.selects.units" :key="o.id" :value="o.id">
                                     {{ o.title }}
@@ -135,8 +135,8 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="unit" class="form-label">Unidade</label>
                                 <select name="unit" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.unit }" id="unit"
-                                    v-model="page.data.unit">
+                                    :class="{ 'form-control-alert': page.valids.unit_id }" id="unit"
+                                    v-model="page.data.unit_id">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
                                         {{ s.title }}

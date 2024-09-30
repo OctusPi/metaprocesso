@@ -27,7 +27,7 @@ const [page, pageData] = Layout.new(emit, {
     rules: {
         name: 'required',
         cpf: 'required',
-        unit: 'required',
+        unit_id: 'required',
         status: 'required',
         start_term: 'required'
     }
@@ -81,8 +81,7 @@ onMounted(() => {
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-unit" class="form-label">Unidade</label>
-                            <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit"
-                                @change="pageData.selects('filter', page.search.unit)">
+                            <select name="unit" class="form-control" id="s-unit" v-model="page.search.unit_id">
                                 <option value=""></option>
                                 <option v-for="o in page.selects.units" :key="o.id" :value="o.id">
                                     {{ o.title }}
@@ -91,7 +90,7 @@ onMounted(() => {
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-sector" class="form-label">Setor</label>
-                            <select name="sector" class="form-control" id="s-sector" v-model="page.search.sector">
+                            <select name="sector" class="form-control" id="s-sector" v-model="page.search.sector_id">
                                 <option value=""></option>
                                 <option v-for="o in page.selects.sectors" :key="o.id" :value="o.id">
                                     {{ o.name }}
@@ -155,9 +154,9 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="unit" class="form-label">Unidade</label>
                                 <select name="unit" class="form-control"
-                                    @change="pageData.selects('filter', page.data.unit)"
-                                    :class="{ 'form-control-alert': page.valids.unit }" id="unit"
-                                    v-model="page.data.unit">
+                                    @change="pageData.selects('filter', page.data.unit_id)"
+                                    :class="{ 'form-control-alert': page.valids.unit_id }" id="unit"
+                                    v-model="page.data.unit_id">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.units" :value="s.id" :key="s.id">
                                         {{ s.title }}
@@ -166,7 +165,7 @@ onMounted(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="sector" class="form-label">Setor</label>
-                                <select name="sector" class="form-control" id="sector" v-model="page.data.sector">
+                                <select name="sector" class="form-control" id="sector" v-model="page.data.sector_id">
                                     <option value=""></option>
                                     <option v-for="s in page.selects.sectors" :value="s.id" :key="s.id">
                                         {{ s.name }}

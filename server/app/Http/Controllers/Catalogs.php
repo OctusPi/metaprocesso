@@ -31,7 +31,7 @@ class Catalogs extends Controller
     {
         return $this->base_list(
             $request,
-            ['comission', 'name', 'description'],
+            ['comission_id', 'name', 'description'],
             ['name'],
             ['organ', 'comission']
         );
@@ -52,7 +52,7 @@ class Catalogs extends Controller
         }
 
         $instanceArray = $instance->toArray();
-        $instanceArray['items'] = CatalogItem::where('catalog', $request->id)->get();
+        $instanceArray['items'] = CatalogItem::where('catalog_id', $request->id)->get();
 
         return response()->json($instanceArray, 200);
     }
@@ -65,20 +65,8 @@ class Catalogs extends Controller
      */
     public function selects(Request $request)
     {
-        // Mapeia as comissões de acordo com o parâmetro de busca, se fornecido
-        $comissions = $request->key
-            ? Utils::map_select(Data::find(new Comission(), [
-                [
-                    'column' => $request->key,
-                    'operator' => '=',
-                    'value' => $request->search,
-                    'mode' => 'AND'
-                ]
-            ], ['name']))
-            : Utils::map_select(Data::find(new Comission()));
-
         return response()->json([
-            'comissions' => $comissions,
+            'comissions' => Utils::map_select(Data::find(new Comission())),
             'items_status' => CatalogItem::list_status(),
             'items_categories' => CatalogItem::list_categories(),
             'items_origins' => CatalogItem::list_origins(),

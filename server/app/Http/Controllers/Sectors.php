@@ -29,7 +29,7 @@ class Sectors extends Controller
     {
         return $this->base_list(
             $request,
-            ['unit', 'name', 'description'],  // Campos para filtragem
+            ['unit_id', 'name', 'description'],  // Campos para filtragem
             ['name'],  // Campo para ordenação
             ['organ', 'unit']  // Relações para carregamento adiantado
         );

@@ -25,10 +25,10 @@ const items = ref({
         { obj: 'item', key: 'description', title: 'DESCRIÇÃO' },
         { obj: 'item', key: 'und', title: 'UDN', sub: [{ obj: 'item', key: 'volume' }] },
         {
-            key: 'program',
-            cast: 'name',
+            obj: 'program',
+            key: 'name',
             title: 'VINCULO',
-            sub: [{ key: 'dotation', cast: 'name' }]
+            sub: [{ obj: 'dotation', key: 'name' }]
         },
         { key: 'quantity', title: 'QUANT.' }
     ]
