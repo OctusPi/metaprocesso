@@ -14,7 +14,7 @@ class SupplierFactory extends Factory
     public function definition(): array
     {
         return [
-            'organ' => Organ::latest()->first()->id,
+            'organ_id' => Organ::latest()->first()->id,
             'name' => fake()->company(),
             'cnpj' => fake()->numerify('##.###.###/####-##'),
             'agent' => fake()->name(),

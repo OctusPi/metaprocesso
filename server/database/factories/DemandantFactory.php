@@ -17,9 +17,9 @@ class DemandantFactory extends Factory
     {
         return [
             'status' => fake()->randomElement(Demandant::list_status())['id'],
-            'sector' => Sector::latest()->first()->id,
-            'organ' => Organ::latest()->first()->id,
-            'unit' => Unit::latest()->first()->id,
+            'sector_id' => Sector::latest()->first()->id,
+            'organ_id' => Organ::latest()->first()->id,
+            'unit_id' => Unit::latest()->first()->id,
             'cpf' => fake()->numerify('###.###.###-##'),
             'start_term' => fake()->date('d/m/Y'),
             'name' => fake()->name(),

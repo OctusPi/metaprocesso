@@ -17,8 +17,8 @@ class ComissionFactory extends Factory
         return [
             'status' => Comission::STATUS_ACTIVE,
             'type' => fake()->randomElement(Comission::list_types())['id'],
-            'organ' => Organ::latest()->first()->id,
-            'unit' => Unit::latest()->first()->id,
+            'organ_id' => Organ::latest()->first()->id,
+            'unit_id' => Unit::latest()->first()->id,
             'start_term' => fake()->date('d/m/Y'),
             'name' => fake()->company(),
         ];

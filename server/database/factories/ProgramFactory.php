@@ -16,8 +16,8 @@ class ProgramFactory extends Factory
     {
         return [
             'status' => Program::S_ACTIVE,
-            'organ' => Organ::latest()->first()->id,
-            'unit' => Unit::latest()->first()->id,
+            'organ_id' => Organ::latest()->first()->id,
+            'unit_id' => Unit::latest()->first()->id,
             'name' => fake()->company(),
             'law' => fake()->text(200),
             'description' => fake()->text(200),

@@ -14,8 +14,8 @@ class CatalogFactory extends Factory
     public function definition(): array
     {
         return [
-            'comission' => Comission::latest()->first()->id,
-            'organ' => Organ::latest()->first()->id,
+            'comission_id' => Comission::latest()->first()->id,
+            'organ_id' => Organ::latest()->first()->id,
             'name' => fake()->name(),
             'description' => fake()->text(200)
         ];

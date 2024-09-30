@@ -14,7 +14,7 @@ class CatalogSubCategoryItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'organ' => Organ::latest()->first()->id,
+            'organ_id' => Organ::latest()->first()->id,
             'name' => fake()->name(),
         ];
     }

@@ -16,8 +16,8 @@ class DotationFactory extends Factory
     {
         return [
             'status' => fake()->randomElement(Dotation::list_status())['id'],
-            'organ' => Organ::latest()->first()->id,
-            'unit' => Unit::latest()->first()->id,
+            'organ_id' => Organ::latest()->first()->id,
+            'unit_id' => Unit::latest()->first()->id,
             'description' => fake()->text(200),
             'name' => fake()->company(),
             'law' => fake()->text(200),

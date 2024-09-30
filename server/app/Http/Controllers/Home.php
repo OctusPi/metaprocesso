@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Models\Dfd;
 use App\Models\Process;
 use App\Http\Middlewares\Data;
-use stdClass;
 
 class Home extends Controller
 {
