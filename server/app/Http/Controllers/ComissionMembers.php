@@ -46,9 +46,9 @@ class ComissionMembers extends Controller
         return $this->base_save(
             $request,
             $upload->mergeUploads([
-                'organ' => $comission->organ,
-                'unit' => $comission->unit,
-                'comission' => $comission->id
+                'organ_id' => $comission->organ_id,
+                'unit_id' => $comission->unit_id,
+                'comission_id' => $comission->id
             ])
         );
     }
@@ -63,7 +63,7 @@ class ComissionMembers extends Controller
     {
         return $this->base_list(
             $request,
-            ['comission', 'status', 'responsibility', 'name'],
+            ['comission_id', 'status', 'responsibility', 'name'],
             ['name']
         );
     }

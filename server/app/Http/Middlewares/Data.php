@@ -51,8 +51,7 @@ class Data
      */
     public static function save(Model $model, array $params)
     {
-        $organ = self::getOrgan();
-        $data_model = array_merge(['organ' => $organ], $params);
+        $data_model = array_merge(['organ_id' => self::getOrgan()], $params);
 
         if (isset($params['id'])) {
             $model = $model->find($params['id']);
@@ -112,7 +111,7 @@ class Data
      */
     public static function delete(Model $model, int $id)
     {
-        if ($model->where(['id' => $id, 'organ' => self::getOrgan()])->delete()) {
+        if ($model->where(['id' => $id, 'organ_id' => self::getOrgan()])->delete()) {
             return self::result(200, 'Registro removido com sucesso...');
         }
 
@@ -268,7 +267,7 @@ class Data
     private static function paramsGenericOrgan(): array
     {
         $id = self::getOrgan();
-        return [(object) ['column' => 'organ', 'operator' => '=', 'value' => $id]];
+        return [(object) ['column' => 'organ_id', 'operator' => '=', 'value' => $id]];
     }
 
     /**
@@ -279,7 +278,7 @@ class Data
      */
     private static function paramsGenericUnit($user): array
     {
-        return array_map(fn($id) => (object) ['column' => 'unit', 'operator' => '=', 'value' => $id], array_column($user->units ?? [], "id"));
+        return array_map(fn($id) => (object) ['column' => 'unit_id', 'operator' => '=', 'value' => $id], array_column($user->units ?? [], "id"));
     }
 
     /**

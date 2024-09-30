@@ -32,7 +32,7 @@ class Dfds extends Controller
 
         return $this->base_list(
             $request,
-            ['organ', 'unit', 'protocol', 'description'],
+            ['organ_id', 'unit_id', 'protocol', 'description'],
             ['date_ini'],
             ['organ', 'unit', 'demandant', 'ordinator', 'comission'],
             $date_between
@@ -53,13 +53,13 @@ class Dfds extends Controller
             return response()->json(Notify::warning('Não é possível editar DFDs aprovisionados pelo Processo!'), 403);
         }
 
-        $protocol = $request->id ? $request->protocol : Utils::randCode(6, str_pad($request->unit, 3, '0', STR_PAD_LEFT), date('dmY'));
+        $protocol = $request->id ? $request->protocol : Utils::randCode(6, str_pad($request->unit_id, 3, '0', STR_PAD_LEFT), date('dmY'));
 
         $data = [
             'ip' => $request->ip(),
             'protocol' => $protocol,
-            'author' => $request->user()->id,
-            'comission_members' => ComissionMember::where('comission', $request->comission)->get()->toArray()
+            'author_id' => $request->user()->id,
+            'comission_members' => ComissionMember::where('comission_id', $request->comission_id)->get()->toArray()
         ];
 
         $save = $this->base_save($request, $data);

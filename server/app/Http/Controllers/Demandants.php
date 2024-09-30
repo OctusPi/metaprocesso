@@ -21,7 +21,7 @@ class Demandants extends Controller
     {
         return $this->base_list(
             $request,
-            ['unit', 'sector', 'name'],
+            ['unit_id', 'sector_id', 'name'],
             ['name'],
             ['organ', 'unit']
         );
@@ -36,7 +36,7 @@ class Demandants extends Controller
         ];
 
         if ($request->key == 'filter') {
-            $selections['sectors'] = Data::find(new Sector(), ['unit' => $request->search], ['name']);
+            $selections['sectors'] = Data::find(new Sector(), ['unit_id' => $request->search], ['name']);
         }
 
         return Response()->json($selections, 200);

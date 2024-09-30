@@ -51,7 +51,7 @@ class Authentication extends Controller
                     'organs' => $user->profile != User::PRF_ADMIN ? $user->organs : Organ::get(),
                     'last_login' => $user->getAttribute('lastlogin'),
                     'navigation' => $user->modules,
-                    'token' => $token->plainTextToken,
+                    'token' => $token->plainTextToken
                 ]
             ], 200);
         }

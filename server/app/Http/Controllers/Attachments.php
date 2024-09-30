@@ -9,7 +9,6 @@ use App\Utils\Notify;
 use App\Utils\Uploads;
 use Illuminate\Http\Request;
 use App\Http\Middlewares\Data;
-use Spatie\PdfToImage\Pdf;
 
 class Attachments extends Controller
 {
