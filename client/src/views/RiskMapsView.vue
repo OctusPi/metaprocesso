@@ -118,7 +118,7 @@ risksData.setAfterSave((data) => {
 
 risksData.setBeforeSave((data) => {
     const getSelect = (select, name) =>
-        main.selects[select].find(({ id }) => id === data[name])
+        main.selects[select].find((o) => o.id === data[name])
 
     return {
         risk_actions: data.risk_actions ?? [],
@@ -552,9 +552,7 @@ onMounted(() => {
                                         Actions.FastDelete((id) => risksData.removeCascade(id, accomp, 'id', 'accomp_risk')),
                                         Actions.Create('download', 'Danos', (id) => swithToModal(id, damage, risks, 'risk_damage'), '#' + damage.modal),
                                         Actions.Create('download', 'Ações', (id) => swithToModal(id, actions, risks, 'risk_actions'), '#' + actions.modal),
-                                    ]" :virtual="{
-                                        test: (inst) => inst.risk_name
-                                    }" :mounts="{
+                                    ]" :mounts="{
                                         'risk_impact': [Mounts.Cast(main.selects.risk_impacts)],
                                         'risk_probability': [Mounts.Cast(main.selects.risk_probabilities)],
                                         'risk_level': [Mounts.Level()],
@@ -623,7 +621,8 @@ onMounted(() => {
                                             <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
                                             Registrar
                                         </button>
-                                        <button type="button" @click="risksData.ui('register')" class="btn btn-action-tertiary">
+                                        <button type="button" @click="risksData.ui('register')"
+                                            class="btn btn-action-tertiary">
                                             <ion-icon name="close-outline" class="fs-5"></ion-icon>
                                             Cancelar
                                         </button>

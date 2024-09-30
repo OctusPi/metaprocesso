@@ -120,19 +120,15 @@ export default class Mounts {
                     classes: ['badge', 'tls', 'tls-red']
                 }
             }
-
             if (address >= 100) {
                 return {
                     value: address,
                     classes: ['badge', 'tls', 'tls-yellow']
                 }
             }
-
-            if (address >= 50) {
-                return {
-                    value: address,
-                    classes: ['badge', 'tls', 'tls-green']
-                }
+            return {
+                value: address,
+                classes: ['badge', 'tls', 'tls-green']
             }
         }
     }
