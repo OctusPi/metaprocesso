@@ -84,7 +84,7 @@ function exportProposal(){
             protocol: page.proposal?.process.protocol,
             organ: page.proposal?.organ,
             date_ini: `${page.proposal?.date_ini} - ${page.proposal?.hour_ini}`,
-            date_fin: page.proposal?.price_record.date_fin,
+            date_fin: page.proposal?.pricerecord.date_fin,
             description: page.proposal?.process.description
         },
         items: page.proposal.items ?? page.proposal.dfd_items,
@@ -159,7 +159,7 @@ onBeforeMount(() => {
             protocol: page.proposal?.process.protocol,
             organ: page.proposal?.organ.name,
             date_ini: `${page.proposal?.date_ini} - ${page.proposal?.hour_ini}`,
-            date_fin: page.proposal?.price_record.date_fin,
+            date_fin: page.proposal?.pricerecord.date_fin,
             description: page.proposal?.process.description
         }" />
 

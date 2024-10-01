@@ -29,7 +29,7 @@ class ProposalsSupplier extends Controller
      */
     public function check(Request $request): JsonResponse
     {
-        $proposal = Proposal::with(['organ', 'process', 'supplier', 'price_record'])
+        $proposal = Proposal::with(['organ', 'process', 'supplier', 'pricerecord'])
             ->firstWhere('token', $request->token);
 
         if (is_null($proposal)) {
@@ -40,8 +40,8 @@ class ProposalsSupplier extends Controller
             return response()->json(Notify::success('Solicitação de coleta de preço já enviada...'), 403);
         }
 
-        $price_record = PriceRecord::with('organ')->find($proposal->price_record);
-        if (is_null($price_record) || now()->greaterThan(Dates::ptbrToUtc($price_record->date_fin))) {
+        $pricerecord = PriceRecord::with('organ')->find($proposal->pricerecord_id);
+        if (is_null($pricerecord) || now()->greaterThan(Dates::ptbrToUtc($pricerecord->date_fin))) {
             return response()->json(Notify::warning('Solicitção de registro de coleta de preço expirada...'), 403);
         }
 
@@ -92,7 +92,7 @@ class ProposalsSupplier extends Controller
         ]);
 
         if ($instance->update($upload->mergeUploads($dataToUpdate))) {
-            $this->updateStatusPriceRecord($instance->price_record);
+            $this->updateStatusPriceRecord($instance->pricerecord_id);
             return response()->json(Notify::success('Proposta salva com sucesso'), 200);
         } else {
             return response()->json(Notify::error('Falha ao gravar proposta'), 500);
@@ -108,7 +108,7 @@ class ProposalsSupplier extends Controller
     private function dfdItems(?array $dfds): array
     {
         $items = array_map(function ($id) {
-            return DfdItem::where('dfd', '=', $id)->with('item')->get()->toArray();
+            return DfdItem::where('dfd_id', '=', $id)->with('item')->get()->toArray();
         }, array_column($dfds, 'id'));
 
         $result = array_reduce($items, function ($carry, $subArray) {
@@ -136,7 +136,7 @@ class ProposalsSupplier extends Controller
     private function updateStatusPriceRecord(int $id): void
     {
         // Obtém todas as propostas relacionadas ao registro de preço
-        $proposals = Proposal::where('price_record', $id)->get();
+        $proposals = Proposal::where('pricerecord_id', $id)->get();
 
         if (!$proposals->isEmpty()) {
             // Verifica se todas as propostas têm o status S_FINISHED
@@ -145,9 +145,9 @@ class ProposalsSupplier extends Controller
             });
 
             // Atualiza o status do PriceRecord com base nas propostas
-            $price_record = PriceRecord::find($id);
-            if ($price_record) {
-                $price_record->update([
+            $pricerecord = PriceRecord::find($id);
+            if ($pricerecord) {
+                $pricerecord->update([
                     'status' => $allFinished ? PriceRecord::S_FINISHED : PriceRecord::S_PENDING
                 ]);
             }

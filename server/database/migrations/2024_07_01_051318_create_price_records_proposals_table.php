@@ -29,7 +29,7 @@ return new class extends Migration
             $table->integer('modality');
             $table->json('items')->nullable();
             $table->longText('logomarca')->nullable();
-            $table->string('attachment')->nullable();
+            $table->string('document')->nullable();
             $table->string('representation')->nullable();
             $table->string('cpf', 20)->nullable();
             $table->integer('status');

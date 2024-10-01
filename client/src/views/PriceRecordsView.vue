@@ -93,7 +93,7 @@ const [page, pageData] = Layout.new(emit, {
         protocol: 'required',
         date_ini: 'required',
         date_fin: 'required',
-        comission: 'required'
+        comission_id: 'required'
     }
 })
 
@@ -329,7 +329,7 @@ onBeforeMount(() => {
                 </div>
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
-                    <form @submit.prevent="pageData.save()">
+                    <form @submit.prevent="pageData.save({process_id: page.data.process?.id})">
                         <div class="content">
 
                             <!-- tab proccess -->
@@ -480,8 +480,8 @@ onBeforeMount(() => {
                                 <div class="col-sm-12">
                                     <label for="comission" class="form-label">Comissão</label>
                                     <select name="comission" class="form-control" :class="{
-                                        'form-control-alert': page.valids.comission
-                                    }" id="comission" v-model="page.data.comission">
+                                        'form-control-alert': page.valids.comission_id
+                                    }" id="comission" v-model="page.data.comission_id">
                                         <option value=""></option>
                                         <option v-for="s in page.selects.comissions" :value="s.id" :key="s.id">
                                             {{ s.title }}
