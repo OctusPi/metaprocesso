@@ -191,6 +191,7 @@ function view_proposal(id){
     http.get(`/proposals/details/${id}`, emit, (resp) => {
         page.collect = resp.data
         console.log(resp.data)
+        console.log(page.selects)
     })
 }
 

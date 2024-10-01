@@ -27,7 +27,16 @@ function getTxt(objs, key_subject, key_search = 'id', key_txt = 'title') {
     }
 
     return '*****'
+}
 
+function extractTxt(objs, key)
+{
+    if(objs){
+        const txt = objs.map(o => o[key])
+        return txt.join('; ')
+    }
+
+    return '*****'
 }
 
 function truncate(str, len = 100) {
@@ -98,6 +107,7 @@ export default {
     dateNow,
     randCode,
     getTxt,
+    extractTxt,
     truncate,
     stripHTML,
     dateProtocol,
