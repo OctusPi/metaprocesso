@@ -104,7 +104,8 @@ class RiskMaps extends Controller
         }
 
         if (!$request->id) {
-            $last_item = RiskMap::orderByDesc('created_at')->first();
+            $last_item = RiskMap::where('process_id', '=', $request->process_id)
+                ->orderByDesc('created_at')->first();
             $last_version = floatval($last_item ? $last_item->version : 0);
             $preload['version'] = sprintf("%.1f", $last_version + 1);
         }
@@ -128,6 +129,7 @@ class RiskMaps extends Controller
             'risk_actions' => RiskMap::list_actions(),
             'process_status' => Process::list_status(),
             'responsabilitys' => ComissionMember::list_responsabilities(),
+            'status' => RiskMap::list_status(),
         ], Dfd::make_details()), 200);
     }
 }

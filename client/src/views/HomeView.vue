@@ -169,7 +169,7 @@ const users = ref({
     datalist: [],
     selects: {},
     header: [
-        { key: 'name', title: 'NOME', sub: [{ key: 'email' }] },
+        { key: 'name', title: 'NOME', sub: [{ key: 'profile' }] },
         { key: 'lastlogin', title: 'ÚLTIMO ACESSO', err: 'Não Acessado' },
     ],
 })
@@ -182,6 +182,7 @@ onMounted(() => {
         processes.value.datalist = res.data?.processes?.datalist
         processes.value.selects = res.data?.processes?.selects
         users.value.datalist = res.data?.users?.datalist
+        users.value.selects = res.data?.users?.selects
     })
 })
 
@@ -316,7 +317,9 @@ onMounted(() => {
                                 </div>
                                 <div class="modal-listage listage h-100"
                                     :class="[users.datalist.length < 1 && 'd-flex align-items-center justify-content-center']">
-                                    <TableList :header="users.header" :body="users.datalist" />
+                                    <TableList :header="users.header" :body="users.datalist" :mounts="{
+                                        profile: [Mounts.Cast(users.selects.profiles)]
+                                    }" />
                                 </div>
                             </div>
                         </div>

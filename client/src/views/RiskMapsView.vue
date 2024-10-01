@@ -28,13 +28,15 @@ const [main, mainData] = Layout.new(emit, {
         { key: 'version', title: 'VERSÃO', sub: [{ key: 'date_version' }] },
         { key: 'comission.name', title: 'ORIGEM' },
         { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] },
-        { key: 'phase', title: 'FASE' }
+        { key: 'phase', title: 'FASE' },
+        { key: 'status', title: 'STATUS' },
     ],
     rules: {
         comission_id: 'required',
         phase: 'required',
         description: 'required',
-        process: 'required'
+        process: 'required',
+        status: 'required',
     },
     process: {
         search: {},
@@ -381,7 +383,8 @@ onMounted(() => {
                         Actions.Delete(mainData.remove),
                         Actions.Export('document-text-outline', export_riskiness),
                     ]" :mounts="{
-                        phase: [Mounts.Cast(main.selects.phases)]
+                        phase: [Mounts.Cast(main.selects.phases)],
+                        status: [Mounts.Cast(main.selects.status), Mounts.Status()]
                     }" />
                 </div>
             </section>
@@ -495,7 +498,7 @@ onMounted(() => {
                         </div>
                         <div class="tab-pane fade content p-4 pt-1 row m-0 g-3"
                             :class="{ 'show active': tabs.is('infos') }">
-                            <div class="col-sm-12 col-md-8">
+                            <div class="col-sm-12 col-md-4">
                                 <label for="comission" class="form-label">Comissão</label>
                                 <select name="comission" class="form-control"
                                     :class="{ 'form-control-alert': main.valids.comission_id }" id="comission"
@@ -517,6 +520,17 @@ onMounted(() => {
                                 }" id="phase" v-model="main.data.phase">
                                     <option value=""></option>
                                     <option v-for="o in main.selects.phases" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="status" class="form-label">Status</label>
+                                <select name="status" class="form-control" :class="{
+                                    'form-control-alert': main.valids.status
+                                }" id="status" v-model="main.data.status">
+                                    <option value=""></option>
+                                    <option v-for="o in main.selects.status" :key="o.id" :value="o.id">
                                         {{ o.title }}
                                     </option>
                                 </select>

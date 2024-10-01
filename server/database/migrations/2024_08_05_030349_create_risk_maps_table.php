@@ -25,6 +25,7 @@ return new class extends Migration
             $table->json('comission_members');
             $table->json('riskiness');
             $table->json('accompaniments');
+            $table->integer('status');
         });
     }
 

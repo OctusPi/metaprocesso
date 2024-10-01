@@ -89,14 +89,21 @@ class Etp extends Model
         ];
     }
 
+    public const S_DRAFT = 0;
+    public const S_WRITING = 1;
+    public const S_PENDENT = 2;
+    public const S_FINISHED = 3;
+    public const S_BLOCKED = 4;
+
+
     public static function list_status(): array
     {
         return [
-            ['id' => 0, 'title' => 'Rascunho'],
-            ['id' => 1, 'title' => 'Em Preenchimento'],
-            ['id' => 2, 'title' => 'Pendente'],
-            ['id' => 3, 'title' => 'Finalizado'],
-            ['id' => 4, 'title' => 'Bloqueado'],
+            ['id' => self::S_DRAFT, 'title' => 'Rascunho'],
+            ['id' => self::S_WRITING, 'title' => 'Em Preenchimento'],
+            ['id' => self::S_PENDENT, 'title' => 'Pendente'],
+            ['id' => self::S_FINISHED, 'title' => 'Finalizado'],
+            ['id' => self::S_BLOCKED, 'title' => 'Bloqueado'],
         ];
     }
 
@@ -112,7 +119,7 @@ class Etp extends Model
     {
         return $this->belongsTo(Process::class);
     }
-    
+
     public function organ(): BelongsTo
     {
         return $this->belongsTo(Organ::class);

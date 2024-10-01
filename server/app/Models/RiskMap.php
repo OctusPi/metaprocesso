@@ -29,6 +29,7 @@ class RiskMap extends Model
         'comission_members',
         'riskiness',
         'accompaniments',
+        'status',
     ];
 
     protected $casts = [
@@ -40,7 +41,6 @@ class RiskMap extends Model
     public function rules(): array
     {
         return [
-            'process_id' => ['required', Rule::unique('risk_maps', 'process_id')->ignore($this->id)],
             'comission_id' => 'required',
             'organ_id' => 'required',
             'author_id' => 'required',
@@ -51,6 +51,7 @@ class RiskMap extends Model
             'comission_members' => 'required',
             'riskiness' => 'required',
             'accompaniments' => 'required',
+            'status' => 'required'
         ];
     }
 
@@ -68,6 +69,23 @@ class RiskMap extends Model
             get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
             set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
         );
+    }
+
+    public const S_DRAFT = 1;
+    public const S_WRITING = 2;
+    public const S_REVOKED = 3;
+    public const S_FINISHED = 4;
+    public const S_ACTIVE = 5;
+
+    static function list_status(): array
+    {
+        return [
+            ['id' =>  self::S_DRAFT, 'title' => 'Rascunho'],
+            ['id' =>  self::S_WRITING, 'title' => 'Em Preenchimento'],
+            ['id' =>  self::S_REVOKED, 'title' => 'Revogado'],
+            ['id' =>  self::S_FINISHED, 'title' => 'Finalizado'],
+            ['id' =>  self::S_ACTIVE, 'title' => 'Ativo'],
+        ];
     }
 
     static function list_phases(): array
