@@ -39,6 +39,11 @@ class Proposals extends Controller
 
     }
 
+    public function details(Request $request)
+    {
+        return $this->base_details($request, ['organ', 'process', 'supplier', 'pricerecord']);
+    }
+
     public function delete(Request $request){
         $propolsal = Proposal::firstWhere([
             ['pricerecord_id', $request->price_record],

@@ -30,6 +30,7 @@ const props = defineProps({
 const [page, pageData] = Layout.new(emit, {
     url: '/pricerecords',
     datalist: props.datalist,
+    collect:{},
     process: {
         search: {},
         data: [],
@@ -187,7 +188,10 @@ function resend_collect(id) {
 }
 
 function view_proposal(id){
-    console.log(id)
+    http.get(`/proposals/details/${id}`, emit, (resp) => {
+        page.collect = resp.data
+        console.log(resp.data)
+    })
 }
 
 function generate(type) {
@@ -646,7 +650,8 @@ onBeforeMount(() => {
             </section>
 
             <DfdDetails :dfd="page.dfds.data" :selects="page.selects" />
-            <ModalProposalDetailsUi />
+            
+            <ModalProposalDetailsUi :collect="page.collect" :selects="page.selects" />
 
             <FooterMainUi />
         </main>

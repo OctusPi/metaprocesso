@@ -3,13 +3,14 @@ import { watch } from 'vue';
 import layout from '@/services/layout';
 
 const props = defineProps({
-    proposal: { type: Object, default: () => {} },
+    collect: { type: Object, default: () => {} },
     selects: { type: Object, default: () => {} },
     modal: { type: String, default: 'modalProposalDetails' }
 })
 
 const [page, ] = layout.new(null, {
-    data: props.proposal ?? {},
+    data: props.collect ?? {},
+    selects: props.selects,
     items_headers: [
         { key: 'item.code', title: 'COD', sub: [{ key: 'item.type' }] },
         { key: 'item.name', title: 'ITEM' },
@@ -20,7 +21,7 @@ const [page, ] = layout.new(null, {
     ]
 })
 
-watch(() => props.proposal, (newval) => {
+watch(() => props.collect, (newval) => {
     page.data = newval
 })
 
@@ -58,13 +59,13 @@ watch(() => props.selects, (newval) => {
                             </div>
                         </div>
                         <div class="box-revisor-content">
-                            <div class="row">
+                            <div class="row g-3">
                                 <div class="col-md-4">
                                     <h4>Orgão</h4>
                                     <p>
-                                        nome orgao
+                                        {{ page.data?.organ.name }}
                                     </p>
-                                    <p class="p-0 m-0 form-text">cnpj orgao</p>
+                                    <p class="p-0 m-0 form-text">{{ page.data?.organ.cnpj }}</p>
                                 </div>
                                 <div class="col-md-4">
                                     <h4>Unidades</h4>
@@ -72,7 +73,7 @@ watch(() => props.selects, (newval) => {
                                         Nome unidades
                                     </p>
                                 </div>
-                                <div class="col-md-4 mb-4">
+                                <div class="col-md-4">
                                     <h4>Demandantes</h4>
                                     <p>
                                         nome dos demandantes
@@ -93,7 +94,7 @@ watch(() => props.selects, (newval) => {
                             </div>
                         </div>
                         <div class="box-revisor-content">
-                            <div class="row">
+                            <div class="row g-3">
                                 <div class="col-md-4">
                                     <h4>Protocolo</h4>
                                     <p>
@@ -115,10 +116,10 @@ watch(() => props.selects, (newval) => {
                                     </p>
                                     <p class="p-0 m-0 form-text">se tem parcelamento</p>
                                 </div>
-                                <div class="col-md-12 mb-4">
+                                <div class="col-md-12">
                                     <h4>Descrição do Objeto</h4>
                                     <p>
-                                        {{ page.data.comission?.name }}
+                                        obj name
                                     </p>
                                 </div>
                             </div>
@@ -157,7 +158,7 @@ watch(() => props.selects, (newval) => {
                             </div>
                         </div>
                         <div class="box-revisor-content">
-                            <div class="row">
+                            <div class="row g-3">
                                 <div class="col-md-4">
                                     <h4>Fornecedor</h4>
                                     <p>
@@ -172,7 +173,7 @@ watch(() => props.selects, (newval) => {
                                     </p>
                                     <p class="p-0 m-0 form-text">cpf repres</p>
                                 </div>
-                                <div class="col-md-4 mb-4">
+                                <div class="col-md-4">
                                     <h4>Contato</h4>
                                     <p>
                                         telefone email fornec
@@ -194,7 +195,7 @@ watch(() => props.selects, (newval) => {
                             </div>
                         </div>
                         <div class="box-revisor-content">
-                            <div class="row">
+                            <div class="row g-3">
                                 <div class="col-md-4">
                                     <h4>Modalidade Coleta</h4>
                                     <p>
@@ -207,7 +208,7 @@ watch(() => props.selects, (newval) => {
                                         data inicial
                                     </p>
                                 </div>
-                                <div class="col-md-4 mb-4">
+                                <div class="col-md-4">
                                     <h4>Prazo final</h4>
                                     <p>
                                         data final
@@ -238,5 +239,10 @@ watch(() => props.selects, (newval) => {
     padding: 8px;
     border-radius: 8px;
     font-size: 1.2em;
+}
+
+p{
+    margin: 0;
+    padding: 0;
 }
 </style>
