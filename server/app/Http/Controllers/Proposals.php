@@ -27,11 +27,11 @@ class Proposals extends Controller
 
         return response()->json([
             'emails' => Data::find($this->model, [
-                ['column' => 'price_record', 'operator' => '=', 'value' => $request->price_record],
+                ['column' => 'pricerecord_id', 'operator' => '=', 'value' => $request->price_record],
                 ['column' => 'modality', 'operator' => '=', 'value' => Proposal::M_MAIL]
             ], ['date_ini'], ['process', 'supplier']),
             'manual' => Data::find($this->model, [
-                ['column' => 'price_record', 'operator' => '=', 'value' => $request->price_record],
+                ['column' => 'pricerecord_id', 'operator' => '=', 'value' => $request->price_record],
                 ['column' => 'modality', 'operator' => '=', 'value' => Proposal::M_MANUAL]
             ], ['date_ini'], ['process', 'supplier'])
         ]);
@@ -41,13 +41,13 @@ class Proposals extends Controller
 
     public function delete(Request $request){
         $propolsal = Proposal::firstWhere([
-            ['price_record', $request->price_record],
-            ['supplier', $request->supplier]
+            ['pricerecord_id', $request->price_record],
+            ['supplier_id', $request->supplier]
         ])?->delete();
 
         $message = $propolsal ? Notify::success('Solicitação removida...') : Notify::warning('Falha ao remover solicitação...');
         $code = $propolsal ? 200 : 500;
 
-        return response()->json($message, $code);
+        return response()->json($message, $code);       
     }
 }

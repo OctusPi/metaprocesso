@@ -8,7 +8,6 @@ use App\Utils\{Utils, Notify};
 use Illuminate\Http\Request;
 use App\Http\Middlewares\Data;
 use App\Http\Controllers\Controller;
-use Log;
 use Mail;
 use Str;
 
@@ -33,20 +32,17 @@ class PriceRecords extends Controller
      */
     public function save(Request $request)
     {
-        $comission_members = Data::find(new ComissionMember(), ['comission' => $request->comission]);
+        $comission_members = Data::find(new ComissionMember(), ['comission_id' => $request->comission_id]);
 
         if ($comission_members->isEmpty()) {
             return response()->json(Notify::warning('Comissão Selecionada não possui membros ativos...'), 400);
         }
 
-        $process = json_decode($request->process);
-
         $save = $this->base_save($request, [
             'ip' => $request->ip(),
-            'process' => $process->id,
             'organ' => Data::getOrgan(),
             'comission_members' => $comission_members->toArray(),
-            'author' => $request->user()->id,
+            'author_id' => $request->user()->id,
             'status' => $request->status ?? PriceRecord::S_START
         ]);
 
@@ -89,13 +85,10 @@ class PriceRecords extends Controller
      */
     public function details(Request $request)
     {
-        $price_record = Data::findOne(new PriceRecord(), ['id' => $request->id]);
+        $pricerecord = Data::findOne(new PriceRecord(), ['id' => $request->id], null, ['organ', 'process']);
 
-        if ($price_record) {
-            $process = Data::findOne(new Process(), ['id' => $price_record->process], null, ['organ']);
-            $data = $price_record->toArray();
-            $data['process'] = $process->toArray();
-            return response()->json($data);
+        if ($pricerecord) {
+            return response()->json($pricerecord);
         }
 
         return response()->json(Notify::warning('Registro não localizado'), 404);
@@ -130,7 +123,7 @@ class PriceRecords extends Controller
      */
     public function list_dfd_items(Request $request)
     {
-        return response()->json(Data::find(new DfdItem(), ['dfd' => $request->id], null, ['item', 'dotation', 'program']));
+        return response()->json(Data::find(new DfdItem(), ['dfd_id' => $request->id], null, ['item', 'dotation', 'program']));
     }
 
     /**
@@ -183,7 +176,7 @@ class PriceRecords extends Controller
 
         $process  = json_decode(json_encode(Process::with('organ')->find($proposal->process)?->toArray()));
         $supplier  = json_decode(json_encode(Supplier::find($proposal->supplier)?->toArray()));
-        $price_rec = json_decode(json_encode(PriceRecord::find($proposal->price_record)?->toArray()));
+        $price_rec = json_decode(json_encode(PriceRecord::find($proposal->pricerecord)?->toArray()));
 
         $send = Mail::to($supplier->email)->send(new ProposalRequest(
             $process,
@@ -208,32 +201,32 @@ class PriceRecords extends Controller
      */
     private function process_collects(Request $request): void
     {
-        $price_record = $request->id ?? $this->model->id;
+        $pricerecord = $request->id ?? $this->model->id;
 
-        if ($price_record) {
+        if ($pricerecord) {
             $suppliers = json_decode($request->suppliers);
             $process = json_decode($request->process);
 
             if (!empty($suppliers)) {
                 foreach ($suppliers as $supplier) {
-                    $token = $price_record . $supplier->id . Str::random(16);
+                    $token = $pricerecord . $supplier->id . Str::random(16);
                     $hour_send = date('H:i:s');
 
                     if (!Proposal::firstWhere([
-                        ['price_record', $price_record],
-                        ['supplier', $supplier->id]
+                        ['pricerecord_id', $pricerecord],
+                        ['supplier_id', $supplier->id]
                     ])) {
                         $proposal = new Proposal([
                             'protocol' => $request->protocol,
                             'ip' => $request->ip(),
-                            'author' => $request->user()->id,
+                            'author_id' => $request->user()->id,
                             'token' => $token,
                             'date_ini' => $request->date_ini,
                             'hour_ini' => $hour_send,
-                            'organ' => Data::getOrgan(),
-                            'process' => $process->id,
-                            'price_record' => $price_record,
-                            'supplier' => $supplier->id,
+                            'organ_id' => Data::getOrgan(),
+                            'process_id' => $process->id,
+                            'pricerecord_id' => $pricerecord,
+                            'supplier_id' => $supplier->id,
                             'modality' => Proposal::M_MAIL,
                             'status' => Proposal::S_START
                         ]);
