@@ -44,6 +44,17 @@ class Proposals extends Controller
         return $this->base_details($request, ['organ', 'process', 'supplier', 'pricerecord']);
     }
 
+    public function download(Request $request)
+    {
+        $proposal = Proposal::find($request->id);
+
+        if ($proposal && $proposal->document) {
+            return response()->download(storage_path("uploads/$proposal->document"), "$proposal->id.pdf");
+        }
+
+        return response()->json(Notify::warning('Arquivo Indisponível'));
+    }
+
     public function delete(Request $request){
         $propolsal = Proposal::firstWhere([
             ['pricerecord_id', $request->price_record],

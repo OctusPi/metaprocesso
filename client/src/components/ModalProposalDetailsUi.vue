@@ -12,7 +12,8 @@ const props = defineProps({
     modal: { type: String, default: 'modalProposalDetails' }
 })
 
-const [page,] = layout.new(null, {
+const [page, pgData] = layout.new(null, {
+    url: '/proposals',
     data: props.collect ?? {},
     selects: props.selects,
     items_headers: [
@@ -225,7 +226,7 @@ watch(() => props.selects, (newval) => {
                                         {{ utils.getTxt(page.selects?.proposal_status, page.data?.status) }}
                                     </p>
                                     <p class="p-0 m-0 form-text">
-                                        <a href="" class="d-flex align-items-center">
+                                        <a href="#" @click.prevent="pgData.download(page.data?.id)" class="d-flex align-items-center">
                                             Proposta Assinada
                                             <ion-icon name="cloud-download-outline" class="fs-6 ms-2"></ion-icon>
                                         </a>
