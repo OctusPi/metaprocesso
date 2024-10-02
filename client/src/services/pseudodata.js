@@ -77,7 +77,13 @@ class PseudoData {
     }
 
     save = (over = null) => {
-        const validation = forms.checkform(this.page.data, this.page.rules);
+        const validation = forms.checkform(
+            this.page.data,
+            {
+                fields: this.page.rules,
+                valids: this.page.valids,
+            }
+        );
 
         if (!validation.isvalid) {
             this.emit('callAlert', notifys.warning(validation.message))
