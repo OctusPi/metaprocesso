@@ -16,14 +16,15 @@ class Process extends Model
 {
     use HasFactory;
 
-    public const S_ABERTO = 0;
-    public const S_ADIADO = 1;
-    public const S_ANULADO = 2;
-    public const S_CANCELADO = 3;
-    public const S_DESERTO = 4;
-    public const S_FINALIZADO = 5;
-    public const S_FRACASSADO = 6;
-    public const S_REVOGADO = 7;
+    public const S_BUILD = 0;
+    public const S_ABERTO = 1;
+    public const S_ADIADO = 2;
+    public const S_ANULADO = 3;
+    public const S_CANCELADO = 4;
+    public const S_DESERTO = 5;
+    public const S_FINALIZADO = 6;
+    public const S_FRACASSADO = 7;
+    public const S_REVOGADO = 8;
 
     public const T_PRICE = 0;
     public const T_DISCOUNT = 1;
@@ -164,15 +165,15 @@ class Process extends Model
     public static function list_installments_types(): array
     {
         return [
-            ['id' => self::INSTALLMENT_NONE, 'title' => 'Sem parcelamento'],
-            ['id' => self::INSTALLMENT_LOT, 'title' => 'Parcelamento por lote'],
             ['id' => self::INSTALLMENT_ITEM, 'title' => 'Parcelamento por item'],
+            ['id' => self::INSTALLMENT_LOT, 'title' => 'Parcelamento por lote']
         ];
     }
 
     public static function list_status(): array
     {
         return [
+            ['id' => self::S_BUILD, 'title' => 'Em Contrução'],
             ['id' => self::S_ABERTO, 'title' => 'Aberto'],
             ['id' => self::S_ADIADO, 'title' => 'Adiado'],
             ['id' => self::S_ANULADO, 'title' => 'Anulado'],

@@ -188,7 +188,7 @@ onMounted(() => {
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
                                 Registrar
                             </button>
-                            <button @click="pageData.ui('register')" class="btn btn-action-secondary">
+                            <button type="button" @click="pageData.ui('register')" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>
                                 Cancelar
                             </button>
@@ -201,6 +201,3 @@ onMounted(() => {
         </main>
     </div>
 </template>
-
-
-<style scoped></style>

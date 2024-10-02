@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ComissionMember;
 use App\Models\Dfd;
-use App\Models\DfdItem;
 use App\Models\Unit;
 use App\Models\User;
 use App\Utils\Utils;
 use App\Utils\Notify;
+use App\Models\DfdItem;
 use App\Models\Process;
 use App\Models\Comission;
 use Illuminate\Http\Request;
 use App\Http\Middlewares\Data;
+use App\Models\ComissionMember;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+
 class Processes extends Controller
 {
     /**
@@ -47,7 +49,7 @@ class Processes extends Controller
         $comission = Data::findOne(new Comission(), ['id' => $request->comission_id], with: ['organ']);
         $comissionmembers = Data::find(new ComissionMember(), ['comission_id' => $request->comission_id]);
 
-        if($comissionmembers->isEmpty()){
+        if ($comissionmembers->isEmpty()) {
             return response()->json(Notify::warning('Comissão selecionada não possuí membros ativos'), 400);
         }
 
@@ -117,36 +119,31 @@ class Processes extends Controller
             return response()->json(Notify::warning('Informe ao menos uma unidade antes de continuar'), 400);
         }
 
-        if (!$request->anyFilled('date_i', 'date_f', 'protocol', 'description')) {
+        if (!$request->anyFilled('date_i', 'date_f', 'protocol', 'description', 'units')) {
             return response()->json(Notify::warning('Informe pelo menos um campo de busca...'), 400);
         }
 
-        $search = Utils::map_search(
-            ['protocol', 'description', 'unit'],
-            $request->all()
-        );
-
-        $search = array_merge($search, [
-            [
-                'column' => 'unit_id',
-                'operator' => '=',
-                'value' => json_decode($request->units),
-                'mode' => 'AND'
-            ]
-        ]);
+        $search = Utils::map_search(['protocol', 'description'],$request->all());
 
         $between = [];
         if ($request->date_i && $request->date_f) {
             $between['date_ini'] = [$request->date_i, $request->date_f];
         }
 
-        return response()->json(Data::find(
-            new Dfd(),
-            $search,
-            ['date_ini'],
-            ['unit', 'comission', 'demandant', 'ordinator'],
-            $between,
-        ), 200);
+        $query = Data::query(new Dfd(), $search, ['date_ini'], ['unit', 'comission', 'demandant', 'ordinator'], $between);
+        
+        if($query != null) {
+            $units = json_decode($request->units) ?? [];
+
+            $query->where(function ($query) use ($units) {
+                foreach ($units as $unit) {
+                    $query->orWhere('unit_id', '=', $unit);
+                }
+            });
+
+        }
+
+        return response()->json($query->get());
     }
 
     /**
@@ -225,7 +222,7 @@ class Processes extends Controller
         if ($status != Process::S_FRACASSADO) {
             $dfds->update([
                 'status' => match ($status) {
-                    Process::S_ABERTO => Dfd::STATUS_BLOQUEADO,
+                    Process::S_ABERTO, Process::S_BUILD => Dfd::STATUS_BLOQUEADO,
                     Process::S_FINALIZADO => Dfd::STATUS_PROCESSADO,
                     default => Dfd::STATUS_ENVIADO
                 }

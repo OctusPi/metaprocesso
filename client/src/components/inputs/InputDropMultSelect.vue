@@ -17,6 +17,11 @@ const valid = ref(props.valid)
 const checkall = ref(false)
 
 function show_selected(){
+
+	if(!Array.isArray(model.value)){
+		model.value = []
+	}
+
 	if(model.value){
 		return `${(model.value.length).toString().padStart(2, '0')} Itens Selecionados`
 	}
