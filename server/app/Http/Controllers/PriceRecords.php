@@ -61,16 +61,19 @@ class PriceRecords extends Controller
      */
     public function list(Request $request)
     {
-        $date_between = $request->has(['date_ini', 'date_fin']) ?
-            ['date_ini' => [$request->date_ini, $request->date_fin]] :
-            ['date_ini' => [date('Y') . '-01-01', date('Y-m-d')]];
+        $date_between = [
+            'date_ini' => [
+                $request->date_ini ?: (date('Y')-1) . '-01-01',
+                $request->date_fin ?: (date('Y')+1) . '-12-31'
+            ]
+        ];
 
         $objs_search = Utils::map_search_obj($request->suppliers, 'suppliers', 'id');
 
         return $this->base_list(
             $request,
             ['protocol', 'status'],
-            ['date_ini'],
+            ['date_ini', 'desc'],
             ['process'],
             $date_between,
             $objs_search

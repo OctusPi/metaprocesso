@@ -49,15 +49,15 @@ class RefTerms extends Controller
     {
         $date_between = [
             'emission' => [
-                $request->date_ini ?: date('Y') . '-01-01',
-                $request->date_fin ?: date('Y-m-d')
+                $request->date_ini ?: (date('Y')-1) . '-01-01',
+                $request->date_fin ?: (date('Y')+1) . '-12-31'
             ]
         ];
 
         return $this->base_list(
             $request,
             ['protocol', 'necessity', 'type'],  // Campos para filtragem
-            ['protocol'],  // Campo para ordenação
+            ['emission', 'desc'],  // Campo para ordenação
             ['comission', 'process'],  // Relações para carregamento adiantado
             $date_between
         );
