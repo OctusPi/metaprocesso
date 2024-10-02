@@ -26,6 +26,14 @@ class Comission extends Model
     const STATUS_SUSPENDED = 2;
     const STATUS_EXTINGUED = 3;
 
+    const TYPE_PLANNING = 1;
+    const TYPE_DEMANDANT = 2;
+    const TYPE_CONTRACT = 3;
+    const TYPE_SELECTION = 3;
+    const TYPE_FISCAL = 4;
+    const TYPE_MANAGEMENT = 5;
+    const TYPE_OTHER = 6;
+
     use HasFactory;
 
     protected $table = 'comissions';
@@ -81,22 +89,14 @@ class Comission extends Model
     public static function list_types(): array
     {
         return [
-            ['id' => 0, 'title' => 'Comissão de Planejamento e Contratação'],
-            ['id' => 1, 'title' => 'Comissão de Licitação'],
-            ['id' => 2, 'title' => 'Comissão de Gestão e Fiscalização de Contratos'],
-            ['id' => 3, 'title' => 'Comissão de Auditoria de Processo de Contratação']
+            ['id' => self::TYPE_PLANNING, 'title' => 'Comissão de Planejamento e Contratação'],
+            ['id' => self::TYPE_DEMANDANT, 'title' => 'Comissão Demandante'],
+            ['id' => self::TYPE_CONTRACT, 'title' => 'Comissão de Contratação'],
+            ['id' => self::TYPE_SELECTION, 'title' => 'Comissão de Seleção'],
+            ['id' => self::TYPE_FISCAL, 'title' => 'Comissão de Fiscalização de Contratos'],
+            ['id' => self::TYPE_MANAGEMENT, 'title' => 'Comissão de Gestão de Contratos'],
+            ['id' => self::TYPE_OTHER, 'title' => 'Outro Tipo'],
         ];
-    }
-
-    public static function get_type(int $type): string
-    {
-        foreach (self::list_types() as $t) {
-            if ($t['id'] == $type) {
-                return $t['title'];
-            }
-        }
-
-        return '';
     }
 
     public static function list_status(): array
@@ -107,17 +107,6 @@ class Comission extends Model
             ['id' => self::STATUS_SUSPENDED, 'title' => 'Suspensa'],
             ['id' => self::STATUS_EXTINGUED, 'title' => 'Finalizada']
         ];
-    }
-
-    public static function get_status(int $type): string
-    {
-        foreach (self::list_status() as $t) {
-            if ($t['id'] == $type) {
-                return $t['title'];
-            }
-        }
-
-        return '';
     }
 
     public function organ(): BelongsTo

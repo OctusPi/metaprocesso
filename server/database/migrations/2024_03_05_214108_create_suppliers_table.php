@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('phone', 20)->nullable();
             $table->string('email', 220)->nullable();
             $table->string('address');
+            $table->json('services')->nullable();
             $table->integer('modality');
             $table->integer('size')->nullable();
             $table->foreignId('organ_id')->constrained('organs');

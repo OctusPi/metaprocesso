@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Json;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -25,16 +26,24 @@ class Supplier extends Model
         'address',
         'modality',
         'size',
-        'organ_id'
+        'organ_id',
+        'services',
+    ];
+
+    protected $casts = [
+        'services' => Json::class,
     ];
 
     public function rules(): array
     {
         return [
             'name' => 'required',
-            'cnpj' => ['required', Rule::unique('suppliers', 'cnpj')->where(function($query){
-                return $query->where('organ_id', $this->organ_id);
-            })->ignore($this->id)],
+            'cnpj' => [
+                'required',
+                Rule::unique('suppliers', 'cnpj')->where(function ($query) {
+                    return $query->where('organ_id', $this->organ_id);
+                })->ignore($this->id)
+            ],
             'address' => 'required',
             'email' => 'required',
             'phone' => 'required',
@@ -47,7 +56,7 @@ class Supplier extends Model
     {
         return [
             'required' => 'Campo obrigatório não informado!',
-            'unique'   => 'Fornecedor já registrado...'
+            'unique' => 'Fornecedor já registrado...'
         ];
     }
 

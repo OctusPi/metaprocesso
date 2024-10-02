@@ -197,8 +197,8 @@ class Processes extends Controller
             'acquisition_types' => Process::list_acquisition_types(),
             'acquisitions' => Process::list_acquisitions(),
             'installment_types' => Process::list_installments_types(),
-            '_types' => [
-                'INSTALLMENT_NONE' => Process::INSTALLMENT_NONE
+            'vars' => [
+                'INSTALLMENT_NONE' => Process::INSTALLMENT_ITEM
             ]
         ], Dfd::make_details()), 200);
     }

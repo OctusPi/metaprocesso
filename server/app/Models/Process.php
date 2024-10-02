@@ -48,9 +48,8 @@ class Process extends Model
     public const ACQUISITION_SERVICE = 1;
     public const ACQUISITION_ACQUISITION = 2;
 
-    public const INSTALLMENT_NONE = 1;
-    public const INSTALLMENT_LOT = 2;
-    public const INSTALLMENT_ITEM = 3;
+    public const INSTALLMENT_LOT = 1;
+    public const INSTALLMENT_ITEM = 2;
 
     protected $table = 'processes';
 
