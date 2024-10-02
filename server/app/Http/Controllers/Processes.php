@@ -91,7 +91,7 @@ class Processes extends Controller
         $date_between = [
             'date_hour_ini' => [
                 $request->date_ini ?: (date('Y')-1) . '-01-01',
-                $request->date_fin ?: date('Y') . '-12-31'
+                $request->date_fin ?: (date('Y')+1) . '-12-31'
             ]
         ];
 
@@ -100,7 +100,7 @@ class Processes extends Controller
         return $this->base_list(
             $request,
             ['protocol', 'date_hour_ini', 'status', 'description'],
-            ['date_hour_ini'],
+            [['date_hour_ini', 'desc']],
             ['organ', 'comission'],
             $date_between,
             $objs
