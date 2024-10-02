@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->string('email', 220)->nullable();
             $table->string('address');
             $table->integer('modality');
-            $table->integer('size');
+            $table->integer('size')->nullable();
             $table->foreignId('organ_id')->constrained('organs');
         });
     }

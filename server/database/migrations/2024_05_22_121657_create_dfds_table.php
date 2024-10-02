@@ -29,7 +29,7 @@ return new class extends Migration
             $table->text('description');
             $table->text('justification');
             $table->text('justification_quantity')->nullable();
-            $table->string('estimated_value');
+            $table->string('estimated_value')->nullable();
             $table->date('estimated_date');
             $table->integer('priority');
             $table->boolean('bonds')->default(false); 
