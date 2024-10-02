@@ -137,7 +137,7 @@ onMounted(() => {
             <section v-if="page.ui.register" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
                     <div>
-                        <h2>Registrar Fornecedo</h2>
+                        <h2>Registrar Fornecedor</h2>
                         <p>Registro de catalógo de fornecedores do Órgão</p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
