@@ -100,7 +100,7 @@ class Processes extends Controller
         return $this->base_list(
             $request,
             ['protocol', 'date_hour_ini', 'status', 'description'],
-            [['date_hour_ini', 'desc']],
+            ['date_hour_ini', 'desc'],
             ['organ', 'comission'],
             $date_between,
             $objs
