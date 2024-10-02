@@ -224,7 +224,7 @@ abstract class Controller
 
     public function generate(Request $request)
     {
-        $api_key = getenv('OPENIA_KEY');
+        $api_key = config('app.openia_key');
         $client = new Client();
         $url = 'https://api.openai.com/v1/chat/completions';
         $data = [

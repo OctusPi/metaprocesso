@@ -99,6 +99,8 @@ return [
 
     'key' => env('APP_KEY'),
 
+    'openia_key' => env('OPENIA_KEY', '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'),
+
     'previous_keys' => [
         ...array_filter(
             explode(',', env('APP_PREVIOUS_KEYS', ''))
