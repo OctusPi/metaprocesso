@@ -396,7 +396,7 @@ onMounted(() => {
                                     'form-control-alert': page.valids.description
                                 }" id="description" v-model="page.data.description"></textarea>
                             </div>
-                            <div v-if="page.data.installment_type && page.data.installment_type != page.selects._types.INSTALLMENT_NONE"
+                            <div v-if="page.data.installment_type && page.data.installment_type != page.selects.vars.INSTALLMENT_NONE"
                                 class="col-sm-12 col-md-12">
                                 <label for="installment_justification"
                                     class="form-label d-flex justify-content-between">
