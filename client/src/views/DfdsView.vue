@@ -47,7 +47,6 @@ const [page, pageData] = Layout.new(emit, {
         estimated_date: 'required',
         year_pca: 'required',
         acquisition_type: 'required',
-        estimated_value: 'required',
         priority: 'required',
         description: 'required',
         suggested_hiring: 'required',

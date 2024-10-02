@@ -97,7 +97,6 @@ class Dfd extends Model
             'suggested_hiring'  => 'required',
             'description'       => 'required',
             'justification'     => 'required',
-            'estimated_value'   => 'required',
             'estimated_date'    => 'required'
         ];
     }
