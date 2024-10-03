@@ -6,13 +6,15 @@ import Mounts from '@/services/mounts';
 
 import TableList from '@/components/table/TableList.vue';
 
+const emit = defineEmits(['callAlert'])
+
 const props = defineProps({
     collect: { type: Object, default: () => { } },
     selects: { type: Object, default: () => { } },
     modal: { type: String, default: 'modalProposalDetails' }
 })
 
-const [page, pgData] = layout.new(null, {
+const [page, pgData] = layout.new(emit, {
     url: '/proposals',
     data: props.collect ?? {},
     selects: props.selects,

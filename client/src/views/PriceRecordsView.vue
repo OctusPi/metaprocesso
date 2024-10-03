@@ -190,8 +190,6 @@ function resend_collect(id) {
 function view_proposal(id){
     http.get(`/proposals/details/${id}`, emit, (resp) => {
         page.collect = resp.data
-        console.log(resp.data)
-        console.log(page.selects)
     })
 }
 
@@ -652,7 +650,7 @@ onBeforeMount(() => {
 
             <DfdDetails :dfd="page.dfds.data" :selects="page.selects" />
             
-            <ModalProposalDetailsUi :collect="page.collect" :selects="page.selects" />
+            <ModalProposalDetailsUi :collect="page.collect" :selects="page.selects" @callAlert="(data) => emit('callAlert', data)" />
 
             <FooterMainUi />
         </main>
