@@ -9,7 +9,6 @@ class Tabs {
     #getToggler() {
         const ids = Object.keys(this.elements.value)
         if (this.currentIndex.value >= 0 && this.currentIndex.value < ids.length) {
-            console.log('#' + ids[this.currentIndex.value])
             return document.querySelector(
                 `[data-bs-target="${'#' + ids[this.currentIndex.value]}"]`
             )
