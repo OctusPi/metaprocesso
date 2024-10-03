@@ -16,17 +16,19 @@ import forms from '@/services/forms';
 import notifys from '@/utils/notifys';
 
 const sysapp = inject('sysapp')
-const emit = defineEmits(['callAlert', 'callUpdate'])
+const emit = defineEmits(['callAlert', 'callUpdate', 'callRemove'])
 const route = useRoute()
-
+defineProps({
+    datalist:{type: Array, required: false}
+})
 
 const [page, pageData] = Layout.new(emit, {
     url: '/proposal_supplier',
     auth_view: false,
-    data_logo:null,
+    data_logo: null,
     proposal: {},
     rules: {
-        logomarca:'required',
+        logomarca: 'required',
         representation: 'required',
         cpf: 'required'
     }
@@ -34,28 +36,32 @@ const [page, pageData] = Layout.new(emit, {
 
 function sendProposal() {
     pageData.save({
-        status:4, 
-        items:page.proposal.items ?? page.proposal.dfd_items
+        status: 4,
+        items: page.proposal.items && page.proposal.items.length > 0
+            ? page.proposal.items
+            : page.proposal?.dfd_items
     }, checkProposal, false)
 }
 
 function sendPatialProposal() {
     pageData.save({
-        status:3, 
-        items:page.proposal.items ?? page.proposal.dfd_items
+        status: 3,
+        items: page.proposal.items && page.proposal.items.length > 0
+            ? page.proposal.items
+            : page.proposal?.dfd_items
     }, null, false)
 }
 
-function checkProposal(){
+function checkProposal() {
     http.get(`${page.url}/check/${route.params.token}`, emit, (resp) => {
         if (http.success(resp)) {
             page.auth_view = true
             page.proposal = resp.data
             page.data = {
                 id: resp.data?.id,
-                logomarca:resp.data?.logomarca,
-                representation:resp.data?.representation,
-                cpf:resp.data?.cpf
+                logomarca: resp.data?.logomarca,
+                representation: resp.data?.representation,
+                cpf: resp.data?.cpf
             }
         }
     }, () => {
@@ -65,21 +71,21 @@ function checkProposal(){
     })
 }
 
-function exportProposal(){
+function exportProposal() {
     const checkform = forms.checkform(page.data, {
         fields: page.rules,
         valids: page.valids
     })
-    if(!checkform.isvalid){
+    if (!checkform.isvalid) {
         emit('callAlert', notifys.warning(checkform.message))
         return
     }
 
     const containerReport = document.createElement('div')
     const instanceReport = createApp(ProposalReport, {
-        qrdata:sysapp, 
-        logomarca:page.data.logomarca,
-        supplier:page.proposal.supplier,
+        qrdata: sysapp,
+        logomarca: page.data.logomarca,
+        supplier: page.proposal.supplier,
         process: {
             protocol: page.proposal?.process.protocol,
             organ: page.proposal?.organ,
@@ -88,17 +94,17 @@ function exportProposal(){
             description: page.proposal?.process.description
         },
         items: page.proposal.items ?? page.proposal.dfd_items,
-        representation:{
-            name:page.data.representation,
+        representation: {
+            name: page.data.representation,
             cpf: page.data.cpf
         }
-     })
+    })
     instanceReport.mount(containerReport)
     exp.exportPDF(containerReport, `Coleta-${page.proposal.protocol}`)
 }
 
 watch(() => page.data_logo, (new_value) => {
-    if(new_value != null){
+    if (new_value != null) {
         const reader = new FileReader()
         reader.readAsDataURL(new_value)
         reader.onloadend = () => {
@@ -194,7 +200,9 @@ onBeforeMount(() => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="i in page.proposal.items ?? page.proposal?.dfd_items" :key="i.id">
+                                        <tr v-for="i in page.proposal.items && page.proposal.items.length > 0
+                                            ? page.proposal.items
+                                            : page.proposal?.dfd_items" :key="i.id">
                                             <td class="align-middle">
                                                 <div class="small">{{ i.item.code }}</div>
                                             </td>
@@ -230,7 +238,7 @@ onBeforeMount(() => {
                                 <div class="col-sm-12 col-md-3">
                                     <label for="representation" class="form-label">Nome do Representante</label>
                                     <input type="text" name="representation" class="form-control" id="representation"
-                                        placeholder="Nome completo do representante" v-model="page.data.representation" 
+                                        placeholder="Nome completo do representante" v-model="page.data.representation"
                                         :class="{ 'form-control-alert': page.valids.representation }">
 
                                 </div>
@@ -238,7 +246,7 @@ onBeforeMount(() => {
                                     <label for="cpf" class="form-label">CPF do Representante</label>
                                     <input type="text" name="cpf" class="form-control" id="cpf"
                                         placeholder="000.000.000-00" v-maska:[masks.maskcpf] v-model="page.data.cpf"
-                                        :class="{ 'form-control-alert': page.valids.cpf }" >
+                                        :class="{ 'form-control-alert': page.valids.cpf }">
 
                                 </div>
                                 <div class="col-sm-12 col-md-3">
