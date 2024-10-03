@@ -172,7 +172,7 @@ class Process extends Model
     public static function list_status(): array
     {
         return [
-            ['id' => self::S_BUILD, 'title' => 'Em Contrução'],
+            ['id' => self::S_BUILD, 'title' => 'Em Construção'],
             ['id' => self::S_ABERTO, 'title' => 'Aberto'],
             ['id' => self::S_ADIADO, 'title' => 'Adiado'],
             ['id' => self::S_ANULADO, 'title' => 'Anulado'],
