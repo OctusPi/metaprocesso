@@ -10,7 +10,7 @@ import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import TableList from '@/components/table/TableList.vue';
 import Mounts from '@/services/mounts';
-import notifys from '@/utils/notifys';
+import InputInsertTag from '@/components/inputs/InputInsertTag.vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 const props = defineProps({
@@ -36,25 +36,6 @@ const [page, pageData] = Layout.new(emit, {
         phone: 'required',
         modality: 'required'
     }
-})
-
-const [services, servicesData] = Layout.pseudo(emit, {
-    rules: {
-        service: 'required',
-    }
-})
-
-const saveServiceIfUnique = () => {
-    if (services.datalist.find(o => o.service === services.data.service)) {
-        emit('callAlert', notifys.info('Este serviço já existe'))
-        return
-    }
-    servicesData.save()
-}
-
-
-watch(() => page.ui.register, () => {
-    services.datalist = page.data.services ?? []
 })
 
 watch(() => props.datalist, (newdata) => {
@@ -168,7 +149,7 @@ onMounted(() => {
                     </div>
                 </div>
                 <div role="form" class="container p-0">
-                    <form class="form-row" @submit.prevent="() => pageData.save({ services: services.datalist })">
+                    <form class="form-row" @submit.prevent="() => pageData.save()">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
                             <div class="col-sm-12 col-md-4">
                                 <label for="name" class="form-label">Fornecedor</label>
@@ -231,30 +212,14 @@ onMounted(() => {
                                     :class="{ 'form-control-alert': page.valids.email }" id="email"
                                     placeholder="Email de contato do Fornecedor" v-model="page.data.email">
                             </div>
-                        </div>
-                        <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-                            <div class="col-12">
-                                <label for="name" class="form-label">Serviços</label>
-                                <div class="input-group">
-                                    <input @keydown.enter.prevent="saveServiceIfUnique" type="text" name="service"
-                                        class="form-control" :class="{ 'form-control-alert': services.valids.service }"
-                                        id="service" placeholder="Nome do Serviço" v-model="services.data.service">
-                                    <button @click="saveServiceIfUnique" type="button" class="btn btn-action-primary">
-                                        <ion-icon name="add" class="fs-5"></ion-icon>
-                                        Adicionar
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="d-flex flex-wrap gap-2">
-                                <div class="tag d-flex gap-2" v-for="item, i in services.datalist" :key="i">
-                                    <span>{{ item.service }}</span>
-                                    <button @click="() => servicesData.remove(item.id)" type="button"
-                                        class="btn m-0 p-0">
-                                        <ion-icon name="close" class="txt-color"></ion-icon>
-                                    </button>
-                                </div>
+                            <div class="col-sm-12">
+                                <InputInsertTag 
+                                placeholder="Adicionar serviços do fornecedor" 
+                                identify="service" label="Serviços" 
+                                v-model="page.data.services" />
                             </div>
                         </div>
+                        
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>

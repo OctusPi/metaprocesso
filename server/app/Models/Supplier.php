@@ -24,10 +24,10 @@ class Supplier extends Model
         'phone',
         'email',
         'address',
+        'services',
         'modality',
         'size',
-        'organ_id',
-        'services',
+        'organ_id'
     ];
 
     protected $casts = [
