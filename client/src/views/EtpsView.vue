@@ -11,8 +11,8 @@ import http from '@/services/http';
 import gpt from '@/services/gpt';
 import utils from '@/utils/utils';
 
-import TabNav from '@/components/TabNav2.vue';
-import Tabs from '@/utils/tabs2';
+import TabNav from '@/components/TabNavValidated.vue';
+import Tabs from '@/utils/tabsValidated';
 
 import InputRichText from '@/components/inputs/InputRichText.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
