@@ -53,10 +53,6 @@ class Processes extends Controller
             return response()->json(Notify::warning('Comissão selecionada não possuí membros ativos'), 400);
         }
 
-        if (!$request->id) {
-            $this->model->protocol = Utils::randCode(6, str_pad(Data::getOrgan(), 3, '0', STR_PAD_LEFT), date('dmY'));
-        }
-
         $this->model->fill($request->all());
 
         $this->model->dfds = json_decode($request->dfds);
@@ -140,7 +136,6 @@ class Processes extends Controller
                     $query->orWhere('unit_id', '=', $unit);
                 }
             });
-
         }
 
         return response()->json($query->get());
