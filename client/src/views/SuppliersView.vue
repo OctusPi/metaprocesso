@@ -213,13 +213,11 @@ onMounted(() => {
                                     placeholder="Email de contato do Fornecedor" v-model="page.data.email">
                             </div>
                             <div class="col-sm-12">
-                                <InputInsertTag 
-                                placeholder="Adicionar serviços do fornecedor" 
-                                identify="service" label="Serviços" 
-                                v-model="page.data.services" />
+                                <InputInsertTag placeholder="Adicionar serviços do fornecedor" identify="service"
+                                    label="Serviços" v-model="page.data.services" />
                             </div>
                         </div>
-                        
+
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>

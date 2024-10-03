@@ -18,17 +18,26 @@ class Tabs {
         return this.current.value.id == id
     }
 
+    resetScroll() {
+        window.scroll({
+            top: 0,
+            left: 0,
+            behavior: "smooth",
+        })
+    }
+
     next() {
         const index = this.tabs.value.indexOf(this.current.value)
         if (index !== -1 && index < this.tabs.value.length - 1) {
             this.current.value = this.tabs.value[index + 1]
+            this.resetScroll()
         }
     }
-
     prev() {
         const index = this.tabs.value.indexOf(this.current.value)
         if (index !== -1 && index > 0) {
             this.current.value = this.tabs.value[index - 1]
+            this.resetScroll()
         }
     }
 }
