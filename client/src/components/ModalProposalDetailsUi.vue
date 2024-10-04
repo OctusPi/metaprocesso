@@ -2,9 +2,8 @@
 import { watch } from 'vue';
 import layout from '@/services/layout';
 import utils from '@/utils/utils'
-import Mounts from '@/services/mounts';
 
-import TableList from '@/components/table/TableList.vue';
+const emit = defineEmits(['callAlert'])
 
 const props = defineProps({
     collect: { type: Object, default: () => { } },
@@ -12,7 +11,7 @@ const props = defineProps({
     modal: { type: String, default: 'modalProposalDetails' }
 })
 
-const [page, pgData] = layout.new(null, {
+const [page, pgData] = layout.new(emit, {
     url: '/proposals',
     data: props.collect ?? {},
     selects: props.selects,
@@ -141,29 +140,6 @@ watch(() => props.selects, (newval) => {
                         </div>
                     </div>
 
-                    <!-- dfds -->
-                    <div class="box-revisor mb-4 px-0">
-                        <div class="box-revisor-title d-flex mb-4">
-                            <div class="txt-revisor-title">
-                                <h3>Lista de DFDs</h3>
-                                <p>
-                                    Listagem dos DFDs atrelados ao processo
-                                </p>
-                            </div>
-                        </div>
-                        <div>
-                            <!-- list dfds -->
-                            <div>
-                                <TableList secondary :count="false" :order="false" :header="page.dfds_headers"
-                                    :body="page.data?.process?.dfds" :mounts="{
-                                        'item.type': [Mounts.Cast(page.selects.items_types)],
-                                        status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
-                                        description: [Mounts.Truncate()],
-                                    }" />
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Supplier -->
                     <div class="box-revisor mb-4 px-0">
                         <div class="box-revisor-title d-flex mb-4">
@@ -226,7 +202,7 @@ watch(() => props.selects, (newval) => {
                                         {{ utils.getTxt(page.selects?.proposal_status, page.data?.status) }}
                                     </p>
                                     <p class="p-0 m-0 form-text">
-                                        <a href="#" @click.prevent="pgData.download(page.data?.id)" class="d-flex align-items-center">
+                                        <a v-if="page.data?.status == 4" href="#" @click.prevent="pgData.download(page.data?.id)" class="d-flex align-items-center">
                                             Proposta Assinada
                                             <ion-icon name="cloud-download-outline" class="fs-6 ms-2"></ion-icon>
                                         </a>
@@ -235,13 +211,13 @@ watch(() => props.selects, (newval) => {
                                 <div class="col-md-4">
                                     <h4>Data da Resposta</h4>
                                     <p>
-                                        {{ `${page.data?.date_fin} - ${page.data?.hour_fin}`  }}
+                                       {{ page.data?.date_fin ?? '***' }} : {{ page.data?.hour_fin ?? '***' }}
                                     </p>
                                 </div>
                             </div>
                         </div>
                         <!-- list items -->
-                        <div class="table-responsive mt-4">
+                        <div v-if="page.data?.items && page.data?.items.length" class="table-responsive mt-4">
                                 <table class="m-0 table-borderless table-striped table-hover table">
                                     <thead>
                                         <tr>

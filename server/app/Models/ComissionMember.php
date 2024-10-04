@@ -70,6 +70,7 @@ class ComissionMember extends Model
         return [
             ['id' => 0, 'title' => 'Presidente'],
             ['id' => 1, 'title' => 'Membro'],
+            ['id' => 2, 'title' => 'Suplente'],
         ];
     }
 

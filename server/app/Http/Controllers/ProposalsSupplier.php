@@ -105,7 +105,7 @@ class ProposalsSupplier extends Controller
      * @param array|null $dfds
      * @return array
      */
-    private function dfdItems(?array $dfds): array
+    public function dfdItems(?array $dfds): array
     {
         $items = array_map(function ($id) {
             return DfdItem::where('dfd_id', '=', $id)->with('item')->get()->toArray();

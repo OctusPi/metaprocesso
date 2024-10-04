@@ -8,7 +8,7 @@ import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import TabNav from '@/components/TabNav.vue';
-import DfdDetails from '@/components/DfdDetails.vue';
+import ModalDfdDetails from '@/components/DfdDetails.vue';
 import ModalProposalDetailsUi from '@/components/ModalProposalDetailsUi.vue';
 
 import Layout from '@/services/layout';
@@ -30,7 +30,7 @@ const props = defineProps({
 const [page, pageData] = Layout.new(emit, {
     url: '/pricerecords',
     datalist: props.datalist,
-    collect:{},
+    collect: {},
     process: {
         search: {},
         data: [],
@@ -46,6 +46,7 @@ const [page, pageData] = Layout.new(emit, {
         search: {},
         datalist: [],
         data: null,
+        group_items: [],
         headers: [
             { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { key: 'demandant.name', title: 'DEMANDANTE' },
@@ -66,6 +67,14 @@ const [page, pageData] = Layout.new(emit, {
     },
     proposals: {
         selected: 'emails',
+        manual_insert: false,
+        manual_insert_item: null,
+        manual_insert_types_resource_selected: 'tce',
+        manual_insert_types_resource: {
+            'tce': { nav: 'TCE', title: 'TCE', subtitle: 'Consulta Processos Tribunal de Contas do Estado do Ceará' },
+            'pncp': { nav: 'PNCP', title: 'PNCP', subtitle: 'Consulta Plano Nacional de Contrações Públicas' },
+            'Ecomerce': { nav: 'Ecomerce', title: 'Ecomerce', subtitle: 'Consultar através sites de varejo' }
+        },
         types: {
             'emails': { nav: 'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
             'manual': { nav: 'Inserção Manual', title: 'Inserir Coletas Manualmente', subtitle: 'Adicionar coletas através de banco de preços do TCE ou sites de varejo online.' },
@@ -131,6 +140,15 @@ function list_suppliers() {
     })
 }
 
+function list_grouped_items() {
+    if (page.data.process?.id) {
+        http.get(`${page.url}/list_grouped_items/${page.data.process?.id}`, emit, (resp) => {
+            page.dfds.group_items = resp.data
+            page.proposals.manual_insert = true
+        })
+    }
+}
+
 function select_supplier(supplier) {
     if (!page.data.suppliers) {
         page.data.suppliers = []
@@ -162,7 +180,7 @@ function remove_supplier(id) {
     page.proposals.data.emails = page.proposals.data.emails.filter(o => o.supplier.id !== id)
 
     if (page.data.id) {
-        http.post('proposals/destroy', {price_record: page.data.id, supplier: id}, emit)
+        http.post('proposals/destroy', { price_record: page.data.id, supplier: id }, emit)
     }
 }
 
@@ -187,11 +205,9 @@ function resend_collect(id) {
     http.get(`${page.url}/send_collect/${id}`, emit);
 }
 
-function view_proposal(id){
+function view_proposal(id) {
     http.get(`/proposals/details/${id}`, emit, (resp) => {
         page.collect = resp.data
-        console.log(resp.data)
-        console.log(page.selects)
     })
 }
 
@@ -221,6 +237,10 @@ function generate(type) {
     }
 
     gpt.generate(`${page.url}/generate`, payload, emit, callresp)
+}
+
+function save_manual_collect() {
+    console.log('save manual')
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -312,9 +332,9 @@ onBeforeMount(() => {
                         Actions.Edit(prepare_update),
                         Actions.Delete(pageData.remove)
                     ]" :mounts="{
-                            status: [Mounts.Cast(page.selects.status), Mounts.Status()],
-                            'process.description': [Mounts.Truncate()]
-                        }" />
+                        status: [Mounts.Cast(page.selects.status), Mounts.Status()],
+                        'process.description': [Mounts.Truncate()]
+                    }" />
                 </div>
             </section>
 
@@ -334,10 +354,11 @@ onBeforeMount(() => {
                 </div>
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
-                    <form @submit.prevent="pageData.save({process_id: page.data.process?.id})">
+                    <form @submit.prevent="pageData.save({ process_id: page.data.process?.id })">
+                        <!-- Tabs Register -->
                         <div class="content">
 
-                            <!-- tab proccess -->
+                            <!-- tab process -->
                             <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
                                 <div class="accordion mb-3" id="accordion-process">
                                     <div class="accordion-item">
@@ -456,7 +477,7 @@ onBeforeMount(() => {
                                 </div>
                             </div>
 
-                            <!-- tab informacoes -->
+                            <!-- tab informations -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('infos') }">
                                 <div class="col-sm-12 col-md-4">
@@ -571,7 +592,7 @@ onBeforeMount(() => {
                                 </div>
                             </div>
 
-                            <!-- tab coletas -->
+                            <!-- tab collects -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('proposals') }">
 
@@ -591,29 +612,107 @@ onBeforeMount(() => {
                                                     name="type-collect" :value="i" v-model="page.proposals.selected">
                                                 <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
                                                     c.nav
-                                                    }}</label>
+                                                }}</label>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="dashed-separator mt-2 mb-3"></div>
 
                                     <div v-if="page.proposals.selected === 'emails'">
-                                        <TableList secondary :count="false" 
-                                            :header="page.proposals.headers"
-                                            :body="page.proposals.data.emails"
-                                            :actions="[
+                                        <TableList secondary :count="false" :header="page.proposals.headers"
+                                            :body="page.proposals.data.emails" :actions="[
                                                 Actions.Create('eye-outline', 'Visualizar', view_proposal, '#modalProposalDetails'),
                                                 Actions.Create('send-outline', 'Reenviar', resend_collect),
-                                            ]"
-                                            :mounts="{
+                                            ]" :mounts="{
                                                 modality: [Mounts.Cast(page.selects.proposal_modalities)],
                                                 status: [Mounts.Cast(page.selects.proposal_status), Mounts.Status()]
                                             }" />
                                     </div>
 
                                     <div v-else>
-                                        <TableList :header="page.proposals.headers"
-                                            :body="page.proposals.data.manual" />
+                                        <div v-if="page.proposals.manual_insert">
+
+                                            <div class="tablelist">
+                                                <div class="table-responsive-md">
+                                                    <table class="m-0 table-borderless table-striped table-hover table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>CÓDIGO</th>
+                                                                <th>ITEM</th>
+                                                                <th>UNIT.</th>
+                                                                <th class="text-center">QUANT.</th>
+                                                                <th>VALOR UNIT.</th>
+                                                                <th class="pe-2">TOTAL</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="i in page.dfds.group_items" :key="i.id">
+                                                                <td class="align-middle">
+                                                                    <div class="small">{{ i.item.code }}</div>
+                                                                </td>
+                                                                <td class="align-middle">
+                                                                    <div class="small txt-color-sec">{{ i.item.name }}
+                                                                    </div>
+                                                                    <div class="small">{{ i.item.description }}</div>
+                                                                </td>
+                                                                <td class="align-middle">
+                                                                    <div class="small txt-color-sec">{{ i.item.und }}
+                                                                    </div>
+                                                                    <div class="small">{{ i.item.volume }}</div>
+                                                                </td>
+                                                                <td class="align-middle text-center">
+                                                                    <div class="small">{{ i.quantity }}</div>
+                                                                </td>
+                                                                <td class="align-middle">
+                                                                    <div class="small"
+                                                                        :class="i.value ? 'text-success' : 'text-danger'">
+                                                                        {{ i.value ?? '0,00' }}</div>
+                                                                </td>
+                                                                <td class="align-middle">
+                                                                    <div class="small">{{
+                                                                        utils.floatToCurrency((i.quantity *
+                                                                            utils.currencyToFloat(i.value)).toFixed(2)) }}
+                                                                    </div>
+                                                                </td>
+                                                                <td class="align-middle text-end">
+                                                                    <button type="button"
+                                                                        @click="page.proposals.manual_insert_item = i"
+                                                                        data-bs-target="#modalProposalManualConsult"
+                                                                        data-bs-toggle="modal"
+                                                                        class="btn btn-action-quaternary">
+                                                                        <ion-icon name="search-outline"></ion-icon>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-4 d-flex align-items-center justify-content-center">
+                                                <button type="button" class="mx-2 btn btn-action-primary"
+                                                    @click="save_manual_collect">
+                                                    <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
+                                                    Registrar Coleta
+                                                </button>
+                                                <button type="button" @click="page.proposals.manual_insert = false"
+                                                    class="mx-2 btn btn-action-tertiary">
+                                                    <ion-icon name="close-outline" class="fs-5"></ion-icon>
+                                                    Cancelar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <TableList :header="page.proposals.headers"
+                                                :body="page.proposals.data.manual" />
+
+                                            <button type="button" class="mx-auto btn btn-action-primary"
+                                                @click="list_grouped_items">
+                                                <ion-icon name="add-circle-outline" class="fs-5"></ion-icon>
+                                                Iniciar Coleta Manual
+                                            </button>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -623,12 +722,14 @@ onBeforeMount(() => {
                                         <ion-icon name="warning" class="fs-5" />
                                         Atenção
                                     </h2>
-                                    <p class="txt-color-sec small text-center m-0 pb-3">
+                                    <p class="txt-color-sec small text-center m-0 pb-0">
                                         É necessário selecionar um processo para iniciar as coletas
                                     </p>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- nav buttons -->
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
@@ -650,11 +751,60 @@ onBeforeMount(() => {
                 </div>
             </section>
 
-            <DfdDetails :dfd="page.dfds.data" :selects="page.selects" />
-            
-            <ModalProposalDetailsUi :collect="page.collect" :selects="page.selects" />
-
             <FooterMainUi />
         </main>
     </div>
+
+    <ModalDfdDetails :dfd="page.dfds.data" :selects="page.selects" />
+
+    <ModalProposalDetailsUi :collect="page.collect" :selects="page.selects"
+        @callAlert="(data) => emit('callAlert', data)" />
+
+    <div class="modal fade" id="modalProposalManualConsult" data-bs-backdrop="static" data-bs-keyboard="false"
+        tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered mx-auto">
+            <div class="modal-content p-4 content">
+                <div v-if="page.proposals.manual_insert_item" class="modal-body p-0 my-1">
+                    <div role="heading" class="inside-title w-100 mb-3">
+                        <div>
+                            <h2>Consulta de Preços</h2>
+                            <p>
+                                Contular preços através do TCE, PNCP e Ecomerce Digital
+                            </p>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-action-close">
+                                <ion-icon name="close" class="fs-5"></ion-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="dashed-separator mt-2 mb-3"></div>
+                    <div class="mb-4 d-flex align-items-center justify-content-between">
+                        <div>
+                            <h3 class="small txt-blue p-0 m-0">
+                            {{ page.proposals.manual_insert_item?.item.code }} :
+                            {{ page.proposals.manual_insert_item?.item.type == 1 ? 'Material' : 'Serviço' }} :
+                            {{ page.proposals.manual_insert_item?.item.name }} :
+                            {{ page.proposals.manual_insert_item?.item.und }} :
+                            {{ page.proposals.manual_insert_item?.item.volume }}
+                        </h3>
+                        <p class="small p-0 m-0">{{ page.proposals.manual_insert_item?.item.description }}</p>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-center">
+                        <div v-for="(c, i) in page.proposals.manual_insert_types_resource" :key="i" class="ms-2">
+                            <input class="btn-check" :id="`type-collect-${i}`" type="radio"
+                                name="type-collect" :value="i" v-model="page.proposals.manual_insert_types_resource_selected">
+                            <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
+                                c.nav
+                            }}</label>
+                        </div>
+                    </div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
 </template>

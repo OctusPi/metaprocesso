@@ -21,6 +21,8 @@ return new class extends Migration {
             $table->string('address');
             $table->string('postalcity', 120);
             $table->string('postalcode', 10);
+            $table->string('tcecode', 10)->nullable();
+            $table->string('ibgecode', 10)->nullable();
             $table->integer('status');
         });
     }

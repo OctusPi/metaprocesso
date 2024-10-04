@@ -129,6 +129,16 @@ class PriceRecords extends Controller
         return response()->json(Data::find(new DfdItem(), ['dfd_id' => $request->id], null, ['item', 'dotation', 'program']));
     }
 
+    public function list_grouped_items(Request $request)
+    {
+        $process = Data::findOne(new Process(), ['id' => $request->process_id]);
+        if(!is_null($process)){
+            return response()->json((new ProposalsSupplier())->dfdItems($process->dfds), 200);
+        }
+
+        return response()->json(Notify::warning('Processo não localizado...'), 404);
+    }
+
     /**
      * Lista fornecedores associados a uma coleta de preços.
      *
@@ -167,7 +177,7 @@ class PriceRecords extends Controller
     }
 
     public function send_collect(Request $request){
-        $proposal = Data::findOne(new Proposal(), ['id' => $request->id]);
+        $proposal = Data::findOne(new Proposal(), ['id' => $request->id], null, ['process', 'supplier', 'pricerecord']);
 
         if(is_null($proposal)){
             return response()->json(Notify::warning('Coleta não localizada...'), 404);
@@ -177,17 +187,13 @@ class PriceRecords extends Controller
             return response()->json(Notify::warning('Coleta já preenchida pelo fornecedor...'), 400);
         }
 
-        $process  = json_decode(json_encode(Process::with('organ')->find($proposal->process)?->toArray()));
-        $supplier  = json_decode(json_encode(Supplier::find($proposal->supplier)?->toArray()));
-        $price_rec = json_decode(json_encode(PriceRecord::find($proposal->pricerecord)?->toArray()));
-
-        $send = Mail::to($supplier->email)->send(new ProposalRequest(
-            $process,
-            $supplier,
+        $send = Mail::to($proposal->supplier->email)->send(new ProposalRequest(
+            $proposal->process,
+            $proposal->supplier,
             $proposal->token,
             $proposal->protocol,
             $proposal->date_ini.' '.$proposal->hour_ini,
-            $price_rec->date_fin
+            $proposal->pricerecord->date_fin
         ));
 
         $code = !is_null($send) ? 200 : 500;
