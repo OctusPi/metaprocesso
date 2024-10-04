@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
@@ -11,6 +11,8 @@ import FooterMainUi from '@/components/FooterMainUi.vue';
 import TableList from '@/components/table/TableList.vue';
 import Mounts from '@/services/mounts';
 import InputInsertTag from '@/components/inputs/InputInsertTag.vue';
+import http from '@/services/http';
+import notifys from '@/utils/notifys';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 const props = defineProps({
@@ -37,6 +39,20 @@ const [page, pageData] = Layout.new(emit, {
         modality: 'required'
     }
 })
+
+const remoteModalId = 'remoteModal'
+const remoteToggler = ref()
+const remoteEmails = ref([])
+
+function sendRemoteEmails() {
+    if (remoteEmails.value.length < 1) {
+        emit('callAlert', notifys.info('Adicione ao menos um email'))
+        return
+    }
+    http.post(`${page.url}/send_form`, { emails: remoteEmails.value }, emit, () => {
+        remoteToggler.value.click()
+    })
+}
 
 watch(() => props.datalist, (newdata) => {
     page.datalist = newdata
@@ -68,6 +84,11 @@ onMounted(() => {
                         </p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
+                        <button data-bs-toggle="modal" ref="remoteToggler" :data-bs-target="'#' + remoteModalId"
+                            class="btn btn-action-secondary">
+                            <ion-icon name="git-compare-outline" class="fs-5"></ion-icon>
+                            Cadastro Remoto
+                        </button>
                         <button @click="pageData.ui('register')" class="btn btn-action-primary">
                             <ion-icon name="add" class="fs-5"></ion-icon>
                             Adicionar
@@ -229,6 +250,40 @@ onMounted(() => {
                             </button>
                         </div>
                     </form>
+                </div>
+            </section>
+
+            <!--Remote Modal-->
+            <section class="modal fade" :id="remoteModalId" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered mx-auto">
+                    <div class="modal-content p-4 content">
+                        <div class="modal-body p-0 my-1">
+                            <div role="heading" class="inside-title w-100 mb-3">
+                                <div>
+                                    <h2>Solicitar Cadastro de Fornecedor</h2>
+                                    <p>
+                                        Encaminhe a solicitação de cadastro por email para os fornecedores
+                                    </p>
+                                </div>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-action-close">
+                                        <ion-icon name="close" class="fs-5"></ion-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <InputInsertTag placeholder="Email do Fornecedor" identify="email"
+                                    v-model="remoteEmails" />
+                                <div class="mt-4">
+                                    <button @click="sendRemoteEmails" class="btn btn-action-primary ms-auto">
+                                        <ion-icon name="mail-outline" class="fs-5"></ion-icon>
+                                        Enviar Emails
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 

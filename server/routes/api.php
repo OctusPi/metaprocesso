@@ -153,6 +153,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('/attachments/{origin}/{protocol}')->controller(Attachments::class)->group(function () {
         Route::get('/download_png/{id}', 'download_as_png');
     });
+
+    Route::prefix('/suppliers')->controller(Suppliers::class)->group(function () {
+        Route::post('/send_form', 'send_form');
+    });
 });
 
 
