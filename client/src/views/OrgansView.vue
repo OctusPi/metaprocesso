@@ -180,6 +180,16 @@ onMounted(() => {
                                     placeholder="00000-000" v-model="page.data.postalcode" v-maska:[masks.maskcep]>
                             </div>
                             <div class="col-sm-12 col-md-4">
+                                <label for="tcecode" class="form-label">Código TCE</label>
+                                <input type="text" name="tcecode" class="form-control" id="tcecode"
+                                    placeholder="00000000" v-model="page.data.tcecode" maxlength="10">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="ibgecode" class="form-label">Código IBGE</label>
+                                <input type="text" name="ibgecode" class="form-control" id="ibgecode"
+                                    placeholder="00000000" v-model="page.data.ibgecode" maxlength="10">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
                                 <label for="status" class="form-label">Status</label>
                                 <select name="status" class="form-control"
                                     :class="{ 'form-control-alert': page.valids.status }" id="status"

@@ -26,6 +26,8 @@ class Organ extends Model
         'address',
         'postalcity',
         'postalcode',
+        'tcecode',
+        'ibgecode',
         'status',
         'logomarca'
     ];
