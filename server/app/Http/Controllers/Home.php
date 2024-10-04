@@ -55,7 +55,7 @@ class Home extends Controller
             });
 
         $processesQ = Data::find(new Process(), [], ['date_hour_ini'], [
-            'pricerecord' => fn ($query) => $query->where('status', '=', PriceRecord::S_FINISHED),
+            'priceRecord' => fn ($query) => $query->where('status', '=', PriceRecord::S_FINISHED),
             'etp' => fn ($query) =>  $query->where('status', '=', Etp::S_FINISHED),
             'riskmaps' => fn ($query) => $query->where('status', '=', RiskMap::S_FINISHED),
             'refterm' => fn ($query) => $query->get(),
