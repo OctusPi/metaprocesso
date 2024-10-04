@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Supplier;
+use App\Utils\Notify;
 use Illuminate\Http\Request;
+use Validator;
 
 class Suppliers extends Controller
 {
@@ -46,5 +48,21 @@ class Suppliers extends Controller
             'modalities' => Supplier::list_modalitys(),
             'sizes' => Supplier::list_sizes()
         ]);
+    }
+
+    public function send_form(Request $request)
+    {
+        $data = ['emails' => json_decode($request->emails)];
+
+        $validation = Validator::make($data, [
+            'emails' => 'required|array',
+            'emails.*' => 'required|email'
+        ]);
+
+        if ($validation->fails()) {
+            return response()->json(Notify::warning('Um ou mais emails inválidos'), 400);
+        }
+
+        $emails = collect($data['emails']);
     }
 }
