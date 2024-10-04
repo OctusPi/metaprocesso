@@ -131,8 +131,12 @@ class PriceRecords extends Controller
 
     public function list_grouped_items(Request $request)
     {
-        $process = Data::find(new Process(), ['id' => $request->process_id]);
-        return response()->json((new ProposalsSupplier())->dfdItems($process->dfds), 200);
+        $process = Data::findOne(new Process(), ['id' => $request->process_id]);
+        if(!is_null($process)){
+            return response()->json((new ProposalsSupplier())->dfdItems($process->dfds), 200);
+        }
+
+        return response()->json(Notify::warning('Processo não localizado...'), 404);
     }
 
     /**
