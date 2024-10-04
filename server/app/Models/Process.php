@@ -72,6 +72,7 @@ class Process extends Model
         'status',
         'initial_value',
         'winner_value',
+        'dfds',
         'acquisition',
         'acquisition_type',
         'installment_justification',
