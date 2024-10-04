@@ -127,10 +127,10 @@ onMounted(() => {
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
                             <input type="hidden" name="id" v-model="page.id">
                             <div class="col-sm-12 col-md-8">
-                                <label for="name" class="form-label">Programa</label>
+                                <label for="name" class="form-label">Dotação</label>
                                 <input type="text" name="name" class="form-control"
                                     :class="{ 'form-control-alert': page.valids.name }" id="name"
-                                    placeholder="Nome de identificação do Programa" v-model="page.data.name">
+                                    placeholder="Nome de identificação da Dotação" v-model="page.data.name">
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="unit" class="form-label">Unidade</label>
@@ -163,7 +163,7 @@ onMounted(() => {
                             <div class="col-sm-12">
                                 <label for="description" class="form-label">Descrição</label>
                                 <input type="text" name="description" class="form-control" id="description"
-                                    placeholder="Breve resumo do objetivo do programa" v-model="page.data.description">
+                                    placeholder="Breve resumo do objetivo da dotação" v-model="page.data.description">
                             </div>
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">

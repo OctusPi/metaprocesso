@@ -37,6 +37,7 @@ const [page, pageData] = Layout.new(emit, {
     ],
     rules: {
         date_hour_ini: 'required',
+        protocol: 'required',
         year_pca: 'required',
         type: 'required',
         modality: 'required',
@@ -98,7 +99,7 @@ watch(() => props.datalist, (newdata) => {
 
 watch(() => page.ui.register, (newdata) => {
     if (newdata && page.data.id == null) {
-        page.data.protocol = utils.dateProtocol(page.organ?.id)
+        page.data.protocol = utils.dateProtocol(page.organ?.id, '-')
     }
 })
 
@@ -267,19 +268,18 @@ onMounted(() => {
                         <!-- tab origigem -->
                         <div class="tab-pane fade row content m-0 g-3 p-4 pt-1"
                             :class="{ 'show active': tabs.is('origem') }">
-                            <div class="col-sm-12 col-md-4">
+                            <div class="col-sm-12 col-md-8">
                                 <label for="unit" class="form-label">Unidades</label>
                                 <InputDropMultSelect :valid="page.valids.units" v-model="page.data.units"
                                     :options="page.selects.units" identify="units" />
                             </div>
-
                             <div class="col-sm-12 col-md-4">
-                                <label for="year_pca" class="form-label">Ano do PCA</label>
-                                <input maxlength="4" type="text" name="year_pca" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.year_pca }" id="year_pca"
-                                    v-model="page.data.year_pca" placeholder="AAAA">
+                                <label for="protocol" class="form-label">Protocolo</label>
+                                <input type="text" name="protocol" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.protocol }" id="protocol"
+                                    v-model="page.data.protocol" placeholder="Protocolo">
                             </div>
-                            <div class="col-sm-12 col-md-4">
+                            <div class="col-sm-12 col-md-8">
                                 <label for="comission" class="form-label">Comissão</label>
                                 <select name="comission" class="form-control"
                                     :class="{ 'form-control-alert': page.valids.comission_id }" id="comission"
@@ -293,6 +293,12 @@ onMounted(() => {
                                     Ao selecionar a comissão/equipe de planejamento seus
                                     integrantes serão vinculados ao documento
                                 </div>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="year_pca" class="form-label">Ano do PCA</label>
+                                <input maxlength="4" type="text" name="year_pca" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.year_pca }" id="year_pca"
+                                    v-model="page.data.year_pca" placeholder="AAAA">
                             </div>
                         </div>
 

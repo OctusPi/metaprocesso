@@ -406,7 +406,7 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
                     <form @submit.prevent="mainData.save({
-                        process_id: main.data.process.id,
+                        process_id: main.data.process?.id,
                         riskiness: risks.datalist,
                         accompaniments: accomp.datalist
                     })">

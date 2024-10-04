@@ -13,8 +13,8 @@ import axsi from '@/services/axsi';
 
 // Utils
 import utils from '@/utils/utils';
-import Tabs from '@/utils/tabs2';
-import PDFMerger from 'pdf-merger-js';
+import TabNav from '@/components/TabNavValidated.vue';
+import Tabs from '@/utils/tabsValidated';
 
 // Components
 import TableList from '@/components/table/TableList.vue';
@@ -24,7 +24,6 @@ import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import InputRichText from '@/components/inputs/InputRichText.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
-import TabNav from '@/components/TabNav2.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
 import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 
