@@ -110,6 +110,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/list_processes', 'list_processes');
         Route::post('/list_suppliers', 'list_suppliers');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
+        Route::get('/list_grouped_items/{process_id}', 'list_grouped_items');
         Route::get('/send_collect/{id}', 'send_collect');
         Route::post('/generate', 'generate');
     });

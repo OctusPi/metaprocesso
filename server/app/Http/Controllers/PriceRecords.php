@@ -129,6 +129,12 @@ class PriceRecords extends Controller
         return response()->json(Data::find(new DfdItem(), ['dfd_id' => $request->id], null, ['item', 'dotation', 'program']));
     }
 
+    public function list_grouped_items(Request $request)
+    {
+        $process = Data::find(new Process(), ['id' => $request->process_id]);
+        return response()->json((new ProposalsSupplier())->dfdItems($process->dfds), 200);
+    }
+
     /**
      * Lista fornecedores associados a uma coleta de preços.
      *

@@ -46,6 +46,7 @@ const [page, pageData] = Layout.new(emit, {
         search: {},
         datalist: [],
         data: null,
+        group_items:[],
         headers: [
             { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
             { key: 'demandant.name', title: 'DEMANDANTE' },
@@ -66,6 +67,7 @@ const [page, pageData] = Layout.new(emit, {
     },
     proposals: {
         selected: 'emails',
+        manual_insert: false,
         types: {
             'emails': { nav: 'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
             'manual': { nav: 'Inserção Manual', title: 'Inserir Coletas Manualmente', subtitle: 'Adicionar coletas através de banco de preços do TCE ou sites de varejo online.' },
@@ -131,6 +133,15 @@ function list_suppliers() {
     })
 }
 
+function list_grouped_items(){
+    if(page.data.process?.id){
+        http.get(`${page.url}/list_grouped_items/${page.data.process?.id}`, emit, (resp) => {
+            page.dfds.group_items = resp.data
+            page.proposals.manual_insert = true
+        })
+    }
+}
+
 function select_supplier(supplier) {
     if (!page.data.suppliers) {
         page.data.suppliers = []
@@ -191,7 +202,7 @@ function view_proposal(id){
     http.get(`/proposals/details/${id}`, emit, (resp) => {
         page.collect = resp.data
     })
-}
+} 
 
 function generate(type) {
 
@@ -333,9 +344,10 @@ onBeforeMount(() => {
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" identify="tabbed" />
                     <form @submit.prevent="pageData.save({process_id: page.data.process?.id})">
+                        <!-- Tabs Register -->
                         <div class="content">
 
-                            <!-- tab proccess -->
+                            <!-- tab process -->
                             <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('process') }">
                                 <div class="accordion mb-3" id="accordion-process">
                                     <div class="accordion-item">
@@ -454,7 +466,7 @@ onBeforeMount(() => {
                                 </div>
                             </div>
 
-                            <!-- tab informacoes -->
+                            <!-- tab informations -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('infos') }">
                                 <div class="col-sm-12 col-md-4">
@@ -569,7 +581,7 @@ onBeforeMount(() => {
                                 </div>
                             </div>
 
-                            <!-- tab coletas -->
+                            <!-- tab collects -->
                             <div class="tab-pane fade row m-0 p-4 pt-1 g-3"
                                 :class="{ 'show active': tabs.is('proposals') }">
 
@@ -610,8 +622,16 @@ onBeforeMount(() => {
                                     </div>
 
                                     <div v-else>
-                                        <TableList :header="page.proposals.headers"
+                                        <div v-if="page.proposals.manual_insert">
+                                            
+                                        </div>
+                                        <TableList v-else :header="page.proposals.headers"
                                             :body="page.proposals.data.manual" />
+
+                                            <button type="button" class="mx-auto btn btn-action-primary" @click="list_grouped_items">
+                                                <ion-icon name="add-circle-outline" class="fs-5"></ion-icon>
+                                                Iniciar Coleta Manual
+                                            </button>
                                     </div>
 
                                 </div>
@@ -621,12 +641,14 @@ onBeforeMount(() => {
                                         <ion-icon name="warning" class="fs-5" />
                                         Atenção
                                     </h2>
-                                    <p class="txt-color-sec small text-center m-0 pb-3">
+                                    <p class="txt-color-sec small text-center m-0 pb-0">
                                         É necessário selecionar um processo para iniciar as coletas
                                     </p>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- nav buttons -->
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
