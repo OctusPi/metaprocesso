@@ -73,7 +73,7 @@ const [page, pageData] = Layout.new(emit, {
         manual_insert_types_resource: {
             'tce': { nav: 'TCE', title: 'TCE', subtitle: 'Consulta Processos Tribunal de Contas do Estado do Ceará' },
             'pncp': { nav: 'PNCP', title: 'PNCP', subtitle: 'Consulta Plano Nacional de Contrações Públicas' },
-            'Ecomerce': { nav: 'Ecomerce', title: 'Ecomerce', subtitle: 'Consultar através sites de varejo' }
+            'ecomerce': { nav: 'Ecomerce', title: 'Ecomerce', subtitle: 'Consultar através sites de varejo' }
         },
         types: {
             'emails': { nav: 'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
@@ -612,7 +612,7 @@ onBeforeMount(() => {
                                                     name="type-collect" :value="i" v-model="page.proposals.selected">
                                                 <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
                                                     c.nav
-                                                }}</label>
+                                                    }}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -716,6 +716,7 @@ onBeforeMount(() => {
                                     </div>
 
                                 </div>
+
                                 <div v-else>
                                     <h2
                                         class="txt-color text-center m-0 d-flex justify-content-center align-items-center gap-1">
@@ -782,29 +783,52 @@ onBeforeMount(() => {
                     <div class="mb-4 d-flex align-items-center justify-content-between">
                         <div>
                             <h3 class="small txt-blue p-0 m-0">
-                            {{ page.proposals.manual_insert_item?.item.code }} :
-                            {{ page.proposals.manual_insert_item?.item.type == 1 ? 'Material' : 'Serviço' }} :
-                            {{ page.proposals.manual_insert_item?.item.name }} :
-                            {{ page.proposals.manual_insert_item?.item.und }} :
-                            {{ page.proposals.manual_insert_item?.item.volume }}
-                        </h3>
-                        <p class="small p-0 m-0">{{ page.proposals.manual_insert_item?.item.description }}</p>
+                                {{ page.proposals.manual_insert_item?.item.code }} :
+                                {{ page.proposals.manual_insert_item?.item.type == 1 ? 'Material' : 'Serviço' }} :
+                                {{ page.proposals.manual_insert_item?.item.name }} :
+                                {{ page.proposals.manual_insert_item?.item.und }} :
+                                {{ page.proposals.manual_insert_item?.item.volume }}
+                            </h3>
+                            <p class="small p-0 m-0">{{ page.proposals.manual_insert_item?.item.description }}</p>
                         </div>
                         <div class="d-flex align-items-center justify-content-center">
-                        <div v-for="(c, i) in page.proposals.manual_insert_types_resource" :key="i" class="ms-2">
-                            <input class="btn-check" :id="`type-collect-${i}`" type="radio"
-                                name="type-collect" :value="i" v-model="page.proposals.manual_insert_types_resource_selected">
-                            <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
-                                c.nav
-                            }}</label>
+                            <div v-for="(c, i) in page.proposals.manual_insert_types_resource" :key="i" class="ms-2">
+                                <input class="btn-check" :id="`type-collect-${i}`" type="radio" name="type-collect"
+                                    :value="i" v-model="page.proposals.manual_insert_types_resource_selected">
+                                <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
+                                    c.nav
+                                    }}</label>
+                            </div>
                         </div>
                     </div>
-                    </div>
-                    
-                    
+
+                    <!-- TCE -->
+                     <div v-if="page.proposals.manual_insert_types_resource_selected === 'tce'">
+                        <div class="row g-3">
+                            <div class="col-sm-12 col-md-8">
+                                <label for="ano_tce_origem" class="form-label">Origem</label>
+                                <select name="ano_tce_origem" class="form-control" id="ano_tce_origem">
+                                    
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="ano_tce_licitacao" class="form-label">Ano Base</label>
+                                <select name="ano_tce_licitacao" class="form-control" id="ano_tce_licitacao">
+                                    
+                                </select>
+                            </div>
+                            
+                            <!-- https://api-dados-abertos.tce.ce.gov.br/itens_licitacoes?codigo_municipio=033&data_realizacao_licitacao=2023-01-01_2023-12-31 -->
+                        </div>
+                     </div>
+
+                     <!-- PNCP -->
+                     <div v-if="page.proposals.manual_insert_types_resource_selected === 'pncp'">PNCP</div>
+
+                     <!-- Ecomerce -->
+                     <div v-if="page.proposals.manual_insert_types_resource_selected === 'ecomerce'">Ecomerce</div>
                 </div>
             </div>
         </div>
     </div>
-
 </template>
