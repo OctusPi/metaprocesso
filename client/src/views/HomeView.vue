@@ -157,7 +157,7 @@ const processes = ref({
     complete_header: [
         { key: 'date_hour_ini', title: 'PROTOCOLO', sub: [{ key: 'protocol' }] },
         { key: 'dfds.protocol', title: 'DFDS' },
-        { key: 'pricerecords', title: 'COLETAS', isBool: true },
+        { key: 'pricerecord', title: 'COLETAS', isBool: true },
         { key: 'etp', title: 'ETP', isBool: true },
         { key: 'riskmaps', title: 'MAPAS', isBool: true },
         { key: 'refterm', title: 'T. REFERÊNCIA', isBool: true },
