@@ -94,7 +94,7 @@ class Home extends Controller
                 ]
             ],
             'users' => [
-                'datalist' => Data::find(new User(), [])->where('status', '>=', $user->profile),
+                'datalist' => Data::find(new User(), [])->where('profile', '>=', $user->profile),
                 'selects' => [
                     'profiles' => $profiles,
                 ]
