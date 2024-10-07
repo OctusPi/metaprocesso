@@ -255,4 +255,9 @@ class PriceRecords extends Controller
             }
         }
     }
+
+    public function prices_tce(Request $request)
+    {
+        
+    }
 }

@@ -76,6 +76,12 @@ const [page, pageData] = Layout.new(emit, {
             'pncp': { nav: 'PNCP', title: 'PNCP', subtitle: 'Consulta Plano Nacional de Contrações Públicas' },
             'ecomerce': { nav: 'Ecomerce', title: 'Ecomerce', subtitle: 'Consultar através sites de varejo' }
         },
+        manual_insert_search_items:{
+            tce:{}
+        },
+        manual_insert_find_items:{
+            tce:[]
+        },
         types: {
             'emails': { nav: 'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
             'manual': { nav: 'Inserção Manual', title: 'Inserir Coletas Manualmente', subtitle: 'Adicionar coletas através de banco de preços do TCE ou sites de varejo online.' },
@@ -242,6 +248,17 @@ function generate(type) {
 
 function save_manual_collect() {
     console.log('save manual')
+}
+
+function prices_tce(){
+    const url = (import.meta.env.VITE_TCE_URL ?? '')
+    .replace('{origin}', page.proposals.manual_insert_search_items.tce.origin)
+    .replace('{year}', `${page.proposals.manual_insert_search_items.tce.year}-01-01_${page.proposals.manual_insert_search_items.tce.year}-12-31`);
+
+    http.get(url, emit, (resp) => {
+        page.proposals.manual_insert_find_items.tce = resp.data
+        console.log(resp.data)
+    })
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -808,7 +825,8 @@ onBeforeMount(() => {
                         <div class="row g-3">
                             <div class="col-sm-12 col-md-7">
                                 <label for="city_tce_origem" class="form-label">Origem</label>
-                                <select name="city_tce_origem" class="form-control" id="city_tce_origem">
+                                <select name="city_tce_origem" class="form-control" id="city_tce_origem" 
+                                v-model="page.proposals.manual_insert_search_items.tce.origin">
                                     <option v-for="c in citys_tce" :key="c.codigo_municipio" :value="c.codigo_municipio">
                                         {{ c.nome_municipio }}
                                     </option>
@@ -816,17 +834,18 @@ onBeforeMount(() => {
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="ano_tce_licitacao" class="form-label">Ano Base</label>
-                                <select name="ano_tce_licitacao" class="form-control" id="ano_tce_licitacao">
+                                <select name="ano_tce_licitacao" class="form-control" id="ano_tce_licitacao" 
+                                v-model="page.proposals.manual_insert_search_items.tce.year">
                                     <option v-for="d in dates.listYears()" :key="d" :value="d">{{ d }}</option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-1 align-items-bottom">
                                 <label class="form-label d-none d-md-block">&nbsp;</label>
-                                <button type="button" class="w-100 text-center btn btn-inline btn-action-primary">
+                                <button type="button" class="w-100 text-center btn btn-inline btn-action-primary" 
+                                @click="prices_tce">
                                 <ion-icon name="search-outline" class="mx-auto fs-5"></ion-icon>
                             </button>
                             </div>
-                            <!-- https://api-dados-abertos.tce.ce.gov.br/itens_licitacoes?codigo_municipio=033&data_realizacao_licitacao=2023-01-01_2023-12-31 -->
                         </div>
                      </div>
 
