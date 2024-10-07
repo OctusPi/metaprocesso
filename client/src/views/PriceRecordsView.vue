@@ -76,11 +76,11 @@ const [page, pageData] = Layout.new(emit, {
             'pncp': { nav: 'PNCP', title: 'PNCP', subtitle: 'Consulta Plano Nacional de Contrações Públicas' },
             'ecomerce': { nav: 'Ecomerce', title: 'Ecomerce', subtitle: 'Consultar através sites de varejo' }
         },
-        manual_insert_search_items:{
-            tce:{}
+        manual_insert_search_items: {
+            tce: {}
         },
-        manual_insert_find_items:{
-            tce:[]
+        manual_insert_find_items: {
+            tce: []
         },
         types: {
             'emails': { nav: 'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
@@ -250,12 +250,14 @@ function save_manual_collect() {
     console.log('save manual')
 }
 
-function prices_tce(){
-    const url = (import.meta.env.VITE_TCE_URL ?? '')
-    .replace('{origin}', page.proposals.manual_insert_search_items.tce.origin)
-    .replace('{year}', `${page.proposals.manual_insert_search_items.tce.year}-01-01_${page.proposals.manual_insert_search_items.tce.year}-12-31`);
+function prices_tce() {
 
-    http.get(url, emit, (resp) => {
+    const params = {
+        origin: page.proposals.manual_insert_search_items.tce.origin,
+        year: page.proposals.manual_insert_search_items.tce.year,
+        item: page.proposals.manual_insert_item
+    }
+    http.post(`${page.url}/prices_tce`, params, emit, (resp) => {
         page.proposals.manual_insert_find_items.tce = resp.data
         console.log(resp.data)
     })
@@ -630,7 +632,7 @@ onBeforeMount(() => {
                                                     name="type-collect" :value="i" v-model="page.proposals.selected">
                                                 <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
                                                     c.nav
-                                                    }}</label>
+                                                }}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -703,7 +705,7 @@ onBeforeMount(() => {
                                                                         data-bs-target="#modalProposalManualConsult"
                                                                         data-bs-toggle="modal"
                                                                         class="btn btn-inline btn-action-quaternary">
-                                                                        <ion-icon name="search-outline"></ion-icon>
+                                                                        <ion-icon name="search-outline" class="ms-auto"></ion-icon>
                                                                     </button>
                                                                 </td>
                                                             </tr>
@@ -789,14 +791,14 @@ onBeforeMount(() => {
             <div class="modal-content p-4 content">
                 <div v-if="page.proposals.manual_insert_item" class="modal-body p-0 my-1">
                     <div role="heading" class="inside-title w-100 mb-3">
-                        
+
                         <div class="d-flex align-items-center justify-content-center">
                             <div v-for="(c, i) in page.proposals.manual_insert_types_resource" :key="i" class="ms-2">
                                 <input class="btn-check" :id="`type-collect-${i}`" type="radio" name="type-collect"
                                     :value="i" v-model="page.proposals.manual_insert_types_resource_selected">
                                 <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
                                     c.nav
-                                    }}</label>
+                                }}</label>
                             </div>
                         </div>
                         <div class="d-flex gap-2 flex-wrap">
@@ -815,45 +817,84 @@ onBeforeMount(() => {
                                 {{ page.proposals.manual_insert_item?.item.und }} :
                                 {{ page.proposals.manual_insert_item?.item.volume }}
                             </h3>
-                            <p class="small p-0 m-0 text-justify">{{ page.proposals.manual_insert_item?.item.description }}</p>
+                            <p class="small p-0 m-0 text-justify">{{ page.proposals.manual_insert_item?.item.description
+                                }}</p>
                         </div>
-                        
                     </div>
 
                     <!-- TCE -->
-                     <div v-if="page.proposals.manual_insert_types_resource_selected === 'tce'">
-                        <div class="row g-3">
+                    <div v-if="page.proposals.manual_insert_types_resource_selected === 'tce'">
+                        <div class="row g-3 mb-4">
                             <div class="col-sm-12 col-md-7">
                                 <label for="city_tce_origem" class="form-label">Origem</label>
-                                <select name="city_tce_origem" class="form-control" id="city_tce_origem" 
-                                v-model="page.proposals.manual_insert_search_items.tce.origin">
-                                    <option v-for="c in citys_tce" :key="c.codigo_municipio" :value="c.codigo_municipio">
+                                <select name="city_tce_origem" class="form-control" id="city_tce_origem"
+                                    v-model="page.proposals.manual_insert_search_items.tce.origin">
+                                    <option v-for="c in citys_tce" :key="c.codigo_municipio"
+                                        :value="c.codigo_municipio">
                                         {{ c.nome_municipio }}
                                     </option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-4">
                                 <label for="ano_tce_licitacao" class="form-label">Ano Base</label>
-                                <select name="ano_tce_licitacao" class="form-control" id="ano_tce_licitacao" 
-                                v-model="page.proposals.manual_insert_search_items.tce.year">
+                                <select name="ano_tce_licitacao" class="form-control" id="ano_tce_licitacao"
+                                    v-model="page.proposals.manual_insert_search_items.tce.year">
                                     <option v-for="d in dates.listYears()" :key="d" :value="d">{{ d }}</option>
                                 </select>
                             </div>
                             <div class="col-sm-12 col-md-1 align-items-bottom">
                                 <label class="form-label d-none d-md-block">&nbsp;</label>
-                                <button type="button" class="w-100 text-center btn btn-inline btn-action-primary" 
-                                @click="prices_tce">
-                                <ion-icon name="search-outline" class="mx-auto fs-5"></ion-icon>
-                            </button>
+                                <button type="button" class="w-100 text-center btn btn-inline btn-action-primary"
+                                    @click="prices_tce">
+                                    <ion-icon name="search-outline" class="mx-auto fs-5"></ion-icon>
+                                </button>
                             </div>
                         </div>
-                     </div>
+                        <div v-if="page.proposals.manual_insert_find_items.tce.length"
+                            class="tablelist-modal table-responsive-sm">
+                            <table class="m-0 table-borderless table-striped table-hover table">
+                                <thead>
+                                    <tr>
+                                        <th>ORIGEM</th>
+                                        <th>ITEM</th>
+                                        <th>UNIT.</th>
+                                        <th>VALOR UNIT.</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(i, k) in page.proposals.manual_insert_find_items.tce" :key="k">
+                                        <td class="align-middle">
+                                            <div class="small txt-color-sec">TCE</div>
+                                            <div class="small">{{ i.numero_licitacao }}</div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="small">{{ i.descricao_item_licitacao }}</div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="small">{{ i.descricao_unidade_item_licitacao }}</div>
+                                        </td>
 
-                     <!-- PNCP -->
-                     <div v-if="page.proposals.manual_insert_types_resource_selected === 'pncp'">PNCP</div>
+                                        <td class="align-middle">
+                                            <div class="small">{{ utils.floatToCurrency(i.valor_unitario_item_licitacao) }}</div>
+                                        </td>
 
-                     <!-- Ecomerce -->
-                     <div v-if="page.proposals.manual_insert_types_resource_selected === 'ecomerce'">Ecomerce</div>
+                                        <td class="align-middle text-end">
+                                            <button type="button" class="btn btn-inline btn-action-quaternary">
+                                                <ion-icon name="checkmark-circle-outline" class="ms-auto"></ion-icon>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- PNCP -->
+                    <div v-if="page.proposals.manual_insert_types_resource_selected === 'pncp'">PNCP</div>
+
+                    <!-- Ecomerce -->
+                    <div v-if="page.proposals.manual_insert_types_resource_selected === 'ecomerce'">Ecomerce</div>
                 </div>
             </div>
         </div>
