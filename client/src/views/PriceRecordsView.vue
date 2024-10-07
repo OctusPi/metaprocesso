@@ -20,6 +20,7 @@ import Tabs from '@/utils/tabs';
 import notifys from '@/utils/notifys';
 import dates from '@/utils/dates'
 import utils from '@/utils/utils';
+import citys_tce from '@/data/citys_tce'
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -767,30 +768,7 @@ onBeforeMount(() => {
             <div class="modal-content p-4 content">
                 <div v-if="page.proposals.manual_insert_item" class="modal-body p-0 my-1">
                     <div role="heading" class="inside-title w-100 mb-3">
-                        <div>
-                            <h2>Consulta de Preços</h2>
-                            <p>
-                                Contular preços através do TCE, PNCP e Ecomerce Digital
-                            </p>
-                        </div>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-action-close">
-                                <ion-icon name="close" class="fs-5"></ion-icon>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="dashed-separator mt-2 mb-3"></div>
-                    <div class="mb-4 d-flex align-items-center justify-content-between">
-                        <div>
-                            <h3 class="small txt-blue p-0 m-0">
-                                {{ page.proposals.manual_insert_item?.item.code }} :
-                                {{ page.proposals.manual_insert_item?.item.type == 1 ? 'Material' : 'Serviço' }} :
-                                {{ page.proposals.manual_insert_item?.item.name }} :
-                                {{ page.proposals.manual_insert_item?.item.und }} :
-                                {{ page.proposals.manual_insert_item?.item.volume }}
-                            </h3>
-                            <p class="small p-0 m-0">{{ page.proposals.manual_insert_item?.item.description }}</p>
-                        </div>
+                        
                         <div class="d-flex align-items-center justify-content-center">
                             <div v-for="(c, i) in page.proposals.manual_insert_types_resource" :key="i" class="ms-2">
                                 <input class="btn-check" :id="`type-collect-${i}`" type="radio" name="type-collect"
@@ -800,24 +778,50 @@ onBeforeMount(() => {
                                     }}</label>
                             </div>
                         </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-action-close">
+                                <ion-icon name="close" class="fs-5"></ion-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="dashed-separator mt-2 mb-3"></div>
+                    <div class="mb-4">
+                        <div class="me-2">
+                            <h3 class="small txt-blue p-0 m-0">
+                                {{ page.proposals.manual_insert_item?.item.code }} :
+                                {{ page.proposals.manual_insert_item?.item.type == 1 ? 'Material' : 'Serviço' }} :
+                                {{ page.proposals.manual_insert_item?.item.name }} :
+                                {{ page.proposals.manual_insert_item?.item.und }} :
+                                {{ page.proposals.manual_insert_item?.item.volume }}
+                            </h3>
+                            <p class="small p-0 m-0 text-justify">{{ page.proposals.manual_insert_item?.item.description }}</p>
+                        </div>
+                        
                     </div>
 
                     <!-- TCE -->
                      <div v-if="page.proposals.manual_insert_types_resource_selected === 'tce'">
-                        <div class="row g-3">
-                            <div class="col-sm-12 col-md-8">
-                                <label for="ano_tce_origem" class="form-label">Origem</label>
-                                <select name="ano_tce_origem" class="form-control" id="ano_tce_origem">
-                                    
+                        <div class="row g-3 align-items-center">
+                            <div class="col-auto">
+                                <label for="city_tce_origem" class="form-label">Origem</label>
+                                <select name="city_tce_origem" class="form-control" id="city_tce_origem">
+                                    <option value=""></option>
+                                    <option v-for="c in citys_tce" :key="c.codigo_municipio" :value="c.codigo_municipio">
+                                        {{ c.nome_municipio }}
+                                    </option>
                                 </select>
                             </div>
-                            <div class="col-sm-12 col-md-4">
+                            <div class="col-auto">
                                 <label for="ano_tce_licitacao" class="form-label">Ano Base</label>
                                 <select name="ano_tce_licitacao" class="form-control" id="ano_tce_licitacao">
-                                    
+                                    <option>da dasd </option>
                                 </select>
                             </div>
-                            
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-action-primary">
+                                <ion-icon name="search-outline" class="fs-5"></ion-icon>
+                            </button>
+                            </div>
                             <!-- https://api-dados-abertos.tce.ce.gov.br/itens_licitacoes?codigo_municipio=033&data_realizacao_licitacao=2023-01-01_2023-12-31 -->
                         </div>
                      </div>
