@@ -644,6 +644,7 @@ onBeforeMount(() => {
                                                                 <th class="text-center">QUANT.</th>
                                                                 <th>VALOR UNIT.</th>
                                                                 <th class="pe-2">TOTAL</th>
+                                                                <th class="pe-2">ORIGEM</th>
                                                                 <th></th>
                                                             </tr>
                                                         </thead>
@@ -676,12 +677,15 @@ onBeforeMount(() => {
                                                                             utils.currencyToFloat(i.value)).toFixed(2)) }}
                                                                     </div>
                                                                 </td>
+                                                                <td class="align-middle text-center">
+                                                                    <div class="small">{{ i.origin }}</div>
+                                                                </td>
                                                                 <td class="align-middle text-end">
                                                                     <button type="button"
                                                                         @click="page.proposals.manual_insert_item = i"
                                                                         data-bs-target="#modalProposalManualConsult"
                                                                         data-bs-toggle="modal"
-                                                                        class="btn btn-action-quaternary">
+                                                                        class="btn btn-inline btn-action-quaternary">
                                                                         <ion-icon name="search-outline"></ion-icon>
                                                                     </button>
                                                                 </td>
@@ -801,25 +805,25 @@ onBeforeMount(() => {
 
                     <!-- TCE -->
                      <div v-if="page.proposals.manual_insert_types_resource_selected === 'tce'">
-                        <div class="row g-3 align-items-center">
-                            <div class="col-auto">
+                        <div class="row g-3">
+                            <div class="col-sm-12 col-md-7">
                                 <label for="city_tce_origem" class="form-label">Origem</label>
                                 <select name="city_tce_origem" class="form-control" id="city_tce_origem">
-                                    <option value=""></option>
                                     <option v-for="c in citys_tce" :key="c.codigo_municipio" :value="c.codigo_municipio">
                                         {{ c.nome_municipio }}
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-auto">
+                            <div class="col-sm-12 col-md-4">
                                 <label for="ano_tce_licitacao" class="form-label">Ano Base</label>
                                 <select name="ano_tce_licitacao" class="form-control" id="ano_tce_licitacao">
-                                    <option>da dasd </option>
+                                    <option v-for="d in dates.listYears()" :key="d" :value="d">{{ d }}</option>
                                 </select>
                             </div>
-                            <div class="col-auto">
-                                <button type="button" class="btn btn-action-primary">
-                                <ion-icon name="search-outline" class="fs-5"></ion-icon>
+                            <div class="col-sm-12 col-md-1 align-items-bottom">
+                                <label class="form-label d-none d-md-block">&nbsp;</label>
+                                <button type="button" class="w-100 text-center btn btn-inline btn-action-primary">
+                                <ion-icon name="search-outline" class="mx-auto fs-5"></ion-icon>
                             </button>
                             </div>
                             <!-- https://api-dados-abertos.tce.ce.gov.br/itens_licitacoes?codigo_municipio=033&data_realizacao_licitacao=2023-01-01_2023-12-31 -->

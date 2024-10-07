@@ -248,6 +248,10 @@
     transition: 0.3s;
 }
 
+.btn-inline{
+    padding: 13px 16px !important;
+}
+
 .btn-action-primary {
     background-color: var(--color-base);
     color: white;
