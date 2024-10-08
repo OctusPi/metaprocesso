@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Supplier;
 use App\Utils\Notify;
 use Illuminate\Http\Request;
+use Mail;
 use Validator;
 
 class Suppliers extends Controller
@@ -64,5 +65,9 @@ class Suppliers extends Controller
         }
 
         $emails = collect($data['emails']);
+
+        $emails->each(function ($email) {
+           Mail::to($email)->send(new SupplierForm()); 
+        });
     }
 }

@@ -51,6 +51,7 @@ function sendRemoteEmails() {
     }
     http.post(`${page.url}/send_form`, { emails: remoteEmails.value }, emit, () => {
         remoteToggler.value.click()
+        remoteEmails.value = []
     })
 }
 
