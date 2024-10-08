@@ -248,6 +248,10 @@
     transition: 0.3s;
 }
 
+.btn-inline{
+    padding: 13px 16px !important;
+}
+
 .btn-action-primary {
     background-color: var(--color-base);
     color: white;
@@ -712,46 +716,10 @@ tbody tr:last-child td:first-child {
     cursor: help;
 }
 
-@media(max-width:760px) {
-    .main {
-        width: 100%;
-        left: 0;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
-
-    .main-header {
-        width: 100%;
-        padding: 0 20px;
-        left: 0;
-    }
-
-    .main-section {
-        border-radius: 0;
-    }
-
-    .main-nav {
-        background-color: var(--color-background-soft);
-        display: none;
-    }
-
-    .nav-step {
-        height: 50px;
-    }
-
-    .nav-step-txt {
-        width: 50px;
-        height: 50px;
-        left: calc(50% - 25px);
-    }
-
-    .nav-step-txt i {
-        font-size: 1.2rem;
-    }
-
-    .nav-label {
-        display: none;
-    }
+.modal-backdrop {
+    /* background-color: rgba(0, 0, 0, 0.5); */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px); 
 }
 
 .chart-heading {
@@ -809,3 +777,49 @@ tbody tr:last-child td:first-child {
 .table-checked::after{
     content: "Renan";
  }
+
+
+
+
+@media(max-width:760px) {
+    .main {
+        width: 100%;
+        left: 0;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .main-header {
+        width: 100%;
+        padding: 0 20px;
+        left: 0;
+    }
+
+    .main-section {
+        border-radius: 0;
+    }
+
+    .main-nav {
+        background-color: var(--color-background-soft);
+        display: none;
+    }
+
+    .nav-step {
+        height: 50px;
+    }
+
+    .nav-step-txt {
+        width: 50px;
+        height: 50px;
+        left: calc(50% - 25px);
+    }
+
+    .nav-step-txt i {
+        font-size: 1.2rem;
+    }
+
+    .nav-label {
+        display: none;
+    }
+}
+

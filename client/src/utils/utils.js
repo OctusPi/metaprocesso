@@ -92,6 +92,11 @@ function currencyToFloat(currency){
     if(!currency){
         return 0
     }
+
+    if(typeof currency === 'number'){
+        return currency
+    }
+
     return parseFloat(currency.replace('.', '').replace(',', '.')).toFixed(2)
 }
 

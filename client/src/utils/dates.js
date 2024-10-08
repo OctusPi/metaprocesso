@@ -130,5 +130,5 @@ export default {
     toPtBr,
     getMonthYear,
     getYear,
-    nowPtbr
+    nowPtbr,
 }

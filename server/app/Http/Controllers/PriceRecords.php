@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\ProposalRequest;
-use App\Models\{ ComissionMember, Dfd, Proposal, Supplier, Unit, User, DfdItem, Process, Comission, PriceRecord };
-use App\Utils\{Utils, Notify};
-use Illuminate\Http\Request;
-use App\Http\Middlewares\Data;
-use App\Http\Controllers\Controller;
-use Mail;
 use Str;
+use Mail;
+use GuzzleHttp\Client;
+use Illuminate\Http\Request;
+use App\Mail\ProposalRequest;
+use App\Http\Middlewares\Data;
+use App\Utils\{Utils, Notify};
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Models\{ComissionMember, Dfd, Proposal, Supplier, Unit, User, DfdItem, Process, Comission, PriceRecord};
 
 /**
  * Controller para gerenciamento de Price Records.
@@ -63,8 +65,8 @@ class PriceRecords extends Controller
     {
         $date_between = [
             'date_ini' => [
-                $request->date_ini ?: (date('Y')-1) . '-01-01',
-                $request->date_fin ?: (date('Y')+1) . '-12-31'
+                $request->date_ini ?: (date('Y') - 1) . '-01-01',
+                $request->date_fin ?: (date('Y') + 1) . '-12-31'
             ]
         ];
 
@@ -132,7 +134,7 @@ class PriceRecords extends Controller
     public function list_grouped_items(Request $request)
     {
         $process = Data::findOne(new Process(), ['id' => $request->process_id]);
-        if(!is_null($process)){
+        if (!is_null($process)) {
             return response()->json((new ProposalsSupplier())->dfdItems($process->dfds), 200);
         }
 
@@ -176,14 +178,15 @@ class PriceRecords extends Controller
         ], Dfd::make_details()), 200);
     }
 
-    public function send_collect(Request $request){
+    public function send_collect(Request $request)
+    {
         $proposal = Data::findOne(new Proposal(), ['id' => $request->id], null, ['process', 'supplier', 'pricerecord']);
 
-        if(is_null($proposal)){
+        if (is_null($proposal)) {
             return response()->json(Notify::warning('Coleta não localizada...'), 404);
         }
 
-        if($proposal->status == Proposal::S_FINISHED){
+        if ($proposal->status == Proposal::S_FINISHED) {
             return response()->json(Notify::warning('Coleta já preenchida pelo fornecedor...'), 400);
         }
 
@@ -192,12 +195,12 @@ class PriceRecords extends Controller
             $proposal->supplier,
             $proposal->token,
             $proposal->protocol,
-            $proposal->date_ini.' '.$proposal->hour_ini,
+            $proposal->date_ini . ' ' . $proposal->hour_ini,
             $proposal->pricerecord->date_fin
         ));
 
         $code = !is_null($send) ? 200 : 500;
-        $msg  = !is_null($send) ? Notify::success("Solicitação de coleta reenviada...") : Notify::error('Falha ao reenviar solicitação...');
+        $msg = !is_null($send) ? Notify::success("Solicitação de coleta reenviada...") : Notify::error('Falha ao reenviar solicitação...');
 
         return response()->json($msg, $code);
     }
@@ -221,10 +224,12 @@ class PriceRecords extends Controller
                     $token = $pricerecord . $supplier->id . Str::random(16);
                     $hour_send = date('H:i:s');
 
-                    if (!Proposal::firstWhere([
-                        ['pricerecord_id', $pricerecord],
-                        ['supplier_id', $supplier->id]
-                    ])) {
+                    if (
+                        !Proposal::firstWhere([
+                            ['pricerecord_id', $pricerecord],
+                            ['supplier_id', $supplier->id]
+                        ])
+                    ) {
                         $proposal = new Proposal([
                             'protocol' => $request->protocol,
                             'ip' => $request->ip(),
@@ -253,6 +258,42 @@ class PriceRecords extends Controller
                     }
                 }
             }
+        }
+    }
+
+    public function prices_tce(Request $request)
+    {
+        $year = "$request->year-01-01_$request->year-12-31";
+        $tce_url = Utils::map_params(config('app.tce_url'), ['origin' => $request->origin, 'year' => $year]);
+
+        try {
+            $client = new Client();
+            $resp = $client->get($tce_url, [
+                'headers' => [
+                    'Access-Control-Allow-Origin' => '*',
+                    'Content-Type' => 'application/json',
+                ]
+            ]);
+
+            $data = json_decode($resp->getBody(), true);
+            $search_item = json_decode($request->item, true);
+
+            $filter_data = array_map(function ($item) use ($search_item) {
+                // Filtrar os itens que atendem à condição
+                return array_values(array_filter($item, function ($v) use ($search_item) {
+                    return strpos(strtolower($v['descricao_item_licitacao']), strtolower($search_item['item']['name'])) !== false;
+                }));
+            }, $data);
+
+            // Remover arrays vazios do resultado final e reindexar o array principal
+            $filter_data = array_values(array_filter($filter_data));
+
+
+            return Response()->json($filter_data[0] ?? [], 200);
+
+        } catch (\Exception $e) {
+            Log::alert('Falha ao receber dados da API: ' . $e->getMessage());
+            return Response()->json(Notify::warning('Falha ao receber dados da API'), 404);
         }
     }
 }

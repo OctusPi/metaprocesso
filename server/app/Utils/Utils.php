@@ -81,4 +81,13 @@ class Utils
 
         return $prefix.'-'.$code.'-'.$sufix;
     }
+
+    public static function map_params(string $data, array $params = []):string
+    {
+        $keys = array_map(function($k){
+            return '{{'.$k.'}}';
+        }, array_keys($params));
+
+        return str_replace($keys, $params, $data); 
+    }
 }

@@ -113,6 +113,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/list_grouped_items/{process_id}', 'list_grouped_items');
         Route::get('/send_collect/{id}', 'send_collect');
         Route::post('/generate', 'generate');
+        Route::post('/prices_tce', 'prices_tce');
     });
 
 

@@ -27,6 +27,7 @@ const menuitens = {
     pricerecords: { href: '/pricerecords', icon: 'pricetags', title: 'Preços', description: 'Mapa de Registro de Preços' },
     riskiness: { href: '/riskiness', icon: 'map', title: 'Mapa de Riscos', description: 'Mapa de Riscos' },
     refterms: { href: '/refterms', icon: 'newspaper', title: 'Termos', description: 'Termos de Referência' },
+    pca: { href: '/pca', icon: 'globe', title: 'PCA', description: 'Plano de Contratação Anual' },
     trasmission: { href: '/trasmission', icon: 'navigate', title: 'Publicar', description: 'Publicação e Transmissão' },
     reports: { href: '/reports', icon: 'stats-chart', title: 'Relatórios', description: 'Relatórios de Acompanhamento e Planejamento' },
 };

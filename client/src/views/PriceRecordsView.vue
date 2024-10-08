@@ -20,6 +20,7 @@ import Tabs from '@/utils/tabs';
 import notifys from '@/utils/notifys';
 import dates from '@/utils/dates'
 import utils from '@/utils/utils';
+import citys_tce from '@/data/citys_tce'
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -73,7 +74,13 @@ const [page, pageData] = Layout.new(emit, {
         manual_insert_types_resource: {
             'tce': { nav: 'TCE', title: 'TCE', subtitle: 'Consulta Processos Tribunal de Contas do Estado do Ceará' },
             'pncp': { nav: 'PNCP', title: 'PNCP', subtitle: 'Consulta Plano Nacional de Contrações Públicas' },
-            'Ecomerce': { nav: 'Ecomerce', title: 'Ecomerce', subtitle: 'Consultar através sites de varejo' }
+            'ecomerce': { nav: 'Ecomerce', title: 'Ecomerce', subtitle: 'Consultar através sites de varejo' }
+        },
+        manual_insert_search_items: {
+            tce: {}
+        },
+        manual_insert_find_items: {
+            tce: []
         },
         types: {
             'emails': { nav: 'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
@@ -241,6 +248,29 @@ function generate(type) {
 
 function save_manual_collect() {
     console.log('save manual')
+}
+
+function prices_tce() {
+
+    const params = {
+        origin: page.proposals.manual_insert_search_items.tce.origin,
+        year: page.proposals.manual_insert_search_items.tce.year,
+        item: page.proposals.manual_insert_item
+    }
+    http.post(`${page.url}/prices_tce`, params, emit, (resp) => {
+        page.proposals.manual_insert_find_items.tce = resp.data
+        console.log(resp.data)
+    })
+}
+
+function open_search_manual_price(i){
+    page.proposals.manual_insert_item = i
+    page.proposals.manual_insert_find_items.tce = []
+
+}
+
+function set_manual_price(price){
+    Object.assign(page.proposals.manual_insert_item, price)
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -643,6 +673,7 @@ onBeforeMount(() => {
                                                                 <th class="text-center">QUANT.</th>
                                                                 <th>VALOR UNIT.</th>
                                                                 <th class="pe-2">TOTAL</th>
+                                                                <th class="pe-2">ORIGEM</th>
                                                                 <th></th>
                                                             </tr>
                                                         </thead>
@@ -667,7 +698,7 @@ onBeforeMount(() => {
                                                                 <td class="align-middle">
                                                                     <div class="small"
                                                                         :class="i.value ? 'text-success' : 'text-danger'">
-                                                                        {{ i.value ?? '0,00' }}</div>
+                                                                        {{ i.value ? utils.floatToCurrency(i.value) : '0,00' }}</div>
                                                                 </td>
                                                                 <td class="align-middle">
                                                                     <div class="small">{{
@@ -675,13 +706,16 @@ onBeforeMount(() => {
                                                                             utils.currencyToFloat(i.value)).toFixed(2)) }}
                                                                     </div>
                                                                 </td>
+                                                                <td class="align-middle text-center">
+                                                                    <div class="small">{{ i.origin }}</div>
+                                                                </td>
                                                                 <td class="align-middle text-end">
                                                                     <button type="button"
-                                                                        @click="page.proposals.manual_insert_item = i"
+                                                                        @click="open_search_manual_price(i)"
                                                                         data-bs-target="#modalProposalManualConsult"
                                                                         data-bs-toggle="modal"
-                                                                        class="btn btn-action-quaternary">
-                                                                        <ion-icon name="search-outline"></ion-icon>
+                                                                        class="btn btn-inline btn-action-quaternary">
+                                                                        <ion-icon name="search-outline" class="ms-auto"></ion-icon>
                                                                     </button>
                                                                 </td>
                                                             </tr>
@@ -716,6 +750,7 @@ onBeforeMount(() => {
                                     </div>
 
                                 </div>
+
                                 <div v-else>
                                     <h2
                                         class="txt-color text-center m-0 d-flex justify-content-center align-items-center gap-1">
@@ -766,11 +801,15 @@ onBeforeMount(() => {
             <div class="modal-content p-4 content">
                 <div v-if="page.proposals.manual_insert_item" class="modal-body p-0 my-1">
                     <div role="heading" class="inside-title w-100 mb-3">
-                        <div>
-                            <h2>Consulta de Preços</h2>
-                            <p>
-                                Contular preços através do TCE, PNCP e Ecomerce Digital
-                            </p>
+
+                        <div class="d-flex align-items-center justify-content-center">
+                            <div v-for="(c, i) in page.proposals.manual_insert_types_resource" :key="i" class="ms-2">
+                                <input class="btn-check" :id="`type-collect-${i}`" type="radio" name="type-collect"
+                                    :value="i" v-model="page.proposals.manual_insert_types_resource_selected">
+                                <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
+                                    c.nav
+                                }}</label>
+                            </div>
                         </div>
                         <div class="d-flex gap-2 flex-wrap">
                             <button data-bs-dismiss="modal" aria-label="Close" class="btn btn-action-close">
@@ -779,32 +818,94 @@ onBeforeMount(() => {
                         </div>
                     </div>
                     <div class="dashed-separator mt-2 mb-3"></div>
-                    <div class="mb-4 d-flex align-items-center justify-content-between">
-                        <div>
+                    <div class="mb-4">
+                        <div class="me-2">
                             <h3 class="small txt-blue p-0 m-0">
-                            {{ page.proposals.manual_insert_item?.item.code }} :
-                            {{ page.proposals.manual_insert_item?.item.type == 1 ? 'Material' : 'Serviço' }} :
-                            {{ page.proposals.manual_insert_item?.item.name }} :
-                            {{ page.proposals.manual_insert_item?.item.und }} :
-                            {{ page.proposals.manual_insert_item?.item.volume }}
-                        </h3>
-                        <p class="small p-0 m-0">{{ page.proposals.manual_insert_item?.item.description }}</p>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-center">
-                        <div v-for="(c, i) in page.proposals.manual_insert_types_resource" :key="i" class="ms-2">
-                            <input class="btn-check" :id="`type-collect-${i}`" type="radio"
-                                name="type-collect" :value="i" v-model="page.proposals.manual_insert_types_resource_selected">
-                            <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
-                                c.nav
-                            }}</label>
+                                {{ page.proposals.manual_insert_item?.item.code }} :
+                                {{ page.proposals.manual_insert_item?.item.type == 1 ? 'Material' : 'Serviço' }} :
+                                {{ page.proposals.manual_insert_item?.item.name }} :
+                                {{ page.proposals.manual_insert_item?.item.und }} :
+                                {{ page.proposals.manual_insert_item?.item.volume }}
+                            </h3>
+                            <p class="small p-0 m-0 text-justify">{{ page.proposals.manual_insert_item?.item.description
+                                }}</p>
                         </div>
                     </div>
+
+                    <!-- TCE -->
+                    <div v-if="page.proposals.manual_insert_types_resource_selected === 'tce'">
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-12 col-md-7">
+                                <label for="city_tce_origem" class="form-label">Origem</label>
+                                <select name="city_tce_origem" class="form-control" id="city_tce_origem"
+                                    v-model="page.proposals.manual_insert_search_items.tce.origin">
+                                    <option v-for="c in citys_tce" :key="c.codigo_municipio"
+                                        :value="c.codigo_municipio">
+                                        {{ c.nome_municipio }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="ano_tce_licitacao" class="form-label">Ano Base</label>
+                                <select name="ano_tce_licitacao" class="form-control" id="ano_tce_licitacao"
+                                    v-model="page.proposals.manual_insert_search_items.tce.year">
+                                    <option v-for="d in dates.listYears()" :key="d" :value="d">{{ d }}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-1 align-items-bottom">
+                                <label class="form-label d-none d-md-block">&nbsp;</label>
+                                <button type="button" class="w-100 text-center btn btn-inline btn-action-primary"
+                                    @click="prices_tce">
+                                    <ion-icon name="search-outline" class="mx-auto fs-5"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <div v-if="page.proposals.manual_insert_find_items.tce.length"
+                            class="tablelist-modal table-responsive-sm">
+                            <table class="m-0 table-borderless table-striped table-hover table">
+                                <thead>
+                                    <tr>
+                                        <th>ORIGEM</th>
+                                        <th>ITEM</th>
+                                        <th>UNIT.</th>
+                                        <th>VALOR UNIT.</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(i, k) in page.proposals.manual_insert_find_items.tce" :key="k">
+                                        <td class="align-middle">
+                                            <div class="small txt-color-sec">TCE</div>
+                                            <div class="small">{{ i.numero_licitacao }}</div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="small">{{ i.descricao_item_licitacao }}</div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="small">{{ i.descricao_unidade_item_licitacao }}</div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="small">{{ utils.floatToCurrency(i.valor_unitario_item_licitacao) }}</div>
+                                        </td>
+
+                                        <td class="align-middle text-end">
+                                            <button @click="set_manual_price({origin:'TCE', value:i.valor_unitario_item_licitacao, data:i })" type="button" class="btn btn-inline btn-action-quaternary" data-bs-dismiss="modal">
+                                                <ion-icon name="checkmark-circle-outline" class="ms-auto"></ion-icon>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    
-                    
+
+                    <!-- PNCP -->
+                    <div v-if="page.proposals.manual_insert_types_resource_selected === 'pncp'">PNCP</div>
+
+                    <!-- Ecomerce -->
+                    <div v-if="page.proposals.manual_insert_types_resource_selected === 'ecomerce'">Ecomerce</div>
                 </div>
             </div>
         </div>
     </div>
-
 </template>
