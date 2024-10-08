@@ -263,6 +263,16 @@ function prices_tce() {
     })
 }
 
+function open_search_manual_price(i){
+    page.proposals.manual_insert_item = i
+    page.proposals.manual_insert_find_items.tce = []
+
+}
+
+function set_manual_price(price){
+    Object.assign(page.proposals.manual_insert_item, price)
+}
+
 watch(() => props.datalist, (newdata) => {
     page.datalist = newdata
 })
@@ -688,7 +698,7 @@ onBeforeMount(() => {
                                                                 <td class="align-middle">
                                                                     <div class="small"
                                                                         :class="i.value ? 'text-success' : 'text-danger'">
-                                                                        {{ i.value ?? '0,00' }}</div>
+                                                                        {{ i.value ? utils.floatToCurrency(i.value) : '0,00' }}</div>
                                                                 </td>
                                                                 <td class="align-middle">
                                                                     <div class="small">{{
@@ -701,7 +711,7 @@ onBeforeMount(() => {
                                                                 </td>
                                                                 <td class="align-middle text-end">
                                                                     <button type="button"
-                                                                        @click="page.proposals.manual_insert_item = i"
+                                                                        @click="open_search_manual_price(i)"
                                                                         data-bs-target="#modalProposalManualConsult"
                                                                         data-bs-toggle="modal"
                                                                         class="btn btn-inline btn-action-quaternary">
@@ -874,13 +884,12 @@ onBeforeMount(() => {
                                         <td class="align-middle">
                                             <div class="small">{{ i.descricao_unidade_item_licitacao }}</div>
                                         </td>
-
                                         <td class="align-middle">
                                             <div class="small">{{ utils.floatToCurrency(i.valor_unitario_item_licitacao) }}</div>
                                         </td>
 
                                         <td class="align-middle text-end">
-                                            <button type="button" class="btn btn-inline btn-action-quaternary">
+                                            <button @click="set_manual_price({origin:'TCE', value:i.valor_unitario_item_licitacao, data:i })" type="button" class="btn btn-inline btn-action-quaternary" data-bs-dismiss="modal">
                                                 <ion-icon name="checkmark-circle-outline" class="ms-auto"></ion-icon>
                                             </button>
                                         </td>
