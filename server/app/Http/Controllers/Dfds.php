@@ -141,7 +141,7 @@ class Dfds extends Controller
     {
         $selections = [
             'units'         => Utils::map_select(Data::find(new Unit(), [], ['name'])),
-            'comissions'    => Utils::map_select(Data::find(new Comission(), [], ['name'])),
+            'comissions' => Utils::map_select(Data::find(new Comission(), ['status' => Comission::STATUS_ACTIVE], ['name'])),
             'acquisitions'  => Dfd::list_acquisitions(),
             'prioritys'     => Dfd::list_priority(),
             'hirings'       => Dfd::list_hirings(),

@@ -122,7 +122,7 @@ class RiskMaps extends Controller
     {
         return response()->json(array_merge([
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
-            'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
+            'comissions' => Utils::map_select(Data::find(new Comission(), ['status' => Comission::STATUS_ACTIVE], ['name'])),
             'phases' => RiskMap::list_phases(),
             'risk_impacts' => RiskMap::list_impacts(),
             'risk_probabilities' => RiskMap::list_probabilities(),

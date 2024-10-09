@@ -185,7 +185,7 @@ class Processes extends Controller
     public function selects(Request $request)
     {
         return response()->json(array_merge([
-            'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
+            'comissions' => Utils::map_select(Data::find(new Comission(), ['status' => Comission::STATUS_ACTIVE], ['name'])),
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'types' => Process::list_types(),
             'status' => Process::list_status(),
