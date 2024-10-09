@@ -3,7 +3,6 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -15,7 +14,7 @@ class SupplierForm extends BaseMail
   /**
    * Create a new message instance.
    */
-  public function __construct(protected Model $user, protected string $passwd)
+  public function __construct()
   {
     parent::__construct();
   }
@@ -38,7 +37,9 @@ class SupplierForm extends BaseMail
     return new Content(
       markdown: 'mail.supplier_form',
       with: [
-        'url' => $this->makeUrl(['suppliers']),
+        'form_url' => $this->makeUrl(['new-supplier']),
+        'system' => $this->system,
+        'sender' => $this->sender,
       ]
     );
   }

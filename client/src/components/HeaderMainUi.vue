@@ -11,8 +11,6 @@ function open_menu() {
         menu.style.display = 'block'
     }
 }
-
-
 </script>
 
 <template>

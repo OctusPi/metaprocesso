@@ -1,18 +1,15 @@
 <x-mail::message>
 
-Caro Fornecedor,
+Olá,
 
-O sistema {{ $system }} solicita o seu cadastro para uma .
+Solicitamos o seu cadastro para ser forncedor do sistema {{ $system }}.
 
 Esperamos que você aproveite ao máximo todas as funcionalidades e recursos que oferecemos.
 
 Se surgir alguma dúvida ou se precisar de ajuda, não hesite em entrar em contato conosco.
 
-| Usuário: **{{ $username }}**
-| Senha: **{{ $pass }}**
-
-<x-mail::button :url="$system_url">
-    Acessar Sistema
+<x-mail::button :url="$form_url">
+    Acessar Formulário
 </x-mail::button>
 
 Atenciosamente, <br>

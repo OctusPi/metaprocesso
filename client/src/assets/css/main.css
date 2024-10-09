@@ -21,6 +21,12 @@
     background-color: var(--color-background-soft);
 }
 
+.page-colapsed {
+    display: flex;
+    justify-content: center;
+    background-color: var(--color-background);
+}
+
 .wall {
     background-color: var(--color-wall);
     z-index: 3000;
@@ -58,6 +64,12 @@
     min-height: 100vh;
     left: 280px;
     padding: 0 40px;
+}
+
+.page-colapsed .main {
+    width: 100%;
+    max-width: 1180px;
+    position: initial;
 }
 
 .content {
@@ -109,6 +121,11 @@
     border-radius: 30px;
     display: flex;
     flex-direction: column;
+}
+
+.page-colapsed .main-section {
+    margin: 0;
+    justify-content: center;
 }
 
 .main-footer {
@@ -769,17 +786,6 @@ tbody tr:last-child td:first-child {
 .vue-apexcharts {
     max-height: 0 !important;
 }
-
-.table-checked {
-    font-family: bootstrap-icons, 'Courier New', Courier, monospace;
-}
-
-.table-checked::after{
-    content: "Renan";
- }
-
-
-
 
 @media(max-width:760px) {
     .main {

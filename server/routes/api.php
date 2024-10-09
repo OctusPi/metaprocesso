@@ -18,6 +18,7 @@ use App\Http\Controllers\Programs;
 use App\Http\Controllers\Proposals;
 use App\Http\Controllers\ProposalsSupplier;
 use App\Http\Controllers\RefTerms;
+use App\Http\Controllers\ExternalSuppliers;
 use App\Http\Controllers\RiskMaps;
 use App\Http\Controllers\Sectors;
 use App\Http\Controllers\Suppliers;
@@ -158,6 +159,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('/suppliers')->controller(Suppliers::class)->group(function () {
         Route::post('/send_form', 'send_form');
+    });
+
+    Route::prefix('/external-suppliers/{organ_id}')->controller(ExternalSuppliers::class)->group(function () {
+        Route::get('', 'index');
+        Route::get('/selects', 'selects');
+        Route::post('/save', 'save');
     });
 });
 

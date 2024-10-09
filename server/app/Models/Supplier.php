@@ -13,6 +13,9 @@ class Supplier extends Model
 {
     use HasFactory;
 
+    public const FLAG_INTERN = 1;
+    public const FLAG_EXTERN = 2;
+
     protected $table = 'suppliers';
 
     protected $fillable = [
@@ -27,7 +30,8 @@ class Supplier extends Model
         'services',
         'modality',
         'size',
-        'organ_id'
+        'organ_id',
+        'flag',
     ];
 
     protected $casts = [
@@ -67,6 +71,14 @@ class Supplier extends Model
             ['id' => 2, 'title' => 'Microempresa (ME)'],
             ['id' => 3, 'title' => 'Empresa de Pequeno Porte (EPP)'],
             ['id' => 4, 'title' => 'Empresa de Grande Porte (EGP)'],
+        ];
+    }
+
+    public static function list_flags(): array
+    {
+        return [
+            ['id' => self::FLAG_INTERN, 'title' => 'Cadastro Interno'],
+            ['id' => self::FLAG_EXTERN, 'title' => 'Cadasto Externo'],
         ];
     }
 

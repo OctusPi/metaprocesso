@@ -88,7 +88,7 @@ onMounted(() => {
                         <button data-bs-toggle="modal" ref="remoteToggler" :data-bs-target="'#' + remoteModalId"
                             class="btn btn-action-secondary">
                             <ion-icon name="git-compare-outline" class="fs-5"></ion-icon>
-                            Cadastro Remoto
+                            Socilitar Cadastro
                         </button>
                         <button @click="pageData.ui('register')" class="btn btn-action-primary">
                             <ion-icon name="add" class="fs-5"></ion-icon>

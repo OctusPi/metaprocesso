@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SupplierForm;
 use App\Models\User;
 use App\Models\Supplier;
 use App\Utils\Notify;
@@ -36,6 +37,13 @@ class Suppliers extends Controller
         );
     }
 
+    public function save(Request $request)
+    {
+        return $this->base_save($request, [
+            'flag' => Supplier::FLAG_INTERN
+        ]);
+    }
+
     /**
      * Fornece dados de seleção para uso em formulários ou interfaces.
      *
@@ -64,10 +72,8 @@ class Suppliers extends Controller
             return response()->json(Notify::warning('Um ou mais emails inválidos'), 400);
         }
 
-        $emails = collect($data['emails']);
-
-        $emails->each(function ($email) {
-           Mail::to($email)->send(new SupplierForm()); 
-        });
+        foreach($data['emails'] as $recipient) {
+            Mail::to($recipient)->send(new SupplierForm()); 
+        }
     }
 }

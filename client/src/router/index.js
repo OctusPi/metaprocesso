@@ -122,6 +122,12 @@ const router = createRouter({
       component: () => import('../views/SuppliersView.vue')
     },
     {
+      path: '/supplier-request/:organId(\\d+)',
+      name: 'supplier_request',
+      meta: { auth: false },
+      component: () => import('../views/SupplierRequestView.vue')
+    },
+    {
       path: '/processes',
       name: 'processes',
       meta: { auth: true },
