@@ -148,7 +148,7 @@ class Etps extends Controller
 
         return response()->json(array_merge([
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
-            'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
+            'comissions' => Utils::map_select(Data::find(new Comission(), ['status' => Comission::STATUS_ACTIVE], ['name'])),
             'process_status' => Process::list_status(),
             'status' => ETP::list_status(),
             'responsibilities' => ComissionMember::list_responsabilities(),

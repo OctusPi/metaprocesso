@@ -66,7 +66,7 @@ class Catalogs extends Controller
     public function selects(Request $request)
     {
         return response()->json([
-            'comissions' => Utils::map_select(Data::find(new Comission())),
+            'comissions' => Utils::map_select(Data::find(new Comission(), ['status' => Comission::STATUS_ACTIVE], ['name'])),
             'items_status' => CatalogItem::list_status(),
             'items_categories' => CatalogItem::list_categories(),
             'items_origins' => CatalogItem::list_origins(),

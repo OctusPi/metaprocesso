@@ -164,7 +164,7 @@ class PriceRecords extends Controller
     public function selects(Request $request)
     {
         return response()->json(array_merge([
-            'comissions' => Utils::map_select(Data::find(new Comission(), [], ['name'])),
+            'comissions' => Utils::map_select(Data::find(new Comission(), ['status' => Comission::STATUS_ACTIVE], ['name'])),
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'status' => PriceRecord::list_status(),
             'process_modalities' => Process::list_modalitys(),
