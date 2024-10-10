@@ -107,6 +107,26 @@ function floatToCurrency(value){
       }).format(value)
 }
 
+function deepEqual(obj1, obj2) {
+   
+    if (typeof obj1 === 'object' && obj1 !== null && typeof obj2 === 'object' && obj2 !== null) {
+ 
+      if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+        return false;
+      }
+      
+
+      for (let key in obj1) {
+        if (!Object.prototype.hasOwnProperty.call(obj2, key) || !deepEqual(obj1[key], obj2[key])) {
+          return false;
+        }
+      }
+      return true;
+    } else {
+      return obj1 === obj2;
+    }
+  }
+
 export default {
     load,
     dateNow,
@@ -118,5 +138,6 @@ export default {
     dateProtocol,
     reduceArrays,
     currencyToFloat,
-    floatToCurrency
+    floatToCurrency,
+    deepEqual
 }
