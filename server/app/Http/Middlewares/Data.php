@@ -49,7 +49,7 @@ class Data
      * @param array $params Parâmetros para preenchimento do modelo.
      * @return object Resultado da operação, incluindo código de status e mensagem.
      */
-    public static function save(Model $model, array $params)
+    public static function save(Model &$model, array $params)
     {
         $data_model = array_merge(['organ_id' => self::getOrgan()], $params);
 

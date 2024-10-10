@@ -59,13 +59,13 @@ class Data {
 
         if (over)  data = Object.assign(data, over)
 
-        http.post(`${this.page.url}/save`, data, this.emit, () => {
+        http.post(`${this.page.url}/save`, data, this.emit, (resp) => {
             if(onList){
                 this.list();
             }
 
             if(onSave){
-                onSave()
+                onSave(resp)
             }
         })
     }

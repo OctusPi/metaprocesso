@@ -41,6 +41,7 @@ const [page, pageData] = Layout.new(emit, {
 function fetchComission() {
     http.get(`${page.url}/comission`, emit, (res) => {
         page.comission = res.data
+        page.search.comission_id = res.data?.id
     })
 }
 

@@ -73,7 +73,7 @@ Route::middleware('auth:sanctum')->group(function () {
     $common('/demandants', Demandants::class);
     $common('/comissions', Comissions::class);
     $common('/endedcomissions', ComissionsEnds::class);
-    $common('/comissionmembers/{comission}', ComissionMembers::class);
+    $common('/comissionmembers/{comission_id}', ComissionMembers::class);
     $common('/programs', Programs::class);
     $common('/dotations', Dotations::class);
     $common('/catalogs', Catalogs::class);
