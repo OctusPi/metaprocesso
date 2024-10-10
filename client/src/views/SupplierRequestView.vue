@@ -19,17 +19,12 @@ const route = useRoute()
 
 const [page, pageData] = Layout.new(emit, {
     url: `/external-suppliers/${route.params.organId}`,
-    header: [
-        { key: 'name', title: 'FORNECEDOR', sub: [{ key: 'cnpj', title: 'CNPJ: ' }] },
-        { key: 'modality', title: 'DEFINIÇÃO', sub: [{ key: 'size' }] },
-        { key: 'address', title: 'ENDEREÇO' },
-    ],
     search: {
         sent: false
     },
     rules: {
         name: 'required',
-        cnpj: 'required',
+        cnpj: 'required|cnpj',
         address: 'required',
         email: 'required',
         phone: 'required',
@@ -71,7 +66,8 @@ onMounted(() => {
                     </div>
                 </div>
                 <div role="form" class="container p-0">
-                    <form class="form-row" @submit.prevent="() => pageData.save({}, () => page.registered = true)">
+                    <form class="form-row"
+                        @submit.prevent="() => pageData.save({}, () => page.registered = true, false)">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
                             <div class="col-sm-12 col-md-4">
                                 <label for="name" class="form-label">Fornecedor</label>

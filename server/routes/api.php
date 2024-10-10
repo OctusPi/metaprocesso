@@ -46,6 +46,11 @@ Route::prefix('/proposal_supplier')->controller(ProposalsSupplier::class)->group
     Route::get('/check/{token}', 'check');
 });
 
+Route::prefix('/external-suppliers/{organ_id}')->controller(ExternalSuppliers::class)->group(function () {
+    Route::get('', 'index');
+    Route::get('/selects', 'selects');
+    Route::post('/save', 'save');
+});
 
 //authenticaded
 Route::middleware('auth:sanctum')->group(function () {
@@ -159,12 +164,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('/suppliers')->controller(Suppliers::class)->group(function () {
         Route::post('/send_form', 'send_form');
-    });
-
-    Route::prefix('/external-suppliers/{organ_id}')->controller(ExternalSuppliers::class)->group(function () {
-        Route::get('', 'index');
-        Route::get('/selects', 'selects');
-        Route::post('/save', 'save');
     });
 });
 

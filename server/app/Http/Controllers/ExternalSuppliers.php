@@ -10,7 +10,7 @@ class ExternalSuppliers extends Controller
 {
   public function __construct()
   {
-    parent::__construct(Supplier::class);
+    parent::__construct(Supplier::class, secutiry: false);
   }
 
   public function save(Request $request)

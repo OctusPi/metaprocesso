@@ -7,22 +7,22 @@ function checkobj(value) {
 }
 
 function casting(key, value) {
-    if(key !== 'document'){
+    if (key !== 'document') {
         switch (typeof value) {
             case 'object':
                 return value !== null && checkobj(value) ? JSON.stringify(value) : ''
             case 'boolean':
-                return value ? 1 : 0 
+                return value ? 1 : 0
             default:
                 return value !== 'null' ? value : ''
         }
     }
 
     return value
-    
+
 }
 
-function builddata(data){
+function builddata(data) {
     const formData = new FormData()
     Object.entries(data).forEach(([key, value]) => {
         formData.append(key, casting(key, value))
@@ -30,7 +30,7 @@ function builddata(data){
     return formData
 }
 
-function checkrule (rule, value){
+function checkrule(rule, value) {
     let isvalid = true
     let message = ''
 
@@ -41,7 +41,7 @@ function checkrule (rule, value){
 
     switch (rule) {
         case 'required':
-            isvalid = typeof(value) == 'number' ? true : !(!value)
+            isvalid = typeof (value) == 'number' ? true : !(!value)
             message = isvalid ? '' : 'Campo obrigatório não informado!'
             break;
         case 'email':
@@ -60,6 +60,29 @@ function checkrule (rule, value){
             isvalid = regexDate.test(value)
             message = isvalid ? '' : 'O Campor precisa ser uma data válida!'
             break;
+
+        case 'cnpj':
+            const cnpjValid = (cnpj) => {
+                let b = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+                let c = String(cnpj).replace(/[^\d]/g, '')
+    
+                if (c.length !== 14)
+                    return false
+    
+                if (/0{14}/.test(c))
+                    return false
+    
+                for (var i = 0, n = 0; i < 12; n += c[i] * b[++i]);
+                if (c[12] != (((n %= 11) < 2) ? 0 : 11 - n))
+                    return false
+    
+                for (var i = 0, n = 0; i <= 12; n += c[i] * b[i++]);
+                if (c[13] != (((n %= 11) < 2) ? 0 : 11 - n))
+                    return false
+            }
+            isvalid = cnpjValid(value)
+            message = isvalid ? '' : 'Digite um CNPJ válido!'
+            break;
         default:
             break;
     }
@@ -70,8 +93,8 @@ function checkrule (rule, value){
     }
 }
 
-function checkform(data, rules){
-    if(rules){
+function checkform(data, rules) {
+    if (rules) {
 
         const checks = []
         const messages = []
