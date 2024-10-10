@@ -11,7 +11,7 @@ import { useRoute } from 'vue-router';
 
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
-const props = defineProps({
+defineProps({
     datalist: { type: Array, default: () => [] }
 })
 
