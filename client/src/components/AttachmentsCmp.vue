@@ -2,7 +2,6 @@
 import { onMounted, watch } from 'vue'
 import TableList from '@/components/table/TableList.vue';
 import Layout from '@/services/layout';
-import Mounts from '@/services/mounts';
 import Actions from '@/services/actions';
 import FileInput from './inputs/FileInput.vue';
 
@@ -10,9 +9,8 @@ const emit = defineEmits(['callAlert', 'callRemove'])
 
 const props = defineProps({
     origin: { type: String },
-    originName: { type: String, default: 'objeto' },
     protocol: { type: String },
-    types: { type: Object },
+    label: { type: String }
 })
 
 const [page, pageData] = Layout.new(emit, {
@@ -58,7 +56,7 @@ onMounted(() => {
                 <div>
                     <h2>Anexos</h2>
                     <p>
-                        Listagem de arquivos anexados
+                        {{ props.label }}
                     </p>
                 </div>
                 <div class="d-flex gap-2 flex-wrap">
@@ -73,9 +71,7 @@ onMounted(() => {
                     Actions.Edit(pageData.update),
                     Actions.Delete((id) => pageData.remove(id, pageData.list)),
                     Actions.Dowload((id) => pageData.download(id, `Anexo`)),
-                ]" :mounts="{
-                    type: [Mounts.Cast(props.types)],
-                }" />
+                ]" />
             </div>
         </div>
         <div v-if="page.ui.register" class="container-fluid m-0 p-4 content">
@@ -98,16 +94,10 @@ onMounted(() => {
             <div role="form" class="p-0">
                 <form class="form-row" @submit.prevent="pageData.save">
                     <div class="row g-3">
-                        <input type="hidden" name="id" v-model="page.id">
                         <div class="col-sm-12 col-md-4">
                             <label for="type" class="form-label">Tipo</label>
-                            <select name="type" class="form-control" :class="{ 'form-control-alert': page.valids.type }"
-                                id="type" v-model="page.data.type">
-                                <option value=""></option>
-                                <option v-for="s in props.types" :value="s.id" :key="s.id">
-                                    {{ s.title }}
-                                </option>
-                            </select>
+                            <input class="form-control" placeholder="Tipo de Anexo" type="text" id="type"
+                                v-model="page.data.type">
                         </div>
                         <div class="col-sm-12 col-md-8">
                             <FileInput label="Arquivo" identify="attachments-upload" v-model="page.data.document"
@@ -118,7 +108,7 @@ onMounted(() => {
             </div>
         </div>
     </div>
-    <div v-else>
+    <div v-else class="content p-4 py-3">
         <h2 class="txt-color text-center m-0 d-flex justify-content-center align-items-center gap-1">
             <ion-icon name="warning" class="fs-5" />
             Atenção

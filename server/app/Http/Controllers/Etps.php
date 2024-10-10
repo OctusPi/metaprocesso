@@ -44,8 +44,8 @@ class Etps extends Controller
     {
         $date_between = [
             'emission' => [
-                $request->date_ini ?: (date('Y')-1) . '-01-01',
-                $request->date_fin ?: (date('Y')+1) . '-12-31',
+                $request->date_ini ?: (date('Y') - 1) . '-01-01',
+                $request->date_fin ?: (date('Y') + 1) . '-12-31',
             ]
         ];
 
@@ -152,6 +152,9 @@ class Etps extends Controller
             'process_status' => Process::list_status(),
             'status' => ETP::list_status(),
             'responsibilities' => ComissionMember::list_responsabilities(),
+            'vars' => [
+                'ORIGIN_ETP' => User::MOD_ETPS['id']
+            ]
         ], Dfd::make_details()), 200);
     }
 }

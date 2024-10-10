@@ -764,7 +764,8 @@ onMounted(() => {
                                         <div class="col-12 col-md-6">
                                             <input class="btn-check" id="viability-1" type="radio" name="viability"
                                                 value="1" v-model="page.data.viability_declaration">
-                                            <label class="btn btn-action-primary-tls w-100" for="viability-1">Esta equipe de
+                                            <label class="btn btn-action-primary-tls w-100" for="viability-1">Esta
+                                                equipe de
                                                 planejamento
                                                 declara viável esta contratação com base neste ETP, consoante o inciso
                                                 XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</label>
@@ -772,7 +773,8 @@ onMounted(() => {
                                         <div class="col-12 col-md-6">
                                             <input class="btn-check" id="viability-2" type="radio" name="viability"
                                                 value="0" v-model="page.data.viability_declaration">
-                                            <label class="btn btn-action-danger-tls w-100" for="viability-2">Esta equipe de
+                                            <label class="btn btn-action-danger-tls w-100" for="viability-2">Esta equipe
+                                                de
                                                 planejamento
                                                 declara inviável esta contratação com base neste ETP, consoante o inciso
                                                 XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.</label>
@@ -782,9 +784,10 @@ onMounted(() => {
                             </div>
 
                             <div id="anexos" class="tab-pane">
-                                <AttachmentsCmp origin-name="ETP" @callAlert="(data) => emit('callAlert', data)"
-                                    @callRemove="(data) => emit('callRemove', data)" :origin="ORIGIN_ETPS"
-                                    :protocol="page.data.protocol" :types="attachmentTypes" />
+                                <AttachmentsCmp label="Listagem de arquivos anexados ao ETP"
+                                    @callAlert="(data) => emit('callAlert', data)"
+                                    @callRemove="(data) => emit('callRemove', data)"
+                                    :origin="page.selects.vars?.ORIGIN_ETP" :protocol="page.data.protocol" />
                             </div>
                         </div>
 
