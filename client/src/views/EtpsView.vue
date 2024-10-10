@@ -29,6 +29,7 @@ import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 
 // Local Components
 import EtpReport from './reports/EtpReport.vue';
+import PDFMerger from 'pdf-merger-js';
 
 
 const ORIGIN_ETPS = "1";
