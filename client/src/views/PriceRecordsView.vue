@@ -22,7 +22,7 @@ import dates from '@/utils/dates'
 import utils from '@/utils/utils';
 import citys_tce from '@/data/citys_tce'
 
-const emit = defineEmits(['callAlert', 'callUpdate'])
+const emit = defineEmits(['callAlert', 'callUpdate', 'callRemove'])
 
 const props = defineProps({
     datalist: { type: Array, default: () => [] }
@@ -259,7 +259,6 @@ function prices_tce() {
     }
     http.post(`${page.url}/prices_tce`, params, emit, (resp) => {
         page.proposals.manual_insert_find_items.tce = resp.data
-        console.log(resp.data)
     })
 }
 
