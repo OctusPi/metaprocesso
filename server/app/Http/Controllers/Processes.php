@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use App\Http\Middlewares\Data;
 use App\Models\ComissionMember;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class Processes extends Controller
 {
@@ -193,7 +192,7 @@ class Processes extends Controller
             'acquisitions' => Process::list_acquisitions(),
             'installment_types' => Process::list_installments_types(),
             'vars' => [
-                'INSTALLMENT_NONE' => Process::INSTALLMENT_ITEM
+                'INSTALLMENT_ITEM' => Process::INSTALLMENT_ITEM
             ]
         ], Dfd::make_details()), 200);
     }

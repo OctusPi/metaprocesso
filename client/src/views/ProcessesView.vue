@@ -49,6 +49,7 @@ const [page, pageData] = Layout.new(emit, {
         acquisition: 'required',
         acquisition_type: 'required',
         installment_type: 'required',
+        installment_justification: 'required',
     },
     dfds: {
         search: {},
@@ -148,6 +149,22 @@ function generate(key) {
     gpt.generate(`${page.url}/generate`, payload, emit, (resp) => {
         page.data.description = resp.data?.choices[0]?.message?.content
     })
+}
+
+const InstallmentItemText = `Nos termos do art. 47, inciso II, da Lei Federal nº 14.133/2021, as licitações atenderão ao princípio do parcelamento, quando tecnicamente viável e economicamente vantajoso. Na aplicação deste princípio, o § 1º do mesmo art. 47 estabelece que devam ser considerados a responsabilidade técnica, o custo para a Administração de vários contratos frente às vantagens da redução de custos, com divisão do objeto em itens, e o dever de buscar a ampliação da competição e de evitar a concentração de mercado. Nesse caso, sugerimos a licitação por itens, onde o objeto é dividido em partes específicas, cada qual representando um bem de forma autônoma, visando um aumento da competitividade do certame, pois possibilita a participação de vários fornecedores, assim como pela particularidade dos objetos, uma vez que nem toda concessionária e/ou montadora, produzem ambulância.`
+
+const InstallmentLotText = `Nos termos do art. 47, inciso II, da Lei Federal nº 14.133/2021, as licitações atenderão ao princípio do parcelamento, quando tecnicamente viável e economicamente vantajoso. Na aplicação deste princípio, o § 1º do mesmo art. 47 estabelece que devam ser considerados a responsabilidade técnica, o custo para a Administração de vários contratos frente às vantagens da redução de custos, com divisão do objeto em itens, e o dever de buscar a ampliação da competição e de evitar a concentração de mercado. No caso em questão, o objeto da contratação trata de itens que tem semelhanças entre si e são passivos de agrupamentos, portanto, optou-se pela realização de licitação por lotes ou grupos. 
+A divisão em lotes segmentados por características semelhantes e comuns ao mercado serve como estratégia competitiva na concorrência de preços, uma vez que permite aos fornecedores especializados em uma linha de produtos, oferecerem maiores descontos na composição do preço de um lote, o que mostra viabilidade econômica, aproveitando particularidades do mercado, como estabelece o Artigo 40 da Lei Federal nº 14.133/2021, em seu Parágrafo 2º.
+Justifica-se também a contratação por lote, haja vista economicidade, já que a(s) empresa(s) contratada(s) deverá(ão) fazer entregas a cada demanda, o que ocasionalmente oneraria o contrato caso o julgamento fosse realizado por item. Considerando a compatibilidade entre os itens por fazerem parte de uma mesma classificação ou categoria e a maior facilidade para a fiscalização e acompanhamento do contrato, esse meio foi visto como o mais vantajoso para o poder público, por apresentar vantagem econômica, técnica e de segurança. Justifica-se também a necessidade de preservar a integridade qualitativa do objeto, uma vez que a contratação visa formar um todo unitário. Diante disso, a contratação de múltiplos fornecedores pode resultar na descontinuidade da padronização, assim como em desafios gerenciais e possivelmente aumento dos custos. Além disso, é crucial estabelecer um padrão de qualidade e eficiência que possa ser mantido ao longo das aquisições, o que se torna significativamente mais difícil quando se lida com diversos fornecedores.
+Logo, o não parcelamento do objeto em itens neste caso, se demonstra técnica e economicamente viável e não tem a finalidade de reduzir o caráter competitivo da licitação, visa, tão somente, assegurar a gerência segura da contratação, e principalmente, assegurar, não só a mais ampla competição necessária em um processo licitatório, mas também, atingir a sua finalidade e efetividade, que é a de atender a contento as necessidades da Administração Pública.
+Outrossim, o agrupamento dos itens faz-se necessário haja vista a economia de escala, a eficiência na fiscalização de uma quantidade menor de contratos e os transtornos que poderiam surgir com a existência de muitas empresas para a execução e supervisão do fornecimento a ser prestado. Assim com destaque para os princípios da eficiência e economicidade, é imprescindível a licitação por grupo/lotes.`
+
+
+const setInstallmentJustification = () => {
+    page.data.installment_justification =
+        page.data.installment_type === page.selects.vars?.INSTALLMENT_ITEM
+            ? InstallmentItemText
+            : InstallmentLotText
 }
 
 onMounted(() => {
@@ -382,7 +399,8 @@ onMounted(() => {
                                 <label for="installment_type" class="form-label">Tipo do parcelamento</label>
                                 <select name="installment_type" class="form-control"
                                     :class="{ 'form-control-alert': page.valids.installment_type }"
-                                    id="installment_type" v-model="page.data.installment_type">
+                                    id="installment_type" v-model="page.data.installment_type"
+                                    @change="() => setInstallmentJustification()">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.installment_types" :key="o.id" :value="o.id">
                                         {{ o.title }}
@@ -402,8 +420,7 @@ onMounted(() => {
                                     'form-control-alert': page.valids.description
                                 }" id="description" v-model="page.data.description"></textarea>
                             </div>
-                            <div v-if="page.data.installment_type && page.data.installment_type != page.selects.vars.INSTALLMENT_NONE"
-                                class="col-sm-12 col-md-12">
+                            <div class="col-sm-12 col-md-12">
                                 <label for="installment_justification"
                                     class="form-label d-flex justify-content-between">
                                     Justificação do Parcelamento
