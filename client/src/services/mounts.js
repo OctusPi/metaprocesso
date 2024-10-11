@@ -72,6 +72,7 @@ export default class Mounts {
                 case 'Deserto':
                 case 'Fracassado':
                 case 'Aprovisionado':
+                case 'Em Construção':
                     colorClass = 'tls-yellow'
                     break
                 case 'Enviado':

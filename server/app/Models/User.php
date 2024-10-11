@@ -45,6 +45,7 @@ class User extends Authenticatable
     public const MOD_PROGRAMS = ['id' => 19, 'module' => 'programs', 'title' => 'Gestão de Programas'];
     public const MOD_DOTATIONS = ['id' => 20, 'module' => 'dotations', 'title' => 'Gestão de Dotações'];
     public const MOD_ATTACHMENT = ['id' => 21, 'module' => 'attachment', 'title' => 'Controle de Anexos'];
+    public const MOD_PCA = ['id' => 22, 'module' => 'pca', 'title' => 'Plano de Contratação Anual'];
 
     protected $table = 'users';
 
@@ -150,6 +151,7 @@ class User extends Authenticatable
             self::MOD_RISKINESS,
             self::MOD_PROCESSES,
             self::MOD_TRANSMISSION,
+            self::MOD_PCA,
             self::MOD_REPORTS
         ];
     }
