@@ -21,7 +21,7 @@ const [page, pageData] = Layout.new(emit, {
     datalist: props.datalist,
     header: [
         { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cpf' }] },
-        { obj: 'unit', key: 'name', title: 'VINCULO', sub: [{ obj: 'organ', key: 'name' }] },
+        { key: 'unit.name', title: 'VINCULO', sub: [{ key: 'organ.name' }] },
         { key: 'status', title: 'STATUS', sub: [{ title: 'De ', key: 'start_term' }, { title: 'à ', key: 'end_term', err: 'Agora' }] },
     ],
     rules: {

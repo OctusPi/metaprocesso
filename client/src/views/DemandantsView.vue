@@ -1,14 +1,13 @@
 <script setup>
+import { onMounted, watch } from 'vue';
 import TableList from '@/components/table/TableList.vue';
 import NavMainUi from '@/components/NavMainUi.vue';
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
-import { onMounted } from 'vue';
 import Mounts from '@/services/mounts';
 import masks from '@/utils/masks';
-import { watch } from 'vue';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -21,7 +20,7 @@ const [page, pageData] = Layout.new(emit, {
     datalist: props.datalist,
     header: [
         { key: 'name', title: 'IDENTIFICAÇÃO', sub: [{ key: 'cpf' }] },
-        { key: 'unit.name', title: 'VINCULO' },
+        { key: 'unit.name', title: 'VINCULO', sub: [{ key: 'organ.name' }] },
         { key: 'status', title: 'STATUS', sub: [{ title: 'De ', key: 'start_term' }, { title: 'à ', key: 'end_term', err: 'Agora' }] },
     ],
     rules: {
@@ -71,6 +70,7 @@ onMounted(() => {
                         </button>
                     </div>
                 </div>
+
                 <!-- Search -->
                 <div v-if="page.ui.search" role="search" class="content container p-4 mb-4">
                     <form @submit.prevent="pageData.list" class="row g-3">
@@ -132,7 +132,6 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <form class="form-row" @submit.prevent="pageData.save()">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-
                             <div class="col-sm-12 col-md-8">
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control"
@@ -219,5 +218,3 @@ onMounted(() => {
         </main>
     </div>
 </template>
-
-<style scoped></style>

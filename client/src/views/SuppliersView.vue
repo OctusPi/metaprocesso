@@ -3,16 +3,16 @@ import { onMounted, ref, watch } from 'vue';
 
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
+import Mounts from '@/services/mounts';
+import http from '@/services/http';
 import masks from '@/utils/masks';
+import notifys from '@/utils/notifys';
 
 import NavMainUi from '@/components/NavMainUi.vue';
 import HeaderMainUi from '@/components/HeaderMainUi.vue';
 import FooterMainUi from '@/components/FooterMainUi.vue';
 import TableList from '@/components/table/TableList.vue';
-import Mounts from '@/services/mounts';
 import InputInsertTag from '@/components/inputs/InputInsertTag.vue';
-import http from '@/services/http';
-import notifys from '@/utils/notifys';
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 const props = defineProps({
@@ -85,14 +85,14 @@ onMounted(() => {
                         </p>
                     </div>
                     <div class="d-flex gap-2 flex-wrap">
-                        <button data-bs-toggle="modal" ref="remoteToggler" :data-bs-target="'#' + remoteModalId"
-                            class="btn btn-action-secondary">
-                            <ion-icon name="git-compare-outline" class="fs-5"></ion-icon>
-                            Socilitar Cadastro
-                        </button>
                         <button @click="pageData.ui('register')" class="btn btn-action-primary">
                             <ion-icon name="add" class="fs-5"></ion-icon>
                             Adicionar
+                        </button>
+                        <button data-bs-toggle="modal" ref="remoteToggler" :data-bs-target="'#' + remoteModalId"
+                            class="btn btn-action-secondary">
+                            <ion-icon name="mail-outline" class="fs-5"></ion-icon>
+                            Socilitar Cadastro
                         </button>
                         <button @click="pageData.ui('search')" class="btn btn-action-secondary">
                             <ion-icon name="search" class="fs-5"></ion-icon>
