@@ -49,6 +49,12 @@ function catalog(id) {
     router.replace({ name: 'catalogitems', params: { id } })
 }
 
+function onsave(resp){
+    if(resp.data?.instance_id){
+        catalog(resp.data?.instance_id)
+    }
+}
+
 watch(() => props.datalist, (newdata) => {
     page.datalist = newdata
 })
@@ -146,7 +152,7 @@ onMounted(() => {
                     </div>
                 </div>
                 <div role="form" class="container p-0">
-                    <form class="form-row" @submit.prevent="pageData.save">
+                    <form class="form-row" @submit.prevent="pageData.save(null, onsave)">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
                             <input type="hidden" name="id" v-model="page.id">
                             <div class="col-sm-12 col-md-6">
@@ -176,8 +182,8 @@ onMounted(() => {
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
-                                <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
-                                Registrar
+                                <ion-icon name="arrow-forward" class="fs-5"></ion-icon>
+                                Avançar
                             </button>
                             <button @click="pageData.ui('register')" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>

@@ -316,14 +316,14 @@ onBeforeMount(() => {
                     <form @submit.prevent="pageData.list" class="row g-3">
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_ini" class="form-label">Data Inicial</label>
-                            <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false"
+                            <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false" :auto-position="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
                                 locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_fin" class="form-label">Data Final</label>
-                            <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
+                            <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false" :auto-position="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
                                 locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
@@ -420,6 +420,7 @@ onBeforeMount(() => {
                                                             <VueDatePicker auto-apply
                                                                 v-model="page.process.search.date_i"
                                                                 :enable-time-picker="false" format="dd/MM/yyyy"
+                                                                :auto-position="false"
                                                                 model-type="yyyy-MM-dd"
                                                                 input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                                 calendar-class-name="dp-custom-calendar"
@@ -432,6 +433,7 @@ onBeforeMount(() => {
                                                             <VueDatePicker auto-apply
                                                                 v-model="page.process.search.date_f"
                                                                 :enable-time-picker="false" format="dd/MM/yyyy"
+                                                                :auto-position="false"
                                                                 model-type="yyyy-MM-dd"
                                                                 input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                                 calendar-class-name="dp-custom-calendar"
@@ -518,7 +520,7 @@ onBeforeMount(() => {
                                 </div>
                                 <div class="col-sm-12 col-md-4">
                                     <label for="date_ini" class="form-label">Data Inicio da Coleta</label>
-                                    <VueDatePicker auto-apply v-model="page.data.date_ini"
+                                    <VueDatePicker auto-apply v-model="page.data.date_ini" :auto-position="false"
                                         :input-class-name="page.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                         :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
                                         locale="pt-br" calendar-class-name="dp-custom-calendar"
@@ -527,7 +529,7 @@ onBeforeMount(() => {
                                 </div>
                                 <div class="col-sm-12 col-md-4">
                                     <label for="date_fin" class="form-label">Data Finalização da Coleta</label>
-                                    <VueDatePicker auto-apply v-model="page.data.date_fin"
+                                    <VueDatePicker auto-apply v-model="page.data.date_fin" :auto-position="false"
                                         :input-class-name="page.valids.date_fin ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                         :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
                                         locale="pt-br" calendar-class-name="dp-custom-calendar"

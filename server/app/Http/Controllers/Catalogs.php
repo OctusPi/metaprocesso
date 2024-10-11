@@ -21,6 +21,18 @@ class Catalogs extends Controller
         parent::__construct(Catalog::class, User::MOD_CATALOGS['module']);
     }
 
+    public function save(Request $request)
+    {
+        $save = parent::save($request);
+        
+        if ($save->getStatusCode() == 200) {
+            return response()->json(['instance_id' => $this->model->id], 200);
+        }
+
+        return $save;
+    }
+
+
     /**
      * Lista os catálogos de acordo com os parâmetros de busca.
      *

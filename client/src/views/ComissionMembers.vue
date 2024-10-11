@@ -41,6 +41,7 @@ const [page, pageData] = Layout.new(emit, {
 function fetchComission() {
     http.get(`${page.url}/comission`, emit, (res) => {
         page.comission = res.data
+        page.search.comission_id = res.data?.id
     })
 }
 
@@ -163,6 +164,7 @@ onMounted(() => {
                                 <VueDatePicker auto-apply v-model="page.data.start_term"
                                     :input-class-name="page.valids.start_term ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                     :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                    :auto-position="false"
                                     locale="pt-br" calendar-class-name="dp-custom-calendar"
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
@@ -171,6 +173,7 @@ onMounted(() => {
                                 <VueDatePicker auto-apply v-model="page.data.end_term"
                                     :input-class-name="page.valids.end_term ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                     :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                    :auto-position="false"
                                     locale="pt-br" calendar-class-name="dp-custom-calendar"
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>

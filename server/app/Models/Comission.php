@@ -13,6 +13,7 @@ use App\Models\RiskMap;
 use App\Models\PriceRecord;
 use App\Models\ComissionEnd;
 use App\Models\ComissionMember;
+use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -56,7 +57,9 @@ class Comission extends Model
         return [
             'organ_id' => 'required',
             'unit_id' => 'required',
-            'name' => 'required',
+            'name' => ['required', Rule::unique('comissions', 'name')->where(function($query){
+                return $query->where('organ_id', $this->organ_id);
+            })->ignore($this->id)],
             'type' => 'required',
             'start_term' => 'required',
             'status' => 'required',
@@ -67,6 +70,7 @@ class Comission extends Model
     {
         return [
             'required' => 'Campo obrigatório não informado!',
+            'unique'   => 'Já existe uma comissão com esse nome...'
         ];
     }
 

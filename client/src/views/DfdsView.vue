@@ -258,6 +258,7 @@ onMounted(() => {
                             <label for="date_s_ini" class="form-label">Data Inicial</label>
                             <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
+                                :auto-position="false"
                                 locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
@@ -265,6 +266,7 @@ onMounted(() => {
                             <label for="date_s_fin" class="form-label">Data Final</label>
                             <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
+                                :auto-position="false"
                                 locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
@@ -391,6 +393,7 @@ onMounted(() => {
                                     <VueDatePicker auto-apply v-model="page.data.date_ini"
                                         :input-class-name="page.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                         :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                        :auto-position="false"
                                         locale="pt-br" calendar-class-name="dp-custom-calendar"
                                         calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                                 </div>
@@ -400,6 +403,7 @@ onMounted(() => {
                                     <VueDatePicker auto-apply v-model="page.data.estimated_date"
                                         :input-class-name="page.valids.estimated_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                         :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                        :auto-position="false"
                                         locale="pt-br" calendar-class-name="dp-custom-calendar"
                                         calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                                 </div>

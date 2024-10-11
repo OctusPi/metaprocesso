@@ -50,7 +50,13 @@ class Comissions extends Controller
         }
 
         // Salva os dados da comissão
-        return $this->base_save($request, $upload->mergeUploads([]));
+        $save = $this->base_save($request, $upload->mergeUploads([]));
+
+        if($save->getStatusCode() == 200) {
+            return response()->json(['instance_id' => $this->model->id]);
+        }
+
+        return $save;
     }
 
     /**

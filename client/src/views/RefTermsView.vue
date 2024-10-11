@@ -318,14 +318,14 @@ onMounted(() => {
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_ini" class="form-label">Data Inicial</label>
-                            <VueDatePicker auto-apply v-model="page.search.date_ini" :enable-time-picker="false"
+                            <VueDatePicker auto-apply v-model="page.search.date_ini" :enable-time-picker="false" :auto-position="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
                                 locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_fin" class="form-label">Data Final</label>
-                            <VueDatePicker auto-apply v-model="page.search.date_fin" :enable-time-picker="false"
+                            <VueDatePicker auto-apply v-model="page.search.date_fin" :enable-time-picker="false" :auto-position="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
                                 locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
@@ -411,6 +411,7 @@ onMounted(() => {
                                                             Inicial</label>
                                                         <VueDatePicker auto-apply v-model="page.process.search.date_i"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            :auto-position="false"
                                                             model-type="yyyy-MM-dd"
                                                             input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                             calendar-class-name="dp-custom-calendar"
@@ -422,6 +423,7 @@ onMounted(() => {
                                                             Final</label>
                                                         <VueDatePicker auto-apply v-model="page.process.search.date_f"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
+                                                            :auto-position="false"
                                                             model-type="yyyy-MM-dd"
                                                             input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                             calendar-class-name="dp-custom-calendar"
@@ -498,6 +500,7 @@ onMounted(() => {
                                 <VueDatePicker auto-apply v-model="page.data.emission"
                                     :input-class-name="page.valids.emission ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                     :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                    :auto-position="false"
                                     locale="pt-br" calendar-class-name="dp-custom-calendar"
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
