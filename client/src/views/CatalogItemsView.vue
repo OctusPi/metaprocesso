@@ -59,6 +59,7 @@ function detailsCatalog() {
 
 function selectItem(data) {
     page.data.origin = 1
+    page.data.status = 1
     if (data.category.tipo === 'M') {
         let description = ''
         data.item.buscaItemCaracteristica.forEach(element => {
