@@ -70,6 +70,7 @@ const [page, pageData] = Layout.new(emit, {
         selected: 'emails',
         manual_insert: false,
         manual_insert_item: null,
+        manual_insert_search: false,
         manual_insert_types_resource_selected: 'tce',
         manual_insert_types_resource: {
             'tce': { nav: 'TCE', title: 'TCE', subtitle: 'Consulta Processos Tribunal de Contas do Estado do Ceará' },
@@ -247,7 +248,9 @@ function generate(type) {
 }
 
 function save_manual_collect() {
-    console.log('save manual')
+    http.post(`${page.url}/save`, Object.assign(page.data, {manual_items:page.dfds.group_items}), emit, (resp) => {
+        console.log(resp.data)
+    })
 }
 
 function prices_tce() {
@@ -259,16 +262,18 @@ function prices_tce() {
     }
     http.post(`${page.url}/prices_tce`, params, emit, (resp) => {
         page.proposals.manual_insert_find_items.tce = resp.data
+        page.proposals.manual_insert_search = true
     })
 }
 
-function open_search_manual_price(i){
+function open_search_manual_price(i) {
     page.proposals.manual_insert_item = i
+    page.proposals.manual_insert_search = false
     page.proposals.manual_insert_find_items.tce = []
 
 }
 
-function set_manual_price(price){
+function set_manual_price(price) {
     Object.assign(page.proposals.manual_insert_item, price)
 }
 
@@ -315,17 +320,19 @@ onBeforeMount(() => {
                     <form @submit.prevent="pageData.list" class="row g-3">
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_ini" class="form-label">Data Inicial</label>
-                            <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false" :auto-position="false"
-                                format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
-                                locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false"
+                                :auto-position="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
+                                menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_fin" class="form-label">Data Final</label>
-                            <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false" :auto-position="false"
-                                format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
-                                locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
+                                :auto-position="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
+                                menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="s-protocol" class="form-label">Protocolo</label>
@@ -419,8 +426,7 @@ onBeforeMount(() => {
                                                             <VueDatePicker auto-apply
                                                                 v-model="page.process.search.date_i"
                                                                 :enable-time-picker="false" format="dd/MM/yyyy"
-                                                                :auto-position="false"
-                                                                model-type="yyyy-MM-dd"
+                                                                :auto-position="false" model-type="yyyy-MM-dd"
                                                                 input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                                 calendar-class-name="dp-custom-calendar"
                                                                 calendar-cell-class-name="dp-custom-cell"
@@ -432,8 +438,7 @@ onBeforeMount(() => {
                                                             <VueDatePicker auto-apply
                                                                 v-model="page.process.search.date_f"
                                                                 :enable-time-picker="false" format="dd/MM/yyyy"
-                                                                :auto-position="false"
-                                                                model-type="yyyy-MM-dd"
+                                                                :auto-position="false" model-type="yyyy-MM-dd"
                                                                 input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                                 calendar-class-name="dp-custom-calendar"
                                                                 calendar-cell-class-name="dp-custom-cell"
@@ -699,7 +704,8 @@ onBeforeMount(() => {
                                                                 <td class="align-middle">
                                                                     <div class="small"
                                                                         :class="i.value ? 'text-success' : 'text-danger'">
-                                                                        {{ i.value ? utils.floatToCurrency(i.value) : '0,00' }}</div>
+                                                                        {{ i.value ? utils.floatToCurrency(i.value) :
+                                                                            '0,00' }}</div>
                                                                 </td>
                                                                 <td class="align-middle">
                                                                     <div class="small">{{
@@ -716,7 +722,8 @@ onBeforeMount(() => {
                                                                         data-bs-target="#modalProposalManualConsult"
                                                                         data-bs-toggle="modal"
                                                                         class="btn btn-inline btn-action-quaternary">
-                                                                        <ion-icon name="search-outline" class="ms-auto"></ion-icon>
+                                                                        <ion-icon name="search-outline"
+                                                                            class="ms-auto"></ion-icon>
                                                                     </button>
                                                                 </td>
                                                             </tr>
@@ -728,8 +735,8 @@ onBeforeMount(() => {
                                             <div class="mt-4 d-flex align-items-center justify-content-center">
                                                 <button type="button" class="mx-2 btn btn-action-primary"
                                                     @click="save_manual_collect">
-                                                    <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
-                                                    Registrar Coleta
+                                                    <ion-icon name="document-text-outline" class="fs-5"></ion-icon>
+                                                    Salvar Coleta
                                                 </button>
                                                 <button type="button" @click="page.proposals.manual_insert = false"
                                                     class="mx-2 btn btn-action-tertiary">
@@ -775,7 +782,6 @@ onBeforeMount(() => {
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>
                                 Cancelar
                             </button>
-
                             <button @click="tabs.next()" type="button" class="btn btn-action-secondary me-auto">
                                 <ion-icon name="arrow-forward" class="fs-5"></ion-icon>
                             </button>
@@ -791,11 +797,14 @@ onBeforeMount(() => {
         </main>
     </div>
 
+    <!-- Modal DFDS Details -->
     <ModalDfdDetails :dfd="page.dfds.data" :selects="page.selects" />
 
+    <!-- Modal Proposal Details -->
     <ModalProposalDetailsUi :collect="page.collect" :selects="page.selects"
         @callAlert="(data) => emit('callAlert', data)" />
 
+    <!-- Modal Search Manual Price -->
     <div class="modal fade" id="modalProposalManualConsult" data-bs-backdrop="static" data-bs-keyboard="false"
         tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered mx-auto">
@@ -886,17 +895,25 @@ onBeforeMount(() => {
                                             <div class="small">{{ i.descricao_unidade_item_licitacao }}</div>
                                         </td>
                                         <td class="align-middle">
-                                            <div class="small">{{ utils.floatToCurrency(i.valor_unitario_item_licitacao) }}</div>
+                                            <div class="small">{{ utils.floatToCurrency(i.valor_unitario_item_licitacao)
+                                                }}</div>
                                         </td>
 
                                         <td class="align-middle text-end">
-                                            <button @click="set_manual_price({origin:'TCE', value:i.valor_unitario_item_licitacao, data:i })" type="button" class="btn btn-inline btn-action-quaternary" data-bs-dismiss="modal">
+                                            <button
+                                                @click="set_manual_price({ origin: 'TCE', value: i.valor_unitario_item_licitacao, data: i })"
+                                                type="button" class="btn btn-inline btn-action-quaternary"
+                                                data-bs-dismiss="modal">
                                                 <ion-icon name="checkmark-circle-outline" class="ms-auto"></ion-icon>
                                             </button>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div v-else class="text-center txt-color-sec">
+                            <ion-icon :name="page.proposals.manual_insert_search ? 'ellipsis-horizontal-outline' : 'search-outline'" class="fs-4"></ion-icon>
+                            <p class="p-0 m-0 small">{{ page.proposals.manual_insert_search ? 'Não foram localizados itens.' : 'Aplique o filtro para localizar os itens.' }}</p>
                         </div>
                     </div>
 

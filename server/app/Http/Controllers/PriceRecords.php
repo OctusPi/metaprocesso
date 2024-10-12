@@ -219,6 +219,7 @@ class PriceRecords extends Controller
             $suppliers = json_decode($request->suppliers);
             $process = json_decode($request->process);
 
+            // create proposals by e-mail request
             if (!empty($suppliers)) {
                 foreach ($suppliers as $supplier) {
                     $token = $pricerecord . $supplier->id . Str::random(16);
@@ -258,6 +259,31 @@ class PriceRecords extends Controller
                     }
                 }
             }
+
+            // create proposals by manual serach prices
+            if($request->manual_items){
+                $manual_items = json_decode($request->manual_items, true);
+
+                $proposal_status = array_filter($manual_items, function($obj) {
+                    return isset($obj['value']);
+                });
+
+                Proposal::create([
+                    'protocol' => $request->protocol,
+                    'ip' => $request->ip(),
+                    'author_id' => $request->user()->id,
+                    'token' => null,
+                    'date_ini' => $request->date_ini,
+                    'hour_ini' => null,
+                    'organ_id' => Data::getOrgan(),
+                    'process_id' => $process->id,
+                    'pricerecord_id' => $pricerecord,
+                    'supplier_id' => null,
+                    'items' => $manual_items,
+                    'modality' => Proposal::M_MANUAL,
+                    'status' => count($manual_items) < count($proposal_status) ? Proposal::S_PENDING : Proposal::S_FINISHED,
+                ]);
+            }
         }
     }
 
@@ -271,7 +297,7 @@ class PriceRecords extends Controller
             $resp = $client->get($tce_url, [
                 'headers' => [
                     'Access-Control-Allow-Origin' => '*',
-                    'Content-Type' => 'application/json',
+                    'Content-Type' => 'application/json'
                 ]
             ]);
 

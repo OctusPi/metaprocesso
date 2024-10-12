@@ -24,7 +24,6 @@ class Proposals extends Controller
             ]);
         }
 
-
         return response()->json([
             'emails' => Data::find($this->model, [
                 ['column' => 'pricerecord_id', 'operator' => '=', 'value' => $request->price_record],
