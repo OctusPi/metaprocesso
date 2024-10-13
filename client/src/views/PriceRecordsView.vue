@@ -94,6 +94,13 @@ const [page, pageData] = Layout.new(emit, {
             { title: 'MODALIDADE', key: 'modality' },
             { title: 'SITUAÇÃO', key: 'status' }
         ],
+        manual_headers: [
+            { title: 'DATA', key: 'date_ini', sub: [{ key: 'hour_ini' }] },
+            { title: 'IDENTIFICAÇÃO', key: 'token', sub: [{ key: 'protocol' }] },
+            { title: 'AUTOR', key: 'author.name', sub: [{ key: 'author.email' }] },
+            { title: 'MODALIDADE', key: 'modality' },
+            { title: 'SITUAÇÃO', key: 'status' }
+        ],
         data: {
             'emails': [],
             'manual': []
@@ -249,7 +256,10 @@ function generate(type) {
 
 function save_manual_collect() {
     http.post(`${page.url}/save`, Object.assign(page.data, {manual_items:page.dfds.group_items}), emit, (resp) => {
-        console.log(resp.data)
+        page.proposals.manual_insert = false
+        if(resp.data?.instance_id){
+            view_colects(resp.data?.instance_id)
+        }
     })
 }
 
@@ -746,10 +756,18 @@ onBeforeMount(() => {
                                             </div>
                                         </div>
                                         <div v-else>
-                                            <TableList :header="page.proposals.headers"
-                                                :body="page.proposals.data.manual" />
+                                            <TableList secondary :header="page.proposals.manual_headers" :count="false"
+                                                :body="page.proposals.data.manual" :actions="[
+                                                Actions.Create('eye-outline', 'Visualizar', view_proposal, '#modalProposalDetails'),
+                                                Actions.Create('create-outline', 'Editar', null),
+                                                Actions.Create('trash-outline', 'Remover', null),
+                                            ]"
+                                                :mounts="{
+                                                modality: [Mounts.Cast(page.selects.proposal_modalities)],
+                                                status: [Mounts.Cast(page.selects.proposal_status), Mounts.Status()]
+                                            }" />
 
-                                            <button type="button" class="mx-auto btn btn-action-primary"
+                                            <button type="button" class="mx-auto btn btn-action-primary mt-4"
                                                 @click="list_grouped_items">
                                                 <ion-icon name="add-circle-outline" class="fs-5"></ion-icon>
                                                 Iniciar Coleta Manual

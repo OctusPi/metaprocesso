@@ -32,7 +32,7 @@ class Proposals extends Controller
             'manual' => Data::find($this->model, [
                 ['column' => 'pricerecord_id', 'operator' => '=', 'value' => $request->price_record],
                 ['column' => 'modality', 'operator' => '=', 'value' => Proposal::M_MANUAL]
-            ], ['date_ini'], ['process', 'supplier'])
+            ], ['date_ini'], ['process', 'author'])
         ]);
 
 

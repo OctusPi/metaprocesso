@@ -50,6 +50,7 @@ class PriceRecords extends Controller
 
         if ($save->status() == 200) {
             $this->process_collects($request);
+            return response()->json(array_merge(Notify::success(''), ['instance_id' => $this->model->id]), 200);
         }
 
         return $save;
@@ -178,6 +179,22 @@ class PriceRecords extends Controller
         ], Dfd::make_details()), 200);
     }
 
+    /**
+     * Reenvia uma solicitação de coleta para o fornecedor.
+     *
+     * Esta função busca uma proposta (`Proposal`) no banco de dados com base no ID fornecido no `Request`.
+     * Se a proposta for encontrada e não tiver status finalizado, é enviado um email para o fornecedor
+     * solicitando a coleta de dados, utilizando a classe `ProposalRequest`.
+     * 
+     * @param \Illuminate\Http\Request $request O objeto de requisição contendo os dados, incluindo o ID da proposta.
+     * @return \Illuminate\Http\JsonResponse Retorna uma resposta JSON contendo uma mensagem de notificação e o status HTTP.
+     * 
+     * Status possíveis:
+     * - 404: Proposta não encontrada.
+     * - 400: Proposta já foi finalizada pelo fornecedor.
+     * - 200: Solicitação de coleta reenviada com sucesso.
+     * - 500: Falha ao reenviar a solicitação de coleta.
+     */
     public function send_collect(Request $request)
     {
         $proposal = Data::findOne(new Proposal(), ['id' => $request->id], null, ['process', 'supplier', 'pricerecord']);
@@ -206,87 +223,23 @@ class PriceRecords extends Controller
     }
 
     /**
-     * Processa as propostas associadas ao registro de preço.
+     * Consulta e filtra preços de itens de licitação da API do TCE.
      *
-     * @param Request $request Requisição HTTP.
-     * @return void
+     * Esta função faz uma requisição GET para a URL configurada da API do TCE, utilizando os parâmetros de origem e ano fornecidos.
+     * O resultado é filtrado com base no item fornecido na requisição, comparando a descrição dos itens de licitação.
+     * 
+     * @param \Illuminate\Http\Request $request O objeto de requisição contendo os seguintes dados:
+     * - `year` (string): O ano a ser consultado, usado para definir o intervalo de datas.
+     * - `origin` (string): O parâmetro de origem para a consulta.
+     * - `item` (string): Um JSON que contém os dados do item para filtrar os resultados da API.
+     * 
+     * @return \Illuminate\Http\JsonResponse Retorna uma resposta JSON com os itens filtrados. Se não houver itens correspondentes, retorna um array vazio.
+     * 
+     * Em caso de falha na requisição, retorna:
+     * - 404: Se houver um erro ao consultar a API ou se a consulta falhar.
+     * 
+     * @throws \Exception Lança exceções caso a requisição à API falhe.
      */
-    private function process_collects(Request $request): void
-    {
-        $pricerecord = $request->id ?? $this->model->id;
-
-        if ($pricerecord) {
-            $suppliers = json_decode($request->suppliers);
-            $process = json_decode($request->process);
-
-            // create proposals by e-mail request
-            if (!empty($suppliers)) {
-                foreach ($suppliers as $supplier) {
-                    $token = $pricerecord . $supplier->id . Str::random(16);
-                    $hour_send = date('H:i:s');
-
-                    if (
-                        !Proposal::firstWhere([
-                            ['pricerecord_id', $pricerecord],
-                            ['supplier_id', $supplier->id]
-                        ])
-                    ) {
-                        $proposal = new Proposal([
-                            'protocol' => $request->protocol,
-                            'ip' => $request->ip(),
-                            'author_id' => $request->user()->id,
-                            'token' => $token,
-                            'date_ini' => $request->date_ini,
-                            'hour_ini' => $hour_send,
-                            'organ_id' => Data::getOrgan(),
-                            'process_id' => $process->id,
-                            'pricerecord_id' => $pricerecord,
-                            'supplier_id' => $supplier->id,
-                            'modality' => Proposal::M_MAIL,
-                            'status' => Proposal::S_START
-                        ]);
-
-                        if ($proposal->save()) {
-                            Mail::to($supplier->email)->send(new ProposalRequest(
-                                $process,
-                                $supplier,
-                                $token,
-                                $request->protocol,
-                                $request->date_ini . ' ' . $hour_send,
-                                $request->date_fin
-                            ));
-                        }
-                    }
-                }
-            }
-
-            // create proposals by manual serach prices
-            if($request->manual_items){
-                $manual_items = json_decode($request->manual_items, true);
-
-                $proposal_status = array_filter($manual_items, function($obj) {
-                    return isset($obj['value']);
-                });
-
-                Proposal::create([
-                    'protocol' => $request->protocol,
-                    'ip' => $request->ip(),
-                    'author_id' => $request->user()->id,
-                    'token' => null,
-                    'date_ini' => $request->date_ini,
-                    'hour_ini' => null,
-                    'organ_id' => Data::getOrgan(),
-                    'process_id' => $process->id,
-                    'pricerecord_id' => $pricerecord,
-                    'supplier_id' => null,
-                    'items' => $manual_items,
-                    'modality' => Proposal::M_MANUAL,
-                    'status' => count($manual_items) < count($proposal_status) ? Proposal::S_PENDING : Proposal::S_FINISHED,
-                ]);
-            }
-        }
-    }
-
     public function prices_tce(Request $request)
     {
         $year = "$request->year-01-01_$request->year-12-31";
@@ -314,12 +267,94 @@ class PriceRecords extends Controller
             // Remover arrays vazios do resultado final e reindexar o array principal
             $filter_data = array_values(array_filter($filter_data));
 
-
-            return Response()->json($filter_data[0] ?? [], 200);
+            return response()->json($filter_data[0] ?? [], 200);
 
         } catch (\Exception $e) {
             Log::alert('Falha ao receber dados da API: ' . $e->getMessage());
-            return Response()->json(Notify::warning('Falha ao receber dados da API'), 404);
+            return response()->json(Notify::warning('Falha ao receber dados da API'), 404);
         }
     }
+
+    /**
+     * Processa as propostas associadas ao registro de preço.
+     *
+     * @param Request $request Requisição HTTP.
+     * @return void
+     */
+    private function process_collects(Request $request): void
+    {
+        $pricerecord = $request->id ?? $this->model->id;
+
+        if ($pricerecord) {
+            $suppliers = json_decode($request->suppliers);
+            $process = json_decode($request->process);
+            $hour_send = date('H:i:s');
+
+            // create proposals by e-mail request
+            if (!empty($suppliers)) {
+                foreach ($suppliers as $supplier) {
+                    $token = $pricerecord . $supplier->id . Str::random(16);
+                
+                    if (
+                        !Proposal::firstWhere([
+                            ['pricerecord_id', $pricerecord],
+                            ['supplier_id', $supplier->id]
+                        ])
+                    ) {
+                        $proposal = new Proposal([
+                            'protocol' => $request->protocol,
+                            'ip' => $request->ip(),
+                            'token' => $token,
+                            'date_ini' => $request->date_ini,
+                            'hour_ini' => $hour_send,
+                            'organ_id' => Data::getOrgan(),
+                            'process_id' => $process->id,
+                            'pricerecord_id' => $pricerecord,
+                            'supplier_id' => $supplier->id,
+                            'author_id' => $request->user()->id,
+                            'modality' => Proposal::M_MAIL,
+                            'status' => Proposal::S_START
+                        ]);
+
+                        if ($proposal->save()) {
+                            Mail::to($supplier->email)->send(new ProposalRequest(
+                                $process,
+                                $supplier,
+                                $token,
+                                $request->protocol,
+                                $request->date_ini . ' ' . $hour_send,
+                                $request->date_fin
+                            ));
+                        }
+                    }
+                }
+            }
+
+            // create proposals by manual serach prices
+            if ($request->manual_items) {
+                $manual_items = json_decode($request->manual_items, true);
+
+                $proposal_status = array_filter($manual_items, function ($obj) {
+                    return isset($obj['value']);
+                });
+
+                Proposal::create([
+                    'protocol' => $request->protocol,
+                    'ip' => $request->ip(),
+                    'token' => $pricerecord . '-00'.Proposal::M_MANUAL.'-' . Str::random(16),
+                    'date_ini' => $request->date_ini,
+                    'hour_ini' => $hour_send,
+                    'organ_id' => Data::getOrgan(),
+                    'process_id' => $process->id,
+                    'pricerecord_id' => $pricerecord,
+                    'supplier_id' => null,
+                    'author_id' => $request->user()->id,
+                    'items' => $manual_items,
+                    'modality' => Proposal::M_MANUAL,
+                    'status' => count($manual_items) < count($proposal_status) ? Proposal::S_PENDING : Proposal::S_FINISHED,
+                ]);
+            }
+        }
+    }
+
 }
