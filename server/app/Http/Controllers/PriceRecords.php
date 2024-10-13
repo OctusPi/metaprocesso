@@ -185,10 +185,10 @@ class PriceRecords extends Controller
      * Esta função busca uma proposta (`Proposal`) no banco de dados com base no ID fornecido no `Request`.
      * Se a proposta for encontrada e não tiver status finalizado, é enviado um email para o fornecedor
      * solicitando a coleta de dados, utilizando a classe `ProposalRequest`.
-     * 
+     *
      * @param \Illuminate\Http\Request $request O objeto de requisição contendo os dados, incluindo o ID da proposta.
      * @return \Illuminate\Http\JsonResponse Retorna uma resposta JSON contendo uma mensagem de notificação e o status HTTP.
-     * 
+     *
      * Status possíveis:
      * - 404: Proposta não encontrada.
      * - 400: Proposta já foi finalizada pelo fornecedor.
@@ -227,17 +227,17 @@ class PriceRecords extends Controller
      *
      * Esta função faz uma requisição GET para a URL configurada da API do TCE, utilizando os parâmetros de origem e ano fornecidos.
      * O resultado é filtrado com base no item fornecido na requisição, comparando a descrição dos itens de licitação.
-     * 
+     *
      * @param \Illuminate\Http\Request $request O objeto de requisição contendo os seguintes dados:
      * - `year` (string): O ano a ser consultado, usado para definir o intervalo de datas.
      * - `origin` (string): O parâmetro de origem para a consulta.
      * - `item` (string): Um JSON que contém os dados do item para filtrar os resultados da API.
-     * 
+     *
      * @return \Illuminate\Http\JsonResponse Retorna uma resposta JSON com os itens filtrados. Se não houver itens correspondentes, retorna um array vazio.
-     * 
+     *
      * Em caso de falha na requisição, retorna:
      * - 404: Se houver um erro ao consultar a API ou se a consulta falhar.
-     * 
+     *
      * @throws \Exception Lança exceções caso a requisição à API falhe.
      */
     public function prices_tce(Request $request)
@@ -260,7 +260,7 @@ class PriceRecords extends Controller
             $filter_data = array_map(function ($item) use ($search_item) {
                 // Filtrar os itens que atendem à condição
                 return array_values(array_filter($item, function ($v) use ($search_item) {
-                    return strpos(strtolower($v['descricao_item_licitacao']), strtolower($search_item['item']['name'])) !== false;
+                    return strpos(strtolower($v['descricao_item_licitacao']), strtolower(explode(' ', $search_item['item']['name'])[0])) !== false;
                 }));
             }, $data);
 
@@ -294,7 +294,7 @@ class PriceRecords extends Controller
             if (!empty($suppliers)) {
                 foreach ($suppliers as $supplier) {
                     $token = $pricerecord . $supplier->id . Str::random(16);
-                
+
                     if (
                         !Proposal::firstWhere([
                             ['pricerecord_id', $pricerecord],
@@ -332,6 +332,7 @@ class PriceRecords extends Controller
 
             // create proposals by manual serach prices
             if ($request->manual_items) {
+                Log::info($request->manual_items);
                 $manual_items = json_decode($request->manual_items, true);
 
                 $proposal_status = array_filter($manual_items, function ($obj) {
@@ -351,7 +352,7 @@ class PriceRecords extends Controller
                     'author_id' => $request->user()->id,
                     'items' => $manual_items,
                     'modality' => Proposal::M_MANUAL,
-                    'status' => count($manual_items) < count($proposal_status) ? Proposal::S_PENDING : Proposal::S_FINISHED,
+                    'status' => count($proposal_status) < count($manual_items) ? Proposal::S_PENDING : Proposal::S_FINISHED,
                 ]);
             }
         }
