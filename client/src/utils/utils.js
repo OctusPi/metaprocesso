@@ -102,14 +102,10 @@ function currencyToFloat(currency){
 
 function floatToCurrency(value){
 
-    if(typeof value === 'number'){
-        return Intl.NumberFormat('pt-BR', {
-            style: 'currency',
-            currency: 'BRL'
-          }).format(value)
-    }
-
-    return 'R$ 0,00'
+    return Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(value)
 }
 
 function deepEqual(obj1, obj2) {

@@ -93,7 +93,7 @@ function exportProposal() {
             date_fin: page.proposal?.pricerecord.date_fin,
             description: page.proposal?.process.description
         },
-        items: page.proposal.items ?? page.proposal.dfd_items,
+        items: page.proposal.items && page.proposal.items.length > 0 ? page.proposal.items : page.proposal.dfd_items,
         representation: {
             name: page.data.representation,
             cpf: page.data.cpf
