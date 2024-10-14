@@ -332,28 +332,32 @@ class PriceRecords extends Controller
 
             // create proposals by manual serach prices
             if ($request->manual_items) {
-                Log::info($request->manual_items);
-                $manual_items = json_decode($request->manual_items, true);
 
+                $manual_items = json_decode($request->manual_items, true);
                 $proposal_status = array_filter($manual_items, function ($obj) {
                     return isset($obj['value']);
                 });
 
-                Proposal::create([
-                    'protocol' => $request->protocol,
-                    'ip' => $request->ip(),
-                    'token' => $pricerecord . '-00'.Proposal::M_MANUAL.'-' . Str::random(16),
-                    'date_ini' => $request->date_ini,
-                    'hour_ini' => $hour_send,
-                    'organ_id' => Data::getOrgan(),
-                    'process_id' => $process->id,
-                    'pricerecord_id' => $pricerecord,
-                    'supplier_id' => null,
-                    'author_id' => $request->user()->id,
-                    'items' => $manual_items,
-                    'modality' => Proposal::M_MANUAL,
-                    'status' => count($proposal_status) < count($manual_items) ? Proposal::S_PENDING : Proposal::S_FINISHED,
-                ]);
+                if($request->manual_proposal_id){
+                    $proposal = Proposal::find($request->manual_proposal_id);
+                    $proposal->update(['items' => $manual_items, 'status' => count($proposal_status) < count($manual_items) ? Proposal::S_PENDING : Proposal::S_FINISHED]);
+                }else{
+                    Proposal::create([
+                        'protocol' => $request->protocol,
+                        'ip' => $request->ip(),
+                        'token' => $pricerecord . '-00'.Proposal::M_MANUAL.'-' . Str::random(16),
+                        'date_ini' => $request->date_ini,
+                        'hour_ini' => $hour_send,
+                        'organ_id' => Data::getOrgan(),
+                        'process_id' => $process->id,
+                        'pricerecord_id' => $pricerecord,
+                        'supplier_id' => null,
+                        'author_id' => $request->user()->id,
+                        'items' => $manual_items,
+                        'modality' => Proposal::M_MANUAL,
+                        'status' => count($proposal_status) < count($manual_items) ? Proposal::S_PENDING : Proposal::S_FINISHED,
+                    ]);
+                }
             }
         }
     }
