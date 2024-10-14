@@ -42,6 +42,8 @@ class Etp extends Model
         'contract_previous_actions',
         'ambiental_impacts',
         'viability_declaration',
+        'installment_type',
+        'installment_justification',
     ];
 
     public function rules(): array

@@ -73,6 +73,7 @@ const [page, pageData] = Layout.new(emit, {
         contract_previous_actions: 'required',
         ambiental_impacts: 'required',
         viability_declaration: 'required',
+        installment_type: 'required'
     },
     process: {
         search: {},
@@ -265,11 +266,28 @@ function generate(type) {
             baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
         `);
             break;
+
+        case 'installment_justification':
+            setValuesAndPayload(type, `
+            Crie uma justificativa de parcelamento do tipo ${utils.getTxt(page.selects.installment_types, base.installment_type)}
+            relacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
+            baseado no input prévio da justificastiva  '${base.installment_justification}' em plain text
+        `);
+            break;
         default:
             break;
     }
 
     gpt.generate(`${page.url}/generate`, payload, emit, callresp)
+}
+
+function fetchProcess(e) {
+    http.post(`${page.url}/${page.data.id ?? 0}/fetch_process/${e.target._value?.id}`, {}, emit, (res) => {
+        page.data.installment_type = res.data.installment_type
+        page.data.installment_justification = res.data.installment_justification
+    }, () => {
+        page.data.process = null
+    })
 }
 
 function dfd_details(id) {
@@ -337,16 +355,14 @@ onMounted(() => {
                             <label for="date_s_ini" class="form-label">Data Inicial</label>
                             <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
-                                :auto-position="false"
-                                locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                :auto-position="false" locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_fin" class="form-label">Data Final</label>
                             <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
-                                :auto-position="false"
-                                locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                :auto-position="false" locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-8">
@@ -373,7 +389,7 @@ onMounted(() => {
                 </div>
                 <div role="list" class="container p-0">
                     <TableList :header="page.header" :body="page.datalist" :actions="[
-                        Actions.Edit((id) => { pageData.update(id) }),
+                        Actions.Edit(pageData.update),
                         Actions.Delete(pageData.remove),
                         Actions.Export('document-text-outline', export_etp),
                     ]" :mounts="{
@@ -433,8 +449,7 @@ onMounted(() => {
                                                             <VueDatePicker auto-apply
                                                                 v-model="page.process.search.date_i"
                                                                 :enable-time-picker="false" format="dd/MM/yyyy"
-                                                                :auto-position="false"
-                                                                model-type="yyyy-MM-dd"
+                                                                :auto-position="false" model-type="yyyy-MM-dd"
                                                                 input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                                 calendar-class-name="dp-custom-calendar"
                                                                 calendar-cell-class-name="dp-custom-cell"
@@ -446,8 +461,7 @@ onMounted(() => {
                                                             <VueDatePicker auto-apply
                                                                 v-model="page.process.search.date_f"
                                                                 :enable-time-picker="false" format="dd/MM/yyyy"
-                                                                :auto-position="false"
-                                                                model-type="yyyy-MM-dd"
+                                                                :auto-position="false" model-type="yyyy-MM-dd"
                                                                 input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                                 calendar-class-name="dp-custom-calendar"
                                                                 calendar-cell-class-name="dp-custom-cell"
@@ -485,7 +499,7 @@ onMounted(() => {
                                                 <div class="p-4 pt-0 mx-2">
                                                     <TableListRadio secondary identify="process"
                                                         v-model="page.data.process" :header="page.process.headers"
-                                                        :body="page.process.data" :mounts="{
+                                                        @onChange="fetchProcess" :body="page.process.data" :mounts="{
                                                             status: [Mounts.Cast(page.selects.process_status), Mounts.Status()],
                                                             description: [Mounts.Truncate(100)],
                                                         }" />
@@ -520,17 +534,7 @@ onMounted(() => {
 
                             <div id="info" class="tab-pane">
                                 <div class="content p-4 pt-0 g-3 m-0 row">
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="emission" class="form-label">Emissão</label>
-                                        <VueDatePicker auto-apply v-model="page.data.emission"
-                                            :input-class-name="page.valids.emission ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
-                                            :auto-position="false"
-                                            locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                            calendar-cell-class-name="dp-custom-cell"
-                                            menu-class-name="dp-custom-menu" />
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
+                                    <div class="col-sm-12 col-md-8">
                                         <label for="comission" class="form-label">Comissão</label>
                                         <select name="comission" class="form-control"
                                             :class="{ 'form-control-alert': page.valids.comission_id }" id="comission"
@@ -542,6 +546,16 @@ onMounted(() => {
                                         </select>
                                     </div>
                                     <div class="col-sm-12 col-md-4">
+                                        <label for="emission" class="form-label">Emissão</label>
+                                        <VueDatePicker auto-apply v-model="page.data.emission"
+                                            :input-class-name="page.valids.emission ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
+                                            :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
+                                            :auto-position="false" locale="pt-br"
+                                            calendar-class-name="dp-custom-calendar"
+                                            calendar-cell-class-name="dp-custom-cell"
+                                            menu-class-name="dp-custom-menu" />
+                                    </div>
+                                    <div class="col-sm-12 col-md-8">
                                         <label for="status" class="form-label">Situação Atual</label>
                                         <select name="status" class="form-control"
                                             :class="{ 'form-control-alert': page.valids.status }" id="status"
@@ -551,6 +565,31 @@ onMounted(() => {
                                                 s.title }}
                                             </option>
                                         </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-4">
+                                        <label for="installment_type" class="form-label">Tipo de Parcelamento</label>
+                                        <select name="installment_type" class="form-control"
+                                            :class="{ 'form-control-alert': page.valids.installment_type }"
+                                            id="installment_type" v-model="page.data.installment_type">
+                                            <option value=""></option>
+                                            <option v-for="s in page.selects.installment_types" :value="s.id"
+                                                :key="s.id">{{ s.title }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12">
+                                        <label for="installment_justification"
+                                            class="form-label d-flex justify-content-between">
+                                            Justificativa do parcelamento
+                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="generate('installment_justification')">
+                                                <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>
+                                                Gerar com I.A
+                                            </a>
+                                        </label>
+                                        <InputRichText :valid="page.valids.installment_justification"
+                                            placeholder="Descrição do Objeto" identifier="installment_justification"
+                                            v-model="page.data.installment_justification" />
                                     </div>
                                     <div class="col-12">
                                         <label for="object_description"
@@ -792,7 +831,7 @@ onMounted(() => {
                                 <AttachmentsCmp label="Listagem de arquivos anexados ao ETP"
                                     @callAlert="(data) => emit('callAlert', data)"
                                     @callRemove="(data) => emit('callRemove', data)"
-                                    :origin="page.selects.vars?.ORIGIN_ETP" :protocol="page.data.protocol" />
+                                    :origin="String(page.selects.vars?.ORIGIN_ETP)" :protocol="page.data.protocol" />
                             </div>
                         </div>
 

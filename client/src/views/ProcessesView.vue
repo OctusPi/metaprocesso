@@ -426,7 +426,7 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-12">
                                 <label for="installment_justification"
                                     class="form-label d-flex justify-content-between">
-                                    Justificação do Parcelamento
+                                    Justificativa do Parcelamento
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
                                         @click="generate('installment_justification')">
                                         <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>

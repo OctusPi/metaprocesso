@@ -128,6 +128,29 @@ class Etps extends Controller
         );
     }
 
+
+    /**
+     * Retorna os dados do Processo selecionado.
+     *
+     * @param Request $request Dados da requisição.
+     * @return \Illuminate\Database\Eloquent\Collection|null Resposta JSON com a lista de itens Termos.
+     */
+    public function fetch_process(Request $request)
+    {
+        $process = Data::findOne(new Process(), ['id' => $request->process_id], with: ['etp']);
+
+        if (!$process) {
+            return response()->json(Notify::warning('O processo não existe!'), 404);
+        }
+
+        if ($process->etp && $process->etp->id != $request->id) {
+            return response()->json(Notify::warning('O processo já possui um ETP!'), 401); 
+        }
+
+        return response()->json($process, 200);
+    }
+
+
     /**
      * Fornece seleções de dados para uso em formulários ou interfaces, baseado em parâmetros específicos.
      *
@@ -152,6 +175,7 @@ class Etps extends Controller
             'process_status' => Process::list_status(),
             'status' => ETP::list_status(),
             'responsibilities' => ComissionMember::list_responsabilities(),
+            'installment_types' => Process::list_installments_types(),
             'vars' => [
                 'ORIGIN_ETP' => User::MOD_ETPS['id']
             ]
