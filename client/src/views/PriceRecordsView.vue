@@ -226,56 +226,6 @@ function view_proposal(id) {
     })
 }
 
-function generate(type) {
-
-    if (!page.data?.process && !page.data?.suppliers) {
-        emit('callAlert', notifys.warning('É necessário inicialmente selecionar um processo e adicionar fornecedores...'))
-        return
-    }
-
-    let callresp = null;
-    let payload = null;
-
-    switch (type) {
-        case 'suppliers_justification':
-            callresp = (resp) => {
-                page.data.suppliers_justification = resp.data?.choices[0]?.message?.content
-            }
-            payload = (`
-                Justifique a escolha desses fornecedores ${JSON.stringify(page.data?.suppliers ?? '')} 
-                de acordo com esse objeto: ${page.data?.process?.description}. 
-                Por favor gere a resposta em um único parágarfo, sem quebras de linha.
-            `)
-            break
-        default:
-            break
-    }
-
-    gpt.generate(`${page.url}/generate`, payload, emit, callresp)
-}
-
-function save_manual_collect() {
-    http.post(`${page.url}/save`, Object.assign(page.data, {manual_items:page.dfds.group_items}), emit, (resp) => {
-        page.proposals.manual_insert = false
-        if(resp.data?.instance_id){
-            view_colects(resp.data?.instance_id)
-        }
-    })
-}
-
-function prices_tce() {
-
-    const params = {
-        origin: page.proposals.manual_insert_search_items.tce.origin,
-        year: page.proposals.manual_insert_search_items.tce.year,
-        item: page.proposals.manual_insert_item
-    }
-    http.post(`${page.url}/prices_tce`, params, emit, (resp) => {
-        page.proposals.manual_insert_find_items.tce = resp.data
-        page.proposals.manual_insert_search = true
-    })
-}
-
 function open_search_manual_price(i) {
     page.proposals.manual_insert_item = i
     page.proposals.manual_insert_search = false
@@ -285,6 +235,72 @@ function open_search_manual_price(i) {
 
 function set_manual_price(price) {
     Object.assign(page.proposals.manual_insert_item, price)
+}
+
+function save_manual_collect() {
+    http.post(`${page.url}/save`, Object.assign(page.data, {manual_items:page.dfds.group_items}), emit, (resp) => {
+        page.proposals.manual_insert = false
+        if(resp.data?.instance_id){
+            http.post('proposals/list', { price_record: resp.data?.instance_id }, emit, (resp) => {
+                page.proposals.data = resp.data
+            })
+        }
+    })
+}
+
+function update_manual_collert(id){
+    http.get(`/proposals/details/${id}`, emit, (resp) => {
+        page.dfds.group_items = resp.data?.items
+        page.data.manual_proposal_id = resp.data?.id
+        page.proposals.manual_insert = true
+    })
+}
+
+function remove_manual_collert(id){
+    http.get(`/proposals/fastdestroy/${id}`, emit, () => {
+        page.proposals.data.manual = page.proposals.data.manual.filter(o => o.id !== id)
+    })
+}
+
+function prices_tce() {
+
+const params = {
+    origin: page.proposals.manual_insert_search_items.tce.origin,
+    year: page.proposals.manual_insert_search_items.tce.year,
+    item: page.proposals.manual_insert_item
+}
+http.post(`${page.url}/prices_tce`, params, emit, (resp) => {
+    page.proposals.manual_insert_find_items.tce = resp.data
+    page.proposals.manual_insert_search = true
+})
+}
+
+function generate(type) {
+
+if (!page.data?.process && !page.data?.suppliers) {
+    emit('callAlert', notifys.warning('É necessário inicialmente selecionar um processo e adicionar fornecedores...'))
+    return
+}
+
+let callresp = null;
+let payload = null;
+
+switch (type) {
+    case 'suppliers_justification':
+        callresp = (resp) => {
+            page.data.suppliers_justification = resp.data?.choices[0]?.message?.content
+        }
+        payload = (`
+            Justifique a escolha desses fornecedores ${JSON.stringify(page.data?.suppliers ?? '')} 
+            de acordo com esse objeto: ${page.data?.process?.description}. 
+            Por favor gere a resposta em um único parágarfo, sem quebras de linha.
+        `)
+        break
+    default:
+        break
+}
+
+gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -759,8 +775,8 @@ onBeforeMount(() => {
                                             <TableList secondary :header="page.proposals.manual_headers" :count="false"
                                                 :body="page.proposals.data.manual" :actions="[
                                                 Actions.Create('eye-outline', 'Visualizar', view_proposal, '#modalProposalDetails'),
-                                                Actions.Create('create-outline', 'Editar', null),
-                                                Actions.Create('trash-outline', 'Remover', null),
+                                                Actions.Create('create-outline', 'Editar', update_manual_collert),
+                                                Actions.Create('trash-outline', 'Remover', remove_manual_collert),
                                             ]"
                                                 :mounts="{
                                                 modality: [Mounts.Cast(page.selects.proposal_modalities)],
@@ -774,7 +790,6 @@ onBeforeMount(() => {
                                             </button>
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <div v-else>
@@ -916,7 +931,6 @@ onBeforeMount(() => {
                                             <div class="small">{{ utils.floatToCurrency(i.valor_unitario_item_licitacao)
                                                 }}</div>
                                         </td>
-
                                         <td class="align-middle text-end">
                                             <button
                                                 @click="set_manual_price({ origin: 'TCE', value: i.valor_unitario_item_licitacao, data: i })"

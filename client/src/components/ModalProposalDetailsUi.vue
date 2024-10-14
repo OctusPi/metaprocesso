@@ -141,7 +141,7 @@ watch(() => props.selects, (newval) => {
                     </div>
 
                     <!-- Supplier -->
-                    <div class="box-revisor mb-4 px-0">
+                    <div v-if="page.data.modality === 1" class="box-revisor mb-4 px-0">
                         <div class="box-revisor-title d-flex mb-4">
                             <div class="txt-revisor-title">
                                 <h3>Fornecedor</h3>
@@ -203,7 +203,7 @@ watch(() => props.selects, (newval) => {
                                     </p>
                                     <p class="p-0 m-0 form-text">
                                         <a v-if="page.data?.status == 4" href="#" @click.prevent="pgData.download(page.data?.id)" class="d-flex align-items-center">
-                                            Proposta Assinada
+                                            Exportar Coleta PDF
                                             <ion-icon name="cloud-download-outline" class="fs-6 ms-2"></ion-icon>
                                         </a>
                                     </p>
@@ -226,7 +226,8 @@ watch(() => props.selects, (newval) => {
                                             <th>UNIT.</th>
                                             <th class="text-center">QUANT.</th>
                                             <th>VALOR UNIT.</th>
-                                            <th class="pe-2">TOTAL</th>
+                                            <th>TOTAL</th>
+                                            <th v-if="page.data.modality !== 1">ORIGEM</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -247,11 +248,14 @@ watch(() => props.selects, (newval) => {
                                                 <div class="small">{{ i.quantity }}</div>
                                             </td>
                                             <td class="align-middle">
-                                                <div class="small">{{ i.value }}</div>
+                                                <div class="small">{{ utils.floatToCurrency(i.value) }}</div>
                                             </td>
                                             <td class="align-middle">
                                                 <div class="small">{{ utils.floatToCurrency((i.quantity *
                                                     utils.currencyToFloat(i.value)).toFixed(2)) }}</div>
+                                            </td>
+                                            <td v-if="page.data.modality !== 1">
+                                                <div class="small">{{ i.origin ?? '*****' }}</div>
                                             </td>
                                         </tr>
                                     </tbody>

@@ -98,6 +98,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth_organ', 'auth_organ');
     });
 
+    Route::prefix('/processes')->controller(Processes::class)->group(function () {
+        Route::post('/list_dfds', 'list_dfds');
+        Route::get('/list_dfd_items/{id}', 'list_dfd_items');
+        Route::post('/generate', 'generate');
+    });
+
     Route::prefix('/dfds')->controller(Dfds::class)->group(function () {
         Route::post('/items', 'items');
         Route::post('/generate', 'generate');
@@ -122,11 +128,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/prices_tce', 'prices_tce');
     });
 
-
-    Route::prefix('/processes')->controller(Processes::class)->group(function () {
-        Route::post('/list_dfds', 'list_dfds');
-        Route::get('/list_dfd_items/{id}', 'list_dfd_items');
-        Route::post('/generate', 'generate');
+    Route::prefix('/proposals')->controller(Proposals::class)->group(function () {
+        Route::get('/fastdestroy/{id}', 'fast_delete');
     });
 
     Route::prefix('/riskiness')->controller(Etps::class)->group(function () {
