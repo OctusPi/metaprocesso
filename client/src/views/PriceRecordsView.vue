@@ -113,7 +113,7 @@ const [page, pageData] = Layout.new(emit, {
         { title: 'IDENTIFICAÇÃO', key: 'date_ini', sub: [{ key: 'protocol' }] },
         { title: 'PROCESSO', key: 'process.protocol', sub: [{ key: 'process.description' }] },
         { title: 'FORCECEDORES', key: 'suppliers.name' },
-        { title: 'PRAZO COLETA', key: 'date_fin' },
+        { title: 'TIPO CÁLCULO', key: 'calctype' },
         { title: 'SITUAÇÃO', key: 'status' }
     ],
     rules: {
@@ -121,7 +121,8 @@ const [page, pageData] = Layout.new(emit, {
         protocol: 'required',
         date_ini: 'required',
         date_fin: 'required',
-        comission_id: 'required'
+        comission_id: 'required',
+        calctype: 'required'
     }
 })
 
@@ -402,6 +403,7 @@ onBeforeMount(() => {
                         Actions.Delete(pageData.remove)
                     ]" :mounts="{
                         status: [Mounts.Cast(page.selects.status), Mounts.Status()],
+                        calctype: [Mounts.Cast(page.selects.calctypes)],
                         'process.description': [Mounts.Truncate()]
                     }" />
                 </div>
@@ -572,7 +574,16 @@ onBeforeMount(() => {
                                         locale="pt-br" calendar-class-name="dp-custom-calendar"
                                         calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                                 </div>
-                                <div class="col-sm-12">
+                                <div class="col-sm-12 col-md-4">
+                                    <label for="calctype" class="form-label">Tipo de Cálculo</label>
+                                    <select name="calctype" class="form-control" :class="{'form-control-alert': page.valids.calctype}" id="calctype" v-model="page.data.calctype">
+                                        <option value=""></option>
+                                        <option v-for="s in page.selects.calctypes" :value="s.id" :key="s.id">
+                                            {{ s.title }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-12 col-md-8">
                                     <label for="comission" class="form-label">Comissão</label>
                                     <select name="comission" class="form-control" :class="{
                                         'form-control-alert': page.valids.comission_id

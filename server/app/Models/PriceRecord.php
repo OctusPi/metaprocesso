@@ -19,6 +19,10 @@ class PriceRecord extends Model
     const S_PENDING = 2;
     const S_FINISHED = 3;
 
+    const C_MEDIA = 1;
+    const C_MEDIANA = 2;
+    const C_MODA = 3;
+
     protected $table = 'price_records';
 
     protected $fillable = [
@@ -34,7 +38,8 @@ class PriceRecord extends Model
         'suppliers',
         'suppliers_justification',
         'author_id',
-        'status'
+        'status',
+        'calctype'
     ];
 
     protected $casts = [
@@ -90,11 +95,20 @@ class PriceRecord extends Model
         ];
     }
 
+    public static function list_calctypes():array
+    {
+        return [
+            ['id' => self::C_MEDIA, 'title' => 'Média'],
+            ['id' => self::C_MEDIANA, 'title' => 'Mediana'],
+            ['id' => self::C_MODA, 'title' => 'Moda']
+        ];
+    }
+
     public function process(): BelongsTo
     {
         return $this->belongsTo(Process::class);
     }
-    
+
     public function organ(): BelongsTo
     {
         return $this->belongsTo(Organ::class);

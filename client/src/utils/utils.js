@@ -105,7 +105,7 @@ function floatToCurrency(value){
     return Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL'
-      }).format(value)
+      }).format(this.currencyToFloat(value))
 }
 
 function deepEqual(obj1, obj2) {
