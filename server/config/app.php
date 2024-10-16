@@ -102,6 +102,7 @@ return [
     'openia_key' => env('OPENIA_KEY', ''),
     'tce_url' => env('TCE_URL', ''),
     'pncp_url' => env('PNCP_URL', ''),
+    'pncp_url_item' => env('PNCP_URL_ITEM', ''),
 
     'previous_keys' => [
         ...array_filter(
