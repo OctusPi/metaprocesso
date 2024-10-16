@@ -169,6 +169,7 @@ class PriceRecords extends Controller
             'comissions' => Utils::map_select(Data::find(new Comission(), ['status' => Comission::STATUS_ACTIVE], ['name'])),
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'status' => PriceRecord::list_status(),
+            'calctypes' =>PriceRecord::list_calctypes(),
             'process_modalities' => Process::list_modalitys(),
             'process_types' => Process::list_types(),
             'process_status' => Process::list_status(),

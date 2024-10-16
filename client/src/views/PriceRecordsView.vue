@@ -80,11 +80,11 @@ const [page, pageData] = Layout.new(emit, {
         manual_insert_search_items: {
             tce: {},
             pncp: {},
-            ecomerce:{}
+            ecomerce: {}
         },
         manual_insert_find_items: {
             tce: [],
-            pncp:[]
+            pncp: []
         },
         types: {
             'emails': { nav: 'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
@@ -113,7 +113,7 @@ const [page, pageData] = Layout.new(emit, {
         { title: 'IDENTIFICAÇÃO', key: 'date_ini', sub: [{ key: 'protocol' }] },
         { title: 'PROCESSO', key: 'process.protocol', sub: [{ key: 'process.description' }] },
         { title: 'FORCECEDORES', key: 'suppliers.name' },
-        { title: 'PRAZO COLETA', key: 'date_fin' },
+        { title: 'TIPO CÁLCULO', key: 'calctype' },
         { title: 'SITUAÇÃO', key: 'status' }
     ],
     rules: {
@@ -121,7 +121,8 @@ const [page, pageData] = Layout.new(emit, {
         protocol: 'required',
         date_ini: 'required',
         date_fin: 'required',
-        comission_id: 'required'
+        comission_id: 'required',
+        calctype: 'required'
     }
 })
 
@@ -233,6 +234,7 @@ function open_search_manual_price(i) {
     page.proposals.manual_insert_item = i
     page.proposals.manual_insert_search = false
     page.proposals.manual_insert_find_items.tce = []
+    page.proposals.manual_insert_search_items.pncp.item_code = page.proposals.manual_insert_item?.item.code
 
 }
 
@@ -241,9 +243,9 @@ function set_manual_price(price) {
 }
 
 function save_manual_collect() {
-    http.post(`${page.url}/save`, Object.assign(page.data, {manual_items:page.dfds.group_items}), emit, (resp) => {
+    http.post(`${page.url}/save`, Object.assign(page.data, { manual_items: page.dfds.group_items }), emit, (resp) => {
         page.proposals.manual_insert = false
-        if(resp.data?.instance_id){
+        if (resp.data?.instance_id) {
             http.post('proposals/list', { price_record: resp.data?.instance_id }, emit, (resp) => {
                 page.proposals.data = resp.data
             })
@@ -251,7 +253,7 @@ function save_manual_collect() {
     })
 }
 
-function update_manual_collert(id){
+function update_manual_collert(id) {
     http.get(`/proposals/details/${id}`, emit, (resp) => {
         page.dfds.group_items = resp.data?.items
         page.data.manual_proposal_id = resp.data?.id
@@ -259,7 +261,7 @@ function update_manual_collert(id){
     })
 }
 
-function remove_manual_collert(id){
+function remove_manual_collert(id) {
     http.get(`/proposals/fastdestroy/${id}`, emit, () => {
         page.proposals.data.manual = page.proposals.data.manual.filter(o => o.id !== id)
     })
@@ -267,47 +269,59 @@ function remove_manual_collert(id){
 
 function prices_tce() {
 
-const params = {
-    origin: page.proposals.manual_insert_search_items.tce.origin,
-    year: page.proposals.manual_insert_search_items.tce.year,
-    item: page.proposals.manual_insert_item
-}
-http.post(`${page.url}/prices_tce`, params, emit, (resp) => {
-    page.proposals.manual_insert_find_items.tce = resp.data
-    page.proposals.manual_insert_search = true
-})
+    if (!page.proposals.manual_insert_search_items.tce.year || !page.proposals.manual_insert_search_items.tce.origin) {
+        return emit('callAlert', notifys.warning('Informe a origem e o ano base.'))
+    }
+
+    const params = {
+        origin: page.proposals.manual_insert_search_items.tce.origin,
+        year: page.proposals.manual_insert_search_items.tce.year,
+        item: page.proposals.manual_insert_item
+    }
+
+    http.post(`${page.url}/prices_tce`, params, emit, (resp) => {
+        page.proposals.manual_insert_find_items.tce = resp.data
+        page.proposals.manual_insert_search = true
+    })
 }
 
 function prices_pncp() {
-    console.log(' prices_pncp')
+    if (!page.proposals.manual_insert_search_items.pncp.item_code || !page.proposals.manual_insert_search_items.pncp.start_year || !page.proposals.manual_insert_search_items.pncp.end_year) {
+        return emit('callAlert', notifys.warning('Informe os campos de código do item, inicio e final da vigência para consultar no pncp!'))
+    }
+
+    http.post(`${page.url}/prices_pncp`, page.proposals.manual_insert_search_items.pncp, emit, (resp) => {
+        page.proposals.manual_insert_find_items.pncp = resp.data
+        page.proposals.manual_insert_search = true
+    })
 }
 
 function generate(type) {
 
-if (!page.data?.process && !page.data?.suppliers) {
-    emit('callAlert', notifys.warning('É necessário inicialmente selecionar um processo e adicionar fornecedores...'))
-    return
-}
+    if (!page.data?.process && !page.data?.suppliers) {
+        emit('callAlert', notifys.warning('É necessário inicialmente selecionar um processo e adicionar fornecedores...'))
+        return
+    }
 
-let callresp = null;
-let payload = null;
+    let callresp = null;
+    let payload = null;
 
-switch (type) {
-    case 'suppliers_justification':
-        callresp = (resp) => {
-            page.data.suppliers_justification = resp.data?.choices[0]?.message?.content
-        }
-        payload = (`
+    switch (type) {
+        case 'suppliers_justification':
+            callresp = (resp) => {
+                page.data.suppliers_justification = resp.data?.choices[0]?.message?.content
+            }
+            payload = (`
             Justifique a escolha desses fornecedores ${JSON.stringify(page.data?.suppliers ?? '')} 
             de acordo com esse objeto: ${page.data?.process?.description}. 
             Por favor gere a resposta em um único parágarfo, sem quebras de linha.
         `)
-        break
-    default:
-        break
-}
+            break
+        default:
+            break
+    }
 
-gpt.generate(`${page.url}/generate`, payload, emit, callresp)
+    gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
 watch(() => props.datalist, (newdata) => {
@@ -402,6 +416,7 @@ onBeforeMount(() => {
                         Actions.Delete(pageData.remove)
                     ]" :mounts="{
                         status: [Mounts.Cast(page.selects.status), Mounts.Status()],
+                        calctype: [Mounts.Cast(page.selects.calctypes)],
                         'process.description': [Mounts.Truncate()]
                     }" />
                 </div>
@@ -572,7 +587,18 @@ onBeforeMount(() => {
                                         locale="pt-br" calendar-class-name="dp-custom-calendar"
                                         calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                                 </div>
-                                <div class="col-sm-12">
+                                <div class="col-sm-12 col-md-4">
+                                    <label for="calctype" class="form-label">Tipo de Cálculo</label>
+                                    <select name="calctype" class="form-control"
+                                        :class="{ 'form-control-alert': page.valids.calctype }" id="calctype"
+                                        v-model="page.data.calctype">
+                                        <option value=""></option>
+                                        <option v-for="s in page.selects.calctypes" :value="s.id" :key="s.id">
+                                            {{ s.title }}
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-12 col-md-8">
                                     <label for="comission" class="form-label">Comissão</label>
                                     <select name="comission" class="form-control" :class="{
                                         'form-control-alert': page.valids.comission_id
@@ -681,7 +707,7 @@ onBeforeMount(() => {
                                                     name="type-collect" :value="i" v-model="page.proposals.selected">
                                                 <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
                                                     c.nav
-                                                }}</label>
+                                                    }}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -781,11 +807,10 @@ onBeforeMount(() => {
                                         <div v-else>
                                             <TableList secondary :header="page.proposals.manual_headers" :count="false"
                                                 :body="page.proposals.data.manual" :actions="[
-                                                Actions.Create('eye-outline', 'Visualizar', view_proposal, '#modalProposalDetails'),
-                                                Actions.Create('create-outline', 'Editar', update_manual_collert),
-                                                Actions.Create('trash-outline', 'Remover', remove_manual_collert),
-                                            ]"
-                                                :mounts="{
+                                                    Actions.Create('eye-outline', 'Visualizar', view_proposal, '#modalProposalDetails'),
+                                                    Actions.Create('create-outline', 'Editar', update_manual_collert),
+                                                    Actions.Create('trash-outline', 'Remover', remove_manual_collert),
+                                                ]" :mounts="{
                                                 modality: [Mounts.Cast(page.selects.proposal_modalities)],
                                                 status: [Mounts.Cast(page.selects.proposal_status), Mounts.Status()]
                                             }" />
@@ -858,7 +883,7 @@ onBeforeMount(() => {
                                     :value="i" v-model="page.proposals.manual_insert_types_resource_selected">
                                 <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
                                     c.nav
-                                }}</label>
+                                    }}</label>
                             </div>
                         </div>
                         <div class="d-flex gap-2 flex-wrap">
@@ -951,7 +976,9 @@ onBeforeMount(() => {
                             </table>
                         </div>
                         <div v-else class="text-center txt-color-sec">
-                            <ion-icon :name="page.proposals.manual_insert_search ? 'ellipsis-horizontal-outline' : 'search-outline'" class="fs-4"></ion-icon>
+                            <ion-icon
+                                :name="page.proposals.manual_insert_search ? 'ellipsis-horizontal-outline' : 'search-outline'"
+                                class="fs-4"></ion-icon>
                             <p class="p-0 m-0 small">{{ page.proposals.manual_insert_search ? 'Não foram localizados itens.' : 'Aplique o filtro para localizar os itens.' }}</p>
                         </div>
                     </div>
@@ -963,7 +990,7 @@ onBeforeMount(() => {
                                 <label for="pncp_item_code" class="form-label">Cod. Item</label>
                                 <input type="text" name="pncp_item_code" class="form-control" id="pncp_item_code"
                                     v-model="page.proposals.manual_insert_search_items.pncp.item_code">
-                                    
+
                             </div>
                             <div class="col-sm-12 col-md-3">
                                 <label for="pnpc_start_vigency" class="form-label">Inicio Vigencia</label>
@@ -1028,7 +1055,9 @@ onBeforeMount(() => {
                             </table>
                         </div>
                         <div v-else class="text-center txt-color-sec">
-                            <ion-icon :name="page.proposals.manual_insert_search ? 'ellipsis-horizontal-outline' : 'search-outline'" class="fs-4"></ion-icon>
+                            <ion-icon
+                                :name="page.proposals.manual_insert_search ? 'ellipsis-horizontal-outline' : 'search-outline'"
+                                class="fs-4"></ion-icon>
                             <p class="p-0 m-0 small">{{ page.proposals.manual_insert_search ? 'Não foram localizados itens.' : 'Aplique o filtro para localizar os itens.' }}</p>
                         </div>
                     </div>
@@ -1039,7 +1068,7 @@ onBeforeMount(() => {
                             <div class="col-sm-12 col-md-11">
                                 <label for="ecomerce_url_item" class="form-label">URL Item</label>
                                 <input type="text" name="ecomerce_url_item" class="form-control" id="ecomerce_url_item"
-                                placeholder="https://sitevarejo.com.br/item"
+                                    placeholder="https://sitevarejo.com.br/item"
                                     v-model="page.proposals.manual_insert_search_items.ecomerce.url_item">
                             </div>
                             <div class="col-sm-12 col-md-1 align-items-bottom">
