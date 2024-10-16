@@ -52,7 +52,7 @@ class Utils
                 }
 
                 return $data_build;
-                
+
             } catch (\Throwable $th) {
                 Log::error('Falha ao fazer decode JSON '.$th->getMessage());
                 return null;
@@ -88,6 +88,32 @@ class Utils
             return '{{'.$k.'}}';
         }, array_keys($params));
 
-        return str_replace($keys, $params, $data); 
+        return str_replace($keys, $params, $data);
+    }
+
+    public static function normalize_string($string) {
+
+        $string = preg_replace(
+            '/[áàãâä]/u', 'a', $string
+        );
+        $string = preg_replace(
+            '/[éèêë]/u', 'e', $string
+        );
+        $string = preg_replace(
+            '/[íìîï]/u', 'i', $string
+        );
+        $string = preg_replace(
+            '/[óòõôö]/u', 'o', $string
+        );
+        $string = preg_replace(
+            '/[úùûü]/u', 'u', $string
+        );
+        $string = preg_replace(
+            '/[ç]/u', 'c', $string
+        );
+
+        $string = preg_replace('/[^a-zA-Z0-9\s]/u', '', $string);
+
+        return trim($string);
     }
 }

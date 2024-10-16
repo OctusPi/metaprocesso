@@ -92,7 +92,7 @@ class ProposalsSupplier extends Controller
         ]);
 
         if ($instance->update($upload->mergeUploads($dataToUpdate))) {
-            $this->updateStatusPriceRecord($instance->pricerecord_id);
+            PriceRecords::updateStatusPriceRecord($instance->pricerecord_id);
             return response()->json(Notify::success('Proposta salva com sucesso'), 200);
         } else {
             return response()->json(Notify::error('Falha ao gravar proposta'), 500);
@@ -124,34 +124,6 @@ class ProposalsSupplier extends Controller
         }, []);
 
         return array_values($result);
-    }
-
-    /**
-     * Atualiza o status do registro de preço com base nas propostas associadas.
-     * O status será atualizado para S_FINISHED apenas se todas as propostas tiverem esse status.
-     *
-     * @param int $id
-     * @return void
-     */
-    private function updateStatusPriceRecord(int $id): void
-    {
-        // Obtém todas as propostas relacionadas ao registro de preço
-        $proposals = Proposal::where('pricerecord_id', $id)->get();
-
-        if (!$proposals->isEmpty()) {
-            // Verifica se todas as propostas têm o status S_FINISHED
-            $allFinished = $proposals->every(function ($proposal) {
-                return $proposal->status == Proposal::S_FINISHED;
-            });
-
-            // Atualiza o status do PriceRecord com base nas propostas
-            $pricerecord = PriceRecord::find($id);
-            if ($pricerecord) {
-                $pricerecord->update([
-                    'status' => $allFinished ? PriceRecord::S_FINISHED : PriceRecord::S_PENDING
-                ]);
-            }
-        }
     }
 
 }

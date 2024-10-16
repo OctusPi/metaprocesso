@@ -14,7 +14,7 @@ class ProposalRequest extends BaseMail
     /**
      * Create a new message instance.
      */
-    public function __construct(protected $process, protected $supplier, protected $token, protected $code, protected $start, protected $expiration)
+    public function __construct(protected $organ, protected $process, protected $supplier, protected $token, protected $code, protected $start, protected $expiration)
     {
         parent::__construct();
     }
@@ -42,7 +42,7 @@ class ProposalRequest extends BaseMail
                 'process' => [
                     'protocol'    => $this->process->protocol,
                     'date_ini'    => $this->process->date_hour_ini,
-                    'organ'       => $this->process->organ->name,
+                    'organ'       => $this->organ,
                     'description' => $this->process->description
                 ],
                 'supplier' => [

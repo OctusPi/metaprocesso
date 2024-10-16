@@ -78,10 +78,13 @@ const [page, pageData] = Layout.new(emit, {
             'ecomerce': { nav: 'Ecomerce', title: 'Ecomerce', subtitle: 'Consultar através sites de varejo' }
         },
         manual_insert_search_items: {
-            tce: {}
+            tce: {},
+            pncp: {},
+            ecomerce:{}
         },
         manual_insert_find_items: {
-            tce: []
+            tce: [],
+            pncp:[]
         },
         types: {
             'emails': { nav: 'E-mails', title: 'Coletas por E-mail', subtitle: 'Situação das cotações solicitas por e-mail aos fornecedores' },
@@ -273,6 +276,10 @@ http.post(`${page.url}/prices_tce`, params, emit, (resp) => {
     page.proposals.manual_insert_find_items.tce = resp.data
     page.proposals.manual_insert_search = true
 })
+}
+
+function prices_pncp() {
+    console.log(' prices_pncp')
 }
 
 function generate(type) {
@@ -950,10 +957,99 @@ onBeforeMount(() => {
                     </div>
 
                     <!-- PNCP -->
-                    <div v-if="page.proposals.manual_insert_types_resource_selected === 'pncp'">PNCP</div>
+                    <div v-if="page.proposals.manual_insert_types_resource_selected === 'pncp'">
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-12 col-md-5">
+                                <label for="pncp_item_code" class="form-label">Cod. Item</label>
+                                <input type="text" name="pncp_item_code" class="form-control" id="pncp_item_code"
+                                    v-model="page.proposals.manual_insert_search_items.pncp.item_code">
+                                    
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <label for="pnpc_start_vigency" class="form-label">Inicio Vigencia</label>
+                                <select name="pnpc_start_vigency" class="form-control" id="pnpc_start_vigency"
+                                    v-model="page.proposals.manual_insert_search_items.pncp.start_year">
+                                    <option v-for="d in dates.listYears()" :key="d" :value="d">{{ d }}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-3">
+                                <label for="ano_tce_licitacao" class="form-label">Final Vigencia</label>
+                                <select name="ano_tce_licitacao" class="form-control" id="ano_tce_licitacao"
+                                    v-model="page.proposals.manual_insert_search_items.pncp.end_year">
+                                    <option v-for="d in dates.listYears()" :key="d" :value="d">{{ d }}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-1 align-items-bottom">
+                                <label class="form-label d-none d-md-block">&nbsp;</label>
+                                <button type="button" class="w-100 text-center btn btn-inline btn-action-primary"
+                                    @click="prices_pncp">
+                                    <ion-icon name="search-outline" class="mx-auto fs-5"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <div v-if="page.proposals.manual_insert_find_items.tce.length"
+                            class="tablelist-modal table-responsive-sm">
+                            <table class="m-0 table-borderless table-striped table-hover table">
+                                <thead>
+                                    <tr>
+                                        <th>ORIGEM</th>
+                                        <th>ITEM</th>
+                                        <th>UNIT.</th>
+                                        <th>VALOR UNIT.</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(i, k) in page.proposals.manual_insert_find_items.pncp" :key="k">
+                                        <td class="align-middle">
+                                            <div class="small txt-color-sec">TCE</div>
+                                            <div class="small">{{ i.numero_licitacao }}</div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="small">{{ i.descricao_item_licitacao }}</div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="small">{{ i.descricao_unidade_item_licitacao }}</div>
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="small">{{ utils.floatToCurrency(i.valor_unitario_item_licitacao)
+                                                }}</div>
+                                        </td>
+                                        <td class="align-middle text-end">
+                                            <button
+                                                @click="set_manual_price({ origin: 'TCE', value: i.valor_unitario_item_licitacao, data: i })"
+                                                type="button" class="btn btn-inline btn-action-quaternary"
+                                                data-bs-dismiss="modal">
+                                                <ion-icon name="checkmark-circle-outline" class="ms-auto"></ion-icon>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div v-else class="text-center txt-color-sec">
+                            <ion-icon :name="page.proposals.manual_insert_search ? 'ellipsis-horizontal-outline' : 'search-outline'" class="fs-4"></ion-icon>
+                            <p class="p-0 m-0 small">{{ page.proposals.manual_insert_search ? 'Não foram localizados itens.' : 'Aplique o filtro para localizar os itens.' }}</p>
+                        </div>
+                    </div>
 
                     <!-- Ecomerce -->
-                    <div v-if="page.proposals.manual_insert_types_resource_selected === 'ecomerce'">Ecomerce</div>
+                    <div v-if="page.proposals.manual_insert_types_resource_selected === 'ecomerce'">
+                        <div class="row g-3 mb-4">
+                            <div class="col-sm-12 col-md-11">
+                                <label for="ecomerce_url_item" class="form-label">URL Item</label>
+                                <input type="text" name="ecomerce_url_item" class="form-control" id="ecomerce_url_item"
+                                placeholder="https://sitevarejo.com.br/item"
+                                    v-model="page.proposals.manual_insert_search_items.ecomerce.url_item">
+                            </div>
+                            <div class="col-sm-12 col-md-1 align-items-bottom">
+                                <label class="form-label d-none d-md-block">&nbsp;</label>
+                                <button type="button" class="w-100 text-center btn btn-inline btn-action-primary">
+                                    <ion-icon name="search-outline" class="mx-auto fs-5"></ion-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

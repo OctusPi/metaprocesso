@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Str;
 use Mail;
+use App\Models\Organ;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Mail\ProposalRequest;
@@ -197,7 +198,7 @@ class PriceRecords extends Controller
      */
     public function send_collect(Request $request)
     {
-        $proposal = Data::findOne(new Proposal(), ['id' => $request->id], null, ['process', 'supplier', 'pricerecord']);
+        $proposal = Data::findOne(new Proposal(), ['id' => $request->id], null, ['organ', 'process', 'supplier', 'pricerecord']);
 
         if (is_null($proposal)) {
             return response()->json(Notify::warning('Coleta não localizada...'), 404);
@@ -208,6 +209,7 @@ class PriceRecords extends Controller
         }
 
         $send = Mail::to($proposal->supplier->email)->send(new ProposalRequest(
+            $proposal->organ?->name,
             $proposal->process,
             $proposal->supplier,
             $proposal->token,
@@ -260,7 +262,7 @@ class PriceRecords extends Controller
             $filter_data = array_map(function ($item) use ($search_item) {
                 // Filtrar os itens que atendem à condição
                 return array_values(array_filter($item, function ($v) use ($search_item) {
-                    return strpos(strtolower($v['descricao_item_licitacao']), strtolower(explode(' ', $search_item['item']['name'])[0])) !== false;
+                    return strpos(strtolower(Utils::normalize_string($v['descricao_item_licitacao'])), strtolower(Utils::normalize_string(explode(' ', $search_item['item']['name'])[0]))) !== false;
                 }));
             }, $data);
 
@@ -316,8 +318,11 @@ class PriceRecords extends Controller
                             'status' => Proposal::S_START
                         ]);
 
+                        $organ = Organ::find(Data::getOrgan());
+
                         if ($proposal->save()) {
                             Mail::to($supplier->email)->send(new ProposalRequest(
+                                $organ?->name,
                                 $process,
                                 $supplier,
                                 $token,
@@ -358,6 +363,36 @@ class PriceRecords extends Controller
                         'status' => count($proposal_status) < count($manual_items) ? Proposal::S_PENDING : Proposal::S_FINISHED,
                     ]);
                 }
+            }
+
+            self::updateStatusPriceRecord($pricerecord);
+        }
+    }
+
+    /**
+     * Atualiza o status do registro de preço com base nas propostas associadas.
+     * O status será atualizado para S_FINISHED apenas se todas as propostas tiverem esse status.
+     *
+     * @param int $id
+     * @return void
+     */
+    public static function updateStatusPriceRecord(int $id): void
+    {
+        // Obtém todas as propostas relacionadas ao registro de preço
+        $proposals = Proposal::where('pricerecord_id', $id)->get();
+
+        if (!$proposals->isEmpty()) {
+            // Verifica se todas as propostas têm o status S_FINISHED
+            $allFinished = $proposals->every(function ($proposal) {
+                return $proposal->status == Proposal::S_FINISHED;
+            });
+
+            // Atualiza o status do PriceRecord com base nas propostas
+            $pricerecord = PriceRecord::find($id);
+            if ($pricerecord) {
+                $pricerecord->update([
+                    'status' => $allFinished ? PriceRecord::S_FINISHED : PriceRecord::S_PENDING
+                ]);
             }
         }
     }
