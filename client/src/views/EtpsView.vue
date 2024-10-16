@@ -1,6 +1,6 @@
 <script setup>
 
-import { createApp, inject, onMounted, watch } from 'vue';
+import { createApp, inject, onMounted, ref, watch } from 'vue';
 
 // Services
 import Layout from '@/services/layout';
@@ -30,6 +30,8 @@ import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 // Local Components
 import EtpReport from './reports/EtpReport.vue';
 import PDFMerger from 'pdf-merger-js';
+import notifys from '@/utils/notifys';
+import forms from '@/services/forms';
 
 
 const ORIGIN_ETPS = "1";
@@ -116,14 +118,6 @@ function list_processes() {
     })
 }
 
-const ATTACHMENT_MEMORY = 1;
-const ATTACHMENT_MARKET = 2;
-
-const attachmentTypes = [
-    { id: ATTACHMENT_MEMORY, title: 'Memória de Cálculo' },
-    { id: ATTACHMENT_MARKET, title: 'Levantamento de Mercado' },
-]
-
 function export_etp(id) {
     http.get(`${page.url}/export/${id}`, emit, async (resp) => {
         const etp = resp.data
@@ -157,6 +151,33 @@ function export_etp(id) {
         }
 
         await merger.save(`ETP-${etp.protocol}`)
+    })
+}
+
+const partial = ref({})
+
+function savePartially() {
+    Object.keys(page.valids).forEach(k => {
+        page.valids[k] = false
+    })
+
+    const validation = forms.checkform(page.data, {
+        valids: page.valids,
+        fields: {
+            process: 'required',
+            comission_id: 'required',
+        },
+    });
+
+    if (!validation.isvalid) {
+        emit('callAlert', notifys.warning(validation.message))
+        return
+    }
+
+    page.data.process_id = page.data.process?.id
+
+    http.post(`${page.url}/save_part`, page.data, emit, () => {
+        pageData.list()
     })
 }
 
@@ -840,7 +861,12 @@ onMounted(() => {
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
                                 Registrar
                             </button>
-                            <button @click="pageData.ui('register')" class="btn btn-action-secondary">
+                            <button v-if="!page.data.id" @click="savePartially" type="button"
+                                class="btn btn-action-secondary">
+                                <ion-icon name="folder-open-outline" class="fs-5"></ion-icon>
+                                Salvar parcialmente
+                            </button>
+                            <button @click="pageData.ui('register')" type="button" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>
                                 Cancelar
                             </button>

@@ -34,6 +34,45 @@ class Etps extends Controller
         ]);
     }
 
+
+    /**
+     * Salva um novo registro de ETP Parcialmente ou atualiza um existente.
+     *
+     * @param Request $request Dados da requisição.
+     * @return \Illuminate\Http\JsonResponse Resposta JSON com o resultado da operação.
+     */
+    public function save_part(Request $request)
+    {
+        $nd = 'Não informado';
+
+        $data = array_merge([
+            'emission' => now()->format('d/m/Y'),
+            'status' => Etp::S_DRAFT,
+            'object_description' => $nd,
+            'object_classification' => $nd,
+            'necessity' => $nd,
+            'contract_forecast' => $nd,
+            'contract_requirements' => $nd,
+            'market_survey' => $nd,
+            'contract_calculus_memories' => $nd,
+            'contract_expected_price' => $nd,
+            'solution_full_description' => $nd,
+            'solution_parcel_justification' => $nd,
+            'correlated_contracts' => $nd,
+            'contract_alignment' => $nd,
+            'expected_results' => $nd,
+            'contract_previous_actions' => $nd,
+            'ambiental_impacts' => $nd,
+            'viability_declaration' => false,
+            'installment_type' => Process::INSTALLMENT_ITEM,
+            'installment_justification' => $nd,
+            'ip' => $request->ip(),
+            'author_id' => $request->user()->id,
+        ], $request->toArray());
+        
+        return $this->base_save($request, $data);
+    }
+
     /**
      * Lista os Etps com base em critérios de filtragem.
      *
@@ -144,7 +183,7 @@ class Etps extends Controller
         }
 
         if ($process->etp && $process->etp->id != $request->id) {
-            return response()->json(Notify::warning('O processo já possui um ETP!'), 401); 
+            return response()->json(Notify::warning('O processo já possui um ETP!'), 401);
         }
 
         return response()->json($process, 200);
