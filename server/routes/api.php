@@ -127,6 +127,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/send_collect/{id}', 'send_collect');
         Route::post('/generate', 'generate');
         Route::post('/prices_tce', 'prices_tce');
+        Route::post('/prices_pncp', 'prices_pncp');
     });
 
     Route::prefix('/proposals')->controller(Proposals::class)->group(function () {
