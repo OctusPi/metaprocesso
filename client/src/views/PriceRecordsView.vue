@@ -80,7 +80,9 @@ const [page, pageData] = Layout.new(emit, {
         manual_insert_search_items: {
             tce: {},
             pncp: {},
-            ecomerce: {}
+            ecomerce: {
+                url_valid: false
+            }
         },
         manual_insert_find_items: {
             tce: [],
@@ -294,6 +296,24 @@ function prices_pncp() {
         page.proposals.manual_insert_find_items.pncp = resp.data
         page.proposals.manual_insert_search = true
     })
+}
+
+function prices_ecomerce(mod) {
+
+    page.proposals.manual_insert_search_items.ecomerce.url_valid = false
+
+    if (mod === 'check_url') {
+        if (!page.proposals.manual_insert_search_items.ecomerce.url) {
+            return emit('callAlert', notifys.warning('Informe a URL para validar a inclusão do item.'))
+        }
+
+        http.get(page.proposals.manual_insert_search_items.ecomerce.url, emit, (resp) => {
+            if (http.success(resp)) {
+                page.proposals.manual_insert_search_items.ecomerce.url_valid = true
+                return
+            }
+        })
+    }
 }
 
 function generate(type) {
@@ -1069,14 +1089,17 @@ onBeforeMount(() => {
                                 <label for="ecomerce_url_item" class="form-label">URL Item</label>
                                 <input type="text" name="ecomerce_url_item" class="form-control" id="ecomerce_url_item"
                                     placeholder="https://sitevarejo.com.br/item"
-                                    v-model="page.proposals.manual_insert_search_items.ecomerce.url_item">
+                                    v-model="page.proposals.manual_insert_search_items.ecomerce.url">
                             </div>
                             <div class="col-sm-12 col-md-1 align-items-bottom">
                                 <label class="form-label d-none d-md-block">&nbsp;</label>
-                                <button type="button" class="w-100 text-center btn btn-inline btn-action-primary">
+                                <button @click="prices_ecomerce('check_url')" type="button" class="w-100 text-center btn btn-inline btn-action-primary">
                                     <ion-icon name="search-outline" class="mx-auto fs-5"></ion-icon>
                                 </button>
                             </div>
+                        </div>
+                        <div v-if="page.proposals.manual_insert_search_items.ecomerce.url_valid" class="add_item_ecomerce">
+                            URL VALIDA
                         </div>
                     </div>
                 </div>

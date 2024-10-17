@@ -248,7 +248,7 @@ watch(() => props.selects, (newval) => {
                                                 <div class="small">{{ i.quantity }}</div>
                                             </td>
                                             <td class="align-middle">
-                                                <div class="small">{{ utils.floatToCurrency(i.value) }}</div>
+                                                <div class="small">{{ utils.floatToCurrency(utils.currencyToFloat(i.value)) }}</div>
                                             </td>
                                             <td class="align-middle">
                                                 <div class="small">{{ utils.floatToCurrency((i.quantity *

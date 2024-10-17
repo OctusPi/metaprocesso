@@ -278,6 +278,11 @@ class PriceRecords extends Controller
         }
     }
 
+    public function prices_pncp(Request $request)
+    {
+        return response()->json(Notify::info('Consulta PNCP Indisponível no momento.'), 500);
+    }
+
     /**
      * Processa as propostas associadas ao registro de preço.
      *
