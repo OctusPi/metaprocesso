@@ -156,7 +156,7 @@ const processes = ref({
     ],
     complete_header: [
         { key: 'date_hour_ini', title: 'PROTOCOLO', sub: [{ key: 'protocol' }] },
-        { key: 'dfds.protocol', title: 'DFDS' },
+        { key: 'description', title: 'OBJETO' },
         { key: 'pricerecord', title: 'COLETAS', isBool: true },
         { key: 'etp', title: 'ETP', isBool: true },
         { key: 'riskmaps', title: 'MAPAS', isBool: true },
@@ -340,7 +340,9 @@ onMounted(() => {
                                 </div>
                                 <div class="modal-listage listage h-100"
                                     :class="[processes.datalist.length < 1 && 'd-flex align-items-center justify-content-center']">
-                                    <TableList :header="processes.complete_header" :body="processes.datalist" />
+                                    <TableList :header="processes.complete_header" :body="processes.datalist" :mounts="{
+                                        description: [Mounts.Truncate()]
+                                    }" />
                                 </div>
                             </div>
                         </div>
