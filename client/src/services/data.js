@@ -96,12 +96,20 @@ class Data {
         })
     }
 
-    list = (onList = () => {}) => {
+    list = () => {
         this.page.search.sent = true
         http.post(`${this.page.url}/list`, this.page.search, this.emit, (response) => {
             this.page.datalist = response.data ?? []
             this.ui('list')
-            onList()
+        })
+    }
+
+    listWithCb = (cb = () => {}) => {
+        this.page.search.sent = true
+        http.post(`${this.page.url}/list`, this.page.search, this.emit, (response) => {
+            this.page.datalist = response.data ?? []
+            this.ui('list')
+            cb()
         })
     }
 

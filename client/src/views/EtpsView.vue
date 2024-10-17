@@ -32,6 +32,7 @@ import EtpReport from './reports/EtpReport.vue';
 import PDFMerger from 'pdf-merger-js';
 import notifys from '@/utils/notifys';
 import forms from '@/services/forms';
+import { toRaw } from 'vue';
 
 
 const ORIGIN_ETPS = "1";
@@ -320,14 +321,14 @@ function dfd_details(id) {
     }
 }
 
-watch(() => page.ui.register, (newdata) => {
-    if (newdata && page.data.id == null) {
+watch(() => page.ui.register, (newUi) => {
+    if (newUi && page.data.id == null) {
         page.data.protocol = utils.dateProtocol(page.organ?.id)
     }
 })
 
 watch(() => props.datalist, (newdata) => {
-    page.datalist = newdata
+    page.datalist = newDatalist
 })
 
 onMounted(() => {
@@ -415,7 +416,7 @@ onMounted(() => {
                         Actions.Export('document-text-outline', export_etp),
                     ]" :mounts="{
                         status: [Mounts.Cast(page.selects.status), Mounts.Status()],
-                        necessity: [Mounts.StripHTML(), Mounts.Truncate(200)],
+                        necessity: [Mounts.StripHTML(), Mounts.Truncate()],
                     }" />
                 </div>
             </section>
@@ -852,7 +853,7 @@ onMounted(() => {
                                 <AttachmentsCmp label="Listagem de arquivos anexados ao ETP"
                                     @callAlert="(data) => emit('callAlert', data)"
                                     @callRemove="(data) => emit('callRemove', data)"
-                                    @clone="(data) => page.attachments = data"
+                                    @clone="(data) => { page.attachments = toRaw(data) }"
                                     :origin="String(page.selects.vars?.ORIGIN_ETP)" :protocol="page.data.protocol" />
                             </div>
 
@@ -1006,7 +1007,8 @@ onMounted(() => {
                                                 <div class="col-12">
                                                     <p>
                                                         {{
-                                                            page.data.viability_declaration
+                                                            page.data.viability_declaration != null &&
+                                                                page.data.viability_declaration == 1
                                                                 ? `Esta
                                                         equipe de
                                                         planejamento
@@ -1035,7 +1037,8 @@ onMounted(() => {
                                             </p>
                                         </div>
                                         <div>
-                                            <TableList secondary :header="page.attachments.header" :body="page.attachments.datalist" />
+                                            <TableList secondary :header="page.attachments.header"
+                                                :body="page.attachments.datalist" />
                                         </div>
                                     </div>
                                 </div>
@@ -1047,8 +1050,7 @@ onMounted(() => {
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
                                 Registrar
                             </button>
-                            <button v-if="!page.data.id" @click="savePartially" type="button"
-                                class="btn btn-action-secondary">
+                            <button @click="savePartially" type="button" class="btn btn-action-secondary">
                                 <ion-icon name="folder-open-outline" class="fs-5"></ion-icon>
                                 Salvar parcialmente
                             </button>

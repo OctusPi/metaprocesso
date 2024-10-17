@@ -34,7 +34,7 @@ const [page, pageData] = Layout.new(emit, {
 watch(() => props.protocol, (newdata) => {
     page.data.url = `/attachments/${props.origin}/${newdata}`
     page.data.protocol = newdata
-    pageData.list(() => {
+    pageData.listWithCb(() => {
         emit('clone', page)
     })
 })
@@ -47,7 +47,7 @@ watch(() => page.ui.register, (newdata) => {
 })
 
 onMounted(() => {
-    pageData.list(() => {
+    pageData.listWithCb(() => {
         emit('clone', page)
     })
 })

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\{Comission, ComissionMember, Dfd, DfdItem, Etp, Process, User};
 use App\Models\Attachment;
+use App\Models\EtpPartial;
 use App\Models\Unit;
 use App\Utils\Utils;
 use App\Utils\Notify;
@@ -43,34 +44,18 @@ class Etps extends Controller
      */
     public function save_part(Request $request)
     {
-        $nd = 'Não informado';
+        $this->model = new EtpPartial();
 
-        $data = array_merge([
-            'emission' => now()->format('d/m/Y'),
-            'status' => Etp::S_DRAFT,
-            'object_description' => $nd,
-            'object_classification' => $nd,
-            'necessity' => $nd,
-            'contract_forecast' => $nd,
-            'contract_requirements' => $nd,
-            'market_survey' => $nd,
-            'contract_calculus_memories' => $nd,
-            'contract_expected_price' => $nd,
-            'solution_full_description' => $nd,
-            'solution_parcel_justification' => $nd,
-            'correlated_contracts' => $nd,
-            'contract_alignment' => $nd,
-            'expected_results' => $nd,
-            'contract_previous_actions' => $nd,
-            'ambiental_impacts' => $nd,
-            'viability_declaration' => false,
-            'installment_type' => Process::INSTALLMENT_ITEM,
-            'installment_justification' => $nd,
+        $response = $this->base_save($request, [
             'ip' => $request->ip(),
             'author_id' => $request->user()->id,
-        ], $request->toArray());
-        
-        return $this->base_save($request, $data);
+            'emission' => now()->format('d/m/Y'),
+            'status' => Etp::S_DRAFT,
+        ]);
+
+        $this->model = new Etp();
+
+        return $response;
     }
 
     /**

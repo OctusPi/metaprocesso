@@ -45,7 +45,9 @@ export default class Mounts {
                 }
             }
             return {
-                value: String(address).slice(0, num - 3) + '...',
+                value: num < address.length
+                    ? String(address).slice(0, num - 3) + '...'
+                    : address,
                 classes: ['cursor-help', 'has-title']
             }
         }
@@ -53,6 +55,12 @@ export default class Mounts {
 
     static StripHTML() {
         return (address) => {
+            if (!address) {
+                return {
+                    value: address,
+                    classes: []
+                }
+            }
             const parser = (new DOMParser())
                 .parseFromString(String(address), 'text/html')
             return {
