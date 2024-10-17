@@ -5,7 +5,7 @@ import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import FileInput from './inputs/FileInput.vue';
 
-const emit = defineEmits(['callAlert', 'callRemove'])
+const emit = defineEmits(['callAlert', 'callRemove', 'clone'])
 
 const props = defineProps({
     origin: { type: String },
@@ -34,7 +34,9 @@ const [page, pageData] = Layout.new(emit, {
 watch(() => props.protocol, (newdata) => {
     page.data.url = `/attachments/${props.origin}/${newdata}`
     page.data.protocol = newdata
-    pageData.list()
+    pageData.list(() => {
+        emit('clone', page)
+    })
 })
 
 watch(() => page.ui.register, (newdata) => {
@@ -45,7 +47,9 @@ watch(() => page.ui.register, (newdata) => {
 })
 
 onMounted(() => {
-    pageData.list()
+    pageData.list(() => {
+        emit('clone', page)
+    })
 })
 </script>
 

@@ -98,7 +98,8 @@ const [page, pageData] = Layout.new(emit, {
             { title: 'OBJETO', sub: [{ key: 'description' }] },
             { key: 'status', title: 'SITUAÇÃO' }
         ],
-    }
+    },
+    attachments: {}
 })
 
 const tabs = new Tabs({
@@ -110,6 +111,7 @@ const tabs = new Tabs({
     planejamento: { title: 'Planejamento' },
     viabilidade: { title: 'Viabilidade' },
     anexos: { title: 'Anexos' },
+    revisor: { title: 'Revisar' },
 })
 
 function list_processes() {
@@ -153,8 +155,6 @@ function export_etp(id) {
         await merger.save(`ETP-${etp.protocol}`)
     })
 }
-
-const partial = ref({})
 
 function savePartially() {
     Object.keys(page.valids).forEach(k => {
@@ -852,7 +852,193 @@ onMounted(() => {
                                 <AttachmentsCmp label="Listagem de arquivos anexados ao ETP"
                                     @callAlert="(data) => emit('callAlert', data)"
                                     @callRemove="(data) => emit('callRemove', data)"
+                                    @clone="(data) => page.attachments = data"
                                     :origin="String(page.selects.vars?.ORIGIN_ETP)" :protocol="page.data.protocol" />
+                            </div>
+
+                            <div id="revisor" class="tab-pane">
+                                <div class="content p-4">
+                                    <div class="box-revisor">
+                                        <div class="box-revisor-title d-flex mb-4">
+                                            <div class="txt-revisor-title">
+                                                <h3>Informações</h3>
+                                                <p>Informações gerais do Estudo Técnico Preliminar</p>
+                                            </div>
+                                        </div>
+                                        <div class="box-revisor-content">
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <h4>Processo</h4>
+                                                    <p>{{ page.data.process?.protocol ?? '*****' }}</p>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <h4>Comissão</h4>
+                                                    <p>{{ utils.getTxt(
+                                                        page.selects.comissions,
+                                                        page.data.comission_id
+                                                    ) }}</p>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <h4>Emissão</h4>
+                                                    <p>{{ page.data.emission ?? '*****' }}</p>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <h4>Tipo de Parcelamento</h4>
+                                                    <p>{{ utils.getTxt(
+                                                        page.selects.installment_types,
+                                                        page.data.installment_type
+                                                    ) }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h4>Justificativa do parcelamento</h4>
+                                                    <p v-html="page.data.installment_justification ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Descrição sucinta do objeto</h4>
+                                                    <p v-html="page.data.object_description ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Classificação do objeto</h4>
+                                                    <p v-html="page.data.object_classification ?? '*****'"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor mt-4">
+                                        <div class="box-revisor-title d-flex mb-4">
+                                            <div class="txt-revisor-title">
+                                                <h3>Necessidade</h3>
+                                                <p>O que motivou a realização do ETP</p>
+                                            </div>
+                                        </div>
+                                        <div class="box-revisor-content">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h4>Necessidade</h4>
+                                                    <p v-html="page.data.necessity ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Descrição dos requisitos da contratação</h4>
+                                                    <p v-html="page.data.contract_requirements ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Previsão de Realização da Contratação</h4>
+                                                    <p v-html="page.data.contract_forecast ?? '*****'"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor mt-4">
+                                        <div class="box-revisor-title d-flex mb-4">
+                                            <div class="txt-revisor-title">
+                                                <h3>Solução</h3>
+                                                <p>Como serão resolvidos os problemas</p>
+                                            </div>
+                                        </div>
+                                        <div class="box-revisor-content">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h4>Levantamento de Mercado </h4>
+                                                    <p v-html="page.data.market_survey ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Descrição da Solução como um Todo </h4>
+                                                    <p v-html="page.data.solution_full_description ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Estimativa das Quantidades Contratadas</h4>
+                                                    <p v-html="page.data.contract_calculus_memories ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Estimativa do Preço da Contratação</h4>
+                                                    <p v-html="page.data.contract_expected_price ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Justificativa para o Parcelamento ou Não</h4>
+                                                    <p v-html="page.data.solution_parcel_justification ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Contratações Correlatas e/ou Interdependentes</h4>
+                                                    <p v-html="page.data.correlated_contracts ?? '*****'"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor mt-4">
+                                        <div class="box-revisor-title d-flex mb-4">
+                                            <div class="txt-revisor-title">
+                                                <h3>Planejamento</h3>
+                                                <p>Passos a serem tomados pelo ETP</p>
+                                            </div>
+                                        </div>
+                                        <div class="box-revisor-content">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <h4>Resultados Pretendidos</h4>
+                                                    <p v-html="page.data.expected_results ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Providências a Serem Tomadas</h4>
+                                                    <p v-html="page.data.contract_previous_actions ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Alinhamento de Contrato</h4>
+                                                    <p v-html="page.data.contract_alignment ?? '*****'"></p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <h4>Possíveis Impactos Ambientais</h4>
+                                                    <p v-html="page.data.ambiental_impacts ?? '*****'"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor mt-4">
+                                        <div class="box-revisor-title d-flex mb-0">
+                                            <div class="txt-revisor-title">
+                                                <h3>Viabilidade</h3>
+                                                <p>Declaração de viabilidade</p>
+                                            </div>
+                                        </div>
+                                        <div class="box-revisor-content">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <p>
+                                                        {{
+                                                            page.data.viability_declaration
+                                                                ? `Esta
+                                                        equipe de
+                                                        planejamento
+                                                        declara viável esta contratação com base neste ETP, consoante o
+                                                        inciso
+                                                        XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.`
+                                                                : `
+                                                        Esta equipe
+                                                        de
+                                                        planejamento
+                                                        declara inviável esta contratação com base neste ETP,
+                                                        consoante o inciso
+                                                        XIII. art 7º da IN 40 de maio de 2022 da SEGES/ME.
+                                                        `
+                                                        }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="box-revisor mb-4">
+                                        <div class="box-revisor-title mb-4">
+                                            <h3>Anexos</h3>
+                                            <p>
+                                                Lista de arquivos anexados
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <TableList secondary :header="page.attachments.header" :body="page.attachments.datalist" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
