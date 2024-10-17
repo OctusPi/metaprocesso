@@ -28,6 +28,7 @@ return new class extends Migration
             $table->text('contract_previous_actions')->nullable()->change();
             $table->text('ambiental_impacts')->nullable()->change();
             $table->integer('viability_declaration')->nullable()->change();
+            $table->integer('status')->default(0)->change();
         });
     }
 
