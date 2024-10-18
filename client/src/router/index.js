@@ -163,6 +163,12 @@ const router = createRouter({
       component: () => import('../views/RefTermsView.vue')
     },
     {
+      path: '/pca',
+      name: 'pca',
+      meta: { auth: true },
+      component: () => import('../views/PCAView.vue')
+    },
+    {
       path: '/forbidden',
       name: 'forbidden',
       component: () => import('../views/ForbiddenView.vue')
