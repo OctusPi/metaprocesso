@@ -202,8 +202,8 @@ watch(() => props.selects, (newval) => {
                                         {{ utils.getTxt(page.selects?.proposal_status, page.data?.status) }}
                                     </p>
                                     <p class="p-0 m-0 form-text">
-                                        <a v-if="page.data?.status == 4" href="#" @click.prevent="pgData.download(page.data?.id)" class="d-flex align-items-center">
-                                            Exportar Coleta PDF
+                                        <a v-if="page.data?.modality === 1 && page.data?.status == 4" href="#" @click.prevent="pgData.download(page.data?.id)" class="d-flex align-items-center">
+                                            Proposta Assinada
                                             <ion-icon name="cloud-download-outline" class="fs-6 ms-2"></ion-icon>
                                         </a>
                                     </p>
