@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, watch } from 'vue';
+import { inject, onBeforeMount, watch, createApp } from 'vue';
 
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
@@ -12,6 +12,8 @@ import dates from '@/utils/dates'
 import utils from '@/utils/utils';
 import citys_tce from '@/data/citys_tce'
 import masks from '@/utils/masks';
+import forms from '@/services/forms';
+import exp from '@/services/export';
 
 import TableList from '@/components/table/TableList.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
@@ -22,14 +24,13 @@ import TableListRadio from '@/components/table/TableListRadio.vue';
 import TabNav from '@/components/TabNav.vue';
 import ModalDfdDetails from '@/components/DfdDetails.vue';
 import ModalProposalDetailsUi from '@/components/ModalProposalDetailsUi.vue';
-import forms from '@/services/forms';
+import ProposalReport from '@/views/reports/ProposalReport.vue'
 
+const sysapp = inject('sysapp')
 const emit = defineEmits(['callAlert', 'callUpdate', 'callRemove'])
-
 const props = defineProps({
     datalist: { type: Array, default: () => [] }
 })
-
 const [page, pageData] = Layout.new(emit, {
     url: '/pricerecords',
     datalist: props.datalist,
@@ -129,7 +130,6 @@ const [page, pageData] = Layout.new(emit, {
         calctype: 'required'
     }
 })
-
 const tabs = new Tabs([
     { id: 'process', title: 'Processo' },
     { id: 'dfds', title: 'DFDs' },
@@ -341,6 +341,34 @@ function handleImgEcomerce(event) {
             page.proposals.manual_insert_search_items.ecomerce.img = reader.result
         }
     }
+}
+
+function export_proposal(id) {
+    http.get(`/proposals/details/${id}`, emit, (resp) => {
+        const proposal = resp.data
+        const containerReport = document.createElement('div')
+        const instanceReport = createApp(ProposalReport, {
+            qrdata: sysapp,
+            logomarca: proposal.logomarca,
+            supplier: proposal.supplier,
+            process: {
+                protocol: proposal?.process.protocol,
+                organ: proposal?.organ,
+                date_ini: `${proposal?.date_ini} - ${proposal?.hour_ini}`,
+                date_fin: proposal?.pricerecord.date_fin,
+                description: proposal?.process.description
+            },
+            items: proposal.items,
+            representation: {
+                name: proposal.representation,
+                cpf: proposal.cpf
+            },
+            modality: proposal.modality,
+            author: proposal.author
+        })
+        instanceReport.mount(containerReport)
+        exp.exportPDF(containerReport, `Coleta-${proposal.protocol}`)
+    })
 }
 
 function generate(type) {
@@ -765,6 +793,7 @@ onBeforeMount(() => {
                                             :body="page.proposals.data.emails" :actions="[
                                                 Actions.Create('eye-outline', 'Visualizar', view_proposal, '#modalProposalDetails'),
                                                 Actions.Create('send-outline', 'Reenviar', resend_collect),
+                                                Actions.Export('document-text-outline', export_proposal),
                                             ]" :mounts="{
                                                 modality: [Mounts.Cast(page.selects.proposal_modalities)],
                                                 status: [Mounts.Cast(page.selects.proposal_status), Mounts.Status()]
@@ -815,8 +844,7 @@ onBeforeMount(() => {
                                                                 </td>
                                                                 <td class="align-middle">
                                                                     <div class="small">{{
-                                                                        utils.floatToCurrency((i.quantity *
-                                                                            utils.currencyToFloat(i.value)).toFixed(2)) }}
+                                                                        utils.floatToCurrency((i.quantity * utils.currencyToFloat(i.value)).toFixed(2)) }}
                                                                     </div>
                                                                 </td>
                                                                 <td class="align-middle text-center">
@@ -855,6 +883,7 @@ onBeforeMount(() => {
                                             <TableList secondary :header="page.proposals.manual_headers" :count="false"
                                                 :body="page.proposals.data.manual" :actions="[
                                                     Actions.Create('eye-outline', 'Visualizar', view_proposal, '#modalProposalDetails'),
+                                                    Actions.Export('document-text-outline', export_proposal),
                                                     Actions.Create('create-outline', 'Editar', update_manual_collert),
                                                     Actions.Create('trash-outline', 'Remover', remove_manual_collert),
                                                 ]" :mounts="{
