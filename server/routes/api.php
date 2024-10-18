@@ -12,6 +12,7 @@ use App\Http\Controllers\Etps;
 use App\Http\Controllers\Home;
 use App\Http\Controllers\Attachments;
 use App\Http\Controllers\Ordinators;
+use App\Http\Controllers\Pcas;
 use App\Http\Controllers\PriceRecords;
 use App\Http\Controllers\Processes;
 use App\Http\Controllers\Programs;
@@ -92,7 +93,7 @@ Route::middleware('auth:sanctum')->group(function () {
     $common('/attachments/{origin}/{protocol}', Attachments::class);
     $common('/riskiness', RiskMaps::class);
     $common('/refterms', RefTerms::class);
-    $common('/pca', RefTerms::class);
+    $common('/pca', Pcas::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {

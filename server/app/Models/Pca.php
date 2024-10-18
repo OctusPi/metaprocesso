@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use App\Utils\Dates;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
 
 class Pca extends Model
 {
@@ -23,6 +26,38 @@ class Pca extends Model
         'status',
     ];
 
+    public function emission(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::UTC, Dates::PTBR),
+            set: fn(?string $value) => Dates::convert($value, Dates::PTBR, Dates::UTC)
+        );
+    }
+
+    public function rules(): array
+    {
+        return [
+            'reference_year' => [
+                'required',
+                Rule::unique('etps', 'protocol')
+                    ->where('organ_id', $this->organ_id)
+                    ->ignore($this->id)
+            ],
+            'emission' => 'required',
+            'organ_id' => 'required',
+            'comission_id' => 'required',
+            'author_id' => 'required',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'required' => 'Campo obrigatório não informado!',
+            'unique' => 'PCA já registrado para o ano de refer!'
+        ];
+    }
+
     const S_ELABORATION = 1;
     const S_APROVED = 2;
     const S_DENIED = 3;
@@ -30,9 +65,9 @@ class Pca extends Model
     public static function list_status(): array
     {
         return [
-            self::S_ELABORATION => 'Em Elaboração',
-            self::S_APROVED => 'Aprovado',
-            self::S_DENIED => 'Recusado',
+            ['id' => self::S_ELABORATION, 'title' => 'Em Elaboração'],
+            ['id' => self::S_APROVED, 'title' => 'Aprovado'],
+            ['id' => self::S_DENIED, 'title' => 'Recusado'],
         ];
     }
 }
