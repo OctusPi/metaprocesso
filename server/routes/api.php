@@ -92,6 +92,7 @@ Route::middleware('auth:sanctum')->group(function () {
     $common('/attachments/{origin}/{protocol}', Attachments::class);
     $common('/riskiness', RiskMaps::class);
     $common('/refterms', RefTerms::class);
+    $common('/pca', RefTerms::class);
 
     //especializeds
     Route::prefix('/auth')->controller(Authentication::class)->group(function () {
