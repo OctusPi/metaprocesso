@@ -1,15 +1,5 @@
 <script setup>
-import { onBeforeMount, watch } from 'vue';
-
-import TableList from '@/components/table/TableList.vue';
-import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
-import NavMainUi from '@/components/NavMainUi.vue';
-import HeaderMainUi from '@/components/HeaderMainUi.vue';
-import FooterMainUi from '@/components/FooterMainUi.vue';
-import TableListRadio from '@/components/table/TableListRadio.vue';
-import TabNav from '@/components/TabNav.vue';
-import ModalDfdDetails from '@/components/DfdDetails.vue';
-import ModalProposalDetailsUi from '@/components/ModalProposalDetailsUi.vue';
+import { inject, onBeforeMount, watch, createApp } from 'vue';
 
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
@@ -21,13 +11,26 @@ import notifys from '@/utils/notifys';
 import dates from '@/utils/dates'
 import utils from '@/utils/utils';
 import citys_tce from '@/data/citys_tce'
+import masks from '@/utils/masks';
+import forms from '@/services/forms';
+import exp from '@/services/export';
 
+import TableList from '@/components/table/TableList.vue';
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
+import NavMainUi from '@/components/NavMainUi.vue';
+import HeaderMainUi from '@/components/HeaderMainUi.vue';
+import FooterMainUi from '@/components/FooterMainUi.vue';
+import TableListRadio from '@/components/table/TableListRadio.vue';
+import TabNav from '@/components/TabNav.vue';
+import ModalDfdDetails from '@/components/DfdDetails.vue';
+import ModalProposalDetailsUi from '@/components/ModalProposalDetailsUi.vue';
+import ProposalReport from '@/views/reports/ProposalReport.vue'
+
+const sysapp = inject('sysapp')
 const emit = defineEmits(['callAlert', 'callUpdate', 'callRemove'])
-
 const props = defineProps({
     datalist: { type: Array, default: () => [] }
 })
-
 const [page, pageData] = Layout.new(emit, {
     url: '/pricerecords',
     datalist: props.datalist,
@@ -81,7 +84,7 @@ const [page, pageData] = Layout.new(emit, {
             tce: {},
             pncp: {},
             ecomerce: {
-                url_valid: false
+                isvalid: false
             }
         },
         manual_insert_find_items: {
@@ -127,7 +130,6 @@ const [page, pageData] = Layout.new(emit, {
         calctype: 'required'
     }
 })
-
 const tabs = new Tabs([
     { id: 'process', title: 'Processo' },
     { id: 'dfds', title: 'DFDs' },
@@ -236,6 +238,8 @@ function open_search_manual_price(i) {
     page.proposals.manual_insert_item = i
     page.proposals.manual_insert_search = false
     page.proposals.manual_insert_find_items.tce = []
+    page.proposals.manual_insert_find_items.pncp = []
+    page.proposals.manual_insert_search_items.ecomerce = { isvalid: false }
     page.proposals.manual_insert_search_items.pncp.item_code = page.proposals.manual_insert_item?.item.code
 
 }
@@ -298,22 +302,73 @@ function prices_pncp() {
     })
 }
 
-function prices_ecomerce(mod) {
+function prices_ecomerce() {
 
-    page.proposals.manual_insert_search_items.ecomerce.url_valid = false
-
-    if (mod === 'check_url') {
-        if (!page.proposals.manual_insert_search_items.ecomerce.url) {
-            return emit('callAlert', notifys.warning('Informe a URL para validar a inclusão do item.'))
-        }
-
-        http.get(page.proposals.manual_insert_search_items.ecomerce.url, emit, (resp) => {
-            if (http.success(resp)) {
-                page.proposals.manual_insert_search_items.ecomerce.url_valid = true
-                return
-            }
-        })
+    const data = { ...page.proposals.manual_insert_search_items.ecomerce }
+    const rules = {
+        fields: {
+            img: 'required',
+            url: 'required',
+            site: 'required',
+            cnpj: 'required',
+            title: 'required',
+            value: 'required',
+            shipping: 'required'
+        },
+        valids: {}
     }
+
+    const validation = forms.checkform(data, rules)
+    if (!validation.isvalid) {
+        page.proposals.manual_insert_search_items.ecomerce.isvalid = false
+        return emit('callAlert', notifys.warning('Informe todos os campos para registrar o preço a partir de um ecomerce'))
+    }
+
+    page.proposals.manual_insert_item.origin = 'Ecomerce'
+    page.proposals.manual_insert_item.value = (utils.currencyToFloat(data.value) + utils.currencyToFloat(data.shipping))
+    page.proposals.manual_insert_item.data = data
+    page.proposals.manual_insert_search_items.ecomerce.isvalid = true
+
+    emit('callAlert', notifys.success('Preço coletado com sucesso.'))
+}
+
+function handleImgEcomerce(event) {
+    const file = event.target.files[0]
+    if (file) {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onloadend = () => {
+            page.proposals.manual_insert_search_items.ecomerce.img = reader.result
+        }
+    }
+}
+
+function export_proposal(id) {
+    http.get(`/proposals/details/${id}`, emit, (resp) => {
+        const proposal = resp.data
+        const containerReport = document.createElement('div')
+        const instanceReport = createApp(ProposalReport, {
+            qrdata: sysapp,
+            logomarca: proposal.logomarca,
+            supplier: proposal.supplier,
+            process: {
+                protocol: proposal?.process.protocol,
+                organ: proposal?.organ,
+                date_ini: `${proposal?.date_ini} - ${proposal?.hour_ini}`,
+                date_fin: proposal?.pricerecord.date_fin,
+                description: proposal?.process.description
+            },
+            items: proposal.items,
+            representation: {
+                name: proposal.representation,
+                cpf: proposal.cpf
+            },
+            modality: proposal.modality,
+            author: proposal.author
+        })
+        instanceReport.mount(containerReport)
+        exp.exportPDF(containerReport, `Coleta-${proposal.protocol}`)
+    })
 }
 
 function generate(type) {
@@ -727,7 +782,7 @@ onBeforeMount(() => {
                                                     name="type-collect" :value="i" v-model="page.proposals.selected">
                                                 <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
                                                     c.nav
-                                                    }}</label>
+                                                }}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -738,6 +793,7 @@ onBeforeMount(() => {
                                             :body="page.proposals.data.emails" :actions="[
                                                 Actions.Create('eye-outline', 'Visualizar', view_proposal, '#modalProposalDetails'),
                                                 Actions.Create('send-outline', 'Reenviar', resend_collect),
+                                                Actions.Export('document-text-outline', export_proposal),
                                             ]" :mounts="{
                                                 modality: [Mounts.Cast(page.selects.proposal_modalities)],
                                                 status: [Mounts.Cast(page.selects.proposal_status), Mounts.Status()]
@@ -788,8 +844,7 @@ onBeforeMount(() => {
                                                                 </td>
                                                                 <td class="align-middle">
                                                                     <div class="small">{{
-                                                                        utils.floatToCurrency((i.quantity *
-                                                                            utils.currencyToFloat(i.value)).toFixed(2)) }}
+                                                                        utils.floatToCurrency((i.quantity * utils.currencyToFloat(i.value)).toFixed(2)) }}
                                                                     </div>
                                                                 </td>
                                                                 <td class="align-middle text-center">
@@ -828,12 +883,13 @@ onBeforeMount(() => {
                                             <TableList secondary :header="page.proposals.manual_headers" :count="false"
                                                 :body="page.proposals.data.manual" :actions="[
                                                     Actions.Create('eye-outline', 'Visualizar', view_proposal, '#modalProposalDetails'),
+                                                    Actions.Export('document-text-outline', export_proposal),
                                                     Actions.Create('create-outline', 'Editar', update_manual_collert),
                                                     Actions.Create('trash-outline', 'Remover', remove_manual_collert),
                                                 ]" :mounts="{
-                                                modality: [Mounts.Cast(page.selects.proposal_modalities)],
-                                                status: [Mounts.Cast(page.selects.proposal_status), Mounts.Status()]
-                                            }" />
+                                                    modality: [Mounts.Cast(page.selects.proposal_modalities)],
+                                                    status: [Mounts.Cast(page.selects.proposal_status), Mounts.Status()]
+                                                }" />
 
                                             <button type="button" class="mx-auto btn btn-action-primary mt-4"
                                                 @click="list_grouped_items">
@@ -903,7 +959,7 @@ onBeforeMount(() => {
                                     :value="i" v-model="page.proposals.manual_insert_types_resource_selected">
                                 <label class="btn btn-action-primary-tls" :for="`type-collect-${i}`">{{
                                     c.nav
-                                    }}</label>
+                                }}</label>
                             </div>
                         </div>
                         <div class="d-flex gap-2 flex-wrap">
@@ -1078,28 +1134,71 @@ onBeforeMount(() => {
                             <ion-icon
                                 :name="page.proposals.manual_insert_search ? 'ellipsis-horizontal-outline' : 'search-outline'"
                                 class="fs-4"></ion-icon>
-                            <p class="p-0 m-0 small">{{ page.proposals.manual_insert_search ? 'Não foram localizados itens.' : 'Aplique o filtro para localizar os itens.' }}</p>
+                            <p class="p-0 m-0 small">{{ page.proposals.manual_insert_search ? 'Não foram localizadositens.' : 'Aplique o filtro para localizar os itens.' }}</p>
                         </div>
                     </div>
 
                     <!-- Ecomerce -->
                     <div v-if="page.proposals.manual_insert_types_resource_selected === 'ecomerce'">
+                        <div class="mt-3 text-center position-relative c-logo">
+                            <div class="v-logo position-absolute">
+                                <img v-if="page.proposals.manual_insert_search_items.ecomerce.img"
+                                    :src="page.proposals.manual_insert_search_items.ecomerce.img" class="img-logo">
+                                <div v-else class="icon-logo mt-4">
+                                    <ion-icon name="image"></ion-icon>
+                                    <p>Imagem do Produto</p>
+                                </div>
+                            </div>
+                            <input type="file" name="logo" class="i-logo position-absolute"
+                                @change="(e) => handleImgEcomerce(e)">
+                        </div>
                         <div class="row g-3 mb-4">
-                            <div class="col-sm-12 col-md-11">
-                                <label for="ecomerce_url_item" class="form-label">URL Item</label>
+                            <div class="col-sm-12">
+                                <label for="ecomerce_url_item" class="form-label">Url Produto</label>
                                 <input type="text" name="ecomerce_url_item" class="form-control" id="ecomerce_url_item"
                                     placeholder="https://sitevarejo.com.br/item"
                                     v-model="page.proposals.manual_insert_search_items.ecomerce.url">
                             </div>
-                            <div class="col-sm-12 col-md-1 align-items-bottom">
-                                <label class="form-label d-none d-md-block">&nbsp;</label>
-                                <button @click="prices_ecomerce('check_url')" type="button" class="w-100 text-center btn btn-inline btn-action-primary">
-                                    <ion-icon name="search-outline" class="mx-auto fs-5"></ion-icon>
-                                </button>
+                            <div class="col-sm-12 col-md-8">
+                                <label for="ecomerce_site" class="form-label">Nome do Site</label>
+                                <input type="text" name="ecomerce_site" class="form-control" id="ecomerce_site"
+                                    placeholder="Site Varejo"
+                                    v-model="page.proposals.manual_insert_search_items.ecomerce.site">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="ecomerce_cnpj" class="form-label">CNPJ</label>
+                                <input type="text" name="ecomerce_cnpj" class="form-control" id="ecomerce_cnpj"
+                                    placeholder="00.000.000/0000-00" v-maska:[masks.maskcnpj]
+                                    v-model="page.proposals.manual_insert_search_items.ecomerce.cnpj">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="ecomerce_title_item" class="form-label">Título do Produto</label>
+                                <input type="text" name="ecomerce_title_item" class="form-control"
+                                    id="ecomerce_title_item" placeholder="Título como é apresentado no site"
+                                    v-model="page.proposals.manual_insert_search_items.ecomerce.title">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="ecomerce_value_item" class="form-label">Valor do Produto</label>
+                                <input type="text" name="ecomerce_value_item" class="form-control"
+                                    id="ecomerce_value_item" placeholder="R$0,00" v-maska:[masks.maskmoney]
+                                    v-model="page.proposals.manual_insert_search_items.ecomerce.value">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="ecomerce_shipping_item" class="form-label">Valor do Frete</label>
+                                <input type="text" name="ecomerce_shipping_item" class="form-control"
+                                    id="ecomerce_shipping_item" placeholder="R$0,00" v-maska:[masks.maskmoney]
+                                    v-model="page.proposals.manual_insert_search_items.ecomerce.shipping">
                             </div>
                         </div>
-                        <div v-if="page.proposals.manual_insert_search_items.ecomerce.url_valid" class="add_item_ecomerce">
-                            URL VALIDA
+                        <div class="d-flex flex-row-reverse gap-2 mt-4">
+                            <button type="button" class="btn btn-action-tertiary" data-bs-dismiss="modal">
+                                <ion-icon name="close-outline" class="fs-5"></ion-icon>
+                                Fechar
+                            </button>
+                            <button @click="prices_ecomerce" type="button" class="btn btn-action-primary">
+                                <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
+                                Coletar
+                            </button>
                         </div>
                     </div>
                 </div>

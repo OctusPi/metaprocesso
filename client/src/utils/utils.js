@@ -89,6 +89,7 @@ function reduceArrays(a, b, k = 'id') {
 }
 
 function currencyToFloat(currency){
+
     if(!currency){
         return 0
     }
@@ -97,15 +98,22 @@ function currencyToFloat(currency){
         return currency
     }
 
-    return parseFloat(currency.replace('.', '').replace(',', '.')).toFixed(2)
+    let sanitizedString = currency.replace(/\s|R\$|/g, '');
+    sanitizedString = sanitizedString.replace(',', '.');
+    const floatValue = parseFloat(sanitizedString);
+    return isNaN(floatValue) ? 0 : floatValue;
 }
 
 function floatToCurrency(value){
 
+    const pvalue = typeof value !== 'number' ? this.currencyToFloat(value) : value
+
+    console.log(pvalue)
+
     return Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL'
-      }).format(value)
+      }).format(pvalue)
 }
 
 function deepEqual(obj1, obj2) {

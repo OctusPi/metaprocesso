@@ -787,6 +787,45 @@ tbody tr:last-child td:first-child {
     max-height: 0 !important;
 }
 
+.c-logo {
+    height: 120px;
+}
+
+.v-logo {
+    width: 120px;
+    height: 120px;
+    left: calc(50% - 60px);
+    border-radius: 50%;
+    border: 1px dashed var(--color-base);
+    background-color: var(--tls-blue);
+}
+
+.i-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    cursor: pointer;
+    left: calc(50% - 60px);
+    opacity: 0;
+}
+
+.img-logo {
+    width: 118px;
+    height: 118px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.icon-logo ion-icon {
+    font-size: 2rem;
+    opacity: 0.6;
+}
+
+.icon-logo p {
+    font-size: 0.7rem;
+    color: var(--color-text-secondary);
+}
+
 @media(max-width:760px) {
     .main {
         width: 100%;

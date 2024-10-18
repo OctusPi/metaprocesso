@@ -1,6 +1,6 @@
 <script setup>
 
-import { createApp, inject, onMounted, ref, watch } from 'vue';
+import { createApp, inject, onMounted, watch, toRaw } from 'vue';
 
 // Services
 import Layout from '@/services/layout';
@@ -30,10 +30,6 @@ import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 // Local Components
 import EtpReport from './reports/EtpReport.vue';
 import PDFMerger from 'pdf-merger-js';
-import notifys from '@/utils/notifys';
-import forms from '@/services/forms';
-import { toRaw } from 'vue';
-
 
 const ORIGIN_ETPS = "1";
 
@@ -54,30 +50,7 @@ const [page, pageData] = Layout.new(emit, {
         { title: 'NECESSIDADE', sub: [{ key: 'necessity' }] },
         { key: 'status', title: 'STATUS' },
     ],
-    rules: {
-        process: 'required',
-        comission_id: 'required',
-        protocol: 'required',
-        emission: 'required',
-        status: 'required',
-        object_description: 'required',
-        object_classification: 'required',
-        necessity: 'required',
-        contract_forecast: 'required',
-        contract_requirements: 'required',
-        market_survey: 'required',
-        contract_calculus_memories: 'required',
-        contract_expected_price: 'required',
-        solution_full_description: 'required',
-        solution_parcel_justification: 'required',
-        correlated_contracts: 'required',
-        contract_alignment: 'required',
-        expected_results: 'required',
-        contract_previous_actions: 'required',
-        ambiental_impacts: 'required',
-        viability_declaration: 'required',
-        installment_type: 'required'
-    },
+    rules: {},
     process: {
         search: {},
         data: [],
@@ -157,29 +130,43 @@ function export_etp(id) {
     })
 }
 
-function savePartially() {
+function save_etp(mode = null) {
+    
+    const baseRules = {
+        process: 'required',
+        comission_id: 'required',
+        emission: 'required'
+    }
+
+    const fullRules = {
+        protocol: 'required',
+        status: 'required',
+        object_description: 'required',
+        object_classification: 'required',
+        necessity: 'required',
+        contract_forecast: 'required',
+        contract_requirements: 'required',
+        market_survey: 'required',
+        contract_calculus_memories: 'required',
+        contract_expected_price: 'required',
+        solution_full_description: 'required',
+        solution_parcel_justification: 'required',
+        correlated_contracts: 'required',
+        contract_alignment: 'required',
+        expected_results: 'required',
+        contract_previous_actions: 'required',
+        ambiental_impacts: 'required',
+        viability_declaration: 'required',
+        installment_type: 'required'
+    }
+
+    page.rules = mode === 'partial' ? baseRules : { ...baseRules, ...fullRules }
+
     Object.keys(page.valids).forEach(k => {
         page.valids[k] = false
     })
 
-    const validation = forms.checkform(page.data, {
-        valids: page.valids,
-        fields: {
-            process: 'required',
-            comission_id: 'required',
-        },
-    });
-
-    if (!validation.isvalid) {
-        emit('callAlert', notifys.warning(validation.message))
-        return
-    }
-
-    page.data.process_id = page.data.process?.id
-
-    http.post(`${page.url}/save_part`, page.data, emit, () => {
-        pageData.list()
-    })
+    pageData.save({ process_id: page.data.process?.id })
 }
 
 function generate(type) {
@@ -303,7 +290,7 @@ function generate(type) {
     gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
-function fetchProcess(e) {
+function fetch_process(e) {
     http.post(`${page.url}/${page.data.id ?? 0}/fetch_process/${e.target._value?.id}`, {}, emit, (res) => {
         page.data.installment_type = res.data.installment_type
         page.data.installment_justification = res.data.installment_justification
@@ -328,7 +315,7 @@ watch(() => page.ui.register, (newUi) => {
 })
 
 watch(() => props.datalist, (newdata) => {
-    page.datalist = newDatalist
+    page.datalist = newdata
 })
 
 onMounted(() => {
@@ -437,7 +424,7 @@ onMounted(() => {
                 </div>
                 <div role="form" class="container p-0">
                     <TabNav :tabs="tabs" :valids="page.valids" identify="tabbed" />
-                    <form @submit.prevent="pageData.save({ process_id: page.data.process?.id })">
+                    <form @submit.prevent="null">
                         <!-- tab processo -->
                         <div class="tab-content">
                             <div id="process" class="tab-pane show active">
@@ -521,7 +508,7 @@ onMounted(() => {
                                                 <div class="p-4 pt-0 mx-2">
                                                     <TableListRadio secondary identify="process"
                                                         v-model="page.data.process" :header="page.process.headers"
-                                                        @onChange="fetchProcess" :body="page.process.data" :mounts="{
+                                                        @onChange="fetch_process" :body="page.process.data" :mounts="{
                                                             status: [Mounts.Cast(page.selects.process_status), Mounts.Status()],
                                                             description: [Mounts.Truncate(100)],
                                                         }" />
@@ -1005,7 +992,7 @@ onMounted(() => {
                                         <div class="box-revisor-content">
                                             <div class="row">
                                                 <div class="col-12">
-                                                    <p>
+                                                    <p :class="page.data.viability_declaration == 1 ? 'text-success' : 'text-danger'">
                                                         {{
                                                             page.data.viability_declaration != null &&
                                                                 page.data.viability_declaration == 1
@@ -1046,13 +1033,13 @@ onMounted(() => {
                         </div>
 
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
-                            <button class="btn btn-action-primary">
+                            <button @click="save_etp" type="button" class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
                                 Registrar
                             </button>
-                            <button @click="savePartially" type="button" class="btn btn-action-secondary">
+                            <button @click="save_etp('partial')" type="button" class="btn btn-action-secondary">
                                 <ion-icon name="folder-open-outline" class="fs-5"></ion-icon>
-                                Salvar parcialmente
+                                Salvar Rascunho
                             </button>
                             <button @click="pageData.ui('register')" type="button" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>

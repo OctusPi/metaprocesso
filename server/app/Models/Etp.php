@@ -14,6 +14,12 @@ class Etp extends Model
 {
     use HasFactory;
 
+    public const S_DRAFT = 0;
+    public const S_WRITING = 1;
+    public const S_PENDENT = 2;
+    public const S_FINISHED = 3;
+    public const S_BLOCKED = 4;
+
     protected $table = 'etps';
 
     protected $fillable = [
@@ -64,22 +70,7 @@ class Etp extends Model
             'organ_id' => 'required',
             'comission_id' => 'required',
             'author_id' => 'required',
-            'object_description' => 'required',
-            'object_classification' => 'required',
-            'necessity' => 'required',
-            'contract_forecast' => 'required',
-            'contract_requirements' => 'required',
-            'market_survey' => 'required',
-            'contract_calculus_memories' => 'required',
-            'contract_expected_price' => 'required',
-            'solution_full_description' => 'required',
-            'solution_parcel_justification' => 'required',
-            'correlated_contracts' => 'required',
-            'contract_alignment' => 'required',
-            'expected_results' => 'required',
-            'contract_previous_actions' => 'required',
-            'ambiental_impacts' => 'required',
-            'viability_declaration' => 'required',
+            'emission' => 'required'
         ];
     }
 
@@ -90,13 +81,6 @@ class Etp extends Model
             'unique' => 'ETP já registrado no sistema!'
         ];
     }
-
-    public const S_DRAFT = 0;
-    public const S_WRITING = 1;
-    public const S_PENDENT = 2;
-    public const S_FINISHED = 3;
-    public const S_BLOCKED = 4;
-
 
     public static function list_status(): array
     {

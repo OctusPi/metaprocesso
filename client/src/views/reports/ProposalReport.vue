@@ -6,11 +6,13 @@ import dates from '@/utils/dates'
 
 const props = defineProps({
     qrdata: { type: Object, default: () => { } },
-    supplier: { type: Object, required: true },
+    supplier: {type: Object},
     logomarca: { type: String },
     representation:{ type: Object, required: true },
     process: { type: Object, required: true },
-    items: { type: Object, required: true }
+    modality:{type: Number, default: 1},
+    items: { type: Object, required: true },
+    author:{type: Object, default: () => {}}
 })
 
 let globalValue = ref(0)
@@ -29,7 +31,7 @@ onBeforeMount(() => {
             <div class="ct-logo me-2">
                 <img :src="logomarca" class="h-logo">
             </div>
-            <div class="h-info">
+            <div class="h-info" v-if="props.supplier">
                 <h1>{{ supplier.name }}</h1>
                 <p>{{ supplier.cnpj }}</p>
                 <p>{{ supplier.address }}</p>
@@ -54,10 +56,12 @@ onBeforeMount(() => {
 
         <div class="my-4">
             <h1 class="mb-3">Solicitante: {{ process.organ.name }}</h1>
-            <p>Fornecedor: {{ supplier.name }}</p>
-            <p>CNPJ: {{ supplier.cnpj }}</p>
-            <p>Endereço: {{ supplier.address }}</p>
-            <p>Contato: {{ supplier.phone }} {{ supplier.email }}</p>
+            <div v-if="props.supplier">
+                <p>Fornecedor: {{ supplier?.name }}</p>
+                <p>CNPJ: {{ supplier?.cnpj }}</p>
+                <p>Endereço: {{ supplier?.address }}</p>
+                <p>Contato: {{ supplier?.phone }} {{ supplier?.email }}</p>
+            </div>
         </div>
 
         <div class="my-4">
@@ -84,7 +88,8 @@ onBeforeMount(() => {
                         <th>UNIT.</th>
                         <th class="text-center">QUANT.</th>
                         <th>VALOR UNIT.</th>
-                        <th class="pe-2">TOTAL</th>
+                        <th>TOTAL</th>
+                        <th v-if="props.modality !== 1">ORIGEM</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -104,11 +109,13 @@ onBeforeMount(() => {
                             <div class="small">{{ i.quantity }}</div>
                         </td>
                         <td class="align-middle">
-                            <div class="small">R$ {{ i.value }}</div>
+                            <div class="small">{{ utils.floatToCurrency(i.value) }}</div>
                         </td>
                         <td class="align-middle">
-                            <div class="small">{{ utils.floatToCurrency((i.quantity *
-                                utils.currencyToFloat(i.value)).toFixed(2)) }}</div>
+                            <div class="small">{{ utils.floatToCurrency((i.quantity * utils.currencyToFloat(i.value)).toFixed(2)) }}</div>
+                        </td>
+                        <td v-if="props.modality !== 1" class="align-middle">
+                            <div class="small">{{ i.origin ?? '*****' }}</div>
                         </td>
                     </tr>
                 </tbody>
@@ -154,13 +161,16 @@ onBeforeMount(() => {
 
         <!-- assings -->
         <div class="row mt-5">
-            <div class="col text-center">
+            <div class="col text-center" v-if="props.modality === 1">
                 <p>___________________________________</p>
                 <p>{{ representation.name }}</p>
-                <p>{{ representation.cpf }}</p>
-                <p>CPF Representante</p>
+                <p>CPF: {{ representation.cpf }}</p>
             </div>
-
+            <div v-else class="col text-center">
+                <p>___________________________________</p>
+                <p>{{ author.name }}</p>
+                <p>Responsável pela Coleta</p>
+            </div>
         </div>
 
         <!-- City and Date -->

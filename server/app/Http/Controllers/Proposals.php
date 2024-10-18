@@ -40,7 +40,7 @@ class Proposals extends Controller
 
     public function details(Request $request)
     {
-        return $this->base_details($request, ['organ', 'process', 'supplier', 'pricerecord']);
+        return $this->base_details($request, ['organ', 'process', 'supplier', 'pricerecord', 'author']);
     }
 
     public function download(Request $request)
