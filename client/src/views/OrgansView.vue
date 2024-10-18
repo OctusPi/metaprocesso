@@ -124,7 +124,7 @@ onMounted(() => {
                 <div role="form" class="container p-0">
                     <form class="form-row" @submit.prevent="pageData.save()">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-                            <input type="hidden" name="id" v-model="page.id">
+                            
                             <div class="mt-3 text-center position-relative c-logo">
                                 <div class="v-logo position-absolute">
                                     <img v-if="page.data.logomarca" :src="page.data.logomarca" class="img-logo">
@@ -219,45 +219,3 @@ onMounted(() => {
         </main>
     </div>
 </template>
-
-
-<style scoped>
-.c-logo {
-    height: 120px;
-}
-
-.v-logo {
-    width: 120px;
-    height: 120px;
-    left: calc(50% - 60px);
-    border-radius: 50%;
-    border: 1px dashed var(--color-base);
-    background-color: var(--tls-blue);
-}
-
-.i-logo {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    cursor: pointer;
-    left: calc(50% - 60px);
-    opacity: 0;
-}
-
-.img-logo {
-    width: 118px;
-    height: 118px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.icon-logo ion-icon {
-    font-size: 2rem;
-    opacity: 0.6;
-}
-
-.icon-logo p {
-    font-size: 0.7rem;
-    color: var(--color-text-secondary);
-}
-</style>

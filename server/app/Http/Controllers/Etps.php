@@ -35,29 +35,6 @@ class Etps extends Controller
         ]);
     }
 
-
-    /**
-     * Salva um novo registro de ETP Parcialmente ou atualiza um existente.
-     *
-     * @param Request $request Dados da requisição.
-     * @return \Illuminate\Http\JsonResponse Resposta JSON com o resultado da operação.
-     */
-    public function save_part(Request $request)
-    {
-        $this->model = new EtpPartial();
-
-        $response = $this->base_save($request, [
-            'ip' => $request->ip(),
-            'author_id' => $request->user()->id,
-            'emission' => now()->format('d/m/Y'),
-            'status' => Etp::S_DRAFT,
-        ]);
-
-        $this->model = new Etp();
-
-        return $response;
-    }
-
     /**
      * Lista os Etps com base em critérios de filtragem.
      *

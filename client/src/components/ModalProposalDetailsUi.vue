@@ -254,7 +254,7 @@ watch(() => props.selects, (newval) => {
                                                 <div class="small">{{ utils.floatToCurrency((i.quantity *
                                                     utils.currencyToFloat(i.value)).toFixed(2)) }}</div>
                                             </td>
-                                            <td v-if="page.data.modality !== 1">
+                                            <td v-if="page.data.modality !== 1" class="align-middle">
                                                 <div class="small">{{ i.origin ?? '*****' }}</div>
                                             </td>
                                         </tr>

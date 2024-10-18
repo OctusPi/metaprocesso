@@ -1039,7 +1039,7 @@ onMounted(() => {
                             </button>
                             <button @click="save_etp('partial')" type="button" class="btn btn-action-secondary">
                                 <ion-icon name="folder-open-outline" class="fs-5"></ion-icon>
-                                Salvar parcialmente
+                                Salvar Rascunho
                             </button>
                             <button @click="pageData.ui('register')" type="button" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>
