@@ -100,6 +100,27 @@ class PriceRecords extends Controller
 
         return response()->json(Notify::warning('Registro não localizado'), 404);
     }
+    
+    /**
+     * Retorna dados para export
+     *
+     * @param Request $request Requisição HTTP.
+     * @return \Illuminate\Http\JsonResponse Detalhes do registro.
+     */
+    public function export(Request $request)
+    {
+        $pricerecord = Data::findOne(new PriceRecord(), ['id' => $request->id], null, ['organ', 'process']);
+        $proposals = Data::find(new Proposal(), ['pricerecord_id' => $request->id], ['date_fin'], ['supplier']);
+
+        if ($pricerecord) {
+            return response()->json([
+                'pricerecord' => $pricerecord,
+                'proposals' => $proposals
+            ]);
+        }
+
+        return response()->json(Notify::warning('Registro não localizado'), 404);
+    }
 
     /**
      * Lista processos.
@@ -345,13 +366,16 @@ class PriceRecords extends Controller
             if ($request->manual_items) {
 
                 $manual_items = json_decode($request->manual_items, true);
+                $global = array_reduce($manual_items ?? [], function ($carry, $item) {
+                    return $carry += round(Utils::toFloat($item['value'] ?? 0) * $item['quantity'] ?? 0, 2);
+                });
                 $proposal_status = array_filter($manual_items, function ($obj) {
                     return isset($obj['value']);
-                });
+                }, 0);
 
                 if($request->manual_proposal_id){
                     $proposal = Proposal::find($request->manual_proposal_id);
-                    $proposal->update(['items' => $manual_items, 'status' => count($proposal_status) < count($manual_items) ? Proposal::S_PENDING : Proposal::S_FINISHED]);
+                    $proposal->update(['items' => $manual_items, 'global'=>$global, 'status' => count($proposal_status) < count($manual_items) ? Proposal::S_PENDING : Proposal::S_FINISHED]);
                 }else{
                     Proposal::create([
                         'protocol' => $request->protocol,
@@ -365,6 +389,7 @@ class PriceRecords extends Controller
                         'supplier_id' => null,
                         'author_id' => $request->user()->id,
                         'items' => $manual_items,
+                        'global'=>$global,
                         'modality' => Proposal::M_MANUAL,
                         'status' => count($proposal_status) < count($manual_items) ? Proposal::S_PENDING : Proposal::S_FINISHED,
                     ]);
