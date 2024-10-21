@@ -6,6 +6,8 @@ const props = defineProps({
     header: { type: Array, default: () => [] },
     body: { type: Array, default: () => [] },
     count: { type: Boolean, default: true },
+    virtual: { type: Object, default: () => ({}) },
+    mounts: { type: Object },
     errmsg: { type: String, default: 'Não foram localizados registros' }
 })
 
@@ -90,13 +92,17 @@ function getValue(value, header) {
                     <td v-for="(mounted, j) in applyMounters(instance, userHeader)" :key="j" class="align-middle">
                         <div>
                             <div v-if="userHeader[j].key" class="small txt-color-sec" :class="mounted.classes" :title="getTitle(mounted)">
-                                {{ getValue(mounted.value, userHeader[j]) }}
+                                <template v-if="!userHeader[j].isBool">
+                                        {{ getValue(mounted.value, userHeader[j]) }}
+                                    </template>
                             </div>
                         </div>
                         <div>
                             <span v-for="(submounted, k) in applyMounters(instance, userHeader[j].sub ?? [])" :key="k" class="inline-block small me-1" :title="getTitle(submounted)" :class="submounted.classes">
-                                {{ userHeader[j].sub[k].title }}
-                                {{ getValue(submounted.value, userHeader[j].sub[k]) }}
+                                <template v-if="!userHeader[j].sub[k].isBool">
+                                        {{ userHeader[j].sub[k].title }}
+                                        {{ getValue(submounted.value, userHeader[j].sub[k]) }}
+                                    </template>
                             </span>
                         </div>
                     </td>

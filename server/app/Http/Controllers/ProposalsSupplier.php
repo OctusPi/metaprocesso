@@ -8,6 +8,7 @@ use App\Utils\Uploads;
 use App\Models\DfdItem;
 use App\Models\Proposal;
 use App\Models\PriceRecord;
+use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -86,7 +87,13 @@ class ProposalsSupplier extends Controller
             $upload->remove($instance->document);
         }
 
+        // soma o valor total dos preços dos items
+        $global = array_reduce(json_decode($request->items, true) ?? [], function ($carry, $item) {
+            return $carry += round(Utils::toFloat($item['value'] ?? 0) * $item['quantity'] ?? 0, 2);
+        });
+
         $dataToUpdate = array_merge($request->all(), [
+            'global'   => $global,
             'date_fin' => date('d/m/Y'),
             'hour_fin' => date('H:i:s')
         ]);

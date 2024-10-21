@@ -115,7 +115,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/list_dfds', 'list_dfds');
         Route::get('/list_dfd_items/{id}', 'list_dfd_items');
         Route::post('/{id}/fetch_process/{process_id}', 'fetch_process');
-        Route::get('/export/{id}', 'export');
         Route::post('/generate', 'generate');
 
     });

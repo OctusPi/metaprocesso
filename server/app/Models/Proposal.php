@@ -47,7 +47,8 @@ class Proposal extends Model
         'document',
         'representation',
         'cpf',
-        'status'
+        'status',
+        'global'
     ];
 
     protected $casts = [

@@ -108,8 +108,6 @@ function floatToCurrency(value){
 
     const pvalue = typeof value !== 'number' ? this.currencyToFloat(value) : value
 
-    console.log(pvalue)
-
     return Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL'

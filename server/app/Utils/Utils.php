@@ -116,4 +116,21 @@ class Utils
 
         return trim($string);
     }
+
+    public static function toFloat($value): float {
+
+        if (is_float($value)) {
+            return $value;
+        }
+    
+        if (is_string($value)) {
+
+            $value = str_replace(['R$', ' ', '.'], '', $value);
+            $value = str_replace(',', '.', $value);
+            return floatval($value);
+        }
+    
+        return 0.0;
+    }
+    
 }

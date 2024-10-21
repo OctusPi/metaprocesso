@@ -1,8 +1,9 @@
 <script setup>
+// import { ref } from 'vue'
 import QrcodeVue from 'qrcode.vue';
 import dates from '@/utils/dates'
-// import { ref } from 'vue'
-// import utils from '@/utils/utils'
+import utils from '@/utils/utils'
+
 import TableListReport from '@/components/table/TableListReport.vue'
 
 defineProps({
@@ -10,7 +11,8 @@ defineProps({
     organ: { type: Object, required: true },
     process: { type: Object, required: true },
     pricerecord: { type: Object, required: true },
-    proposals: { type: Array, required: true }
+    proposals: { type: Array, required: true },
+    selects: {type: Array, default:() => []}
 })
 
 const headers = {
@@ -51,7 +53,7 @@ const headers = {
     </header>
 
     <main>
-        <div class="my-2">
+        <div class="my-4">
             <h1 class="text-center">MAPA DE PREÇOS</h1>
             <h2 class="text-center">{{ `${pricerecord.protocol ?? '*****'} - ${pricerecord.date_ini} - ${pricerecord.ip ?? '*****'}` }}</h2>
             <h2 class="text-center">{{ `PCA: ${process.year_pca} - Situação: ${utils.getTxt(selects.status, pricerecord.status)}` }}</h2>
@@ -59,7 +61,7 @@ const headers = {
         </div>
         
         <!-- process object -->
-        <div class="my-2">
+        <div class="my-4">
             <h2>{{ process.description }}</h2>
         </div>
 
@@ -87,3 +89,7 @@ const headers = {
 
     </main>
 </template>
+
+<style scoped>
+    @import url('../../assets/css/reports.css');
+</style>

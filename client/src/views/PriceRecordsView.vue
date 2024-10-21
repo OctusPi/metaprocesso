@@ -25,6 +25,7 @@ import TabNav from '@/components/TabNav.vue';
 import ModalDfdDetails from '@/components/DfdDetails.vue';
 import ModalProposalDetailsUi from '@/components/ModalProposalDetailsUi.vue';
 import ProposalReport from '@/views/reports/ProposalReport.vue'
+import PriceMapReport from './reports/PriceMapReport.vue';
 
 const sysapp = inject('sysapp')
 const emit = defineEmits(['callAlert', 'callUpdate', 'callRemove'])
@@ -371,6 +372,29 @@ function export_proposal(id) {
     })
 }
 
+function export_pricemap(id) {
+    http.get(`${page.url}/export/${id}`, emit, (resp) => {
+        const pricerecord = resp.data?.pricerecord
+        const proposals = resp.data?.proposals
+        const containerReport = document.createElement('div')
+        const instanceReport = createApp(PriceMapReport, {
+            qrdata: sysapp,
+            organ: page.organ,
+            pricerecord: pricerecord,
+            proposals: proposals,
+            process: {
+                protocol: pricerecord?.process.protocol,
+                organ: pricerecord?.organ,
+                date_ini: `${pricerecord?.date_ini} - ${pricerecord?.hour_ini}`,
+                date_fin: pricerecord?.date_fin,
+                description: pricerecord?.process.description
+            }
+        })
+        instanceReport.mount(containerReport)
+        exp.exportPDF(containerReport, `Coleta-${pricerecord.protocol}`)
+    })
+}
+
 function generate(type) {
 
     if (!page.data?.process && !page.data?.suppliers) {
@@ -486,6 +510,7 @@ onBeforeMount(() => {
                 </div>
                 <div role="list" class="container p-0">
                     <TableList :header="page.header" :body="page.datalist" :actions="[
+                        Actions.Create('document-text-outline', 'Mapa de Preço', export_pricemap),
                         Actions.Create('documents-outline', 'Coletas', view_colects),
                         Actions.Edit(prepare_update),
                         Actions.Delete(pageData.remove)
