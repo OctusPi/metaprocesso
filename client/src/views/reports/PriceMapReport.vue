@@ -3,7 +3,7 @@ import QrcodeVue from 'qrcode.vue';
 import dates from '@/utils/dates'
 // import { ref } from 'vue'
 // import utils from '@/utils/utils'
-// import TableListReport from '@/views/reports/TableListReport.vue'
+import TableListReport from '@/components/table/TableListReport.vue'
 
 defineProps({
     qrdata: { type: Object, default: () => { } },
@@ -12,6 +12,18 @@ defineProps({
     pricerecord: { type: Object, required: true },
     proposals: { type: Array, required: true }
 })
+
+const headers = {
+    proposals: [
+        { title: 'FORNECEDOR.',key: 'supplier.cnpj', sub: [{ key: 'supplier.name' }] },
+        { title: 'MODALIDADE', key: 'modality' },
+        { title: 'CONTATO.',key: 'supplier.email', sub: [{ key: 'supplier.phone' }, { key: 'supplier.address' }] },
+        { title: 'VALOR', key: 'global' },
+        { title: 'DATA/HORA', key:'date_ini', sub: [{ key: 'hour_ini' }] },
+        { title: 'STATUS', key: 'status' }
+    ],
+    items:[]
+}
 </script>
 
 <template>
@@ -42,10 +54,8 @@ defineProps({
         <div class="my-2">
             <h1 class="text-center">MAPA DE PREÇOS</h1>
             <h2 class="text-center">{{ `${pricerecord.protocol ?? '*****'} - ${pricerecord.date_ini} - ${pricerecord.ip ?? '*****'}` }}</h2>
-            <h2 class="text-center">{{ `PCA: ${process.year_pca} - Situação: ${utils.getTxt(
-                selects.status,
-                process.status
-            )}` }}</h2>
+            <h2 class="text-center">{{ `PCA: ${process.year_pca} - Situação: ${utils.getTxt(selects.status, pricerecord.status)}` }}</h2>
+            <h2 class="text-center">{{ `Método de Seleção: ${process.year_pca} - Situação: ${utils.getTxt(selects.status, pricerecord.status)}` }}</h2>
         </div>
         
         <!-- process object -->
@@ -57,17 +67,12 @@ defineProps({
         <div class="table-title">
             <h3>Propostas</h3>
             <p>
-                Lista de propostas associadas a coleta de preços
+                Lista de propostas recebidas
             </p>
         </div>
 
         <div v-if="proposals.length > 0">
-            <!-- <TableListReport :detach-status="false" :smaller="true" :count="false" :header="items.headers_list"
-                :body="catalog?.items" :casts="{
-                    status: selects.items_status ?? [],
-                    origin: selects.items_origins ?? [],
-                    category: selects.items_categories ?? [],
-                }" /> -->
+            <TableListReport :count="false" :header="headers.proposals" :body="proposals"  />
         </div>
         <div v-else class="small mb-4">
             <p>Ainda não existem propostas associadas a coleta</p>

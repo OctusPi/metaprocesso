@@ -62,7 +62,7 @@ function checkrule(rule, value) {
 
     switch (rule) {
         case 'required':
-            isvalid = typeof value === 'number' ? true : !!(value && value.trim());
+            isvalid = typeof value === 'number' ? true : !!(value && value?.trim());
             message = isvalid ? '' : 'Campo obrigatório não informado!';
             break;
         case 'email':
