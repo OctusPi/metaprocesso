@@ -161,30 +161,36 @@ const responsibles = computed(() => {
       <div class="user-signatures text-center">
         <h1>RESPONSÁVEIS</h1>
         <div class="row gap-3 justify-content-center mt-3">
-          <div v-if="responsibles.length > 0" v-for="person, i in responsibles" :key="i" class="col-12 mx-5">
-            <strong class="signature">{{ person.name }}</strong>
-            <p class="small">Demandante</p>
-          </div>
+          <template v-if="responsibles.length > 0">
+            <div v-for="person, i in responsibles" :key="i" class="col-12 mx-5">
+              <strong class="signature">{{ person.name }}</strong>
+              <p class="small">Demandante</p>
+            </div>
+          </template>
           <p v-else>Não informado</p>
         </div>
       </div>
       <div class="comission-signatures text-center mt-4">
         <h1>AUXILIADO PELA EQUIPE TÉCNICA DE PLANEJAMENTO</h1>
         <div class="row gap-3 justify-content-center mt-3">
-          <div v-if="team.length > 0" v-for="person, i in team" :key="i" class="col-12 mx-5">
-            <strong class="signature">{{ person.name }}</strong>
-            <p class="small">{{ utils.getTxt(selects.responsibilities, person.responsibility) }}</p>
-          </div>
+          <template v-if="team.length > 0">
+            <div v-for="person, i in team" :key="i" class="col-12 mx-5">
+              <strong class="signature">{{ person.name }}</strong>
+              <p class="small">{{ utils.getTxt(selects.responsibilities, person.responsibility) }}</p>
+            </div>
+          </template>
           <p v-else>Não informado</p>
         </div>
       </div>
       <div class="user-signatures text-center mt-4">
         <h1>APROVADO POR</h1>
         <div class="row gap-3 justify-content-center mt-3">
-          <div v-if="approvedBy.length > 0" v-for="person, i in approvedBy" :key="i" class="col-12 mx-5">
-            <strong class="signature">{{ person.name }}</strong>
-            <p class="small">Ordenador de Demanda</p>
-          </div>
+          <template v-if="approvedBy.length > 0">
+            <div  v-for="person, i in approvedBy" :key="i" class="col-12 mx-5">
+              <strong class="signature">{{ person.name }}</strong>
+              <p class="small">Ordenador de Demanda</p>
+            </div>
+          </template>
           <p v-else>Não informado</p>
         </div>
       </div>
