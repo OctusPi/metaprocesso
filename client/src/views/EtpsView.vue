@@ -174,7 +174,7 @@ function generate(type) {
         organ: page.organ,
         comission: page.selects.comissions?.find(o => o.id === page.data.comission_id),
         object_description: page.data.object_description,
-        process: page.process
+        process: page.data.process
     }
 
     let callresp, payload = null
@@ -183,7 +183,6 @@ function generate(type) {
         payload = mPayload
         callresp = (resp) => {
             page.data[key] = `<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`
-            console.log(`<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`)
         };
     }
 
@@ -196,8 +195,7 @@ function generate(type) {
             break;
         case 'object_classification':
             setValuesAndPayload(type, `
-            Classifique o objeto de um Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
+            Elabore a categorização e descrição detalhada do bem, serviço ou obra que será adquirido ou contratado com base nessa descrição: ${base.process?.description}. Siga esse padrão na elaboração da resposta: materiais de limpeza, objeto da contratação, se enquadra como bem comum, uma vez que os padrões de desempenho e qualidade estão objetivamente definidos em conformidade com o com o artigo 20° da Lei 14.133/2021. Não se enquadra como sendo de bem de natureza luxuosa, pois os padrões de desempenho e qualidade podem ser objetivamente definidos, por meio de especificações usuais de mercado. retorne a resposta em um único parágrafo em plain text.
         `);
             break;
         case 'necessity':
@@ -294,6 +292,8 @@ function fetch_process(e) {
     http.post(`${page.url}/${page.data.id ?? 0}/fetch_process/${e.target._value?.id}`, {}, emit, (res) => {
         page.data.installment_type = res.data.installment_type
         page.data.installment_justification = res.data.installment_justification
+        page.data.object_description = res.data?.description
+
     }, () => {
         page.data.process = null
     })
@@ -590,11 +590,7 @@ onMounted(() => {
                                         <label for="installment_justification"
                                             class="form-label d-flex justify-content-between">
                                             Justificativa do parcelamento
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="generate('installment_justification')">
-                                                <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>
-                                                Gerar com I.A
-                                            </a>
+                                            
                                         </label>
                                         <InputRichText :valid="page.valids.installment_justification"
                                             placeholder="Descrição do Objeto" identifier="installment_justification"
@@ -604,9 +600,7 @@ onMounted(() => {
                                         <label for="object_description"
                                             class="form-label d-flex justify-content-between">
                                             Descrição sucinta do objeto
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="generate('object_description')">
-                                                <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                            
                                         </label>
                                         <InputRichText :valid="page.valids.object_description"
                                             placeholder="Descrição do Objeto" identifier="object_description"

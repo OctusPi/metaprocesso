@@ -105,8 +105,6 @@ function generate(key) {
         installment: page.selects.installment_types.find(o => o.id === page.data.installment_type),
     }
 
-    console.log(base)
-
     if (!base.acquisition) {
         emit('callAlert', notifys.warning('Selecione o estilo de aquisição do processo'))
         return
@@ -141,8 +139,6 @@ function generate(key) {
             `)
 
     }
-
-    console.log(payload)
 
     gpt.generate(`${page.url}/generate`, payload, emit, (resp) => {
         page.data.description = resp.data?.choices[0]?.message?.content
