@@ -46,7 +46,8 @@ class Process extends Model
     public const M_CALL = 10;
 
     public const ACQUISITION_SERVICE = 1;
-    public const ACQUISITION_ACQUISITION = 2;
+    public const ACQUISITION_BENS = 2;
+    public const ACQUISITION_OBRAS = 3;
 
     public const INSTALLMENT_LOT = 1;
     public const INSTALLMENT_ITEM = 2;
@@ -153,7 +154,8 @@ class Process extends Model
     {
         return [
             ['id' => self::ACQUISITION_SERVICE, 'title' => 'Serviço'],
-            ['id' => self::ACQUISITION_ACQUISITION, 'title' => 'Aquisição'],
+            ['id' => self::ACQUISITION_BENS, 'title' => 'Bens'],
+            ['id' => self::ACQUISITION_OBRAS, 'title' => 'Obras'],
         ];
     }
 
