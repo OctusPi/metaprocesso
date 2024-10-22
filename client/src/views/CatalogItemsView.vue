@@ -45,7 +45,7 @@ const [page, pageData] = Layout.new(emit, {
 const [groups, groupsData] = Layout.new(emit, {
     url: `/catalogsubcategories/${page.organ?.id}`,
     data: {},
-    header: [{ key: 'name', title: 'GRUPO' }],
+    header: [{ key: 'name', title: 'LOTE' }],
     formRules: { name: 'required' },
     modal: 'subgroup',
 })
@@ -134,7 +134,7 @@ onBeforeMount(() => {
                         <button @click="groupsData.list" data-bs-toggle="modal" :data-bs-target="'#' + groups.modal"
                             class="btn btn-action-secondary">
                             <ion-icon name="grid-outline" class="fs-5"></ion-icon>
-                            Grupos
+                            Lotes
                         </button>
                         <RouterLink to="/catalogs" class="btn btn-action-secondary">
                             <ion-icon name="arrow-back" class="fs-5"></ion-icon>
@@ -186,7 +186,7 @@ onBeforeMount(() => {
                         </div>
 
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-subcategory" class="form-label">Grupo</label>
+                            <label for="s-subcategory" class="form-label">Lote</label>
                             <select name="subcategory" class="form-control" id="s-subcategory"
                                 v-model="page.search.subcategory_id">
                                 <option value=""></option>
@@ -342,9 +342,9 @@ onBeforeMount(() => {
                         <div class="modal-body p-0 my-1">
                             <div v-if="!groups.ui.register" role="heading" class="inside-title mb-4 w-100">
                                 <div>
-                                    <h2>Agrupamentos</h2>
+                                    <h2>Lotes</h2>
                                     <p>
-                                        Grupos de itens pertencentes ao
+                                        Lotes de itens pertencentes a
                                         <span class="txt-color">{{ page.organ_name }}</span>
                                     </p>
                                 </div>
@@ -357,9 +357,9 @@ onBeforeMount(() => {
                             <div v-if="groups.ui.register">
                                 <div role="heading" class="inside-title mb-4 w-100">
                                     <div>
-                                        <h2>Criar Agrupamento</h2>
+                                        <h2>Novo Lote</h2>
                                         <p>
-                                            Preencha o nome do grupo abaixo
+                                            Preencha o nome do lote abaixo
                                         </p>
                                     </div>
                                     <div class="d-flex gap-2 flex-wrap">
@@ -373,7 +373,7 @@ onBeforeMount(() => {
                                     class="row p-0 g-3 py-1">
                                     <input type="hidden" name="id" v-model="groups.data.id">
                                     <div class="col-sm-12 col-md-12 m-0">
-                                        <label for="name" class="form-label">Grupo</label>
+                                        <label for="name" class="form-label">Lote</label>
                                         <input type="text" name="name" class="form-control"
                                             :class="{ 'form-control-alert': groups.valids.name }"
                                             v-model="groups.data.name">
@@ -390,7 +390,7 @@ onBeforeMount(() => {
                                     </div>
                                 </form>
                             </div>
-                            <div v-if="!groups.ui.register" class="modal-listage">
+                            <div v-if="!groups.ui.register">
                                 <TableList secondary :header="groups.header" :body="groups.datalist" :actions="[
                                     Actions.Edit((id) => groupsData.update(id, () => { pageData.selects() })),
                                     Actions.FastDelete((id) => groupsData.fastremove(id, () => { pageData.selects() }))
