@@ -3,6 +3,7 @@
 import QrcodeVue from 'qrcode.vue';
 import dates from '@/utils/dates'
 import utils from '@/utils/utils'
+import Mounts from "@/services/mounts"
 
 import TableListReport from '@/components/table/TableListReport.vue'
 
@@ -12,19 +13,19 @@ defineProps({
     process: { type: Object, required: true },
     pricerecord: { type: Object, required: true },
     proposals: { type: Array, required: true },
-    selects: {type: Array, default:() => []}
+    selects: { type: Array, default: () => [] }
 })
 
 const headers = {
     proposals: [
-        { title: 'FORNECEDOR.',key: 'supplier.cnpj', sub: [{ key: 'supplier.name' }] },
+        { title: 'FORNECEDOR.', key: 'supplier.name', err: 'TCE/PNCP/VAREJO', sub: [{ key: 'supplier.cnpj', err: '***', }] },
         { title: 'MODALIDADE', key: 'modality' },
-        { title: 'CONTATO.',key: 'supplier.email', sub: [{ key: 'supplier.phone' }, { key: 'supplier.address' }] },
+        { title: 'CONTATO.', key: 'supplier.email', sub: [{ key: 'supplier.phone' }, { key: 'supplier.address' }] },
         { title: 'VALOR', key: 'global' },
-        { title: 'DATA/HORA', key:'date_ini', sub: [{ key: 'hour_ini' }] },
+        { title: 'DATA/HORA', key: 'date_ini', sub: [{ key: 'hour_ini' }] },
         { title: 'STATUS', key: 'status' }
     ],
-    items:[]
+    items: []
 }
 </script>
 
@@ -55,11 +56,15 @@ const headers = {
     <main>
         <div class="my-4">
             <h1 class="text-center">MAPA DE PREÇOS</h1>
-            <h2 class="text-center">{{ `${pricerecord.protocol ?? '*****'} - ${pricerecord.date_ini} - ${pricerecord.ip ?? '*****'}` }}</h2>
-            <h2 class="text-center">{{ `PCA: ${process.year_pca} - Situação: ${utils.getTxt(selects.status, pricerecord.status)}` }}</h2>
-            <h2 class="text-center">{{ `Método de Seleção: ${process.year_pca} - Situação: ${utils.getTxt(selects.status, pricerecord.status)}` }}</h2>
+            <h2 class="text-center">
+                {{ `${pricerecord.protocol ?? '*****'} - ${pricerecord.date_ini} - ${pricerecord.ip ?? '*****'}` }}
+            </h2>
+            <h2 class="text-center">
+                {{ `Método de Seleção: ${utils.getTxt(selects.process_types,
+                process.type)} - PCA: ${process.year_pca} - Situação: ${utils.getTxt(selects.status, pricerecord.status)}` }}
+            </h2>
         </div>
-        
+
         <!-- process object -->
         <div class="my-4">
             <h2>{{ process.description }}</h2>
@@ -74,7 +79,10 @@ const headers = {
         </div>
 
         <div v-if="proposals.length > 0">
-            <TableListReport :count="false" :header="headers.proposals" :body="proposals"  />
+            <TableListReport :count="false" :header="headers.proposals" :body="proposals" :selects="selects" :mounts="{
+                modality: [Mounts.Cast(selects.proposal_modalities)],
+                status: [Mounts.Cast(selects.proposal_status)]
+            }" />
         </div>
         <div v-else class="small mb-4">
             <p>Ainda não existem propostas associadas a coleta</p>
@@ -91,5 +99,5 @@ const headers = {
 </template>
 
 <style scoped>
-    @import url('../../assets/css/reports.css');
+@import url('../../assets/css/reports.css');
 </style>
