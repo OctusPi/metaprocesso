@@ -1,23 +1,25 @@
 <script setup>
 import { onMounted, watch } from 'vue';
-import TableList from '@/components/table/TableList.vue';
-import NavMainUi from '@/components/NavMainUi.vue';
-import HeaderMainUi from '@/components/HeaderMainUi.vue';
-import FooterMainUi from '@/components/FooterMainUi.vue';
-import TableListStatus from '@/components/table/TableListStatus.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import masks from '@/utils/masks';
 import Mounts from '@/services/mounts';
 import http from '@/services/http';
 import utils from '@/utils/utils';
-import TabNav from '@/components/TabNav.vue';
 import Tabs from '@/utils/tabs';
-import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
-import DfdDetails from '@/components/DfdDetails.vue';
-import TableListSelect from '@/components/table/TableListSelect.vue';
 import gpt from '@/services/gpt';
 import notifys from '@/utils/notifys';
+
+import TableList from '@/components/table/TableList.vue';
+import NavMainUi from '@/components/NavMainUi.vue';
+import HeaderMainUi from '@/components/HeaderMainUi.vue';
+import FooterMainUi from '@/components/FooterMainUi.vue';
+import TableListStatus from '@/components/table/TableListStatus.vue';
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
+import TableListSelect from '@/components/table/TableListSelect.vue';
+import DfdDetails from '@/components/DfdDetails.vue';
+import TabNav from '@/components/TabNav.vue';
+
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -94,36 +96,29 @@ function unselect_dfd(id) {
         .filter((item) => item.id != id)
 }
 
-watch(() => props.datalist, (newdata) => {
-    page.datalist = newdata
-})
-
-watch(() => page.ui.register, (newdata) => {
-    if (newdata && page.data.id == null) {
-        page.data.protocol = utils.dateProtocol(page.organ?.id, '-')
-    }
-})
-
 function generate(key) {
     const base = {
+        units: JSON.stringify(page.data.units ?? []),
         description: page.data.description,
-        type: page.selects.types.find(o => o.id === page.data.type),
-        modality: page.selects.modalities.find(o => o.id === page.data.modality),
+        acquisition: page.selects.acquisitions.find(o => o.id === page.data.acquisition),
+        acquisition_type: page.selects.acquisition_types.find(o => o.id === page.data.acquisition_type),
         installment: page.selects.installment_types.find(o => o.id === page.data.installment_type),
     }
 
-    if (!base.type) {
-        emit('callAlert', notifys.warning('Selecione o tipo do processo'))
+    console.log(base)
+
+    if (!base.acquisition) {
+        emit('callAlert', notifys.warning('Selecione o estilo de aquisição do processo'))
         return
     }
 
-    if (!base.modality) {
-        emit('callAlert', notifys.warning('Selecione a modalidade do processo'))
+    if (!base.acquisition_type) {
+        emit('callAlert', notifys.warning('Selecione o tipo de aquisição do processo'))
         return
     }
 
     if (!base.description) {
-        emit('callAlert', notifys.warning('Digite uma pequena descrição'))
+        emit('callAlert', notifys.warning('Informe palavras chaves no Objeto'))
         return
     }
 
@@ -132,9 +127,10 @@ function generate(key) {
     switch (key) {
         case 'description':
             payload = (`
-                Elabore uma descrição sucinta para um objeto de contratação
-                de empresa especializada em fornecimento de ${base.type} na modalidade ${base.modality}
-                tendo como objetivo ${base.description} para o órgão ${page.organ_name}. Retorne o resultado em plain text.
+                Elabore a descrição sucinta do objeto de contratação para um processo licitatório de aquisiçao de 
+                ${base.acquisition?.title} do tipo ${base.acquisition_type?.title}
+                com o objetivo de fornecimento ${base.description} para ${base.units} o vinculado ao órgão ${page.organ_name}. 
+                Retorne o resultado em plain text em apenas um parágrafo. Não inicie com a frase: O objeto de contratação deste processo licitatório é a
             `)
             break
         case 'installment_justification':
@@ -146,26 +142,37 @@ function generate(key) {
 
     }
 
+    console.log(payload)
+
     gpt.generate(`${page.url}/generate`, payload, emit, (resp) => {
         page.data.description = resp.data?.choices[0]?.message?.content
     })
 }
 
-const InstallmentItemText = `Nos termos do art. 47, inciso II, da Lei Federal nº 14.133/2021, as licitações atenderão ao princípio do parcelamento, quando tecnicamente viável e economicamente vantajoso. Na aplicação deste princípio, o § 1º do mesmo art. 47 estabelece que devam ser considerados a responsabilidade técnica, o custo para a Administração de vários contratos frente às vantagens da redução de custos, com divisão do objeto em itens, e o dever de buscar a ampliação da competição e de evitar a concentração de mercado. Nesse caso, sugerimos a licitação por itens, onde o objeto é dividido em partes específicas, cada qual representando um bem de forma autônoma, visando um aumento da competitividade do certame, pois possibilita a participação de vários fornecedores, assim como pela particularidade dos objetos, uma vez que nem toda concessionária e/ou montadora, produzem ambulância.`
+function setInstallmentJustification() {
+    const InstallmentItemText = `Nos termos do art. 47, inciso II, da Lei Federal nº 14.133/2021, as licitações atenderão ao princípio do parcelamento, quando tecnicamente viável e economicamente vantajoso. Na aplicação deste princípio, o § 1º do mesmo art. 47 estabelece que devam ser considerados a responsabilidade técnica, o custo para a Administração de vários contratos frente às vantagens da redução de custos, com divisão do objeto em itens, e o dever de buscar a ampliação da competição e de evitar a concentração de mercado. Nesse caso, sugerimos a licitação por itens, onde o objeto é dividido em partes específicas, cada qual representando um bem de forma autônoma, visando um aumento da competitividade do certame, pois possibilita a participação de vários fornecedores, assim como pela particularidade dos objetos, uma vez que nem toda concessionária e/ou montadora, produzem ambulância.`
 
-const InstallmentLotText = `Nos termos do art. 47, inciso II, da Lei Federal nº 14.133/2021, as licitações atenderão ao princípio do parcelamento, quando tecnicamente viável e economicamente vantajoso. Na aplicação deste princípio, o § 1º do mesmo art. 47 estabelece que devam ser considerados a responsabilidade técnica, o custo para a Administração de vários contratos frente às vantagens da redução de custos, com divisão do objeto em itens, e o dever de buscar a ampliação da competição e de evitar a concentração de mercado. No caso em questão, o objeto da contratação trata de itens que tem semelhanças entre si e são passivos de agrupamentos, portanto, optou-se pela realização de licitação por lotes ou grupos. 
+    const InstallmentLotText = `Nos termos do art. 47, inciso II, da Lei Federal nº 14.133/2021, as licitações atenderão ao princípio do parcelamento, quando tecnicamente viável e economicamente vantajoso. Na aplicação deste princípio, o § 1º do mesmo art. 47 estabelece que devam ser considerados a responsabilidade técnica, o custo para a Administração de vários contratos frente às vantagens da redução de custos, com divisão do objeto em itens, e o dever de buscar a ampliação da competição e de evitar a concentração de mercado. No caso em questão, o objeto da contratação trata de itens que tem semelhanças entre si e são passivos de agrupamentos, portanto, optou-se pela realização de licitação por lotes ou grupos. 
 A divisão em lotes segmentados por características semelhantes e comuns ao mercado serve como estratégia competitiva na concorrência de preços, uma vez que permite aos fornecedores especializados em uma linha de produtos, oferecerem maiores descontos na composição do preço de um lote, o que mostra viabilidade econômica, aproveitando particularidades do mercado, como estabelece o Artigo 40 da Lei Federal nº 14.133/2021, em seu Parágrafo 2º.
 Justifica-se também a contratação por lote, haja vista economicidade, já que a(s) empresa(s) contratada(s) deverá(ão) fazer entregas a cada demanda, o que ocasionalmente oneraria o contrato caso o julgamento fosse realizado por item. Considerando a compatibilidade entre os itens por fazerem parte de uma mesma classificação ou categoria e a maior facilidade para a fiscalização e acompanhamento do contrato, esse meio foi visto como o mais vantajoso para o poder público, por apresentar vantagem econômica, técnica e de segurança. Justifica-se também a necessidade de preservar a integridade qualitativa do objeto, uma vez que a contratação visa formar um todo unitário. Diante disso, a contratação de múltiplos fornecedores pode resultar na descontinuidade da padronização, assim como em desafios gerenciais e possivelmente aumento dos custos. Além disso, é crucial estabelecer um padrão de qualidade e eficiência que possa ser mantido ao longo das aquisições, o que se torna significativamente mais difícil quando se lida com diversos fornecedores.
 Logo, o não parcelamento do objeto em itens neste caso, se demonstra técnica e economicamente viável e não tem a finalidade de reduzir o caráter competitivo da licitação, visa, tão somente, assegurar a gerência segura da contratação, e principalmente, assegurar, não só a mais ampla competição necessária em um processo licitatório, mas também, atingir a sua finalidade e efetividade, que é a de atender a contento as necessidades da Administração Pública.
 Outrossim, o agrupamento dos itens faz-se necessário haja vista a economia de escala, a eficiência na fiscalização de uma quantidade menor de contratos e os transtornos que poderiam surgir com a existência de muitas empresas para a execução e supervisão do fornecimento a ser prestado. Assim com destaque para os princípios da eficiência e economicidade, é imprescindível a licitação por grupo/lotes.`
 
-
-const setInstallmentJustification = () => {
     page.data.installment_justification =
         page.data.installment_type === page.selects.vars?.INSTALLMENT_ITEM
             ? InstallmentItemText
             : InstallmentLotText
 }
+
+watch(() => props.datalist, (newdata) => {
+    page.datalist = newdata
+})
+
+watch(() => page.ui.register, (newdata) => {
+    if (newdata && page.data.id == null) {
+        page.data.protocol = utils.dateProtocol(page.organ?.id, '-')
+    }
+})
 
 onMounted(() => {
     pageData.selects()
@@ -213,8 +220,7 @@ onMounted(() => {
                             <label for="s-date_ini" class="form-label">Data Inicial</label>
                             <VueDatePicker id="s-date_ini" auto-apply v-model="page.search.date_ini"
                                 :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
-                                :auto-position="false"
-                                input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                :auto-position="false" input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                 calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
                                 menu-class-name="dp-custom-menu" />
                         </div>
@@ -222,8 +228,7 @@ onMounted(() => {
                             <label for="s-date_f" class="form-label">Data Final</label>
                             <VueDatePicker id="s-date_fin" auto-apply v-model="page.search.date_fin"
                                 :enable-time-picker="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
-                                :auto-position="false"
-                                input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                :auto-position="false" input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                 calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
                                 menu-class-name="dp-custom-menu" />
                         </div>
@@ -242,7 +247,7 @@ onMounted(() => {
                             </select>
                         </div>
                         <div class="col-sm-12 col-md-4">
-                            <label for="s-object" class="form-label">Objeto</label>
+                            <label for="s-object" class="form-label">Descrição Sucinta do Objeto</label>
                             <input type="text" name="object" class="form-control" id="s-object"
                                 v-model="page.search.object" placeholder="Pesquise por partes do objeto">
                         </div>
@@ -327,10 +332,9 @@ onMounted(() => {
                             <div class="col-sm-12 col-md-4">
                                 <label for="date_hour_ini" class="form-label">Data e Hora de Abertura</label>
                                 <VueDatePicker id="date_hour_ini" time-picker-inline model-type="dd/MM/yyyy HH:mm"
-                                    format="dd/MM/yyyy - HH:mm" v-model="page.data.date_hour_ini" auto-apply 
+                                    format="dd/MM/yyyy - HH:mm" v-model="page.data.date_hour_ini" auto-apply
                                     :input-class-name="page.valids.date_hour_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
-                                    :auto-position="false"
-                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    :auto-position="false" locale="pt-br" calendar-class-name="dp-custom-calendar"
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
                             <div class="col-sm-12 col-md-4">
@@ -412,7 +416,7 @@ onMounted(() => {
                             </div>
                             <div class="col-sm-12 col-md-12">
                                 <label for="description" class="form-label d-flex justify-content-between">
-                                    Objeto
+                                    Descrição Sucinta do Objeto
                                     <a href="#" class="a-ia d-flex align-items-center gap-1"
                                         @click="generate('description')">
                                         <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>
@@ -427,11 +431,11 @@ onMounted(() => {
                                 <label for="installment_justification"
                                     class="form-label d-flex justify-content-between">
                                     Justificativa do Parcelamento
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                    <!-- <a href="#" class="a-ia d-flex align-items-center gap-1"
                                         @click="generate('installment_justification')">
                                         <ion-icon name="hardware-chip-outline" class="m-0"></ion-icon>
                                         Gerar com I.A
-                                    </a>
+                                    </a> -->
                                 </label>
                                 <textarea name="installment_justification" class="form-control" rows="4" :class="{
                                     'form-control-alert': page.valids.installment_justification
@@ -474,8 +478,7 @@ onMounted(() => {
                                                             Inicial</label>
                                                         <VueDatePicker auto-apply v-model="page.dfds.search.date_i"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
-                                                            :auto-position="false"
-                                                            model-type="yyyy-MM-dd"
+                                                            :auto-position="false" model-type="yyyy-MM-dd"
                                                             input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                             calendar-class-name="dp-custom-calendar"
                                                             calendar-cell-class-name="dp-custom-cell"
@@ -486,8 +489,7 @@ onMounted(() => {
                                                             Final</label>
                                                         <VueDatePicker auto-apply v-model="page.dfds.search.date_f"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
-                                                            :auto-position="false"
-                                                            model-type="yyyy-MM-dd"
+                                                            :auto-position="false" model-type="yyyy-MM-dd"
                                                             input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                             calendar-class-name="dp-custom-calendar"
                                                             calendar-cell-class-name="dp-custom-cell"
