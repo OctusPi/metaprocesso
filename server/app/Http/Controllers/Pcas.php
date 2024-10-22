@@ -21,7 +21,7 @@ class Pcas extends Controller
     {
         return $this->base_list(
             $request,
-            ['reference_year', 'status', 'observations'],
+            ['reference_year', 'status', 'comission_id'],
             ['reference_year', 'desc'],
             ['comission'],
         );

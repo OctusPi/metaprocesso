@@ -76,7 +76,7 @@
               <label for="s-reference_year" class="form-label">Ano de referência</label>
               <input maxlength="4" type="text" name="s-reference_year" class="form-control"
                 :class="{ 'form-control-alert': page.valids.reference_year }" id="s-reference_year" placeholder="AAAA"
-                v-maska:[masks.masknumbs] v-model="page.data.reference_year" />
+                v-maska:[masks.masknumbs] v-model="page.search.reference_year" />
             </div>
             <div class="col-sm-12 col-md-4">
               <label for="s-status" class="form-label">Status</label>
@@ -89,7 +89,7 @@
             </div>
             <div class="col-sm-12 col-md-4">
               <label for="s-comission" class="form-label">Comissão</label>
-              <select name="comission" class="form-control" id="s-comission" v-model="page.search.comission">
+              <select name="comission" class="form-control" id="s-comission" v-model="page.search.comission_id">
                 <option value=""></option>
                 <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
                   {{ o.title }}

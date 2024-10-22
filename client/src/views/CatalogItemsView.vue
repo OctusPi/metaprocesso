@@ -1,106 +1,106 @@
 <script setup>
-import { onBeforeMount, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import Layout from '@/services/layout';
-import Actions from '@/services/actions';
-import Mounts from '@/services/mounts';
-import http from '@/services/http';
-import defines from '@/utils/defines';
-import utils from '@/utils/utils';
+    import { onBeforeMount, watch } from 'vue';
+    import { useRoute } from 'vue-router';
+    import Layout from '@/services/layout';
+    import Actions from '@/services/actions';
+    import Mounts from '@/services/mounts';
+    import http from '@/services/http';
+    import defines from '@/utils/defines';
+    import utils from '@/utils/utils';
 
-import NavMainUi from '@/components/NavMainUi.vue';
-import HeaderMainUi from '@/components/HeaderMainUi.vue';
-import FooterMainUi from '@/components/FooterMainUi.vue';
-import TableList from '@/components/table/TableList.vue';
-import ListCatGov from '@/components/ListCatGov.vue';
+    import NavMainUi from '@/components/NavMainUi.vue';
+    import HeaderMainUi from '@/components/HeaderMainUi.vue';
+    import FooterMainUi from '@/components/FooterMainUi.vue';
+    import TableList from '@/components/table/TableList.vue';
+    import ListCatGov from '@/components/ListCatGov.vue';
 
-const route = useRoute()
-const emit = defineEmits(['callAlert', 'callUpdate'])
-const props = defineProps({
-    datalist: { type: Array, default: () => [] }
-})
-
-const [page, pageData] = Layout.new(emit, {
-    url: `/catalogitems/${route.params.id}`,
-    datalist: props.datalist,
-    catalog: {},
-    header: [
-        { key: 'code', title: 'COD.', sub: [{ key: 'origin' }] },
-        { key: 'name', title: 'ITEM', sub: [{ key: 'category' }] },
-        { key: 'und', title: 'UND.', sub: [{ key: 'volume' }] },
-        { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] },
-        { key: 'status', title: 'STATUS' }
-    ],
-    rules: {
-        code: 'required',
-        name: 'required',
-        type: 'required',
-        und: 'required',
-        category: 'required',
-        status: 'required',
-        description: 'required'
-    }
-})
-
-const [groups, groupsData] = Layout.new(emit, {
-    url: `/catalogsubcategories/${page.organ?.id}`,
-    data: {},
-    header: [{ key: 'name', title: 'LOTE' }],
-    formRules: { name: 'required' },
-    modal: 'subgroup',
-})
-
-function detailsCatalog() {
-    http.get(`${page.url}/catalog`, emit, (response) => {
-        page.catalog = response.data
-        groups.url = `/catalogsubcategories/${page.catalog?.organ?.id}`
+    const route = useRoute()
+    const emit = defineEmits(['callAlert', 'callUpdate'])
+    const props = defineProps({
+        datalist: { type: Array, default: () => [] }
     })
-}
 
-function selectItem(data) {
-    page.data.origin = 1
-    page.data.status = 1
-    if (data.category.tipo === 'M') {
-        let description = ''
-        data.item.buscaItemCaracteristica.forEach(element => {
-            description += `${element.nomeCaracteristica}: ${element.nomeValorCaracteristica}; `
-        });
-        page.data.type = 1
-        page.data.category = 1
-        page.selects.unds = data.units
-        page.data.code = data.item.codigoItem
-        page.data.name = data.item.nomePdm
-        page.data.description = description
+    const [page, pageData] = Layout.new(emit, {
+        url: `/catalogitems/${route.params.id}`,
+        datalist: props.datalist,
+        catalog: {},
+        header: [
+            { key: 'code', title: 'COD.', sub: [{ key: 'origin' }] },
+            { key: 'name', title: 'ITEM', sub: [{ key: 'category' }] },
+            { key: 'und', title: 'UND.', sub: [{ key: 'volume' }] },
+            { title: 'DESCRIÇÃO', sub: [{ key: 'description' }] },
+            { key: 'status', title: 'STATUS' }
+        ],
+        rules: {
+            code: 'required',
+            name: 'required',
+            type: 'required',
+            und: 'required',
+            category: 'required',
+            status: 'required',
+            description: 'required'
+        }
+    })
 
-    } else {
-        const unds = data.units.map(obj => {
-            return { "siglaUnidadeFornecimento": obj.siglaUnidadeMedida, "nomeUnidadeFornecimento": obj.nomeUnidadeMedida }
+    const [groups, groupsData] = Layout.new(emit, {
+        url: `/catalogsubcategories/${page.organ?.id}`,
+        data: {},
+        header: [{ key: 'name', title: 'LOTE' }],
+        formRules: { name: 'required' },
+        modal: 'subgroup',
+    })
+
+    function detailsCatalog() {
+        http.get(`${page.url}/catalog`, emit, (response) => {
+            page.catalog = response.data
+            groups.url = `/catalogsubcategories/${page.catalog?.organ?.id}`
         })
-        page.data.type = 2
-        page.data.category = 2
-        page.selects.unds = unds
-        page.data.code = data.item.codigoServico
-        page.data.name = data.item.descricaoServicoAcentuado
-        page.data.description = data.item.nomeGrupo + '; ' + data.item.descricaoServicoAcentuado
     }
-}
 
-watch(() => props.datalist, (newdata) => {
-    page.datalist = newdata
-})
+    function selectItem(data) {
+        page.data.origin = 1
+        page.data.status = 1
+        if (data.category.tipo === 'M') {
+            let description = ''
+            data.item.buscaItemCaracteristica.forEach(element => {
+                description += `${element.nomeCaracteristica}: ${element.nomeValorCaracteristica}; `
+            });
+            page.data.type = 1
+            page.data.category = 1
+            page.selects.unds = data.units
+            page.data.code = data.item.codigoItem
+            page.data.name = data.item.nomePdm
+            page.data.description = description
 
-watch(() => page.ui.register, (value) => {
-    if (value === true && !page.data.code) {
-        page.data.origin = 2
-        page.data.code = utils.randCode()
+        } else {
+            const unds = data.units.map(obj => {
+                return { "siglaUnidadeFornecimento": obj.siglaUnidadeMedida, "nomeUnidadeFornecimento": obj.nomeUnidadeMedida }
+            })
+            page.data.type = 2
+            page.data.category = 2
+            page.selects.unds = unds
+            page.data.code = data.item.codigoServico
+            page.data.name = data.item.descricaoServicoAcentuado
+            page.data.description = data.item.nomeGrupo + '; ' + data.item.descricaoServicoAcentuado
+        }
     }
-})
 
-onBeforeMount(() => {
-    detailsCatalog()
-    pageData.selects()
-    pageData.list()
-})
+    watch(() => props.datalist, (newdata) => {
+        page.datalist = newdata
+    })
+
+    watch(() => page.ui.register, (value) => {
+        if (value === true && !page.data.code) {
+            page.data.origin = 2
+            page.data.code = utils.randCode()
+        }
+    })
+
+    onBeforeMount(() => {
+        detailsCatalog()
+        pageData.selects()
+        pageData.list()
+    })
 
 </script>
 
