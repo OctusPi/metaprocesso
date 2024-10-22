@@ -17,6 +17,16 @@ class Pcas extends Controller
         parent::__construct(Pca::class, User::MOD_PCA['module']);
     }
 
+    public function list(Request $request)
+    {
+        return $this->base_list(
+            $request,
+            ['reference_year', 'status', 'observations'],
+            ['reference_year', 'desc'],
+            ['comission'],
+        );
+    }
+
     public function save(Request $request)
     {
         $comission = Data::findOne(new Comission(), ['id' => $request->comisison_id]);
@@ -24,7 +34,7 @@ class Pcas extends Controller
         if (!$comission) {
             return response()->json(Notify::warning('Comissão não encontrada'), 404);
         }
-        
+
         return $this->base_save($request, [
             'ip' => $request->ip(),
             'author_id' => $request->user()->id,

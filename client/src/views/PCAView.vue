@@ -1,45 +1,46 @@
 <script setup>
-import TableList from '@/components/table/TableList.vue';
-import NavMainUi from '@/components/NavMainUi.vue';
-import HeaderMainUi from '@/components/HeaderMainUi.vue';
-import FooterMainUi from '@/components/FooterMainUi.vue';
-import Layout from '@/services/layout';
-import Actions from '@/services/actions';
-import Mounts from '@/services/mounts';
-import masks from '@/utils/masks';
-import { onMounted, watch } from 'vue';
+  import TableList from '@/components/table/TableList.vue';
+  import NavMainUi from '@/components/NavMainUi.vue';
+  import HeaderMainUi from '@/components/HeaderMainUi.vue';
+  import FooterMainUi from '@/components/FooterMainUi.vue';
+  import Layout from '@/services/layout';
+  import Actions from '@/services/actions';
+  import Mounts from '@/services/mounts';
+  import masks from '@/utils/masks';
+  import { onMounted, watch } from 'vue';
 
-const emit = defineEmits(['callAlert', 'callUpdate'])
+  const emit = defineEmits(['callAlert', 'callUpdate'])
 
-const props = defineProps({
-  datalist: { type: Array, default: () => [] }
-})
+  const props = defineProps({
+    datalist: { type: Array, default: () => [] }
+  })
 
-const [page, pageData] = Layout.new(emit, {
-  url: '/pca',
-  datalist: props.datalist,
-  header: [
-    { key: 'reference_year', title: 'EMISSÃO', sub: [{ key: 'emission' }] },
-    { key: 'observations', title: 'OBSERVAÇÕES' },
-    { key: 'status', title: 'STATUS' }
-  ],
-  rules: {
-    comission_id: 'required',
-    reference_year: 'required',
-    emission: 'required',
-    price: 'required',
-    status: 'required',
-  }
-})
+  const [page, pageData] = Layout.new(emit, {
+    url: '/pca',
+    datalist: props.datalist,
+    header: [
+      { key: 'reference_year', title: 'ANO REFERÊNCIA', sub: [{ key: 'emission' }] },
+      { key: 'comission.name', title: 'COMISSÃO' },
+      { key: 'observations', title: 'OBSERVAÇÕES' },
+      { key: 'status', title: 'STATUS' }
+    ],
+    rules: {
+      comission_id: 'required',
+      reference_year: 'required',
+      emission: 'required',
+      price: 'required',
+      status: 'required',
+    }
+  })
 
-watch(() => props.datalist, (newdata) => {
-  page.datalist = newdata
-})
+  watch(() => props.datalist, (newdata) => {
+    page.datalist = newdata
+  })
 
-onMounted(() => {
-  pageData.selects()
-  pageData.list()
-})
+  onMounted(() => {
+    pageData.selects()
+    pageData.list()
+  })
 
 </script>
 
@@ -136,9 +137,9 @@ onMounted(() => {
               </div>
               <div class="col-sm-12 col-md-4">
                 <label for="price" class="form-label">Preço</label>
-                <input type="text" name="price" class="form-control"
-                  :class="{ 'form-control-alert': page.valids.price }" id="price" placeholder="R$ 0.00"
-                  v-maska:[masks.maskmoney] v-model="page.data.price" />
+                <input v-maska:[masks.maskmoney] @maska="(v) => page.data.price = v.detail.unmasked"
+                  type="text" name="price" class="form-control" :class="{ 'form-control-alert': page.valids.price }"
+                  id="price" placeholder="R$ 0.00" v-bind:value="page.data.price" />
               </div>
               <div class="col-sm-12 col-md-8">
                 <label for="comission" class="form-label">Comissão/Equipe de
@@ -170,9 +171,9 @@ onMounted(() => {
                 <label for="observations" class="form-label">
                   Observações
                 </label>
-                <textarea name="justification" class="form-control" rows="4" :class="{
-                  'form-control-alert': page.valids.justification
-                }" id="justification" v-model="page.data.justification"></textarea>
+                <textarea name="observations" class="form-control" rows="4" :class="{
+                  'form-control-alert': page.valids.observations
+                }" id="observations" v-model="page.data.observations"></textarea>
               </div>
             </div>
             <div class="d-flex flex-row-reverse gap-2 mt-4">

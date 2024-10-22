@@ -6,6 +6,7 @@ use App\Utils\Dates;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Validation\Rule;
 
 class Pca extends Model
@@ -69,5 +70,20 @@ class Pca extends Model
             ['id' => self::S_APROVED, 'title' => 'Aprovado'],
             ['id' => self::S_DENIED, 'title' => 'Recusado'],
         ];
+    }
+
+    public function organ(): BelongsTo
+    {
+        return $this->belongsTo(Organ::class);
+    }
+
+    public function comission(): BelongsTo
+    {
+        return $this->belongsTo(Comission::class);
+    }
+
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'author_id');
     }
 }
