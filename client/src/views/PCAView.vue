@@ -19,7 +19,8 @@
     url: '/pca',
     datalist: props.datalist,
     header: [
-      { key: 'reference_year', title: 'ANO REFERÊNCIA', sub: [{ key: 'emission' }] },
+      { sub: [{ key: 'emission' }], title: 'EMISSÃO' },
+      { title: 'ANO REFERÊNCIA', key: 'reference_year' },
       { key: 'comission.name', title: 'COMISSÃO' },
       { key: 'observations', title: 'OBSERVAÇÕES' },
       { key: 'status', title: 'STATUS' }
@@ -72,19 +73,28 @@
         <div v-if="page.ui.search" role="search" class="content container p-4 mb-4">
           <form @submit.prevent="pageData.list" class="row g-3">
             <div class="col-sm-12 col-md-4">
-              <label for="s-name" class="form-label">Nome</label>
-              <input type="text" name="name" class="form-control" id="s-name" v-model="page.search.name"
-                placeholder="Pesquise por partes do nome do orgão">
+              <label for="s-reference_year" class="form-label">Ano de referência</label>
+              <input maxlength="4" type="text" name="s-reference_year" class="form-control"
+                :class="{ 'form-control-alert': page.valids.reference_year }" id="s-reference_year" placeholder="AAAA"
+                v-maska:[masks.masknumbs] v-model="page.data.reference_year" />
             </div>
             <div class="col-sm-12 col-md-4">
-              <label for="s-cnpj" class="form-label">CNPJ</label>
-              <input type="cnpj" name="cnpj" class="form-control" id="s-cnpj" v-model="page.search.cnpj"
-                placeholder="000.000.00/0000-00" v-maska:[masks.maskcnpj]>
+              <label for="s-status" class="form-label">Status</label>
+              <select name="status" class="form-control" id="s-status" v-model="page.search.status">
+                <option value=""></option>
+                <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
+                  {{ o.title }}
+                </option>
+              </select>
             </div>
             <div class="col-sm-12 col-md-4">
-              <label for="s-postalcity" class="form-label">Cidade</label>
-              <input type="postalcity" name="postalcity" class="form-control" id="s-postalcity"
-                v-model="page.search.postalcity" placeholder="Nome da Cidade">
+              <label for="s-comission" class="form-label">Comissão</label>
+              <select name="comission" class="form-control" id="s-comission" v-model="page.search.comission">
+                <option value=""></option>
+                <option v-for="o in page.selects.comissions" :key="o.id" :value="o.id">
+                  {{ o.title }}
+                </option>
+              </select>
             </div>
             <div class="d-flex flex-row-reverse mt-4">
               <button type="submit" class="btn btn-action-primary">
@@ -137,9 +147,9 @@
               </div>
               <div class="col-sm-12 col-md-4">
                 <label for="price" class="form-label">Preço</label>
-                <input v-maska:[masks.maskmoney] @maska="(v) => page.data.price = v.detail.unmasked"
-                  type="text" name="price" class="form-control" :class="{ 'form-control-alert': page.valids.price }"
-                  id="price" placeholder="R$ 0.00" v-bind:value="page.data.price" />
+                <input v-maska:[masks.maskmoney] @maska="(v) => page.data.price = v.detail.unmasked" type="text"
+                  name="price" class="form-control" :class="{ 'form-control-alert': page.valids.price }" id="price"
+                  placeholder="R$ 0.00" v-bind:value="page.data.price" />
               </div>
               <div class="col-sm-12 col-md-8">
                 <label for="comission" class="form-label">Comissão/Equipe de
