@@ -132,5 +132,12 @@ class Utils
     
         return 0.0;
     }
+
+    public static function toCurrency($value) {
+        if (!is_numeric($value)) {
+            return $value;
+        }
+        return 'R$ ' . number_format($value, 2, ',', '.');
+    }
     
 }

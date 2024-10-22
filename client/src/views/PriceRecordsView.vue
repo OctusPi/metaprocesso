@@ -380,15 +380,10 @@ function export_pricemap(id) {
         const instanceReport = createApp(PriceMapReport, {
             qrdata: sysapp,
             organ: page.organ,
+            process: pricerecord?.process,
             pricerecord: pricerecord,
             proposals: proposals,
-            process: {
-                protocol: pricerecord?.process.protocol,
-                organ: pricerecord?.organ,
-                date_ini: `${pricerecord?.date_ini} - ${pricerecord?.hour_ini}`,
-                date_fin: pricerecord?.date_fin,
-                description: pricerecord?.process.description
-            }
+            selects:page.selects
         })
         instanceReport.mount(containerReport)
         exp.exportPDF(containerReport, `Coleta-${pricerecord.protocol}`)

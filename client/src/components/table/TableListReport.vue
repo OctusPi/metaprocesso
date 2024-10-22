@@ -69,7 +69,7 @@ function getTitle(item) {
 function getValue(value, header) {
     return value && value != ''
         ? value
-        : header.err || '-'
+        : header.err || null
 }
 
 </script>
@@ -90,19 +90,19 @@ function getValue(value, header) {
             <tbody>
                 <tr v-for="(instance, i) in userBody" :key="i">
                     <td v-for="(mounted, j) in applyMounters(instance, userHeader)" :key="j" class="align-middle">
-                        <div>
-                            <div v-if="userHeader[j].key" class="small txt-color-sec" :class="mounted.classes" :title="getTitle(mounted)">
+                        <div class="p-0 m-0">
+                            <div v-if="userHeader[j].key" class="small txt-color-sec p-0 m-0" :class="mounted.classes" :title="getTitle(mounted)">
                                 <template v-if="!userHeader[j].isBool">
-                                        {{ getValue(mounted.value, userHeader[j]) }}
-                                    </template>
+                                    {{ getValue(mounted.value, userHeader[j]) }}
+                                </template>
                             </div>
                         </div>
-                        <div>
+                        <div class="p-0 m-0">
                             <span v-for="(submounted, k) in applyMounters(instance, userHeader[j].sub ?? [])" :key="k" class="inline-block small me-1" :title="getTitle(submounted)" :class="submounted.classes">
                                 <template v-if="!userHeader[j].sub[k].isBool">
-                                        {{ userHeader[j].sub[k].title }}
-                                        {{ getValue(submounted.value, userHeader[j].sub[k]) }}
-                                    </template>
+                                    {{ userHeader[j].sub[k].title }}
+                                    {{ getValue(submounted.value, userHeader[j].sub[k]) }}
+                                </template>
                             </span>
                         </div>
                     </td>
@@ -115,3 +115,7 @@ function getValue(value, header) {
         <p class="p-0 m-0 small">{{ errmsg }}</p>
     </div>
 </template>
+
+<style scoped>
+@import url('../../assets/css/reports.css');
+</style>

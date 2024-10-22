@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\Json;
 use App\Utils\Dates;
+use App\Utils\Utils;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -19,6 +20,7 @@ class Proposal extends Model
     const S_OPENED = 2;
     const S_PENDING = 3;
     const S_FINISHED = 4;
+    const S_DISQUALIFIED = 5;
 
     const M_MAIL = 1;
     const M_MANUAL = 2;
@@ -102,6 +104,14 @@ class Proposal extends Model
         );
     }
 
+    public function global(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => Utils::toCurrency($value),
+            set: fn($value) => Utils::toFloat($value)
+        );
+    }
+
     public static function list_modalitys(): array
     {
         return [
@@ -119,7 +129,8 @@ class Proposal extends Model
             ['id' => self::S_START, 'title' => 'Enviada'],
             ['id' => self::S_OPENED, 'title' => 'Aberta'],
             ['id' => self::S_PENDING, 'title' => 'Pendente'],
-            ['id' => self::S_FINISHED, 'title' => 'Finalizada']
+            ['id' => self::S_FINISHED, 'title' => 'Finalizada'],
+            ['id' => self::S_DISQUALIFIED, 'title' => 'Desclassificada']
         ];
     }
 

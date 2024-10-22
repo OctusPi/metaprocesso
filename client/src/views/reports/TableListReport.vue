@@ -76,5 +76,5 @@ const getData = (data, obj, key, cast = null, subject = 'id') => {
 </template>
 
 <style scoped>
-@import url('../../assets/css/reports.css');
+    @import url('../../assets/css/reports.css');
 </style>
