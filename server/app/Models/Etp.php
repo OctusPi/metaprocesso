@@ -47,9 +47,7 @@ class Etp extends Model
         'expected_results',
         'contract_previous_actions',
         'ambiental_impacts',
-        'viability_declaration',
-        'installment_type',
-        'installment_justification',
+        'viability_declaration'
     ];
 
     public function rules(): array

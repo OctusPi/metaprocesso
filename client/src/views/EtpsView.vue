@@ -171,15 +171,19 @@ function save_etp(mode = null) {
 }
 
 function generate(type) {
+    if (!page.data.process) {
+        return emit('callAlert', notifys.warning('Necessário selecionar o processo...'))
+    }
+
     const base = {
         organ: page.organ,
         comission: page.selects.comissions?.find(o => o.id === page.data.comission_id),
         object_description: page.data?.object_description,
-        process: page.data.process
-    }
-
-    if (!base.process) {
-        return emit('callAlert', notifys.warning('Necessário selecionar o processo...'))
+        process: page.data.process,
+        dfds_quantity: (page.data?.process?.dfds ?? []).length,
+        dfds_global: (page.data?.process?.dfds ?? []).reduce((a, i) => 
+             a += utils.currencyToFloat(i.estimated_value)
+        , 0)
     }
 
     let callresp, payload = null
@@ -265,20 +269,14 @@ function generate(type) {
             break;
         case 'contract_calculus_memories':
             setValuesAndPayload(type, `
-            Crie uma descrição para as memórias de cálculos do contrato relacionadas ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
+            Crie texto fictício levando em consideração a lei de licitações do brasil,
+            que justifique a Estimativa das Quantidades Contratadas nesse processo: ${base.process?.description}.
+            Retorne a respota em um único parágrafo em plain text.
         `);
             break;
         case 'contract_expected_price':
             setValuesAndPayload(type, `
             Crie uma descrição para o preço esperado do contrato com base no Estudo Técnico preliminar descrito no texto '${base.object_description}' em plain text
-        `);
-            break;
-
-        case 'solution_parcel_justification':
-            setValuesAndPayload(type, `
-            Crie uma justificativa para as parcelas da solução descrita no Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
         `);
             break;
         case 'correlated_contracts':
@@ -310,7 +308,6 @@ function generate(type) {
             baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
         `);
             break;
-
         case 'installment_justification':
             setValuesAndPayload(type, `
             Crie uma justificativa de parcelamento do tipo ${utils.getTxt(page.selects.installment_types, base.installment_type)}
@@ -327,8 +324,7 @@ function generate(type) {
 
 function fetch_process(e) {
     http.post(`${page.url}/${page.data.id ?? 0}/fetch_process/${e.target._value?.id}`, {}, emit, (res) => {
-        page.data.installment_type = res.data.installment_type
-        page.data.installment_justification = res.data.installment_justification
+        page.data.solution_parcel_justification = res.data.installment_justification
         page.data.object_description = res.data?.description
 
     }, () => {
@@ -580,7 +576,7 @@ onMounted(() => {
 
                             <div id="info" class="tab-pane">
                                 <div class="content p-4 pt-0 g-3 m-0 row">
-                                    <div class="col-sm-12 col-md-8">
+                                    <div class="col-sm-12 col-md-6">
                                         <label for="comission" class="form-label">Comissão</label>
                                         <select name="comission" class="form-control"
                                             :class="{ 'form-control-alert': page.valids.comission_id }" id="comission"
@@ -591,7 +587,7 @@ onMounted(() => {
                                             </option>
                                         </select>
                                     </div>
-                                    <div class="col-sm-12 col-md-4">
+                                    <div class="col-sm-12 col-md-3">
                                         <label for="emission" class="form-label">Emissão</label>
                                         <VueDatePicker auto-apply v-model="page.data.emission"
                                             :input-class-name="page.valids.emission ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
@@ -601,7 +597,7 @@ onMounted(() => {
                                             calendar-cell-class-name="dp-custom-cell"
                                             menu-class-name="dp-custom-menu" />
                                     </div>
-                                    <div class="col-sm-12 col-md-8">
+                                    <div class="col-sm-12 col-md-3">
                                         <label for="status" class="form-label">Situação Atual</label>
                                         <select name="status" class="form-control"
                                             :class="{ 'form-control-alert': page.valids.status }" id="status"
@@ -611,27 +607,6 @@ onMounted(() => {
                                                 s.title }}
                                             </option>
                                         </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <label for="installment_type" class="form-label">Tipo de Parcelamento</label>
-                                        <select name="installment_type" class="form-control"
-                                            :class="{ 'form-control-alert': page.valids.installment_type }"
-                                            id="installment_type" v-model="page.data.installment_type">
-                                            <option value=""></option>
-                                            <option v-for="s in page.selects.installment_types" :value="s.id"
-                                                :key="s.id">{{ s.title }}
-                                            </option>
-                                        </select>
-                                    </div>
-                                    <div class="col-sm-12 col-md-12">
-                                        <label for="installment_justification"
-                                            class="form-label d-flex justify-content-between">
-                                            Justificativa do parcelamento
-
-                                        </label>
-                                        <InputRichText :valid="page.valids.installment_justification"
-                                            placeholder="Descrição do Objeto" identifier="installment_justification"
-                                            v-model="page.data.installment_justification" />
                                     </div>
                                     <div class="col-12">
                                         <label for="object_description"
@@ -753,11 +728,8 @@ onMounted(() => {
                                     </div>
                                     <div class="col-12">
                                         <label for="solution_parcel_justification"
-                                            class="form-label d-flex justify-content-between">Justificativa para o
-                                            Parcelamento ou Não
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="generate('solution_parcel_justification')">
-                                                <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                            class="form-label d-flex justify-content-between">Justificativa Parcelamento
+                                            
                                         </label>
                                         <InputRichText :valid="page.valids.solution_parcel_justification"
                                             placeholder="Justificativa para o Parcelamento ou Não"
@@ -1087,8 +1059,9 @@ onMounted(() => {
                     </form>
                 </div>
             </section>
-            <DfdDetails :dfd="page.dfd.data" :selects="page.selects" />
+        
             <FooterMainUi />
         </main>
     </div>
+    <DfdDetails :dfd="page.dfd.data" :selects="page.selects" />
 </template>

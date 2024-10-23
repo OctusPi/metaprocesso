@@ -99,6 +99,7 @@ function currencyToFloat(currency){
     }
 
     let sanitizedString = currency.replace(/\s|R\$|/g, '');
+    sanitizedString = sanitizedString.replace('.', '');
     sanitizedString = sanitizedString.replace(',', '.');
     const floatValue = parseFloat(sanitizedString);
     return isNaN(floatValue) ? 0 : floatValue;

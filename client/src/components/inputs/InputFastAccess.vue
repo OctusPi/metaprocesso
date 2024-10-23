@@ -20,6 +20,7 @@ const menuitens = [
     { href: '/pricerecords', icon: 'pricetags', title: 'Preços', description: 'Mapa de Registro de Preços' },
     { href: '/riskiness', icon: 'map', title: 'Mapa de Riscos', description: 'Mapa de Riscos' },
     { href: '/refterms', icon: 'newspaper', title: 'Termos', description: 'Termos de Referência' },
+    { href: '/pca', icon: 'globe', title: 'PCA', description: 'Plano de Contratação Anual' },
     { href: '/trasmission', icon: 'navigate', title: 'Publicar', description: 'Publicação e Transmissão' },
     { href: '/reports', icon: 'stats-chart', title: 'Relatórios', description: 'Relatórios de Acompanhamento e Planejamento' },
 ];
