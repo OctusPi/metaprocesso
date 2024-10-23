@@ -276,13 +276,23 @@ function generate(type) {
             break;
         case 'contract_expected_price':
             setValuesAndPayload(type, `
-            Crie uma descrição para o preço esperado do contrato com base no Estudo Técnico preliminar descrito no texto '${base.object_description}' em plain text
+            Elabore um texto descrito informando que os orçamentos para o processo: ${base.process?.description}.
+            Foram realizados através de um Software de gerenciamento das cotações de preços e compras governamentais
+            para Prefeituras e diversos órgãos Públicos chamado Metaprocesso. Nele é possível realizar consulta avançada de itens em cestas 
+            de preços, obtidas através de contratações semelhantes. Nele foram inseridos alguns filtros padrões, 
+            que permite uma gestão eficaz e inteligente, dentre eles, os de maior destaque para este relatório foi 
+            a utilização da média aritmética dos ${base.dfds_quantity} orçamentos, a abrangência local, considerando a classificação do 
+            objeto e o banco de preço do último ano, já que esses preços devem ser atuais, “preços de mercado”. 
+            O valor estimado global é de ${base.dfds_global} (escreva o valor por extenso). Retorne em apenas um parágrafo plain text.
         `);
             break;
         case 'correlated_contracts':
             setValuesAndPayload(type, `
-            Crie uma descrição dos contratos correlacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
+            O processo: ${base.process?.description}. Possuí um total de ${base.dfds_quantity} documentos de
+            formalização de demanda provenientes de ${base.dfds_quantity} entidades vinculadas ao orgão ${page.organ_name}.
+            Se o número de DFDs informado no texto for maior que 01 afirme que existe Contratações Correlatas e/ou Interdependentes do 
+            contrário negue a existencia de Contratações Correlatas e/ou Interdependentes.
+            Retorne a resposta em um único parágrafo e não mecione o número de DFDs na sua afirmação.
         `);
             break;
         case 'contract_alignment':
@@ -306,13 +316,6 @@ function generate(type) {
             setValuesAndPayload(type, `
             Crie uma descrição dos possíveis impactos ambientais relacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
             baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
-        `);
-            break;
-        case 'installment_justification':
-            setValuesAndPayload(type, `
-            Crie uma justificativa de parcelamento do tipo ${utils.getTxt(page.selects.installment_types, base.installment_type)}
-            relacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input prévio da justificastiva  '${base.installment_justification}' em plain text
         `);
             break;
         default:
@@ -882,10 +885,7 @@ onMounted(() => {
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-12">
-                                                    <h4>Justificativa do parcelamento</h4>
-                                                    <p v-html="page.data.installment_justification ?? '*****'"></p>
-                                                </div>
+                                                
                                                 <div class="col-12">
                                                     <h4>Descrição sucinta do objeto</h4>
                                                     <p v-html="page.data.object_description ?? '*****'"></p>
