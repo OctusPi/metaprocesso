@@ -222,8 +222,7 @@ onBeforeMount(() => {
                                                     v-maska:[masks.maskmoney] v-model="i.value">
                                             </td>
                                             <td class="align-middle">
-                                                <div class="small">{{ utils.floatToCurrency((i.quantity *
-                                                    utils.currencyToFloat(i.value)).toFixed(2)) }}</div>
+                                                <div class="small">{{utils.floatToCurrency(parseFloat((i.quantity * utils.currencyToFloat(i.value)).toFixed(2)))}}</div>
                                             </td>
                                         </tr>
                                     </tbody>

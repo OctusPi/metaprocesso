@@ -863,8 +863,7 @@ onBeforeMount(() => {
                                                                             '0,00' }}</div>
                                                                 </td>
                                                                 <td class="align-middle">
-                                                                    <div class="small">{{
-                                                                        utils.floatToCurrency((i.quantity * utils.currencyToFloat(i.value)).toFixed(2)) }}
+                                                                    <div class="small">{{ utils.floatToCurrency(parseFloat((i.quantity * utils.currencyToFloat(i.value)).toFixed(2))) }}
                                                                     </div>
                                                                 </td>
                                                                 <td class="align-middle text-center">
