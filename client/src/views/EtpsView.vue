@@ -30,6 +30,7 @@ import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 // Local Components
 import EtpReport from './reports/EtpReport.vue';
 import PDFMerger from 'pdf-merger-js';
+import notifys from '@/utils/notifys';
 
 const ORIGIN_ETPS = "1";
 
@@ -131,7 +132,7 @@ function export_etp(id) {
 }
 
 function save_etp(mode = null) {
-    
+
     const baseRules = {
         process: 'required',
         comission_id: 'required',
@@ -173,8 +174,12 @@ function generate(type) {
     const base = {
         organ: page.organ,
         comission: page.selects.comissions?.find(o => o.id === page.data.comission_id),
-        object_description: page.data.object_description,
+        object_description: page.data?.object_description,
         process: page.data.process
+    }
+
+    if (!base.process) {
+        return emit('callAlert', notifys.warning('Necessário selecionar o processo...'))
     }
 
     let callresp, payload = null
@@ -225,19 +230,37 @@ function generate(type) {
             break;
         case 'contract_forecast':
             setValuesAndPayload(type, `
-            Descreva uma data de previsão por extenso, com base na complexidade o Estudo Técnico preliminar descrito
-            no texto '${base.object_description}' em plain text
+            Com base nesse objeto: '${base.object_description}'. E referenciado essa previsão data de contratação: 
+            ${page.data.process?.date_hour_ini}. Elabore um texto descrevendo a previsão da data que será realizado o contrato.
+            Retorne em plain text
         `);
             break;
         case 'contract_requirements':
             setValuesAndPayload(type, `
-            Elabore os requisitos para o Estudo técnico preliminar descrito no texto '${base.object_description}' em plain text
+            De acordo com a lei de licitações do Brasil, faça a descrição dos requisitos de contração para o objeto:
+            '${base.object_description}'. Use esse texto com ferencia identificando os padões: Considerando-se a sua 
+            classificação - materiais de limpeza e higiene, alguns requisitos mínimos devem ser atendidos.
+            a) as contratadas deverão entregar o material no prazo, em remessa parcelada, no endereço indicado 
+            no edital, dentro da padronização seguida pelos órgãos e conforme especificaçõestécnicas e requisitos 
+            de desempenho, quando da solicitação da contratante, conforme estabelecido em Ordem de Compras, 
+            nos endereços especificados no instrumento convocatório; b) as contratadas deverão fornecer diretamente 
+            o objeto, não podendo transferir a responsabilidade pelo objeto licitado para nenhuma outra empresa 
+            ou instituição de qualquer natureza; c) nos valores propostos deverão estar inclusos todos os custos 
+            operacionais, encargos previdenciários, trabalhistas, tributários, comerciais e quaisquer outros 
+            que incidam direta ou indiretamente no fornecimento dos bens. Retorne a resposta em plain text.
         `);
             break;
         case 'market_survey':
             setValuesAndPayload(type, `
-            Crie uma descrição para a pesquisa de mercado do Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
+            Com base nesse objeto de contratação:'${base.process?.description}'. Elabore um texto com possiveis alternativas de mercado 
+            para contratação, selecione e justifique a alternativa mais viável dentro do cenário. Retorne em plain text.
+        `);
+            break;
+        case 'solution_full_description':
+            setValuesAndPayload(type, `
+            Com base na solução de mercado escolhida nesse texto:'${page.data.market_survey}'. 
+            E levando em consideração as palavras chave:'${page.data.solution_full_description}'.
+            Elabore um texto que descreva e justifique a solução escolhida. Retorne em plain text.
         `);
             break;
         case 'contract_calculus_memories':
@@ -251,12 +274,7 @@ function generate(type) {
             Crie uma descrição para o preço esperado do contrato com base no Estudo Técnico preliminar descrito no texto '${base.object_description}' em plain text
         `);
             break;
-        case 'solution_full_description':
-            setValuesAndPayload(type, `
-            Crie uma descrição completa da solução para o Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
-        `);
-            break;
+
         case 'solution_parcel_justification':
             setValuesAndPayload(type, `
             Crie uma justificativa para as parcelas da solução descrita no Estudo Técnico preliminar do órgão ${base.organ?.name}
@@ -609,7 +627,7 @@ onMounted(() => {
                                         <label for="installment_justification"
                                             class="form-label d-flex justify-content-between">
                                             Justificativa do parcelamento
-                                            
+
                                         </label>
                                         <InputRichText :valid="page.valids.installment_justification"
                                             placeholder="Descrição do Objeto" identifier="installment_justification"
@@ -619,7 +637,7 @@ onMounted(() => {
                                         <label for="object_description"
                                             class="form-label d-flex justify-content-between">
                                             Descrição sucinta do objeto
-                                            
+
                                         </label>
                                         <InputRichText :valid="page.valids.object_description"
                                             placeholder="Descrição do Objeto" identifier="object_description"
@@ -1005,7 +1023,8 @@ onMounted(() => {
                                         <div class="box-revisor-content">
                                             <div class="row">
                                                 <div class="col-12">
-                                                    <p :class="page.data.viability_declaration == 1 ? 'text-success' : 'text-danger'">
+                                                    <p
+                                                        :class="page.data.viability_declaration == 1 ? 'text-success' : 'text-danger'">
                                                         {{
                                                             page.data.viability_declaration != null &&
                                                                 page.data.viability_declaration == 1

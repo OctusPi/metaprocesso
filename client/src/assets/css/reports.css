@@ -6,6 +6,10 @@
     border-radius: 0 !important;
 }
 
+.etp-content div{
+    text-align: justify;
+}
+
 table {
     margin-bottom: 10px;
     width: 100%;
