@@ -374,15 +374,18 @@ function export_proposal(id) {
 
 function export_pricemap(id) {
     http.get(`${page.url}/export/${id}`, emit, (resp) => {
+        const process = resp.data?.process
         const pricerecord = resp.data?.pricerecord
         const proposals = resp.data?.proposals
+        const items = resp.data?.items
         const containerReport = document.createElement('div')
         const instanceReport = createApp(PriceMapReport, {
             qrdata: sysapp,
             organ: page.organ,
-            process: pricerecord?.process,
+            process: process,
             pricerecord: pricerecord,
             proposals: proposals,
+            items: items,
             selects:page.selects
         })
         instanceReport.mount(containerReport)

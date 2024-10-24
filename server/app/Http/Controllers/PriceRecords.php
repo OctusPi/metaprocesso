@@ -109,13 +109,17 @@ class PriceRecords extends Controller
      */
     public function export(Request $request)
     {
-        $pricerecord = Data::findOne(new PriceRecord(), ['id' => $request->id], null, ['organ', 'process']);
+        $pricerecord = Data::findOne(new PriceRecord(), ['id' => $request->id]);
         $proposals = Data::find(new Proposal(), ['pricerecord_id' => $request->id], ['date_fin'], ['supplier']);
+        $process = Data::findOne(new Process(), ['id' => $pricerecord->process_id]);
+        $items   = (new ProposalsSupplier())->dfdItems($process?->dfds);
 
         if ($pricerecord) {
             return response()->json([
+                'process' => $process,
                 'pricerecord' => $pricerecord,
-                'proposals' => $proposals
+                'proposals' => $proposals,
+                'items' => $items
             ]);
         }
 

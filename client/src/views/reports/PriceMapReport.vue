@@ -13,6 +13,7 @@ defineProps({
     process: { type: Object, required: true },
     pricerecord: { type: Object, required: true },
     proposals: { type: Array, required: true },
+    items:{type: Array, default: () => []},
     selects: { type: Array, default: () => [] }
 })
 
