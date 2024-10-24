@@ -8,6 +8,8 @@
   import Mounts from '@/services/mounts';
   import masks from '@/utils/masks';
   import { onMounted, watch } from 'vue';
+  import DfdDetails from '@/components/DfdDetails.vue';
+  import http from '@/services/http';
 
   const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -19,11 +21,10 @@
     url: '/pca',
     datalist: props.datalist,
     header: [
-      { sub: [{ key: 'emission' }], title: 'EMISSÃO' },
-      { title: 'ANO REFERÊNCIA', key: 'reference_year' },
+      { title: 'ANO E EMISSÃO', key: 'reference_year', sub: [{ key: 'emission' }] },
       { key: 'comission.name', title: 'COMISSÃO' },
       { key: 'observations', title: 'OBSERVAÇÕES' },
-      { key: 'status', title: 'STATUS' }
+      { key: 'status', title: 'STATUS' },
     ],
     rules: {
       comission_id: 'required',
@@ -31,8 +32,38 @@
       emission: 'required',
       price: 'required',
       status: 'required',
-    }
+    },
+    dfd: {
+      year: '',
+      data: {},
+      headers: [
+        { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+        { key: 'demandant.name', title: 'DEMANDANTE' },
+        { key: 'ordinator.name', title: 'ORDENADOR' },
+        { key: 'unit.name', title: 'ORIGEM' },
+        { title: 'OBJETO', sub: [{ key: 'description' }] },
+        { key: 'status', title: 'SITUAÇÃO' },
+      ],
+    },
   })
+
+  const listDfdsForPCA = (id) => {
+    const year = page.datalist.find(o => o.id === id)?.reference_year
+    http.post(`${page.url}/list_dfds/${year}`, {}, emit, (res) => {
+      page.dfd.year = year
+      page.dfd.datalist = res.data
+      pageData.ui('prepare')
+    })
+  }
+
+  function dfd_details(id) {
+    if (page.dfd.datalist) {
+      page.dfd.data = page.dfd.datalist.find(obj => obj.id === id)
+      http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
+        page.dfd.data.items = resp.data
+      })
+    }
+  }
 
   watch(() => props.datalist, (newdata) => {
     page.datalist = newdata
@@ -52,7 +83,7 @@
       <HeaderMainUi />
 
       <!-- List -->
-      <section v-if="!page.ui.register" class="main-section container-fluid p-4">
+      <section v-if="!page.ui.register && !page.ui.prepare" class="main-section container-fluid p-4">
         <div role="heading" class="inside-title mb-4">
           <div>
             <h2>PCAs</h2>
@@ -108,8 +139,10 @@
           <TableList :header="page.header" :body="page.datalist" :actions="[
             Actions.Edit(pageData.update),
             Actions.Delete(pageData.remove),
+            Actions.Create('document-attach', 'DFDs', listDfdsForPCA),
           ]" :mounts="{
             status: [Mounts.Cast(page.selects.status), Mounts.Status()],
+            observations: [Mounts.Truncate()],
           }" />
         </div>
       </section>
@@ -199,6 +232,32 @@
           </form>
         </div>
       </section>
+
+      <!-- List -->
+      <section v-if="page.ui.prepare" class="main-section container-fluid p-4">
+        <div role="heading" class="inside-title mb-4">
+          <div>
+            <h2>PCA de {{ page.dfd.year }}</h2>
+            <p>Listagem das DFDs declaradas no ano de <span class="text-white">{{ page.dfd.year }}</span></p>
+          </div>
+          <div class="d-flex gap-2 flex-wrap">
+            <button @click="pageData.ui('prepare')" class="btn btn-action-secondary">
+              <ion-icon name="arrow-back" class="fs-5"></ion-icon>
+              Voltar
+            </button>
+          </div>
+        </div>
+        <div role="list" class="container p-0">
+          <TableList :count="false" :header="page.dfd.headers" :body="page.dfd.datalist" :mounts="{
+            status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
+            description: [Mounts.Truncate(100)]
+          }" :actions="[
+            Actions.ModalDetails(dfd_details),
+          ]" />
+        </div>
+      </section>
+
+      <DfdDetails :dfd="page.dfd.data" :selects="page.selects" />
 
       <FooterMainUi />
     </main>

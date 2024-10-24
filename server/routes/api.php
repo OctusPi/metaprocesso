@@ -171,6 +171,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('/suppliers')->controller(Suppliers::class)->group(function () {
         Route::post('/send_form', 'send_form');
     });
+
+    Route::prefix('/pca')->controller(Pcas::class)->group(function () {
+        Route::post('/list_dfds/{year}', 'list_dfds');
+        Route::get('/list_dfd_items/{id}', 'list_dfd_items');
+    });
 });
 
 

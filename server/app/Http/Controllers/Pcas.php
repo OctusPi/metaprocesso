@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Middlewares\Data;
 use App\Models\Comission;
+use App\Models\Dfd;
+use App\Models\DfdItem;
 use App\Models\Pca;
 use App\Models\User;
 use App\Utils\Notify;
 use App\Utils\Utils;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class Pcas extends Controller
@@ -42,13 +45,45 @@ class Pcas extends Controller
         ]);
     }
 
+    public function list_dfds(Request $request)
+    {
+        if (!$request->year) {
+            return response()->json('Insira o ano de referência', 400);
+        }
+
+        $dateRange = [
+            'date_ini' => [
+                Carbon::create($request->year, 1, 1),
+                Carbon::create($request->year, 12, 31)
+            ]
+        ];
+
+        return response()->json(
+            Data::query(
+                new Dfd(),
+                with: ['demandant', 'ordinator', 'unit'],
+                between: $dateRange
+            )
+            ->whereNotIn('status', [Dfd::STATUS_RASCUNHO, Dfd::STATUS_BLOQUEADO])
+            ->get()
+        );
+    }
+
+    public function list_dfd_items(Request $request)
+    {
+        return response()->json(
+            Data::find(new DfdItem(), ['dfd_id' => $request->id], null, ['item', 'dotation', 'program']),
+            200
+        );
+    }
+
     public function selects(Request $request)
     {
-        return response()->json([
+        return response()->json(array_merge(Dfd::make_details(), [
             'status' => Pca::list_status(),
             'comissions' => Utils::map_select(
                 Data::find(new Comission(), ['status' => Comission::STATUS_ACTIVE], ['name'])
             ),
-        ]);
+        ]));
     }
 }
