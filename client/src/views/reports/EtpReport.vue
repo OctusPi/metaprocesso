@@ -76,17 +76,6 @@ const responsibles = computed(() => {
       </div>
 
       <div class="mt-4">
-        <h1 class="etp-title">TIPO DE PARCELAMENTO</h1>
-        <div v-html="utils.getTxt(props.selects.installment_types, etp.installment_type)"></div>
-      </div>
-
-
-      <div class="mt-4">
-        <h1 class="etp-title">JUSTIFICATIVA DO TIPO DE PARCELAMENTO</h1>
-        <div v-html="etp.installment_justification"></div>
-      </div>
-
-      <div class="mt-4">
         <h1 class="etp-title">DEMONSTRAÇÃO DA PREVISÃO DA CONTRATAÇÃO NO PLANO DE CONTRATAÇÕES ANUAL</h1>
         <div v-html="etp.contract_forecast"></div>
       </div>
@@ -195,7 +184,7 @@ const responsibles = computed(() => {
         </div>
       </div>
     </div>
-    <p class="mt-4 text-center">{{ `${organ.postalcity ?? '*****'}, ${etp.process.date_hour_ini}` }}</p>
+    <p class="mt-4 text-center">{{ `${organ.postalcity ?? '*****'}, ${etp?.emission}` }}</p>
   </main>
 </template>
 

@@ -222,6 +222,8 @@ abstract class Controller
         return [];
     }
 
+
+
     public function generate(Request $request)
     {
         $api_key = config('app.openia_key');
@@ -239,8 +241,8 @@ abstract class Controller
         ];
 
         try {
-
-            $resp = $client->post($url, [
+            // Faz a requisição assíncrona
+            $promise = $client->postAsync($url, [
                 'headers' => [
                     'Authorization' => "Bearer $api_key",
                     'Content-Type' => 'application/json'
@@ -248,11 +250,16 @@ abstract class Controller
                 'json' => $data
             ]);
 
-            return Response()->json(json_decode($resp->getBody(), true), 200);
+            // Espera pela resposta da promessa
+            $resp = $promise->wait();
+
+            // Retorna a resposta JSON decodificada
+            return response()->json(json_decode($resp->getBody(), true), 200);
 
         } catch (\Exception $e) {
             Log::alert('Falha ao receber dados da API: ' . $e->getMessage());
-            return Response()->json(Notify::warning('Falha ao receber dados da API'), 404);
+            return response()->json(Notify::warning('Falha ao receber dados da API'), 404);
         }
     }
+
 }
