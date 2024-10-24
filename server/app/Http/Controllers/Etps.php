@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\{Comission, ComissionMember, Dfd, DfdItem, Etp, Process, User};
 use App\Models\Attachment;
 use App\Models\EtpPartial;
+use App\Models\Proposal;
 use App\Models\Unit;
 use App\Utils\Utils;
 use App\Utils\Notify;
@@ -139,6 +140,18 @@ class Etps extends Controller
     public function fetch_process(Request $request)
     {
         $process = Data::findOne(new Process(), ['id' => $request->process_id], with: ['etp']);
+        $proposals = Data::find(new Proposal(), ['process_id' => $request->process_id])?->toArray() ?? [];
+
+        $data_proposals = array_reduce($proposals, function ($carry, $item) {
+            $carry['total_email'] += ($item['modality'] == Proposal::M_MAIL) ? 1 : 0;
+            $carry['total_manual'] += ($item['modality'] != Proposal::M_MAIL) ? 1 : 0;
+            $carry['global_value'] += Utils::toFloat($item['global']);
+            return $carry;
+        }, [
+            'total_email' => 0,
+            'total_manual' => 0,
+            'global_value' => 0
+        ]);
 
         if (!$process) {
             return response()->json(Notify::warning('O processo não existe!'), 404);
@@ -148,7 +161,10 @@ class Etps extends Controller
             return response()->json(Notify::warning('O processo já possui um ETP!'), 401);
         }
 
-        return response()->json($process, 200);
+        return response()->json([
+            'process' => $process,
+            'proposals' => $data_proposals
+        ], 200);
     }
 
 

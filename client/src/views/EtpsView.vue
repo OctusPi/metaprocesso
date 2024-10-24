@@ -157,8 +157,7 @@ function save_etp(mode = null) {
         expected_results: 'required',
         contract_previous_actions: 'required',
         ambiental_impacts: 'required',
-        viability_declaration: 'required',
-        installment_type: 'required'
+        viability_declaration: 'required'
     }
 
     page.rules = mode === 'partial' ? baseRules : { ...baseRules, ...fullRules }
@@ -277,13 +276,14 @@ function generate(type) {
         case 'contract_expected_price':
             setValuesAndPayload(type, `
             Elabore um texto descrito informando que os orçamentos para o processo: ${base.process?.description}.
-            Foram realizados através de um Software de gerenciamento das cotações de preços e compras governamentais
-            para Prefeituras e diversos órgãos Públicos chamado Metaprocesso. Nele é possível realizar consulta avançada de itens em cestas 
+            Foram realizados através do sistema de gerenciamento das cotações de preços e compras governamentais
+            para Prefeituras e diversos órgãos Públicos chamado Metaprocesso. Nele foram realizadas consultas avançadas de itens em cestas 
             de preços, obtidas através de contratações semelhantes. Nele foram inseridos alguns filtros padrões, 
             que permite uma gestão eficaz e inteligente, dentre eles, os de maior destaque para este relatório foi 
-            a utilização da média aritmética dos ${base.dfds_quantity} orçamentos, a abrangência local, considerando a classificação do 
+            a utilização da média aritmética dos ${parseInt(page.data?.proposals_data?.total_email ?? 0) + parseInt(page.data?.proposals_data?.total_manual ?? 0)} orçamentos, a abrangência local, considerando a classificação do 
             objeto e o banco de preço do último ano, já que esses preços devem ser atuais, “preços de mercado”. 
-            O valor estimado global é de ${base.dfds_global} (escreva o valor por extenso). Retorne em apenas um parágrafo plain text.
+            O valor estimado global é de ${parseFloat(page.data?.proposals_data?.global_value ?? 0)/(parseInt(page.data?.proposals_data?.total_email ?? 0) + parseInt(page.data?.proposals_data?.total_manual ?? 0))}. 
+            (escreva os valores citados na resposta em formato de moeda pt_br e por extenso). Retorne em apenas um parágrafo plain text.
         `);
             break;
         case 'correlated_contracts':
@@ -297,25 +297,36 @@ function generate(type) {
             break;
         case 'contract_alignment':
             setValuesAndPayload(type, `
-            Crie uma descrição para o alinhamento do contrato com o Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
+            Crie um texto afirmando que o processo de contratação: ${base.process?.description} está em conformidade 
+            planejamento orçamentário do Plano Anual de Contratações (PPA) do orgão: ${page.organ_name}.
+            Retorne apenas em um parágrafo em plain text.
         `);
             break;
         case 'expected_results':
             setValuesAndPayload(type, `
-            Crie uma descrição dos resultados esperados com base no Estudo Técnico preliminar descrito no texto '${base.object_description}' em plain text
+            Crie um texto descritivo com os resultados positivos esperados para um processo
+            de contratação de: ${base.process?.description}. Leve em consideração essas palavras chave: ${page.data.expected_results}
+            Retorne apenas em um parágrafo em plain text.
         `);
             break;
         case 'contract_previous_actions':
             setValuesAndPayload(type, `
-            Crie uma descrição das ações anteriores relacionadas ao contrato e ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
+            Crie um texto descritivo com as providências a serem tomadas para a contratação: ${base.process?.description}.
+            Leve em consideração as palavras chave: ${page.data.contract_previous_actions}. Use esse texto como referências
+            identificando seus padrões: 'Conforme especificações e quantitativos relacionados no presente estudo deverá ter 
+            vigência pelo período de 12 meses, podendo ser prorrogado até 10 (dez) anos na forma dos artigos 
+            106 e 107 da Lei n° 14.133, de 2021, e o objeto deve ser formalizado em contrato, considerando que a 
+            demanda é recorrente, cuja interrupção pode provocar prejuízos às atividades das unidades demandantes. 
+            Vale ressaltar que a demanda de materiais de limpeza e higiene foi incluída no Plano de Contratação Anual 
+            e está alinhada com os objetivos das unidades administrativas. Por fim, deverá constar no contrato o ordenador 
+            de despesas e o fiscal de contrato, conforme legislação pertinente.' Retorne apenas em um parágrafo em plain text.
         `);
             break;
         case 'ambiental_impacts':
             setValuesAndPayload(type, `
-            Crie uma descrição dos possíveis impactos ambientais relacionados ao Estudo Técnico preliminar do órgão ${base.organ?.name}
-            baseado no input da descrição do processo '${base.process?.description}' e na descrição '${base.object_description}' em plain text
+            Crie um texto descritivo com os possíveis impactos ambientais esperados para um processo
+            de contratação de: ${base.process?.description}. Leve em consideração essas palavras chave: ${page.data.ambiental_impacts}
+            Retorne apenas em um parágrafo em plain text.
         `);
             break;
         default:
@@ -327,8 +338,9 @@ function generate(type) {
 
 function fetch_process(e) {
     http.post(`${page.url}/${page.data.id ?? 0}/fetch_process/${e.target._value?.id}`, {}, emit, (res) => {
-        page.data.solution_parcel_justification = res.data.installment_justification
-        page.data.object_description = res.data?.description
+        page.data.solution_parcel_justification = res.data?.process?.installment_justification
+        page.data.object_description = res.data?.process?.description
+        page.data.proposals_data = res.data?.proposals
 
     }, () => {
         page.data.process = null
