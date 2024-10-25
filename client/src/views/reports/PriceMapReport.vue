@@ -30,6 +30,26 @@ const headers = {
     ],
     items: []
 }
+
+function check_minor_price(proposals, index) {
+    const proposal = proposals.reduce((p1, p2) => {
+        return utils.currencyToFloat(p2.items[index].value)
+            < utils.currencyToFloat(p1.items[index].value) 
+            ? p2 : p1
+    })
+
+    return proposal.id
+}
+
+function calc_media(proposals, item, index) {
+    const total = proposals.reduce((acc, p) => {
+        return acc + utils.currencyToFloat(p.items[index].value)
+    }, 0)
+
+    const media = (total / proposals.length) * item.quantity
+    item.media = media
+    return media
+}
 </script>
 
 <template>
@@ -70,7 +90,8 @@ const headers = {
 
         <!-- process object -->
         <div class="my-4">
-            <h2>{{ process.description }}</h2>
+            <h2>Processo: {{ process.protocol }}</h2>
+            <p class="text-justify enfase">{{ process.description }}</p>
         </div>
 
         <!-- list index proposals -->
@@ -80,6 +101,8 @@ const headers = {
                 Lista de propostas recebidas
             </p>
         </div>
+        
+        <p class="mb-2 text-justify"> {{ pricerecord?.suppliers_justification }}</p>
 
         <div v-if="proposals.length > 0">
             <TableListReport :count="false" :header="headers.proposals" :body="proposals" :selects="selects" :mounts="{
@@ -129,7 +152,7 @@ const headers = {
                             <div class="p-0 m-0 small enfase text-center">{{ i.quantity }}</div>
                         </td>
                         <td class="align-middle">
-                            <div class="p-0 m-0 small text-center">0,00</div>
+                            <div class="p-0 m-0 small text-center">{{ utils.floatToCurrency(calc_media(proposals, i, k)) }}</div>
                         </td>
                         <td class="align-middle">
                             <div class="p-0 m-0 small text-center">0,00</div>
@@ -138,7 +161,7 @@ const headers = {
                             <div class="p-0 m-0 small text-center">0,00</div>
                         </td>
                     </tr>
-                    <tr v-for="p in proposals" :key="p.id">
+                    <tr v-for="p in proposals" :key="p.id" :class="{'price_winner':check_minor_price(proposals, k) == p.id}">
                         <td class="align-middle" colspan="4">
                             <div class="p-0 m-0 small enfase">{{ p.supplier?.name ?? 'Coleta Banco de Preços' }}</div>
                             <div class="p-0 m-0 small">{{ p.supplier?.cnpj ?? '' }}</div>
@@ -162,9 +185,13 @@ const headers = {
             </tbody>
         </table>
 
-
-
         <!-- proposata vencedora com base no calculo definido -->
+        <div class="table-title">
+            <h3>Proposta Vencedora</h3>
+            <p>
+                Proposta selecionada com base no tipo de cálculo definido
+            </p>
+        </div>
 
         <!-- assinatura dos responsáveis -->
 
@@ -174,4 +201,8 @@ const headers = {
 
 <style scoped>
 @import url('../../assets/css/reports.css');
+
+.price_winner{
+    background-color: var(--color-highline);
+}
 </style>

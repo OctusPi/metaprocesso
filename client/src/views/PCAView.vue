@@ -7,7 +7,7 @@
   import Actions from '@/services/actions';
   import Mounts from '@/services/mounts';
   import masks from '@/utils/masks';
-  import { onMounted, watch } from 'vue';
+  import { onMounted, ref, watch } from 'vue';
   import DfdDetails from '@/components/DfdDetails.vue';
   import http from '@/services/http';
 
@@ -47,16 +47,78 @@
     },
   })
 
+  const dfdsChart = ref({})
+
+  function populateDfds(dataset) {
+    const keys = Object.keys(dataset)
+    const values = Object.values(dataset)
+    dfdsChart.value = {
+      total: values.length,
+      series: [{
+        name: 'Quantidade',
+        data: values
+      }],
+      chartOptions: {
+        chart: {
+          id: 'dfdsChart',
+          offsetX: -4,
+          width: "100%",
+          fontFamily: 'Inter, Helvetica, Arial',
+          toolbar: {
+            show: false
+          }
+        },
+        colors: ['var(--color-base)'],
+        grid: {
+          borderColor: 'var(--color-input-focus)',
+          position: 'front',
+          strokeDashArray: 7,
+          sort: true
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 8,
+            barHeight: "80%",
+            borderRadiusApplication: 'end',
+            horizontal: true,
+          }
+        },
+        dataLabels: {
+          enabled: false,
+          textAnchor: 'start',
+          formatter: function (_, opt) {
+            return opt.w.globals.labels[opt.dataPointIndex]
+          },
+        },
+        yaxis: {
+          labels: {
+            color: 'var(--color-input-focus)',
+            show: true
+          },
+        },
+        xaxis: {
+          categories: keys,
+          stepSize: 1,
+          axisBorder: {
+            show: true,
+            color: 'var(--color-input-focus)',
+          }
+        }
+      }
+    }
+  }
+
   const listDfdsForPCA = (id) => {
     const year = page.datalist.find(o => o.id === id)?.reference_year
     http.post(`${page.url}/list_dfds/${year}`, {}, emit, (res) => {
       page.dfd.year = year
-      page.dfd.datalist = res.data
+      page.dfd.datalist = res.data?.datalist
+      populateDfds(res.data?.dfds_chart ?? [])
       pageData.ui('prepare')
     })
   }
 
-  function dfd_details(id) {
+  const dfd_details = (id) => {
     if (page.dfd.datalist) {
       page.dfd.data = page.dfd.datalist.find(obj => obj.id === id)
       http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
@@ -237,7 +299,7 @@
       <section v-if="page.ui.prepare" class="main-section container-fluid p-4">
         <div role="heading" class="inside-title mb-4">
           <div>
-            <h2>PCA de {{ page.dfd.year }}</h2>
+            <h2>PCA {{ page.dfd.year }}</h2>
             <p>Listagem das DFDs declaradas no ano de <span class="text-white">{{ page.dfd.year }}</span></p>
           </div>
           <div class="d-flex gap-2 flex-wrap">
@@ -248,6 +310,63 @@
           </div>
         </div>
         <div role="list" class="container p-0">
+          <div class="row">
+            <div class="col-12 col-lg-6 mb-4 graph">
+              <div class="content h-100 d-flex flex-column block">
+                <div class="p-4 pb-0">
+                  <div class="chart-heading">
+                    <span>
+                      <ion-icon name="information-circle-outline" />
+                    </span>
+                    <div>
+                      <h1>Informações Gerais</h1>
+                      <p>Dados do PCA de {{ page.dfd.year }}</p>
+                    </div>
+                  </div>
+                  <div class="mt-4 h-100">
+                    <div class="row">
+                      <div class="col-md-4 text-center">
+                        <h1 class="fs-5 text-white">4</h1>
+                        <p>Quantidade de DFDs</p>
+                      </div>
+                      <div class="col-md-4 text-center">
+                        <h1 class="fs-5 text-white">R$1230,00</h1>
+                        <p>Valor Total Estimado</p>
+                      </div>
+                      <div class="col-md-4 text-center">
+                        <h1 class="fs-5 text-white">12 de Junho</h1>
+                        <p>Criação do PCA</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-6 mb-4 graph">
+              <div class="content h-100 d-flex flex-column block">
+                <div class="p-4 pb-0">
+                  <div class="chart-heading">
+                    <span>
+                      <ion-icon name="document" />
+                    </span>
+                    <div>
+                      <h1>Itens por Tipo</h1>
+                      <p>Valores estimados por tipo</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="px-2 my-auto" v-if="dfdsChart.total > 0">
+                  <apexchart height="260" type="bar" :options="dfdsChart.chartOptions" :series="dfdsChart.series" />
+                </div>
+                <div v-else class="d-flex justify-content-center align-items-center h-100">
+                  <div class="text-center p-4">
+                    <ion-icon name="document" class="fs-4" />
+                    <p>Sem DFDs recentes</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <TableList :count="false" :header="page.dfd.headers" :body="page.dfd.datalist" :mounts="{
             status: [Mounts.Cast(page.selects.dfds_status), Mounts.Status()],
             description: [Mounts.Truncate(100)]
@@ -263,3 +382,9 @@
     </main>
   </div>
 </template>
+
+<style scoped>
+.graph {
+  min-height: 250px;
+}
+</style>

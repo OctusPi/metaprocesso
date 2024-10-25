@@ -1,226 +1,226 @@
 <script setup>
-import { createApp, inject, onMounted, ref, watch } from 'vue';
-import TableList from '@/components/table/TableList.vue';
-import NavMainUi from '@/components/NavMainUi.vue';
-import HeaderMainUi from '@/components/HeaderMainUi.vue';
-import FooterMainUi from '@/components/FooterMainUi.vue';
-import TableListStatus from '@/components/table/TableListStatus.vue';
-import TabNav from '@/components/TabNav.vue';
-import DfdReport from './reports/DfdReport.vue';
-import Layout from '@/services/layout';
-import Actions from '@/services/actions';
-import Mounts from '@/services/mounts';
-import http from '@/services/http';
-import gpt from '@/services/gpt';
-import exp from '@/services/export';
-import notifys from '@/utils/notifys';
-import masks from '@/utils/masks';
-import utils from '@/utils/utils';
-import dates from '@/utils/dates';
-import Tabs from '@/utils/tabs';
+    import { createApp, inject, onMounted, ref, watch } from 'vue';
+    import TableList from '@/components/table/TableList.vue';
+    import NavMainUi from '@/components/NavMainUi.vue';
+    import HeaderMainUi from '@/components/HeaderMainUi.vue';
+    import FooterMainUi from '@/components/FooterMainUi.vue';
+    import TableListStatus from '@/components/table/TableListStatus.vue';
+    import TabNav from '@/components/TabNav.vue';
+    import DfdReport from './reports/DfdReport.vue';
+    import Layout from '@/services/layout';
+    import Actions from '@/services/actions';
+    import Mounts from '@/services/mounts';
+    import http from '@/services/http';
+    import gpt from '@/services/gpt';
+    import exp from '@/services/export';
+    import notifys from '@/utils/notifys';
+    import masks from '@/utils/masks';
+    import utils from '@/utils/utils';
+    import dates from '@/utils/dates';
+    import Tabs from '@/utils/tabs';
 
 
-const sysapp = inject('sysapp')
-const emit = defineEmits(['callAlert', 'callUpdate'])
+    const sysapp = inject('sysapp')
+    const emit = defineEmits(['callAlert', 'callUpdate'])
 
-const props = defineProps({
-    datalist: { type: Array, default: () => [] }
-})
-
-const [page, pageData] = Layout.new(emit, {
-    url: '/dfds',
-    datalist: props.datalist,
-    header: [
-        { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-        { key: 'demandant.name', title: 'DEMANDANTE' },
-        { key: 'ordinator.name', title: 'ORDENADOR' },
-        { key: 'unit.name', title: 'ORIGEM' },
-        { title: 'OBJETO', sub: [{ key: 'description' }] },
-        { key: 'status', title: 'SITUAÇÃO' }
-    ],
-    rules: {
-        unit_id: 'required',
-        ordinator_id: 'required',
-        demandant_id: 'required',
-        comission_id: 'required',
-        date_ini: 'required',
-        estimated_date: 'required',
-        year_pca: 'required',
-        acquisition_type: 'required',
-        priority: 'required',
-        description: 'required',
-        suggested_hiring: 'required',
-        justification: 'required'
-    }
-})
-
-const items = ref({
-    search: null,
-    body: [],
-    header: [
-        { key: 'item.code', title: 'COD', sub: [{ key: 'item.type' }] },
-        { key: 'item.name', title: 'ITEM' },
-        { key: 'item.description', title: 'DESCRIÇÃO' },
-        { key: 'item.und', title: 'UDN', sub: [{ key: 'item.volume' }] },
-        { key: 'program_id', title: 'VINC.', sub: [{ key: 'dotation_id' }] },
-        { key: 'quantity', title: 'QUANT.' }
-    ],
-    selected_item: {
-        item: null,
-        program_id: null,
-        dotation_id: null,
-        quantity: 0
-    }
-})
-
-const tabs = new Tabs([
-    { id: 'origin', title: 'Origem' },
-    { id: 'infos', title: 'Informações' },
-    { id: 'items', title: 'Itens' },
-    { id: 'details', title: 'Detalhes' },
-    { id: 'revisor', title: 'Revisar' }
-])
-
-function search_items() {
-    http.post(`${page.url}/items`, { name: items.value.search }, emit, (resp) => {
-        items.value.body = resp.data
-        items.value.selected_item.item = null
+    const props = defineProps({
+        datalist: { type: Array, default: () => [] }
     })
-}
 
-function select_item(item) {
-    items.value.selected_item.item = item
-    items.value.search = null
-    items.value.body = []
-}
+    const [page, pageData] = Layout.new(emit, {
+        url: '/dfds',
+        datalist: props.datalist,
+        header: [
+            { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { key: 'demandant.name', title: 'DEMANDANTE' },
+            { key: 'ordinator.name', title: 'ORDENADOR' },
+            { key: 'unit.name', title: 'ORIGEM' },
+            { title: 'OBJETO', sub: [{ key: 'description' }] },
+            { key: 'status', title: 'SITUAÇÃO' }
+        ],
+        rules: {
+            unit_id: 'required',
+            ordinator_id: 'required',
+            demandant_id: 'required',
+            comission_id: 'required',
+            date_ini: 'required',
+            estimated_date: 'required',
+            year_pca: 'required',
+            acquisition_type: 'required',
+            priority: 'required',
+            description: 'required',
+            suggested_hiring: 'required',
+            justification: 'required'
+        }
+    })
 
-function add_item() {
-    if (!items.value.selected_item.quantity || items.value.selected_item.quantity == 0) {
-        emit('callAlert', notifys.warning('A quantidade não pode ser zero!'))
-        return
+    const items = ref({
+        search: null,
+        body: [],
+        header: [
+            { key: 'item.code', title: 'COD', sub: [{ key: 'item.type' }] },
+            { key: 'item.name', title: 'ITEM' },
+            { key: 'item.description', title: 'DESCRIÇÃO' },
+            { key: 'item.und', title: 'UDN', sub: [{ key: 'item.volume' }] },
+            { key: 'program_id', title: 'VINC.', sub: [{ key: 'dotation_id' }] },
+            { key: 'quantity', title: 'QUANT.' }
+        ],
+        selected_item: {
+            item: null,
+            program_id: null,
+            dotation_id: null,
+            quantity: 0
+        }
+    })
+
+    const tabs = new Tabs([
+        { id: 'origin', title: 'Origem' },
+        { id: 'infos', title: 'Informações' },
+        { id: 'items', title: 'Itens' },
+        { id: 'details', title: 'Detalhes' },
+        { id: 'revisor', title: 'Revisar' }
+    ])
+
+    function search_items() {
+        http.post(`${page.url}/items`, { name: items.value.search }, emit, (resp) => {
+            items.value.body = resp.data
+            items.value.selected_item.item = null
+        })
     }
 
-    if (!page.data.items) {
-        page.data.items = []
+    function select_item(item) {
+        items.value.selected_item.item = item
+        items.value.search = null
+        items.value.body = []
     }
 
-    items.value.selected_item.id = `${items.value.selected_item.item?.id}:${items.value.selected_item.program ?? '0'}:${items.value.selected_item.dotation ?? '0'}`
-    let item = page.data.items.find((obj) => obj.id === items.value.selected_item.id)
+    function add_item() {
+        if (!items.value.selected_item.quantity || items.value.selected_item.quantity == 0) {
+            emit('callAlert', notifys.warning('A quantidade não pode ser zero!'))
+            return
+        }
 
-    if (item) {
-        item = { ...items.value.selected_item }
-    } else {
-        page.data.items.push({ ...items.value.selected_item })
+        if (!page.data.items) {
+            page.data.items = []
+        }
+
+        items.value.selected_item.id = `${items.value.selected_item.item?.id}:${items.value.selected_item.program ?? '0'}:${items.value.selected_item.dotation ?? '0'}`
+        let item = page.data.items.find((obj) => obj.id === items.value.selected_item.id)
+
+        if (item) {
+            item = { ...items.value.selected_item }
+        } else {
+            page.data.items.push({ ...items.value.selected_item })
+        }
+
+        items.value.selected_item = {}
     }
 
-    items.value.selected_item = {}
-}
-
-function update_item(id) {
-    items.value.selected_item = page.data.items.find((obj) => obj.id === id)
-}
-
-function delete_item(id) {
-    page.data.items = page.data.items.filter((obj) => obj.id !== id)
-}
-
-function generate(type) {
-    const dfd = page.data
-    const slc = page.selects
-    const base = {
-        organ: page.organ,
-        unit: slc?.units.find((o) => o.id === dfd.unit_id),
-        type: slc?.acquisitions.find((o) => o.id === dfd.acquisition_type),
-        items: JSON.stringify(dfd.items),
-        description: dfd.description,
-        justification: dfd.justification
+    function update_item(id) {
+        items.value.selected_item = page.data.items.find((obj) => obj.id === id)
     }
-    
-    let callresp = null;
-    let payload = null;
 
-    switch (type) {
-        case 'dfd_description':
-            callresp = (resp) => {
-                page.data.description = resp.data?.choices[0]?.message?.content
-            }
-            payload = (`
+    function delete_item(id) {
+        page.data.items = page.data.items.filter((obj) => obj.id !== id)
+    }
+
+    function generate(type) {
+        const dfd = page.data
+        const slc = page.selects
+        const base = {
+            organ: page.organ,
+            unit: slc?.units.find((o) => o.id === dfd.unit_id),
+            type: slc?.acquisitions.find((o) => o.id === dfd.acquisition_type),
+            items: JSON.stringify(dfd.items),
+            description: dfd.description,
+            justification: dfd.justification
+        }
+
+        let callresp = null;
+        let payload = null;
+
+        switch (type) {
+            case 'dfd_description':
+                callresp = (resp) => {
+                    page.data.description = resp.data?.choices[0]?.message?.content
+                }
+                payload = (`
                 Estou elaborando um DFD, por favor crie a descrição sucinta do 
                 objeto de contratação de uma empresa especializada para fornecimento de 
                 ${base.type?.title} para ${base?.description} para atender as necessidades da 
                 ${base.unit?.title} vinculado a ${base.organ?.title}. 
                 Por favor gere a resposta em um único parágarfo, sem quebras de linha.
             `)
-            break
-        case 'dfd_justification':
-            callresp = (resp) => {
-                page.data.justification = resp.data?.choices[0]?.message?.content
-            }
-            payload = (`
+                break
+            case 'dfd_justification':
+                callresp = (resp) => {
+                    page.data.justification = resp.data?.choices[0]?.message?.content
+                }
+                payload = (`
                 Justifique a necessidade de contratação para ${base.description}. 
                 Por favor gere a resposta em um único parágarfo, sem quebras de linha.
             `)
-            break
-        case 'dfd_quantitys':
-            callresp = (resp) => {
-                page.data.justification_quantity = resp.data?.choices[0]?.message?.content
-            }
-            payload = (`
+                break
+            case 'dfd_quantitys':
+                callresp = (resp) => {
+                    page.data.justification_quantity = resp.data?.choices[0]?.message?.content
+                }
+                payload = (`
                 Justifique a quantidade demandada para esses itens ${base.items} 
                 de acordo com esse objeto: ${base.description} com base nessa justificativa ${base.justification}. 
                 Por favor gere a resposta em um único parágarfo, sem quebras de linha.
             `)
-            break
-        default:
-            break
+                break
+            default:
+                break
+        }
+
+        gpt.generate(`${page.url}/generate`, payload, emit, callresp)
     }
 
-    gpt.generate(`${page.url}/generate`, payload, emit, callresp)
-}
+    function rescue_members() {
+        http.get(`${page.url}/selects/filter/${page.data.unit_id},${page.data.comission_id}`, emit, (resp) => {
+            page.selects = resp.data
+            page.data.comission_members = resp.data.comission_members
+        })
+    }
 
-function rescue_members() {
-    http.get(`${page.url}/selects/filter/${page.data.unit_id},${page.data.comission_id}`, emit, (resp) => {
-        page.selects = resp.data
-        page.data.comission_members = resp.data.comission_members
+    function update_dfd(id) {
+        http.get(`${page.url}/details/${id}`, emit, (response) => {
+            page.data = response.data
+            pageData.selects('filter', `${page.data.unit_id},${page.data.comission}`)
+            pageData.ui('update')
+        })
+    }
+
+    function export_dfd(id) {
+        http.get(`${page.url}/export/${id}`, emit, (resp) => {
+            const dfd = resp.data
+            const containerReport = document.createElement('div')
+            const instanceReport = createApp(DfdReport, { qrdata: sysapp, organ: page.organ, dfd: dfd, selects: page.selects })
+            instanceReport.mount(containerReport)
+            exp.exportPDF(containerReport, `DFD-${dfd.protocol}`)
+        })
+    }
+
+    function clone_dfd(id) {
+        http.get(`${page.url}/details/${id}`, emit, (response) => {
+            response.data.id = null
+            page.data = response.data
+            page.data.clone = true
+            pageData.selects('filter', `${page.data.unit_id},${page.data.comission_id}`)
+            pageData.ui('update')
+        })
+    }
+
+    watch(() => props.datalist, (newdata) => {
+        page.datalist = newdata
     })
-}
 
-function update_dfd(id) {
-    http.get(`${page.url}/details/${id}`, emit, (response) => {
-        page.data = response.data
-        pageData.selects('filter', `${page.data.unit_id},${page.data.comission}`)
-        pageData.ui('update')
+    onMounted(() => {
+        pageData.selects()
+        pageData.list()
     })
-}
-
-function export_dfd(id) {
-    http.get(`${page.url}/export/${id}`, emit, (resp) => {
-        const dfd = resp.data
-        const containerReport = document.createElement('div')
-        const instanceReport = createApp(DfdReport, {qrdata:sysapp, organ: page.organ, dfd: dfd, selects: page.selects})
-        instanceReport.mount(containerReport)
-        exp.exportPDF(containerReport, `DFD-${dfd.protocol}`)
-    })
-}
-
-function clone_dfd(id) {
-    http.get(`${page.url}/details/${id}`, emit, (response) => {
-        response.data.id = null
-        page.data = response.data
-        page.data.clone = true
-        pageData.selects('filter', `${page.data.unit_id},${page.data.comission_id}`)
-        pageData.ui('update')
-    })
-}
-
-watch(() => props.datalist, (newdata) => {
-    page.datalist = newdata
-})
-
-onMounted(() => {
-    pageData.selects()
-    pageData.list()
-})
 
 </script>
 
@@ -258,16 +258,14 @@ onMounted(() => {
                             <label for="date_s_ini" class="form-label">Data Inicial</label>
                             <VueDatePicker auto-apply v-model="page.search.date_i" :enable-time-picker="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
-                                :auto-position="false"
-                                locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                :auto-position="false" locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_fin" class="form-label">Data Final</label>
                             <VueDatePicker auto-apply v-model="page.search.date_f" :enable-time-picker="false"
                                 format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
-                                :auto-position="false"
-                                locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                :auto-position="false" locale="pt-br" calendar-class-name="dp-custom-calendar"
                                 calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
@@ -298,14 +296,12 @@ onMounted(() => {
                     </form>
                 </div>
                 <div role="list" class="container p-0">
-                    <TableList :header="page.header" :body="page.datalist" 
-                        :actions="[
-                            Actions.Edit(update_dfd),
-                            Actions.Delete(pageData.remove),
-                            Actions.Export('document-text-outline', export_dfd),
-                            Actions.Create('documents-outline', 'Clonar', clone_dfd),
-                        ]" 
-                        :mounts="{
+                    <TableList :header="page.header" :body="page.datalist" :actions="[
+                        Actions.Edit(update_dfd),
+                        Actions.Delete(pageData.remove),
+                        Actions.Export('document-text-outline', export_dfd),
+                        Actions.Create('documents-outline', 'Clonar', clone_dfd),
+                    ]" :mounts="{
                             status: [Mounts.Cast(page.selects.status), Mounts.Status()],
                             description: [Mounts.Truncate()],
                         }" />
@@ -393,8 +389,7 @@ onMounted(() => {
                                     <VueDatePicker auto-apply v-model="page.data.date_ini"
                                         :input-class-name="page.valids.date_ini ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                         :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
-                                        :auto-position="false"
-                                        locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                        :auto-position="false" locale="pt-br" calendar-class-name="dp-custom-calendar"
                                         calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                                 </div>
                                 <div class="col-sm-12 col-md-4">
@@ -403,8 +398,7 @@ onMounted(() => {
                                     <VueDatePicker auto-apply v-model="page.data.estimated_date"
                                         :input-class-name="page.valids.estimated_date ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                         :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
-                                        :auto-position="false"
-                                        locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                        :auto-position="false" locale="pt-br" calendar-class-name="dp-custom-calendar"
                                         calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                                 </div>
                                 <div class="col-sm-12 col-md-4">
@@ -426,10 +420,10 @@ onMounted(() => {
                                 </div>
                                 <div class="col-sm-12 col-md-4">
                                     <label for="estimated_value" class="form-label">Valor Estimado</label>
-                                    <input type="text" name="estimated_value" class="form-control"
-                                        :class="{ 'form-control-alert': page.valids.estimated_value }"
-                                        id="estimated_value" placeholder="R$0,00" v-maska:[masks.maskmoney]
-                                        v-model="page.data.estimated_value" />
+                                    <input v-maska:[masks.maskmoney] @maska="(v) => page.data.estimated_value = v.detail.unmasked"
+                                        type="text" name="estimated_value" class="form-control"
+                                        :class="{ 'form-control-alert': page.valids.estimated_value }" id="estimated_value"
+                                        placeholder="R$ 0.00" v-bind:value="page.data.estimated_value" />
                                 </div>
                                 <div class="col-sm-12 col-md-4">
                                     <label for="priority" class="form-label">Prioridade</label>
@@ -839,10 +833,10 @@ onMounted(() => {
                                     <div>
                                         <TableList secondary :count="false" :header="items.header"
                                             :body="page.data.items ?? []" :mounts="{
-                                        'item.type': [Mounts.Cast(page.selects.items_types)],
-                                        'dotation_id': [Mounts.Cast(page.selects.dotations, 'id', 'name')],
-                                        'program_id': [Mounts.Cast(page.selects.programs, 'id', 'name')],
-                                    }" />
+                                                'item.type': [Mounts.Cast(page.selects.items_types)],
+                                                'dotation_id': [Mounts.Cast(page.selects.dotations, 'id', 'name')],
+                                                'program_id': [Mounts.Cast(page.selects.programs, 'id', 'name')],
+                                            }" />
                                     </div>
                                 </div>
 
