@@ -33,6 +33,7 @@ return new class extends Migration
             $table->string('representation')->nullable();
             $table->string('cpf', 20)->nullable();
             $table->integer('status');
+            $table->float('global')->default(0.0);
         });
     }
 

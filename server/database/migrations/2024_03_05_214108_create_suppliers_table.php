@@ -24,6 +24,7 @@ return new class extends Migration {
             $table->integer('modality');
             $table->integer('size')->nullable();
             $table->foreignId('organ_id')->constrained('organs');
+            $table->integer('flag')->nullable();
         });
     }
 

@@ -26,6 +26,7 @@ return new class extends Migration
             $table->text('suppliers_justification')->nullable();
             $table->foreignId('author_id')->constrained('users');
             $table->integer('status');
+            $table->integer('calctype')->default(1);
         });
     }
 
