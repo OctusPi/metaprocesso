@@ -76,3 +76,7 @@ th, td {
 .text-justify{
     text-align: justify;
 }
+
+.enfase{
+    font-weight: bold;
+}

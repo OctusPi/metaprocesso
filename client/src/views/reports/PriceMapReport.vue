@@ -1,5 +1,5 @@
 <script setup>
-// import { ref } from 'vue'
+import { ref } from 'vue'
 import QrcodeVue from 'qrcode.vue';
 import dates from '@/utils/dates'
 import utils from '@/utils/utils'
@@ -7,7 +7,7 @@ import Mounts from "@/services/mounts"
 
 import TableListReport from '@/components/table/TableListReport.vue'
 
-defineProps({
+const props = defineProps({
     qrdata: { type: Object, default: () => { } },
     organ: { type: Object, required: true },
     process: { type: Object, required: true },
@@ -16,6 +16,8 @@ defineProps({
     items:{type: Array, default: () => []},
     selects: { type: Array, default: () => [] }
 })
+
+const items = ref(props.items)
 
 const headers = {
     proposals: [
@@ -90,6 +92,77 @@ const headers = {
         </div>
 
         <!-- mapa itens cada fornecedor -->
+        <div class="table-title">
+            <h3>Mapa de Preços por Item</h3>
+            <p>
+                Lista de Itens para cada coleta com cálculo de média/mediana/moda
+            </p>
+        </div>
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>COD.</th>
+                    <th>ITEM</th>
+                    <th>UND.</th>
+                    <th>QUANT.</th>
+                    <th>MÉDIA</th>
+                    <th>MEDIANA</th>
+                    <th>MODA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <template v-for="(i, k) in items" :key="i.id">
+                    <tr>
+                        <td class="align-middle">
+                            <div class="p-0 m-0 small enfase">{{ i.item.code }}</div>
+                            <div class="p-0 m-0 small">{{ i.item.category == 1 ? 'Material' : 'Serviço' }}</div>
+                        </td>
+                        <td class="align-middle">
+                            <div class="p-0 m-0 small enfase">{{ i.item.name }}</div>
+                            <div class="p-0 m-0 small">{{ i.item.description }}</div>
+                        </td>
+                        <td class="align-middle">
+                            <div class="p-0 m-0 small enfase">{{ i.item.und }}</div>
+                            <div class="p-0 m-0 small">{{ i.item.volume }}</div>
+                        </td>
+                        <td class="align-middle">
+                            <div class="p-0 m-0 small enfase text-center">{{ i.quantity }}</div>
+                        </td>
+                        <td class="align-middle">
+                            <div class="p-0 m-0 small text-center">0,00</div>
+                        </td>
+                        <td class="align-middle">
+                            <div class="p-0 m-0 small text-center">0,00</div>
+                        </td>
+                        <td class="align-middle">
+                            <div class="p-0 m-0 small text-center">0,00</div>
+                        </td>
+                    </tr>
+                    <tr v-for="p in proposals" :key="p.id">
+                        <td class="align-middle" colspan="4">
+                            <div class="p-0 m-0 small enfase">{{ p.supplier?.name ?? 'Coleta Banco de Preços' }}</div>
+                            <div class="p-0 m-0 small">{{ p.supplier?.cnpj ?? '' }}</div>
+                        </td>
+                        <td class="align-middle">
+                            <div class="p-0 m-0 small">{{ p.items[k]?.origin ?? 'E-mail' }}</div>
+                        </td>
+                        <td class="align-middle">
+                            <div class="p-0 m-0 small">Valor Unit.</div>
+                            <div class="p-0 m-0 small enfase">{{ utils.floatToCurrency(p.items[k].value ?? 0) }}</div>
+                        </td>
+                        <td class="align-middle">
+                            <div class="p-0 m-0 small">Total</div>
+                            <div class="p-0 m-0 small enfase">{{ utils.floatToCurrency(parseFloat((p.items[k].quantity * utils.currencyToFloat(p.items[k].value)).toFixed(2))) }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="7" class="py-2"></td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+
+
 
         <!-- proposata vencedora com base no calculo definido -->
 

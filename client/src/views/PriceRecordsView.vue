@@ -374,22 +374,21 @@ function export_proposal(id) {
 
 function export_pricemap(id) {
     http.get(`${page.url}/export/${id}`, emit, (resp) => {
-        const process = resp.data?.process
-        const pricerecord = resp.data?.pricerecord
-        const proposals = resp.data?.proposals
-        const items = resp.data?.items
-        const containerReport = document.createElement('div')
-        const instanceReport = createApp(PriceMapReport, {
+        
+        const data_export = {
             qrdata: sysapp,
             organ: page.organ,
-            process: process,
-            pricerecord: pricerecord,
-            proposals: proposals,
-            items: items,
+            process: resp.data?.process,
+            pricerecord: resp.data?.pricerecord,
+            proposals: resp.data?.proposals,
+            items: resp.data?.items,
             selects:page.selects
-        })
+        }
+        console.log(data_export)
+        const containerReport = document.createElement('div')
+        const instanceReport = createApp(PriceMapReport, data_export)
         instanceReport.mount(containerReport)
-        exp.exportPDF(containerReport, `Coleta-${pricerecord.protocol}`)
+        exp.exportPDF(containerReport, `MapaPreços-${data_export.pricerecord?.protocol}`)
     })
 }
 
