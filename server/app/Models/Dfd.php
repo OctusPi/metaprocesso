@@ -142,6 +142,14 @@ class Dfd extends Model
         );
     }
 
+    public function estimatedValue():Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => floatval($value),
+            set: fn($value) => strval($value)
+        );
+    }
+
     public static function list_priority(): array
     {
         return [
