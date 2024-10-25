@@ -34,6 +34,7 @@ async function generatePDF(data) {
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait'}
         }
 
+        await nextTick()
         return html2pdf().set(optionExport).from(data).toPdf().output('blob')
     } catch (error) {
         throw console.error(error)

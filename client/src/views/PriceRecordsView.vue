@@ -384,7 +384,7 @@ function export_pricemap(id) {
             items: resp.data?.items,
             selects:page.selects
         }
-        console.log(data_export)
+        // console.log(data_export)
         const containerReport = document.createElement('div')
         const instanceReport = createApp(PriceMapReport, data_export)
         instanceReport.mount(containerReport)
@@ -507,8 +507,8 @@ onBeforeMount(() => {
                 </div>
                 <div role="list" class="container p-0">
                     <TableList :header="page.header" :body="page.datalist" :actions="[
-                        Actions.Create('document-text-outline', 'Mapa de Preço', export_pricemap),
                         Actions.Create('documents-outline', 'Coletas', view_colects),
+                        Actions.Create('document-text-outline', 'Mapa de Preço', export_pricemap),
                         Actions.Edit(prepare_update),
                         Actions.Delete(pageData.remove)
                     ]" :mounts="{
