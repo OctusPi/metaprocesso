@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import QrcodeVue from 'qrcode.vue';
 import dates from '@/utils/dates'
 import utils from '@/utils/utils'
@@ -17,7 +17,11 @@ const props = defineProps({
     selects: { type: Array, default: () => [] }
 })
 
-const items = ref(props.items)
+const report = ref({
+    items: props.items,
+    proposals: props.proposals,
+    finished_proposals: [... props.proposals.filter(o => o.status == 4)]
+})
 
 const headers = {
     proposals: [
@@ -41,15 +45,35 @@ function check_minor_price(proposals, index) {
     return proposal.id
 }
 
-function calc_media(proposals, item, index) {
-    const total = proposals.reduce((acc, p) => {
-        return acc + utils.currencyToFloat(p.items[index].value)
-    }, 0)
+function calcs(){
 
-    const media = (total / proposals.length) * item.quantity
-    item.media = media
-    return media
+    const total_proposals = report.value.finished_proposals.length
+
+    report.value.items.forEach((i, k) => {
+
+        const sorted_proposals = [...report.value.finished_proposals]
+        sorted_proposals.sort((a, b) => {
+            return utils.currencyToFloat(a.items[k].value) < utils.currencyToFloat(b.items[k].value)
+        })
+
+        const sum_media = report.value.finished_proposals.reduce((acc, p) => {
+            return acc + utils.currencyToFloat(p.items[k].value)
+        }, 0)
+
+        const base_mediana = (total_proposals % 2) != 0 
+        ? sorted_proposals[Math.ceil(total_proposals / 2)].items[k].value
+        : ((sorted_proposals[(total_proposals / 2)].items[k].value 
+        + sorted_proposals[(total_proposals / 2)+1].items[k].value) / 2).toFixed(2)
+
+        i.media   = sum_media * i.quantity
+        i.mediana = sorted_proposals.length
+    });
 }
+
+onBeforeMount(() => {
+    calcs()
+})
+
 </script>
 
 <template>
@@ -105,7 +129,7 @@ function calc_media(proposals, item, index) {
         <p class="mb-2 text-justify"> {{ pricerecord?.suppliers_justification }}</p>
 
         <div v-if="proposals.length > 0">
-            <TableListReport :count="false" :header="headers.proposals" :body="proposals" :selects="selects" :mounts="{
+            <TableListReport :count="false" :header="headers.proposals" :body="report.proposals" :selects="selects" :mounts="{
                 modality: [Mounts.Cast(selects.proposal_modalities)],
                 status: [Mounts.Cast(selects.proposal_status)]
             }" />
@@ -134,7 +158,7 @@ function calc_media(proposals, item, index) {
                 </tr>
             </thead>
             <tbody>
-                <template v-for="(i, k) in items" :key="i.id">
+                <template v-for="(i, k) in report.items" :key="i.id">
                     <tr>
                         <td class="align-middle">
                             <div class="p-0 m-0 small enfase">{{ i.item.code }}</div>
@@ -152,16 +176,16 @@ function calc_media(proposals, item, index) {
                             <div class="p-0 m-0 small enfase text-center">{{ i.quantity }}</div>
                         </td>
                         <td class="align-middle">
-                            <div class="p-0 m-0 small text-center">{{ utils.floatToCurrency(calc_media(proposals, i, k)) }}</div>
+                            <div class="p-0 m-0 small text-center">{{ i.media }}</div>
                         </td>
                         <td class="align-middle">
-                            <div class="p-0 m-0 small text-center">0,00</div>
+                            <div class="p-0 m-0 small text-center">{{ i.mediana }}</div>
                         </td>
                         <td class="align-middle">
                             <div class="p-0 m-0 small text-center">0,00</div>
                         </td>
                     </tr>
-                    <tr v-for="p in proposals" :key="p.id" :class="{'price_winner':check_minor_price(proposals, k) == p.id}">
+                    <tr v-for="p in report.finished_proposals" :key="p.id" :class="{'price_winner':check_minor_price(report.finished_proposals, k) == p.id}">
                         <td class="align-middle" colspan="4">
                             <div class="p-0 m-0 small enfase">{{ p.supplier?.name ?? 'Coleta Banco de Preços' }}</div>
                             <div class="p-0 m-0 small">{{ p.supplier?.cnpj ?? '' }}</div>
