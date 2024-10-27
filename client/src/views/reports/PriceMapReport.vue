@@ -45,6 +45,36 @@ function check_minor_price(proposals, index) {
     return proposal.id
 }
 
+function define_moda(proposals, index) {
+
+    let frequency_now   = 1;
+    let frequency_major = 1;
+    let frequency_value = utils.currencyToFloat(proposals[0].items[index].value)
+    let value_now = utils.currencyToFloat(proposals[0].items[index].value)
+
+    for (let i = 1; i < proposals.length; i++) {
+        
+        if (utils.currencyToFloat(proposals[i].items[index].value) === value_now) {
+            frequency_now++
+        } else {
+            if (frequency_now > frequency_major) {
+                frequency_major = frequency_now;
+                frequency_value = value_now;
+            }
+
+            value_now = utils.currencyToFloat(proposals[i].items[index].value);
+            frequency_now = 1;
+        }
+
+        if (frequency_now > frequency_major) {
+            frequency_value = frequency_now > 1 ? value_now : 0;
+        }
+
+    }
+
+    return frequency_value;
+}
+
 function calcs(){
 
     const total_proposals = report.value.finished_proposals.length
@@ -56,17 +86,19 @@ function calcs(){
             return utils.currencyToFloat(a.items[k].value) < utils.currencyToFloat(b.items[k].value)
         })
 
-        const sum_media = report.value.finished_proposals.reduce((acc, p) => {
+        const base_media = report.value.finished_proposals.reduce((acc, p) => {
             return acc + utils.currencyToFloat(p.items[k].value)
         }, 0)
 
         const base_mediana = (total_proposals % 2) != 0 
-        ? sorted_proposals[Math.ceil(total_proposals / 2)].items[k].value
-        : ((sorted_proposals[(total_proposals / 2)].items[k].value 
-        + sorted_proposals[(total_proposals / 2)+1].items[k].value) / 2).toFixed(2)
+        ? sorted_proposals[Math.floor(total_proposals / 2)].items[k].value
+        : ((sorted_proposals[(total_proposals / 2) - 1].items[k].value + sorted_proposals[(total_proposals / 2)].items[k].value) / 2).toFixed(2)
 
-        i.media   = sum_media * i.quantity
-        i.mediana = sorted_proposals.length
+        const base_moda = define_moda(sorted_proposals, k)
+
+        i.media   = parseFloat((base_media * i.quantity).toFixed(2))
+        i.mediana = parseFloat((base_mediana * i.quantity).toFixed(2))
+        i.moda    = parseFloat((base_moda * i.quantity).toFixed(2))
     });
 }
 
@@ -176,13 +208,13 @@ onBeforeMount(() => {
                             <div class="p-0 m-0 small enfase text-center">{{ i.quantity }}</div>
                         </td>
                         <td class="align-middle">
-                            <div class="p-0 m-0 small text-center">{{ i.media }}</div>
+                            <div class="p-0 m-0 small text-center">{{ utils.floatToCurrency(i.media) }}</div>
                         </td>
                         <td class="align-middle">
-                            <div class="p-0 m-0 small text-center">{{ i.mediana }}</div>
+                            <div class="p-0 m-0 small text-center">{{ utils.floatToCurrency(i.mediana) }}</div>
                         </td>
                         <td class="align-middle">
-                            <div class="p-0 m-0 small text-center">0,00</div>
+                            <div class="p-0 m-0 small text-center">{{ utils.floatToCurrency(i.mediana) }}</div>
                         </td>
                     </tr>
                     <tr v-for="p in report.finished_proposals" :key="p.id" :class="{'price_winner':check_minor_price(report.finished_proposals, k) == p.id}">
