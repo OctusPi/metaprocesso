@@ -58,15 +58,40 @@ class Pcas extends Controller
             ]
         ];
 
-        return response()->json(
-            Data::query(
-                new Dfd(),
-                with: ['demandant', 'ordinator', 'unit'],
-                between: $dateRange
-            )
-            ->whereNotIn('status', [Dfd::STATUS_RASCUNHO, Dfd::STATUS_BLOQUEADO])
-            ->get()
-        );
+        $dfds = Data::query(
+            new Dfd(),
+            with: ['demandant', 'ordinator', 'unit'],
+            between: $dateRange
+        )->whereNotIn(
+                'status',
+                [Dfd::STATUS_RASCUNHO, Dfd::STATUS_BLOQUEADO],
+            )->get();
+
+        $estimated = $dfds->reduce(function (?float $val, $dfd) {
+            return $val + $dfd->estimated_value;
+        });
+
+        $dfdsChart = (object) [];
+        Data::find(new Dfd(), [])
+            ->each(function (Dfd $item) use ($dfdsChart) {
+                $key = match ($item->status) {
+                    Dfd::ACQUISITION_MATERIAL_CONSUMO,
+                    Dfd::ACQUISITION_MATERIAL_PERMANENTE => 'Material',
+                    default => 'Serviço'
+                };
+
+                if (isset($dfdsChart->{$key})) {
+                    $dfdsChart->{$key}++;
+                } else {
+                    $dfdsChart->{$key} = 1;
+                }
+            });
+
+        return response()->json([
+            'datalist' => $dfds,
+            'estimated' => $estimated,
+            'dfds_chart' => $dfdsChart,
+        ]);
     }
 
     public function list_dfd_items(Request $request)

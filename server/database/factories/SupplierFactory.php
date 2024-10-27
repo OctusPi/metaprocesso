@@ -24,6 +24,7 @@ class SupplierFactory extends Factory
             'address' => fake()->address(),
             'modality' => fake()->randomElement(Supplier::list_modalitys())['id'],
             'size' => fake()->randomElement(Supplier::list_sizes())['id'],
+            'flag' => Supplier::FLAG_INTERN,
         ];
     }
 }

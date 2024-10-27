@@ -35,7 +35,8 @@
     },
     dfd: {
       year: '',
-      data: {},
+      datalist: [],
+      pca: {},
       headers: [
         { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
         { key: 'demandant.name', title: 'DEMANDANTE' },
@@ -109,10 +110,12 @@
   }
 
   const listDfdsForPCA = (id) => {
-    const year = page.datalist.find(o => o.id === id)?.reference_year
-    http.post(`${page.url}/list_dfds/${year}`, {}, emit, (res) => {
-      page.dfd.year = year
+    const pca = page.datalist.find(o => o.id === id)
+    http.post(`${page.url}/list_dfds/${pca?.reference_year}`, {}, emit, (res) => {
+      page.dfd.pca = pca
+      page.dfd.year = pca?.reference_year
       page.dfd.datalist = res.data?.datalist
+      page.dfd.estimated = res.data?.estimated
       populateDfds(res.data?.dfds_chart ?? [])
       pageData.ui('prepare')
     })
@@ -311,9 +314,9 @@
         </div>
         <div role="list" class="container p-0">
           <div class="row">
-            <div class="col-12 col-lg-6 mb-4 graph">
-              <div class="content h-100 d-flex flex-column block">
-                <div class="p-4 pb-0">
+            <div class="col-12 col-lg-6 mb-4">
+              <div class="content h-100 d-flex flex-column">
+                <div class="p-4 h-100 mb-5">
                   <div class="chart-heading">
                     <span>
                       <ion-icon name="information-circle-outline" />
@@ -323,19 +326,21 @@
                       <p>Dados do PCA de {{ page.dfd.year }}</p>
                     </div>
                   </div>
-                  <div class="mt-4 h-100">
-                    <div class="row">
+                  <div class="d-flex align-items-center justify-content-center w-100 mt-auto h-100">
+                    <div class="row w-100">
                       <div class="col-md-4 text-center">
-                        <h1 class="fs-5 text-white">4</h1>
-                        <p>Quantidade de DFDs</p>
+                        <h1 class="m-0 text-white fs-5">{{ page.dfd.datalist.length }}</h1>
+                        <p class="m-0">Quantidade de Itens</p>
                       </div>
                       <div class="col-md-4 text-center">
-                        <h1 class="fs-5 text-white">R$1230,00</h1>
-                        <p>Valor Total Estimado</p>
+                        <h1 class="m-0 text-white fs-5">R$ {{ page.dfd.estimated }}</h1>
+                        <p class="m-0">Valor Estimado Total</p>
                       </div>
                       <div class="col-md-4 text-center">
-                        <h1 class="fs-5 text-white">12 de Junho</h1>
-                        <p>Criação do PCA</p>
+                        <h1 class="m-0 text-white fs-5">
+                          {{ page.dfd.pca.emission.replace(`/${page.dfd.pca.reference_year}`, '') }}
+                        </h1>
+                        <p class="m-0">Criação do PCA</p>
                       </div>
                     </div>
                   </div>
@@ -384,7 +389,7 @@
 </template>
 
 <style scoped>
-.graph {
-  min-height: 250px;
-}
+  .graph {
+    min-height: 300px;
+  }
 </style>
