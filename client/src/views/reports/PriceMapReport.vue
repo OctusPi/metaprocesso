@@ -67,12 +67,12 @@ function define_moda(proposals, index) {
         }
 
         if (frequency_now > frequency_major) {
-            frequency_value = frequency_now > 1 ? value_now : 0;
+            frequency_value = value_now;
         }
 
     }
 
-    return frequency_value;
+    return frequency_now > 1 || frequency_major > 1 ? frequency_value : 0;
 }
 
 function calcs(){
@@ -91,8 +91,8 @@ function calcs(){
         }, 0)
 
         const base_mediana = (total_proposals % 2) != 0 
-        ? sorted_proposals[Math.floor(total_proposals / 2)].items[k].value
-        : ((sorted_proposals[(total_proposals / 2) - 1].items[k].value + sorted_proposals[(total_proposals / 2)].items[k].value) / 2).toFixed(2)
+        ? utils.currencyToFloat(sorted_proposals[Math.floor(total_proposals / 2)].items[k].value)
+        : ((utils.currencyToFloat(sorted_proposals[(total_proposals / 2) - 1].items[k].value) + utils.currencyToFloat(sorted_proposals[(total_proposals / 2)].items[k].value)) / 2).toFixed(2)
 
         const base_moda = define_moda(sorted_proposals, k)
 
@@ -214,7 +214,7 @@ onBeforeMount(() => {
                             <div class="p-0 m-0 small text-center">{{ utils.floatToCurrency(i.mediana) }}</div>
                         </td>
                         <td class="align-middle">
-                            <div class="p-0 m-0 small text-center">{{ utils.floatToCurrency(i.mediana) }}</div>
+                            <div class="p-0 m-0 small text-center">{{ utils.floatToCurrency(i.moda) }}</div>
                         </td>
                     </tr>
                     <tr v-for="p in report.finished_proposals" :key="p.id" :class="{'price_winner':check_minor_price(report.finished_proposals, k) == p.id}">
@@ -248,6 +248,7 @@ onBeforeMount(() => {
                 Proposta selecionada com base no tipo de cálculo definido
             </p>
         </div>
+        <p>Em desenvolvimento....</p>
 
         <!-- assinatura dos responsáveis -->
 
