@@ -420,10 +420,10 @@
                                 </div>
                                 <div class="col-sm-12 col-md-4">
                                     <label for="estimated_value" class="form-label">Valor Estimado</label>
-                                    <input v-maska:[masks.maskmoney]
+                                    <input 
                                         type="text" name="estimated_value" class="form-control"
                                         :class="{ 'form-control-alert': page.valids.estimated_value }" id="estimated_value"
-                                        placeholder="R$ 0.00" v-bind:value="page.data.estimated_value" />
+                                        placeholder="R$ 0.00" v-model="page.data.estimated_value" v-maska:[masks.maskmoney] />
                                 </div>
                                 <div class="col-sm-12 col-md-4">
                                     <label for="priority" class="form-label">Prioridade</label>
