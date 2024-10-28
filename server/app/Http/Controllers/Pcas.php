@@ -68,7 +68,7 @@ class Pcas extends Controller
             )->get();
 
         $estimated = $dfds->reduce(function (?float $val, $dfd) {
-            return $val + $dfd->estimated_value;
+            return $val + Utils::toFloat($dfd->estimated_value);
         });
 
         $dfdsChart = (object) [];

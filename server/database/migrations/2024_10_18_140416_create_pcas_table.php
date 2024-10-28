@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('author_id')->constrained('users');
             $table->string('reference_year');
             $table->date('emission');
-            $table->float('price');
+            $table->string('price', 200);
             $table->json('comission_members');
             $table->text('observations')->nullable();
             $table->integer('status');
