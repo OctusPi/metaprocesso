@@ -10,6 +10,7 @@
   import { onMounted, ref, watch } from 'vue';
   import DfdDetails from '@/components/DfdDetails.vue';
   import http from '@/services/http';
+import { Mask } from 'maska';
 
   const emit = defineEmits(['callAlert', 'callUpdate'])
 
@@ -245,9 +246,9 @@
               </div>
               <div class="col-sm-12 col-md-4">
                 <label for="price" class="form-label">Preço</label>
-                <input v-maska:[masks.maskmoney] @maska="(v) => page.data.price = v.detail.unmasked" type="text"
-                  name="price" class="form-control" :class="{ 'form-control-alert': page.valids.price }" id="price"
-                  placeholder="R$ 0.00" v-bind:value="page.data.price" />
+                <input type="text" name="price" class="form-control"
+                  :class="{ 'form-control-alert': page.valids.price }" id="price"
+                  placeholder="R$ 0.00" v-model="page.data.price" v-maska:[masks.maskmoney] />
               </div>
               <div class="col-sm-12 col-md-8">
                 <label for="comission" class="form-label">Comissão/Equipe de
@@ -333,12 +334,14 @@
                         <p class="m-0">Quantidade de Itens</p>
                       </div>
                       <div class="col-md-4 text-center">
-                        <h1 class="m-0 text-white fs-5">R$ {{ page.dfd.estimated }}</h1>
+                        <h1 class="m-0 text-white fs-5">
+                          R$ {{ (new Mask(masks.maskmoney)).masked(page.dfd.estimated) }}
+                        </h1>
                         <p class="m-0">Valor Estimado Total</p>
                       </div>
                       <div class="col-md-4 text-center">
                         <h1 class="m-0 text-white fs-5">
-                          {{ page.dfd.pca.emission.replace(`/${page.dfd.pca.reference_year}`, '') }}
+                          {{ page.dfd.pca.emission }}
                         </h1>
                         <p class="m-0">Criação do PCA</p>
                       </div>

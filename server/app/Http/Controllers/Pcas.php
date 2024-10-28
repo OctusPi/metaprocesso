@@ -57,7 +57,7 @@ class Pcas extends Controller
                 Carbon::create($request->year, 12, 31)
             ]
         ];
-
+        
         $dfds = Data::query(
             new Dfd(),
             with: ['demandant', 'ordinator', 'unit'],
@@ -72,24 +72,23 @@ class Pcas extends Controller
         });
 
         $dfdsChart = (object) [];
-        Data::find(new Dfd(), [])
-            ->each(function (Dfd $item) use ($dfdsChart) {
-                $key = match ($item->status) {
-                    Dfd::ACQUISITION_MATERIAL_CONSUMO,
-                    Dfd::ACQUISITION_MATERIAL_PERMANENTE => 'Material',
-                    default => 'Serviço'
-                };
+        $dfds->each(function (Dfd $item) use ($dfdsChart) {
+            $key = match ($item->status) {
+                Dfd::ACQUISITION_MATERIAL_CONSUMO,
+                Dfd::ACQUISITION_MATERIAL_PERMANENTE => 'Material',
+                default => 'Serviço'
+            };
 
-                if (isset($dfdsChart->{$key})) {
-                    $dfdsChart->{$key}++;
-                } else {
-                    $dfdsChart->{$key} = 1;
-                }
-            });
+            if (isset($dfdsChart->{$key})) {
+                $dfdsChart->{$key}++;
+            } else {
+                $dfdsChart->{$key} = 1;
+            }
+        });
 
         return response()->json([
             'datalist' => $dfds,
-            'estimated' => $estimated,
+            'estimated' => $estimated ?? 0,
             'dfds_chart' => $dfdsChart,
         ]);
     }
