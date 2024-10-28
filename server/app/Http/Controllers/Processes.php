@@ -192,7 +192,8 @@ class Processes extends Controller
             'acquisitions' => Process::list_acquisitions(),
             'installment_types' => Process::list_installments_types(),
             'vars' => [
-                'INSTALLMENT_ITEM' => Process::INSTALLMENT_ITEM
+                'INSTALLMENT_ITEM' => Process::INSTALLMENT_ITEM,
+                'ORIGIN_PROCESS' => User::MOD_PROCESSES['id'],
             ]
         ], Dfd::make_details()), 200);
     }

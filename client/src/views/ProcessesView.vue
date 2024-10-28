@@ -19,6 +19,8 @@ import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
 import TableListSelect from '@/components/table/TableListSelect.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
 import TabNav from '@/components/TabNav.vue';
+import { toRaw } from 'vue';
+import AttachmentsCmp from '@/components/AttachmentsCmp.vue';
 
 
 const emit = defineEmits(['callAlert', 'callUpdate'])
@@ -66,12 +68,14 @@ const [page, pageData] = Layout.new(emit, {
             { key: 'status', title: 'SITUAÇÃO' }
         ],
     },
+    attachments: {}
 })
 
 const tabs = new Tabs([
     { id: 'origem', title: 'Origem' },
     { id: 'processo', title: 'Processo' },
     { id: 'dfds', title: 'DFDs' },
+    { id: 'anexos', title: 'Anexos' },
     { id: 'revisar', title: 'Revisar' },
 ])
 
@@ -529,6 +533,15 @@ onMounted(() => {
                             </div>
                         </div>
 
+                        <div class="tab-pane fade row content m-0 g-3 p-2 pt-1"
+                            :class="{ 'show active': tabs.is('anexos') }">
+                            <AttachmentsCmp label="Listagem de arquivos anexados ao Processo"
+                                @callAlert="(data) => emit('callAlert', data)"
+                                @callRemove="(data) => emit('callRemove', data)"
+                                @clone="(data) => { page.attachments = toRaw(data) }"
+                                :origin="String(page.selects.vars?.ORIGIN_PROCESS)" :protocol="page.data.protocol" />
+                        </div>
+
                         <!-- tab revisar -->
                         <div class="tab-pane fade row content m-0 g-3 p-4 pt-1"
                             :class="{ 'show active': tabs.is('revisar') }">
@@ -544,7 +557,7 @@ onMounted(() => {
                                         <div class="col-md-6">
                                             <h4>Unidades</h4>
                                             <span class="p-0 m-0 small" v-for="u in page.data.units" :key="u.id">
-                                                {{ `${u.title ?? '***'}; ` }}
+                                                {{ u.title ?? '*****' }}
                                             </span>
                                         </div>
                                         <div class="col-md-6">
@@ -641,6 +654,18 @@ onMounted(() => {
                                             Actions.ModalDetails(dfd_details),
                                             Actions.FastDelete(unselect_dfd),
                                         ]" />
+                                </div>
+                            </div>
+                            <div class="box-revisor mb-4">
+                                <div class="box-revisor-title mb-4">
+                                    <h3>Anexos</h3>
+                                    <p>
+                                        Lista de arquivos anexados
+                                    </p>
+                                </div>
+                                <div>
+                                    <TableList secondary :header="page.attachments.header"
+                                        :body="page.attachments.datalist" />
                                 </div>
                             </div>
                         </div>
