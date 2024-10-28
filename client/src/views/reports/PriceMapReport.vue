@@ -65,11 +65,10 @@ function define_moda(proposals, index) {
             value_now = utils.currencyToFloat(proposals[i].items[index].value);
             frequency_now = 1;
         }
+    }
 
-        if (frequency_now > frequency_major) {
-            frequency_value = value_now;
-        }
-
+    if (frequency_now > frequency_major) {
+        frequency_value = value_now;
     }
 
     return frequency_now > 1 || frequency_major > 1 ? frequency_value : 0;

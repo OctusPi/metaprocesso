@@ -45,9 +45,10 @@ const props = defineProps({
 const [page, pageData] = Layout.new(emit, {
     url: '/etps',
     datalist: props.datalist,
+    generate: {},
     header: [
         { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-        { key: 'comission.name', title: 'ORIGEM' },
+        { title:'PROCESSO', key:'process.protocol' },
         { title: 'NECESSIDADE', sub: [{ key: 'necessity' }] },
         { key: 'status', title: 'STATUS' },
     ],
@@ -180,9 +181,9 @@ function generate(type) {
         object_description: page.data?.object_description,
         process: page.data.process,
         dfds_quantity: (page.data?.process?.dfds ?? []).length,
-        dfds_global: (page.data?.process?.dfds ?? []).reduce((a, i) => 
-             a += utils.currencyToFloat(i.estimated_value)
-        , 0)
+        dfds_global: (page.data?.process?.dfds ?? []).reduce((a, i) =>
+            a += utils.currencyToFloat(i.estimated_value)
+            , 0)
     }
 
     let callresp, payload = null
@@ -256,7 +257,9 @@ function generate(type) {
         case 'market_survey':
             setValuesAndPayload(type, `
             Com base nesse objeto de contratação:'${base.process?.description}'. Elabore um texto com possiveis alternativas de mercado 
-            para contratação, selecione e justifique a alternativa mais viável dentro do cenário. Retorne em plain text.
+            para contratação leve em consideração formas de oportunidades de mercado das contratações públicas governamentais, 
+            selecione e justifique a alternativa mais viável dentro do cenário. Leve em conta as seguintes palavras chave: ${page.data.market_survey}.
+            Retorne em plain text.
         `);
             break;
         case 'solution_full_description':
@@ -268,8 +271,9 @@ function generate(type) {
             break;
         case 'contract_calculus_memories':
             setValuesAndPayload(type, `
-            Crie texto fictício levando em consideração a lei de licitações do brasil,
+            Crie texto fictício levando em consideração a lei de licitações do brasil 14.133/2.021,
             que justifique a Estimativa das Quantidades Contratadas nesse processo: ${base.process?.description}.
+            Leve em consideração essas quantidades: ${JSON.stringify(page.gerate.dfds_items_data)}
             Retorne a respota em um único parágrafo em plain text.
         `);
             break;
@@ -280,9 +284,9 @@ function generate(type) {
             para Prefeituras e diversos órgãos Públicos chamado Metaprocesso. Nele foram realizadas consultas avançadas de itens em cestas 
             de preços, obtidas através de contratações semelhantes. Nele foram inseridos alguns filtros padrões, 
             que permite uma gestão eficaz e inteligente, dentre eles, os de maior destaque para este relatório foi 
-            a utilização da média aritmética dos ${parseInt(page.data?.proposals_data?.total_email ?? 0) + parseInt(page.data?.proposals_data?.total_manual ?? 0)} orçamentos, a abrangência local, considerando a classificação do 
+            a utilização da média aritmética dos ${parseInt(page.generate?.proposals_data?.total_email ?? 0) + parseInt(page.generate?.proposals_data?.total_manual ?? 0)} orçamentos, a abrangência local, considerando a classificação do 
             objeto e o banco de preço do último ano, já que esses preços devem ser atuais, “preços de mercado”. 
-            O valor estimado global é de ${parseFloat(page.data?.proposals_data?.global_value ?? 0)/(parseInt(page.data?.proposals_data?.total_email ?? 0) + parseInt(page.data?.proposals_data?.total_manual ?? 0))}. 
+            O valor estimado global é de ${parseFloat(page.generate?.proposals_data?.global_value ?? 0) / (parseInt(page.generate?.proposals_data?.total_email ?? 0) + parseInt(page.generate?.proposals_data?.total_manual ?? 0))}. 
             (escreva os valores citados na resposta em formato de moeda pt_br e por extenso). Retorne em apenas um parágrafo plain text.
         `);
             break;
@@ -336,11 +340,25 @@ function generate(type) {
     gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
+function improve_gerate(key) {
+    if (!page.data[key]) {
+        return emit('callAlert', notifys.warning('Informe algum conteúdo para que a I.A revise e aprimore.'))
+    }
+
+    const payload = `Revise e aprimore esse texto: ${page.data[key]}`
+    const callresp = (resp) => {
+        page.data[key] = `<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`
+    };
+
+    gpt.generate(`${page.url}/generate`, payload, emit, callresp)
+}
+
 function fetch_process(e) {
     http.post(`${page.url}/${page.data.id ?? 0}/fetch_process/${e.target._value?.id}`, {}, emit, (res) => {
         page.data.solution_parcel_justification = res.data?.process?.installment_justification
         page.data.object_description = res.data?.process?.description
-        page.data.proposals_data = res.data?.proposals
+        page.generate.proposals_data = res.data?.proposals
+        page.generate.dfds_items_data = res.data?.dfds_items
 
     }, () => {
         page.data.process = null
@@ -635,11 +653,16 @@ onMounted(() => {
                                     </div>
                                     <div class="col-12">
                                         <label for="object_classification"
-                                            class="form-label d-flex justify-content-between">
+                                            class="form-label d-md-flex justify-content-between">
                                             Classificação do objeto
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('object_classification')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('object_classification')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.object_classification"
                                             placeholder="Classificação do Objeto" identifier="object_classification"
@@ -651,23 +674,34 @@ onMounted(() => {
                             <div id="necessidade" class="tab-pane">
                                 <div class="content p-4 pt-0 g-3 m-0 row">
                                     <div class="col-12">
-                                        <label for="necessity" class="form-label d-flex justify-content-between">
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
                                             Necessidade
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('necessity')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('necessity')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.necessity"
                                             placeholder="Descrição da Necessidade" identifier="necessity"
                                             v-model="page.data.necessity" />
                                     </div>
                                     <div class="col-12">
-                                        <label for="contract_requirements"
-                                            class="form-label d-flex justify-content-between">
-                                            Descrição dos Requisitos da Contratação
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
+                                            Descrição dos requisitos de Contratação
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('contract_requirements')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('contract_requirements')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.contract_requirements"
                                             placeholder="Descrição dos Requisitos da Contratação"
@@ -675,12 +709,17 @@ onMounted(() => {
                                             v-model="page.data.contract_requirements" />
                                     </div>
                                     <div class="col-12">
-                                        <label for="contract_forecast"
-                                            class="form-label d-flex justify-content-between">
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
                                             Previsão de Realização da Contratação
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('contract_forecast')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('contract_forecast')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.contract_forecast"
                                             placeholder="Previsão de Realização da Contratação"
@@ -692,23 +731,34 @@ onMounted(() => {
                             <div id="solucao" class="tab-pane">
                                 <div class="content p-4 pt-0 g-3 m-0 row">
                                     <div class="col-12">
-                                        <label for="market_survey"
-                                            class="form-label d-flex justify-content-between">Levantamento de Mercado
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
+                                            levantamento de Mercado
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('market_survey')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('market_survey')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.market_survey"
                                             placeholder="Levantamento de Mercado" identifier="market_survey"
                                             v-model="page.data.market_survey" />
                                     </div>
                                     <div class="col-12">
-                                        <label for="solution_full_description"
-                                            class="form-label d-flex justify-content-between">Descrição da Solução como
-                                            um Todo
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
+                                            Descrição da solução como um todo
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('solution_full_description')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('solution_full_description')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.solution_full_description"
                                             placeholder="Descrição da Solução como um Todo"
@@ -716,12 +766,17 @@ onMounted(() => {
                                             v-model="page.data.solution_full_description" />
                                     </div>
                                     <div class="col-12">
-                                        <label for="contract_calculus_memories"
-                                            class="form-label d-flex justify-content-between">Estimativa das Quantidades
-                                            Contratadas
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
+                                            Estimativas das quantidades contratadas
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('contract_calculus_memories')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('contract_calculus_memories')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.contract_calculus_memories"
                                             placeholder="Estimativa das Quantidades Contratadas"
@@ -729,12 +784,17 @@ onMounted(() => {
                                             v-model="page.data.contract_calculus_memories" />
                                     </div>
                                     <div class="col-12">
-                                        <label for="contract_expected_price"
-                                            class="form-label d-flex justify-content-between">Estimativa do Preço da
-                                            Contratação
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
+                                            Estimativas de preço da contratação
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('contract_expected_price')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('contract_expected_price')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.contract_expected_price"
                                             placeholder="Estimativa do Preço da Contratação"
@@ -744,7 +804,7 @@ onMounted(() => {
                                     <div class="col-12">
                                         <label for="solution_parcel_justification"
                                             class="form-label d-flex justify-content-between">Justificativa Parcelamento
-                                            
+
                                         </label>
                                         <InputRichText :valid="page.valids.solution_parcel_justification"
                                             placeholder="Justificativa para o Parcelamento ou Não"
@@ -752,12 +812,17 @@ onMounted(() => {
                                             v-model="page.data.solution_parcel_justification" />
                                     </div>
                                     <div class="col-12">
-                                        <label for="correlated_contracts"
-                                            class="form-label d-flex justify-content-between">Contratações Correlatas
-                                            e/ou Interdependentes
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
+                                            Contratações correlatas ou interdependentes
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('correlated_contracts')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('correlated_contracts')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.correlated_contracts"
                                             placeholder="Contratações Correlatas e/ou Interdependentes"
@@ -770,23 +835,34 @@ onMounted(() => {
                             <div id="planejamento" class="tab-pane">
                                 <div class="content p-4 pt-0 g-3 m-0 row">
                                     <div class="col-12">
-                                        <label for="expected_results"
-                                            class="form-label d-flex justify-content-between">Resultados Pretendidos
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
+                                            Resultados pretendidos
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('expected_results')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('expected_results')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.expected_results"
                                             placeholder="Resultados Pretendidos" identifier="expected_results"
                                             v-model="page.data.expected_results" />
                                     </div>
                                     <div class="col-12">
-                                        <label for="contract_previous_actions"
-                                            class="form-label d-flex justify-content-between">Providências a Serem
-                                            Tomadas
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
+                                            Providências a serem tomadas
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('contract_previous_actions')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('contract_previous_actions')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.contract_previous_actions"
                                             placeholder="Providências a Serem Tomadas"
@@ -794,23 +870,34 @@ onMounted(() => {
                                             v-model="page.data.contract_previous_actions" />
                                     </div>
                                     <div class="col-12">
-                                        <label for="contract_alignment"
-                                            class="form-label d-flex justify-content-between">Alinhamento de Contrato
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
+                                            Alinhamento de contrato
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('contract_alignment')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('contract_alignment')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.contract_alignment"
                                             placeholder="Alinhamento de Contrato" identifier="contract_alignment"
                                             v-model="page.data.contract_alignment" />
                                     </div>
                                     <div class="col-12">
-                                        <label for="ambiental_impacts"
-                                            class="form-label d-flex justify-content-between">Possíveis Impactos
-                                            Ambientais
-                                            <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                        <label for="object_classification"
+                                            class="form-label d-md-flex justify-content-between">
+                                            Possíveis impactos ambientais
+                                            <div class="d-flex">
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
                                                 @click="generate('ambiental_impacts')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                                @click="improve_gerate('ambiental_impacts')">
+                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                            </div>
                                         </label>
                                         <InputRichText :valid="page.valids.ambiental_impacts"
                                             placeholder="Possíveis Impactos Ambientais" identifier="ambiental_impacts"
@@ -897,7 +984,7 @@ onMounted(() => {
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                
+
                                                 <div class="col-12">
                                                     <h4>Descrição sucinta do objeto</h4>
                                                     <p v-html="page.data.object_description ?? '*****'"></p>
@@ -1055,7 +1142,7 @@ onMounted(() => {
                             </button>
                             <button @click="save_etp('partial')" type="button" class="btn btn-action-secondary">
                                 <ion-icon name="folder-open-outline" class="fs-5"></ion-icon>
-                                Salvar Rascunho
+                                Salvar Parcialmente
                             </button>
                             <button @click="pageData.ui('register')" type="button" class="btn btn-action-secondary">
                                 <ion-icon name="close-outline" class="fs-5"></ion-icon>
@@ -1071,7 +1158,7 @@ onMounted(() => {
                     </form>
                 </div>
             </section>
-        
+
             <FooterMainUi />
         </main>
     </div>

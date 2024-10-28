@@ -163,7 +163,8 @@ class Etps extends Controller
 
         return response()->json([
             'process' => $process,
-            'proposals' => $data_proposals
+            'proposals' => $data_proposals,
+            'dfds_items' => (new ProposalsSupplier())->dfdItems($process->dfds)
         ], 200);
     }
 
