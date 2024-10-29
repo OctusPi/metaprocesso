@@ -95,7 +95,7 @@ function calcs(){
 
         const base_moda = define_moda(sorted_proposals, k)
 
-        i.media   = parseFloat((base_media * i.quantity).toFixed(2))
+        i.media   = parseFloat(((base_media * i.quantity)/total_proposals).toFixed(2))
         i.mediana = parseFloat((base_mediana * i.quantity).toFixed(2))
         i.moda    = parseFloat((base_moda * i.quantity).toFixed(2))
     });
