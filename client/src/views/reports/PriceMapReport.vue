@@ -13,14 +13,15 @@ const props = defineProps({
     process: { type: Object, required: true },
     pricerecord: { type: Object, required: true },
     proposals: { type: Array, required: true },
-    items:{type: Array, default: () => []},
+    items: { type: Array, default: () => [] },
     selects: { type: Array, default: () => [] }
 })
 
 const report = ref({
     items: props.items,
     proposals: props.proposals,
-    finished_proposals: [... props.proposals.filter(o => o.status == 4)]
+    finished_proposals: [...props.proposals.filter(o => o.status == 4)],
+    winner: {}
 })
 
 const headers = {
@@ -38,7 +39,7 @@ const headers = {
 function check_minor_price(proposals, index) {
     const proposal = proposals.reduce((p1, p2) => {
         return utils.currencyToFloat(p2.items[index].value)
-            < utils.currencyToFloat(p1.items[index].value) 
+            < utils.currencyToFloat(p1.items[index].value)
             ? p2 : p1
     })
 
@@ -47,13 +48,13 @@ function check_minor_price(proposals, index) {
 
 function define_moda(proposals, index) {
 
-    let frequency_now   = 1;
+    let frequency_now = 1;
     let frequency_major = 1;
     let frequency_value = utils.currencyToFloat(proposals[0].items[index].value)
     let value_now = utils.currencyToFloat(proposals[0].items[index].value)
 
     for (let i = 1; i < proposals.length; i++) {
-        
+
         if (utils.currencyToFloat(proposals[i].items[index].value) === value_now) {
             frequency_now++
         } else {
@@ -74,35 +75,44 @@ function define_moda(proposals, index) {
     return frequency_now > 1 || frequency_major > 1 ? frequency_value : 0;
 }
 
-function calcs(){
+function calcs() {
 
     const total_proposals = report.value.finished_proposals.length
 
     report.value.items.forEach((i, k) => {
 
-        const sorted_proposals = [...report.value.finished_proposals]
-        sorted_proposals.sort((a, b) => {
-            return utils.currencyToFloat(a.items[k].value) < utils.currencyToFloat(b.items[k].value)
+        const sorted_proposals = [...report.value.finished_proposals].slice().sort((a, b) => {
+            return utils.currencyToFloat(b.items[k].value) < utils.currencyToFloat(a.items[k].value)
         })
 
         const base_media = report.value.finished_proposals.reduce((acc, p) => {
+            if (p.id === sorted_proposals[0].id) {
+                p.winner = (p.winner ?? 0) + 1
+            }
             return acc + utils.currencyToFloat(p.items[k].value)
         }, 0)
 
-        const base_mediana = (total_proposals % 2) != 0 
-        ? utils.currencyToFloat(sorted_proposals[Math.floor(total_proposals / 2)].items[k].value)
-        : ((utils.currencyToFloat(sorted_proposals[(total_proposals / 2) - 1].items[k].value) + utils.currencyToFloat(sorted_proposals[(total_proposals / 2)].items[k].value)) / 2).toFixed(2)
+        const base_mediana = (total_proposals % 2) != 0
+            ? utils.currencyToFloat(sorted_proposals[Math.floor(total_proposals / 2)].items[k].value)
+            : ((utils.currencyToFloat(sorted_proposals[(total_proposals / 2) - 1].items[k].value) + utils.currencyToFloat(sorted_proposals[(total_proposals / 2)].items[k].value)) / 2).toFixed(2)
 
         const base_moda = define_moda(sorted_proposals, k)
 
-        i.media   = parseFloat(((base_media * i.quantity)/total_proposals).toFixed(2))
+        i.media = parseFloat(((base_media * i.quantity) / total_proposals).toFixed(2))
         i.mediana = parseFloat((base_mediana * i.quantity).toFixed(2))
-        i.moda    = parseFloat((base_moda * i.quantity).toFixed(2))
+        i.moda = parseFloat((base_moda * i.quantity).toFixed(2))
     });
+}
+
+function check_winner() {
+    return report.value.finished_proposals.reduce((p1, p2) => {
+        return p2.winner > p1.winner ? p2 : p1
+    })
 }
 
 onBeforeMount(() => {
     calcs()
+    report.value.winner = check_winner()
 })
 
 </script>
@@ -139,7 +149,8 @@ onBeforeMount(() => {
             </h2>
             <h2 class="text-center">
                 {{ `Método de Seleção: ${utils.getTxt(selects.process_types,
-                process.type)} - PCA: ${process.year_pca} - Situação: ${utils.getTxt(selects.status, pricerecord.status)}` }}
+                    process.type)} - PCA: ${process.year_pca} - Situação: ${utils.getTxt(selects.status,
+                pricerecord.status)}` }}
             </h2>
         </div>
 
@@ -156,14 +167,15 @@ onBeforeMount(() => {
                 Lista de propostas recebidas
             </p>
         </div>
-        
+
         <p class="mb-2 text-justify"> {{ pricerecord?.suppliers_justification }}</p>
 
         <div v-if="proposals.length > 0">
-            <TableListReport :count="false" :header="headers.proposals" :body="report.proposals" :selects="selects" :mounts="{
-                modality: [Mounts.Cast(selects.proposal_modalities)],
-                status: [Mounts.Cast(selects.proposal_status)]
-            }" />
+            <TableListReport :count="false" :header="headers.proposals" :body="report.proposals" :selects="selects"
+                :mounts="{
+                    modality: [Mounts.Cast(selects.proposal_modalities)],
+                    status: [Mounts.Cast(selects.proposal_status)]
+                }" />
         </div>
         <div v-else class="small mb-4">
             <p>Ainda não existem propostas associadas a coleta</p>
@@ -216,7 +228,8 @@ onBeforeMount(() => {
                             <div class="p-0 m-0 small text-center">{{ utils.floatToCurrency(i.moda) }}</div>
                         </td>
                     </tr>
-                    <tr v-for="p in report.finished_proposals" :key="p.id" :class="{'price_winner':check_minor_price(report.finished_proposals, k) == p.id}">
+                    <tr v-for="p in report.finished_proposals" :key="p.id"
+                        :class="{ 'price_winner': check_minor_price(report.finished_proposals, k) == p.id }">
                         <td class="align-middle" colspan="4">
                             <div class="p-0 m-0 small enfase">{{ p.supplier?.name ?? 'Coleta Banco de Preços' }}</div>
                             <div class="p-0 m-0 small">{{ p.supplier?.cnpj ?? '' }}</div>
@@ -230,7 +243,8 @@ onBeforeMount(() => {
                         </td>
                         <td class="align-middle">
                             <div class="p-0 m-0 small">Total</div>
-                            <div class="p-0 m-0 small enfase">{{ utils.floatToCurrency(parseFloat((p.items[k].quantity * utils.currencyToFloat(p.items[k].value)).toFixed(2))) }}</div>
+                            <div class="p-0 m-0 small enfase">{{ utils.floatToCurrency(parseFloat((p.items[k].quantity *
+                                utils.currencyToFloat(p.items[k].value)).toFixed(2))) }}</div>
                         </td>
                     </tr>
                     <tr>
@@ -247,7 +261,50 @@ onBeforeMount(() => {
                 Proposta selecionada com base no tipo de cálculo definido
             </p>
         </div>
-        <p>Em desenvolvimento....</p>
+        <TableListReport :count="false" :header="headers.proposals" :body="[report.winner]" :selects="selects" :mounts="{
+            modality: [Mounts.Cast(selects.proposal_modalities)],
+            status: [Mounts.Cast(selects.proposal_status)]
+        }" />
+
+        <table class="w-100 my-4">
+            <thead>
+                <tr>
+                    <th>COD.</th>
+                    <th>ITEM</th>
+                    <th>UND.</th>
+                    <th>QUANT.</th>
+                    <th>VALOR</th>
+                    <th>TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(i) in report.winner.items" :key="i.id">
+                    <td class="align-middle">
+                        <div class="p-0 m-0 small enfase">{{ i.item.code }}</div>
+                        <div class="p-0 m-0 small">{{ i.item.category == 1 ? 'Material' : 'Serviço' }}</div>
+                    </td>
+                    <td class="align-middle">
+                        <div class="p-0 m-0 small enfase">{{ i.item.name }}</div>
+                        <div class="p-0 m-0 small">{{ i.item.description }}</div>
+                    </td>
+                    <td class="align-middle">
+                        <div class="p-0 m-0 small enfase">{{ i.item.und }}</div>
+                        <div class="p-0 m-0 small">{{ i.item.volume }}</div>
+                    </td>
+                    <td class="align-middle">
+                        <div class="p-0 m-0 small enfase text-center">{{ i.quantity }}</div>
+                    </td>
+                    <td class="align-middle">
+                        <div class="p-0 m-0 small text-center">{{ utils.floatToCurrency(i.value) }}</div>
+                    </td>
+                    <td class="align-middle">
+                        <div class="p-0 m-0 small text-center">{{ utils.floatToCurrency(parseFloat((i.quantity *
+                                utils.currencyToFloat(i.value)).toFixed(2))) }}</div>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
 
         <!-- assinatura dos responsáveis -->
 
@@ -258,7 +315,7 @@ onBeforeMount(() => {
 <style scoped>
 @import url('../../assets/css/reports.css');
 
-.price_winner{
+.price_winner {
     background-color: var(--color-highline);
 }
 </style>
