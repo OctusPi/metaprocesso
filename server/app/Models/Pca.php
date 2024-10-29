@@ -36,6 +36,13 @@ class Pca extends Model
         );
     }
 
+    public function updatedAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn(?string $value) => Dates::convert($value, Dates::TZ, Dates::PTBR),
+        );
+    }
+
     public function rules(): array
     {
         return [

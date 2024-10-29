@@ -12,6 +12,8 @@ import DfdDetails from '@/components/DfdDetails.vue';
 import http from '@/services/http';
 import { Mask } from 'maska';
 import utils from '@/utils/utils';
+import TableListStatus from '@/components/table/TableListStatus.vue';
+
 const emit = defineEmits(['callAlert', 'callUpdate'])
 
 const props = defineProps({
@@ -110,6 +112,8 @@ function populateDfds(dataset) {
   }
 }
 
+const moneyMask = new Mask(masks.maskmoney)
+
 const listDfdsForPCA = (id) => {
   const pca = page.datalist.find(o => o.id === id)
   http.post(`${page.url}/list_dfds/${pca?.reference_year}`, {}, emit, (res) => {
@@ -132,9 +136,9 @@ const dfd_details = (id) => {
 }
 
 watch(() => page.ui.register, (newdata) => {
-    if (newdata && page.data.id == null) {
-        page.data.protocol = utils.dateProtocol(page.organ?.id)
-    }
+  if (newdata && page.data.id == null) {
+    page.data.protocol = utils.dateProtocol(page.organ?.id)
+  }
 })
 
 watch(() => props.datalist, (newdata) => {
@@ -316,7 +320,7 @@ onMounted(() => {
         <div role="heading" class="inside-title mb-4">
           <div>
             <h2>PCA {{ page.dfd.year }}</h2>
-            <p>Listagem das DFDs declaradas no ano de <span class="text-white">{{ page.dfd.year }}</span></p>
+            <p>Listagem das DFDs declaradas no ano de <span class="txt-color">{{ page.dfd.year }}</span></p>
           </div>
           <div class="d-flex gap-2 flex-wrap">
             <button @click="pageData.ui('prepare')" class="btn btn-action-secondary">
@@ -331,31 +335,82 @@ onMounted(() => {
               <div class="content h-100 d-flex flex-column">
                 <div class="p-4 h-100 mb-5">
                   <div class="chart-heading">
-                    <span>
-                      <ion-icon name="information-circle" />
-                    </span>
+                    <div class="d-flex gap-2 nav nav-tabs m-0 p-0 border-0">
+                      <button type="button" class="btn nav-link p-0 active" data-bs-toggle="tab"
+                        data-bs-target="#orcamento">
+                        <span title="Orçamento">
+                          <ion-icon name="card" />
+                        </span>
+                      </button>
+                      <button type="button" class="btn nav-link p-0" data-bs-toggle="tab" data-bs-target="#origem">
+                        <span title="Origem">
+                          <ion-icon name="document" />
+                        </span>
+                      </button>
+                      <button type="button" class="btn nav-link p-0" data-bs-toggle="tab" data-bs-target="#adicionais">
+                        <span title="Informações Adicionais">
+                          <ion-icon name="information-circle" />
+                        </span>
+                      </button>
+                    </div>
                     <div>
                       <h1>Informações Gerais</h1>
                       <p>Dados do PCA de {{ page.dfd.year }}</p>
                     </div>
                   </div>
                   <div class="d-flex align-items-center justify-content-center w-100 mt-auto h-100">
-                    <div class="row w-100">
-                      <div class="col-md-4 text-center">
-                        <h1 class="m-0 text-white fs-5">{{ page.dfd.datalist.length }}</h1>
-                        <p class="m-0">Quantidade de Itens</p>
+                    <div class="w-100 tab-content">
+                      <div id="orcamento" class="tab-pane w-100 show active">
+                        <div class="row graph-row w-100">
+                          <div class="col-md-4 text-center">
+                            <p class="m-0">Situação</p>
+                            <h2 class="m-0 txt-color">
+                              <TableListStatus :data="utils.getTxt(
+                                page.selects.status,
+                                page.dfd.pca.status
+                              )" />
+                            </h2>
+                          </div>
+                          <div class="col-md-4 text-center">
+                            <p class="m-0">Ano Referência</p>
+                            <h1 class="m-0 txt-color">{{ page.dfd.year }}</h1>
+                          </div>
+                          <div class="col-md-4 text-center">
+                            <p class="m-0">Orçamento Previsto</p>
+                            <h1 class="m-0 txt-color">
+                              R$ {{ moneyMask.masked(page.dfd.pca.price) }}
+                            </h1>
+                          </div>
+                        </div>
                       </div>
-                      <div class="col-md-4 text-center">
-                        <h1 class="m-0 text-white fs-5">
-                          R$ {{ (new Mask(masks.maskmoney)).masked(page.dfd.estimated) }}
-                        </h1>
-                        <p class="m-0">Valor Estimado Total</p>
+                      <div id="origem" class="tab-pane w-100">
+                        <div class="row graph-row w-100">
+                          <div class="col-12 text-center mb-4">
+                            <p class="m-0">Comissão/Equipe de Plaejamento</p>
+                            <h1 class="m-0 txt-color">
+                              {{ utils.getTxt(page.selects.comissions, page.dfd.pca.comission_id) }}
+                            </h1>
+                          </div>
+                          <div class="col-md-6 text-center">
+                            <p class="m-0">Protocolo</p>
+                            <h1 class="m-0 txt-color">
+                              {{ page.dfd.pca.protocol }}
+                            </h1>
+                          </div>
+                          
+                          <div class="col-md-6 text-center">
+                            <p class="m-0">Última modificação</p>
+                            <h1 class="m-0 txt-color">{{ page.dfd.pca.updated_at }}</h1>
+                          </div>
+                        </div>
                       </div>
-                      <div class="col-md-4 text-center">
-                        <h1 class="m-0 text-white fs-5">
-                          {{ page.dfd.pca.emission }}
-                        </h1>
-                        <p class="m-0">Criação do PCA</p>
+                      <div id="adicionais" class="tab-pane w-100">
+                        <div class="row graph-row w-100">
+                          <div class="col-12 text-center">
+                            <p class="m-0">Observações</p>
+                            <h1 class="m-0 txt-color">{{ page.dfd.pca.observations }}</h1>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -404,7 +459,26 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.chart-heading button span {
+  background-color: var(--color-input-focus);
+  color: var(--color-input-txt);
+}
+
+.chart-heading .nav-link {
+  background-color: transparent !important;
+  border: 0 !important;
+}
+
+.chart-heading button.active span {
+  background-color: var(--color-base-tls);
+  color: var(--color-base);
+}
+
 .graph {
   min-height: 300px;
+}
+
+.graph-row h1 {
+  font-size: 1.25em;
 }
 </style>
