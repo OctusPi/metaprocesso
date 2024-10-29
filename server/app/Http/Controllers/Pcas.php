@@ -88,7 +88,7 @@ class Pcas extends Controller
 
         return response()->json([
             'datalist' => $dfds,
-            'estimated' => $estimated ?? 0,
+            'estimated' => Utils::toCurrency($estimated ?? 0),
             'dfds_chart' => $dfdsChart,
         ]);
     }
