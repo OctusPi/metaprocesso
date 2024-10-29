@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('pcas', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('protocol')->unique();
             $table->foreignId('organ_id')->constrained('organs');
             $table->foreignId('comission_id')->constrained('comissions');
             $table->foreignId('author_id')->constrained('users');

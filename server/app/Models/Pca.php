@@ -21,6 +21,7 @@ class Pca extends Model
         'author_id',
         'reference_year',
         'emission',
+        'emission',
         'price',
         'comission_members',
         'observations',
@@ -40,10 +41,11 @@ class Pca extends Model
         return [
             'reference_year' => [
                 'required',
-                Rule::unique('etps', 'protocol')
+                Rule::unique('pcas', 'protocol')
                     ->where('organ_id', $this->organ_id)
                     ->ignore($this->id)
             ],
+            'protocol' => 'required',
             'emission' => 'required',
             'organ_id' => 'required',
             'comission_id' => 'required',
