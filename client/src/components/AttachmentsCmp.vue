@@ -86,8 +86,8 @@ onMounted(() => {
                 </div>
                 <div class="d-flex gap-2 flex-wrap">
                     <button @click="pageData.save" type="button" class="btn btn-action-primary">
-                        <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
-                        Registrar
+                        <ion-icon name="cloud-upload-outline" class="fs-5"></ion-icon>
+                        Upload
                     </button>
                     <button type="button" @click="pageData.ui('register')" class="btn btn-action-tertiary">
                         <ion-icon name="close-outline" class="fs-5"></ion-icon>
@@ -118,7 +118,7 @@ onMounted(() => {
             Atenção
         </h2>
         <p class="txt-color-sec small text-center m-0">
-            É necessário haver um protocolo e uma origem para continuar
+            É necessário haver um protocolo e uma origem do arquivo para continuar
         </p>
     </div>
 </template>
