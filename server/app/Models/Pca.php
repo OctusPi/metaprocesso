@@ -21,7 +21,7 @@ class Pca extends Model
         'author_id',
         'reference_year',
         'emission',
-        'emission',
+        'protocol',
         'price',
         'comission_members',
         'observations',
