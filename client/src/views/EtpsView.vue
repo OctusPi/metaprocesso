@@ -242,16 +242,8 @@ function generate(type) {
         case 'contract_requirements':
             setValuesAndPayload(type, `
             De acordo com a lei de licitações do Brasil, faça a descrição dos requisitos de contração para o objeto:
-            '${base.object_description}'. Use esse texto com ferencia identificando os padões: Considerando-se a sua 
-            classificação - materiais de limpeza e higiene, alguns requisitos mínimos devem ser atendidos.
-            a) as contratadas deverão entregar o material no prazo, em remessa parcelada, no endereço indicado 
-            no edital, dentro da padronização seguida pelos órgãos e conforme especificaçõestécnicas e requisitos 
-            de desempenho, quando da solicitação da contratante, conforme estabelecido em Ordem de Compras, 
-            nos endereços especificados no instrumento convocatório; b) as contratadas deverão fornecer diretamente 
-            o objeto, não podendo transferir a responsabilidade pelo objeto licitado para nenhuma outra empresa 
-            ou instituição de qualquer natureza; c) nos valores propostos deverão estar inclusos todos os custos 
-            operacionais, encargos previdenciários, trabalhistas, tributários, comerciais e quaisquer outros 
-            que incidam direta ou indiretamente no fornecimento dos bens. Retorne a resposta em plain text.
+            '${base.object_description}'. Elabore os requisitos de acordo com o tipo de item que está sendo contratado.
+            Leve em consideração as seguintes palavras chaves: ${page.data.object_description}. Retorne a resposta em plain text.
         `);
             break;
         case 'market_survey':
@@ -340,7 +332,7 @@ function generate(type) {
     gpt.generate(`${page.url}/generate`, payload, emit, callresp)
 }
 
-function improve_gerate(key) {
+function improve_generate(key) {
     if (!page.data[key]) {
         return emit('callAlert', notifys.warning('Informe algum conteúdo para que a I.A revise e aprimore.'))
     }
@@ -660,7 +652,7 @@ onMounted(() => {
                                                 @click="generate('object_classification')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('object_classification')">
+                                                @click="improve_generate('object_classification')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -682,7 +674,7 @@ onMounted(() => {
                                                 @click="generate('necessity')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('necessity')">
+                                                @click="improve_generate('necessity')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -699,7 +691,7 @@ onMounted(() => {
                                                 @click="generate('contract_requirements')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('contract_requirements')">
+                                                @click="improve_generate('contract_requirements')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -717,7 +709,7 @@ onMounted(() => {
                                                 @click="generate('contract_forecast')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('contract_forecast')">
+                                                @click="improve_generate('contract_forecast')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -739,7 +731,7 @@ onMounted(() => {
                                                 @click="generate('market_survey')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('market_survey')">
+                                                @click="improve_generate('market_survey')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -756,7 +748,7 @@ onMounted(() => {
                                                 @click="generate('solution_full_description')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('solution_full_description')">
+                                                @click="improve_generate('solution_full_description')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -774,7 +766,7 @@ onMounted(() => {
                                                 @click="generate('contract_calculus_memories')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('contract_calculus_memories')">
+                                                @click="improve_generate('contract_calculus_memories')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -792,7 +784,7 @@ onMounted(() => {
                                                 @click="generate('contract_expected_price')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('contract_expected_price')">
+                                                @click="improve_generate('contract_expected_price')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -820,7 +812,7 @@ onMounted(() => {
                                                 @click="generate('correlated_contracts')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('correlated_contracts')">
+                                                @click="improve_generate('correlated_contracts')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -843,7 +835,7 @@ onMounted(() => {
                                                 @click="generate('expected_results')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('expected_results')">
+                                                @click="improve_generate('expected_results')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -860,7 +852,7 @@ onMounted(() => {
                                                 @click="generate('contract_previous_actions')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('contract_previous_actions')">
+                                                @click="improve_generate('contract_previous_actions')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -878,7 +870,7 @@ onMounted(() => {
                                                 @click="generate('contract_alignment')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('contract_alignment')">
+                                                @click="improve_generate('contract_alignment')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>
@@ -895,7 +887,7 @@ onMounted(() => {
                                                 @click="generate('ambiental_impacts')">
                                                 <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
                                                 <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_gerate('ambiental_impacts')">
+                                                @click="improve_generate('ambiental_impacts')">
                                                 <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                             </div>
                                         </label>

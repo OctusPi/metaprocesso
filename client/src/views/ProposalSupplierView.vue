@@ -132,27 +132,17 @@ onBeforeMount(() => {
                     </div>
                     <p class="text-center px-3">Confirmar envio de proposta? A coleta será finalizada e não será
                         possível realizar novas edições.</p>
-                    <div class="row">
-                        <div class="col">
-                            <label for="representation" class="form-label">Código de validação</label>
-                            <input placeholder="000-000000-0000" type="text" name="code" class="form-control"
-                                :class="{ 'form-control-alert': page.valids.logomarca }" id="code-validation"
-                                v-model="page.data.code" @keydown.enter.prevent="sendProposal">
-                            <div id="codeHelpBlock" class="form-text txt-color-sec">
-                                Informe o código de validação recebido pelo e-mail.
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
-                <div class="modal-footer border-0">
+                <div class="modal-footer d-flex justify-content-center border-0">
+                    <button @click="sendProposal" type="button" class="btn btn-action-quaternary"
+                        data-bs-dismiss="modal">
+                        <ion-icon name="checkmark-done-outline" />
+                        Confirmar
+                    </button>
                     <button type="button" class="btn btn-action-tertiary" data-bs-dismiss="modal">
                         <ion-icon name="close" />
                         Cancelar
-                    </button>
-                    <button @click="sendProposal" type="button" class="btn btn-action-quaternary"
-                        :data-bs-dismiss="page.data.code ? 'modal' : null">
-                        <ion-icon name="checkmark-done-outline" />
-                        Confirmar
                     </button>
                 </div>
             </div>

@@ -75,10 +75,6 @@ class ProposalsSupplier extends Controller
             if (is_null($request->document)) {
                 return response()->json(Notify::warning('É necessário anexar a proposta assinada para confirmar o envio...'), 400);
             }
-
-            if (is_null($request->code) || $request->code != $instance->protocol) {
-                return response()->json(Notify::warning('Código de validação incorreto...'), 403);
-            }
         }
 
         // Gerencia o upload de documentos
