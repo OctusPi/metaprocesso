@@ -49,8 +49,8 @@ class RefTerms extends Controller
     {
         $date_between = [
             'emission' => [
-                $request->date_ini ?: (date('Y')-1) . '-01-01',
-                $request->date_fin ?: (date('Y')+1) . '-12-31'
+                $request->date_ini ?: (date('Y') - 1) . '-01-01',
+                $request->date_fin ?: (date('Y') + 1) . '-12-31'
             ]
         ];
 
@@ -117,7 +117,7 @@ class RefTerms extends Controller
      */
     public function fetch_etp(Request $request)
     {
-        $etp = Data::findOne(new Etp(), ['process_id' => $request->process]);
+        $etp = Data::findOne(new Etp(), ['process_id' => $request->process], with: ['process', 'process.priceRecord']);
         if (!$etp) {
             return response()->json(Notify::warning('O processo não possui um ETP relacionado!'), 404);
         }

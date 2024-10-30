@@ -1,283 +1,284 @@
 <script setup>
-import { createApp, inject, onMounted, watch } from 'vue';
-import TableList from '@/components/table/TableList.vue';
-import NavMainUi from '@/components/NavMainUi.vue';
-import HeaderMainUi from '@/components/HeaderMainUi.vue';
-import FooterMainUi from '@/components/FooterMainUi.vue';
-import Layout from '@/services/layout';
-import Actions from '@/services/actions';
-import Mounts from '@/services/mounts';
-import http from '@/services/http';
-import gpt from '@/services/gpt';
-import utils from '@/utils/utils';
-import TabNav from '@/components/TabNav.vue';
-import Tabs from '@/utils/tabs';
-import InputRichText from '@/components/inputs/InputRichText.vue';
-import TableListRadio from '@/components/table/TableListRadio.vue';
-import DfdDetails from '@/components/DfdDetails.vue';
-import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
-import exp from '@/services/export';
-import ReftermReport from './reports/ReftermReport.vue';
-import notifys from '@/utils/notifys';
+    import { createApp, inject, onMounted, watch } from 'vue';
+    import TableList from '@/components/table/TableList.vue';
+    import NavMainUi from '@/components/NavMainUi.vue';
+    import HeaderMainUi from '@/components/HeaderMainUi.vue';
+    import FooterMainUi from '@/components/FooterMainUi.vue';
+    import Layout from '@/services/layout';
+    import Actions from '@/services/actions';
+    import Mounts from '@/services/mounts';
+    import http from '@/services/http';
+    import gpt from '@/services/gpt';
+    import utils from '@/utils/utils';
+    import TabNav from '@/components/TabNav.vue';
+    import Tabs from '@/utils/tabs';
+    import InputRichText from '@/components/inputs/InputRichText.vue';
+    import TableListRadio from '@/components/table/TableListRadio.vue';
+    import DfdDetails from '@/components/DfdDetails.vue';
+    import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
+    import exp from '@/services/export';
+    import ReftermReport from './reports/ReftermReport.vue';
+    import notifys from '@/utils/notifys';
 
-const sysapp = inject('sysapp')
+    const sysapp = inject('sysapp')
 
-const emit = defineEmits(['callAlert', 'callUpdate'])
+    const emit = defineEmits(['callAlert', 'callUpdate'])
 
-const props = defineProps({
-    datalist: { type: Array, default: () => [] }
-})
-
-const [page, pageData] = Layout.new(emit, {
-    url: '/refterms',
-    datalist: props.datalist,
-    header: [
-        { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-        { key: 'comission.name', title: 'ORIGEM' },
-        { title: 'NECESSIDADE', sub: [{ key: 'necessity' }] },
-        { key: 'type', title: 'TIPO' },
-    ],
-    rules: {
-        comission_id: 'required',
-        necessity: 'required',
-        contract_forecast: 'required',
-        contract_requirements: 'required',
-        contract_expected_price: 'required',
-        market_survey: 'required',
-        solution_full_description: 'required',
-        ambiental_impacts: 'required',
-        correlated_contracts: 'required',
-        object_execution_model: 'required',
-        contract_management_model: 'required',
-        payment_measure_criteria: 'required',
-        supplier_selection_criteria: 'required',
-        funds_suitability: 'required',
-        parts_obligation: 'required',
-        emission: 'required',
-        type: 'required',
-    },
-    process: {
-        search: {},
-        data: [],
-        headers: [
-            { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-            { key: 'ordinators.name', title: 'ORDENADORES', err: 'Nenhum Ordenador' },
-            { key: 'units.title', title: 'ORIGEM' },
-            { title: 'OBJETO', sub: [{ key: 'description' }] },
-            { key: 'status', title: 'SITUAÇÃO' }
-        ],
-    },
-    dfd: {
-        data: {},
-        headers: [
-            { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-            { key: 'demandant.name', title: 'DEMANDANTE' },
-            { key: 'ordinator.name', title: 'ORDENADOR' },
-            { key: 'unit.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
-            { title: 'OBJETO', sub: [{ key: 'description' }] },
-            { key: 'status', title: 'SITUAÇÃO' }
-        ],
-    }
-})
-
-const tabs = new Tabs([
-    { id: 'process', title: 'Processo' },
-    { id: 'dfds', title: 'DFDs' },
-    { id: 'info', title: 'Informações' },
-    { id: 'solucao', title: 'Solução' },
-    { id: 'exec', title: 'Execução' },
-    { id: 'pagamentos', title: 'Pagamentos' },
-    { id: 'gestao', title: 'Gestão' },
-    { id: 'fiscalizacao', title: 'Fiscalização' },
-])
-
-function list_processes() {
-    http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
-        page.process.data = resp.data ?? []
+    const props = defineProps({
+        datalist: { type: Array, default: () => [] }
     })
-}
 
-function fetchEtp(e) {
-    http.post(`${page.url}/fetch_etp/${e.target._value?.id}`, {}, emit, (res) => {
-        page.data.necessity = res.data.necessity
-        page.data.contract_forecast = res.data.contract_forecast
-        page.data.contract_requirements = res.data.contract_requirements
-        page.data.contract_expected_price = res.data.contract_expected_price
-        page.data.market_survey = res.data.market_survey
-        page.data.solution_full_description = res.data.solution_full_description
-        page.data.ambiental_impacts = res.data.ambiental_impacts
-        page.data.correlated_contracts = res.data.correlated_contracts
-        page.data.etp_id = res.data.id
-    }, () => {
-        page.data.process = null
+    const [page, pageData] = Layout.new(emit, {
+        url: '/refterms',
+        datalist: props.datalist,
+        header: [
+            { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { key: 'comission.name', title: 'ORIGEM' },
+            { title: 'NECESSIDADE', sub: [{ key: 'necessity' }] },
+            { key: 'type', title: 'TIPO' },
+        ],
+        rules: {
+            comission_id: 'required',
+            necessity: 'required',
+            contract_forecast: 'required',
+            contract_requirements: 'required',
+            contract_expected_price: 'required',
+            market_survey: 'required',
+            solution_full_description: 'required',
+            ambiental_impacts: 'required',
+            correlated_contracts: 'required',
+            object_execution_model: 'required',
+            contract_management_model: 'required',
+            payment_measure_criteria: 'required',
+            supplier_selection_criteria: 'required',
+            funds_suitability: 'required',
+            parts_obligation: 'required',
+            emission: 'required',
+            type: 'required',
+        },
+        process: {
+            search: {},
+            data: [],
+            headers: [
+                { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+                { key: 'ordinators.name', title: 'ORDENADORES', err: 'Nenhum Ordenador' },
+                { key: 'units.title', title: 'ORIGEM' },
+                { title: 'OBJETO', sub: [{ key: 'description' }] },
+                { key: 'status', title: 'SITUAÇÃO' }
+            ],
+        },
+        dfd: {
+            data: {},
+            headers: [
+                { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+                { key: 'demandant.name', title: 'DEMANDANTE' },
+                { key: 'ordinator.name', title: 'ORDENADOR' },
+                { key: 'unit.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
+                { title: 'OBJETO', sub: [{ key: 'description' }] },
+                { key: 'status', title: 'SITUAÇÃO' }
+            ],
+        }
     })
-}
 
-function export_refterm(id) {
-    http.get(`${page.url}/export/${id}`, emit, async (resp) => {
-        const refterm = resp.data
-        const containerReport = document.createElement('div')
-        const instanceReport = createApp(ReftermReport, {
-            refterm,
-            qrdata: sysapp,
-            organ: page.organ,
-            selects: page.selects,
+    const tabs = new Tabs([
+        { id: 'process', title: 'Processo' },
+        { id: 'dfds', title: 'DFDs' },
+        { id: 'info', title: 'Informações' },
+        { id: 'solucao', title: 'Solução' },
+        { id: 'exec', title: 'Execução' },
+        { id: 'pagamentos', title: 'Pagamentos' },
+        { id: 'gestao', title: 'Gestão' },
+        { id: 'fiscalizacao', title: 'Fiscalização' },
+    ])
+
+    function list_processes() {
+        http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
+            page.process.data = resp.data ?? []
         })
-        instanceReport.mount(containerReport)
-        exp.exportPDF(containerReport, `TermoDeReferencia-${id}`)
-    })
-}
-
-function generate(type) {
-    const base = {
-        organ: page.organ,
-        comission: page.selects.comissions?.find(o => o.id === page.data.comission_id),
-        process: page.process
     }
 
-    let callresp, payload = null
-
-    function setValuesAndPayload(key, mPayload) {
-        payload = mPayload
-        callresp = (resp) => {
-            page.data[key] = `<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`
-            console.log(`<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`)
-        };
+    function fetchEtp(e) {
+        http.post(`${page.url}/fetch_etp/${e.target._value?.id}`, {}, emit, (res) => {
+            page.data.supplier_selection_criteria = res.data.process.price_record?.suppliers_justification
+            page.data.necessity = res.data.necessity
+            page.data.contract_forecast = res.data.contract_forecast
+            page.data.contract_requirements = res.data.contract_requirements
+            page.data.contract_expected_price = res.data.contract_expected_price
+            page.data.market_survey = res.data.market_survey
+            page.data.solution_full_description = res.data.solution_full_description
+            page.data.correlated_contracts = res.data.correlated_contracts
+            page.data.etp_id = res.data.id
+            page.data.estimated_budget = (res.data.dfds ?? [])
+                .reduce((prev, curr) => prev += curr.estimated_value, 0)
+        }, () => {
+            page.data.process = null
+        })
     }
 
-    switch (type) {
-        case 'necessity':
-            setValuesAndPayload(type, `
-                Crie uma descrição concisa para a necessidade de um Termo de Referência de um processo usando a breve descrição "${page.data.necessity}"
-                para o órgão ${base.organ?.name} baseado na descrição do processo '${base.process?.description}'
-                e no texto prévio "${page.data.necessity ?? ''}" em plain text
+    function export_refterm(id) {
+        http.get(`${page.url}/export/${id}`, emit, async (resp) => {
+            const refterm = resp.data
+            const containerReport = document.createElement('div')
+            const instanceReport = createApp(ReftermReport, {
+                refterm,
+                qrdata: sysapp,
+                organ: page.organ,
+                selects: page.selects,
+            })
+            instanceReport.mount(containerReport)
+            exp.exportPDF(containerReport, `TermoDeReferencia-${id}`)
+        })
+    }
+
+    function generate(type) {
+        const base = {
+            organ: page.organ,
+            comission: page.selects.comissions?.find(o => o.id === page.data.comission_id),
+            process: page.process
+        }
+
+        let callresp, payload = null
+
+        function setValuesAndPayload(key, mPayload) {
+            payload = mPayload
+            callresp = (resp) => {
+                page.data[key] = `<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`
+                console.log(`<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`)
+            };
+        }
+
+        switch (type) {
+            case 'necessity':
+                setValuesAndPayload(type, `
+                Crie uma descrição concisa para a necessidade de um Termo de Referência de um processo usando a breve descrição
+                para o órgão ${base.organ?.name} baseado na descrição do processo '${base.process?.description}' em plain text
             `);
-            break;
-        case 'contract_forecast':
-            setValuesAndPayload(type, `
+                break;
+            case 'contract_forecast':
+                setValuesAndPayload(type, `
                 Elabore detalhadamente uma previsão de contratação para o processo descrito no texto "${page.data.necessity}"
                 e no texto prévio "${page.data.contract_forecast ?? ''}" em plain text
             `);
-            break;
-        case 'contract_requirements':
-            setValuesAndPayload(type, `
+                break;
+            case 'contract_requirements':
+                setValuesAndPayload(type, `
                 Elabore detalhadamente os requerimentos de contrato para o processo descrito no texto "${page.data.necessity}"
                 e no texto prévio "${page.data.contract_requirements ?? ''}" em plain text
             `);
-            break;
-        case 'contract_expected_price':
-            setValuesAndPayload(type, `
+                break;
+            case 'contract_expected_price':
+                setValuesAndPayload(type, `
                 Elabore detalhadamente um levantamento de preço para o processo descrito
                 no texto "${page.data.necessity}"
                 e no texto prévio "${page.data.necessity ?? ''}" em plain text
             `);
-            break;
-        case 'market_survey':
-            setValuesAndPayload(type, `
+                break;
+            case 'market_survey':
+                setValuesAndPayload(type, `
                 Elabore detalhadamente uma pesquisa de mercado para suprir as necessidades
                 do processo descrito no texto "${page.data.necessity}"
                 e no texto prévio "${page.data.market_survey ?? ''}" em plain text
             `);
-            break;
-        case 'solution_full_description':
-            setValuesAndPayload(type, `
+                break;
+            case 'solution_full_description':
+                setValuesAndPayload(type, `
                 Elabore detalhadamente uma descrição completa para a solução do processo descrito em "${page.data.necessity}
                 e no texto prévio "${page.data.solution_full_description ?? ''}" em plain text"
             `);
-            break;
-        case 'ambiental_impacts':
-            setValuesAndPayload(type, `
+                break;
+            case 'ambiental_impacts':
+                setValuesAndPayload(type, `
                 Elabore detalhadamente um levantamento de possíveis impactos ambientais
                 na execução do processo descrito em "${page.data.necessity}"
                 e no texto prévio "${page.data.ambiental_impacts ?? ''}" em plain text
             `);
-            break;
-        case 'correlated_contracts':
-            if (!page.data.correlated_contracts) {
-                emit('callAlert', notifys.info('Digite o contrato correlato'))
-                return
-            }
-            setValuesAndPayload(type, `
+                break;
+            case 'correlated_contracts':
+                if (!page.data.correlated_contracts) {
+                    emit('callAlert', notifys.info('Digite o contrato correlato'))
+                    return
+                }
+                setValuesAndPayload(type, `
                 Elabore detalhadamente uma descrição de correlação entre o processo descrito em "${page.data.necessity}"
                 descritos no texto "${page.data.correlated_contracts}"
                 e no texto prévio "${page.data.correlated_contracts ?? ''}" em plain text
             `);
-            break;
-        case 'object_execution_model':
-            if (!page.data.object_execution_model) {
-                emit('callAlert', notifys.info('Digite uma breve descrição'))
-                return
-            }
-            setValuesAndPayload(type, `
+                break;
+            case 'object_execution_model':
+                if (!page.data.object_execution_model) {
+                    emit('callAlert', notifys.info('Digite uma breve descrição'))
+                    return
+                }
+                setValuesAndPayload(type, `
                 Elabore detalhadamente o modelo de execução do objeto baseado no texto "${page.data.object_execution_model}"
                 e no contrato descrito em ${page.data.necessity}
                 e no texto prévio "${page.data.object_execution_model ?? ''}" em plain text
             `);
-            break;
-        case 'contract_management_model':
-            setValuesAndPayload(type, `
+                break;
+            case 'contract_management_model':
+                setValuesAndPayload(type, `
                 Elabore uma descrição de um modelo de gerenciamento de contrato para o contrato descrito em "${page.data.necessity}
                 e no texto prévio "${page.data.contract_management_model ?? ''}" em plain text"
             `);
-            break;
-        case 'payment_measure_criteria':
-            setValuesAndPayload(type, `
+                break;
+            case 'payment_measure_criteria':
+                setValuesAndPayload(type, `
                 Elabore uma critério de medida para o pagamento do contrato descrito no texto "${page.data.necessity}
                 e no texto prévio "${page.data.payment_measure_criteria ?? ''}" em plain text"
             `);
-            break;
-        case 'supplier_selection_criteria':
-            setValuesAndPayload(type, `
+                break;
+            case 'supplier_selection_criteria':
+                setValuesAndPayload(type, `
                 Elabore uma critério de seleção para o fornecedor do contrato descrito no texto "${page.data.necessity}
                 e no texto prévio "${page.data.supplier_selection_criteria ?? ''}" em plain text"
             `);
-            break;
-        case 'funds_suitability':
-            setValuesAndPayload(type, `
+                break;
+            case 'funds_suitability':
+                setValuesAndPayload(type, `
                 Elabore uma critério de seleção para o fornecedor do contrato descrito no texto "${page.data.necessity}
                 e no texto prévio "${page.data.funds_suitability ?? ''}" em plain text"
             `);
-            break;
-        case 'parts_obligation':
-            if (!page.data.solution_full_description) {
-                emit('callAlert', notifys.info('Antes, digite a descrição da solução completa'))
-                return
-            }
-            setValuesAndPayload(type, `
+                break;
+            case 'parts_obligation':
+                if (!page.data.solution_full_description) {
+                    emit('callAlert', notifys.info('Antes, digite a descrição da solução completa'))
+                    return
+                }
+                setValuesAndPayload(type, `
                 Elabore uma descrição da obrigação das partes para o fornecedor do contrato descrito no texto "${page.data.solution_full_description}
                 e no texto prévio "${page.data.parts_obligation ?? ''}" em plain text"
             `);
-            break;
-        default:
-            break;
+                break;
+            default:
+                break;
+        }
+
+        gpt.generate(`${page.url}/generate`, payload, emit, callresp)
     }
 
-    gpt.generate(`${page.url}/generate`, payload, emit, callresp)
-}
-
-function dfd_details(id) {
-    if (page.data.process.dfds) {
-        page.dfd.data = page.data.process.dfds.find(obj => obj.id === id)
-        http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
-            page.dfd.data.items = resp.data
-        })
+    function dfd_details(id) {
+        if (page.data.process.dfds) {
+            page.dfd.data = page.data.process.dfds.find(obj => obj.id === id)
+            http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
+                page.dfd.data.items = resp.data
+            })
+        }
     }
-}
 
-watch(() => page.ui.register, (newdata) => {
-    if (newdata && page.data.id == null) {
-        page.data.protocol = utils.dateProtocol(page.organ?.id)
-    }
-})
+    watch(() => page.ui.register, (newdata) => {
+        if (newdata && page.data.id == null) {
+            page.data.protocol = utils.dateProtocol(page.organ?.id)
+        }
+    })
 
-watch(() => props.datalist, (newdata) => {
-    page.datalist = newdata
-})
+    watch(() => props.datalist, (newdata) => {
+        page.datalist = newdata
+    })
 
-onMounted(() => {
-    pageData.selects()
-    pageData.list()
-})
+    onMounted(() => {
+        pageData.selects()
+        pageData.list()
+    })
 
 </script>
 
@@ -318,17 +319,19 @@ onMounted(() => {
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_ini" class="form-label">Data Inicial</label>
-                            <VueDatePicker auto-apply v-model="page.search.date_ini" :enable-time-picker="false" :auto-position="false"
-                                format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
-                                locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            <VueDatePicker auto-apply v-model="page.search.date_ini" :enable-time-picker="false"
+                                :auto-position="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
+                                menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-4">
                             <label for="date_s_fin" class="form-label">Data Final</label>
-                            <VueDatePicker auto-apply v-model="page.search.date_fin" :enable-time-picker="false" :auto-position="false"
-                                format="dd/MM/yyyy" model-type="yyyy-MM-dd" input-class-name="dp-custom-input-dtpk"
-                                locale="pt-br" calendar-class-name="dp-custom-calendar"
-                                calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
+                            <VueDatePicker auto-apply v-model="page.search.date_fin" :enable-time-picker="false"
+                                :auto-position="false" format="dd/MM/yyyy" model-type="yyyy-MM-dd"
+                                input-class-name="dp-custom-input-dtpk" locale="pt-br"
+                                calendar-class-name="dp-custom-calendar" calendar-cell-class-name="dp-custom-cell"
+                                menu-class-name="dp-custom-menu" />
                         </div>
                         <div class="col-sm-12 col-md-8">
                             <label for="s-necessity" class="form-label">Necessidade</label>
@@ -411,8 +414,7 @@ onMounted(() => {
                                                             Inicial</label>
                                                         <VueDatePicker auto-apply v-model="page.process.search.date_i"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
-                                                            :auto-position="false"
-                                                            model-type="yyyy-MM-dd"
+                                                            :auto-position="false" model-type="yyyy-MM-dd"
                                                             input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                             calendar-class-name="dp-custom-calendar"
                                                             calendar-cell-class-name="dp-custom-cell"
@@ -423,8 +425,7 @@ onMounted(() => {
                                                             Final</label>
                                                         <VueDatePicker auto-apply v-model="page.process.search.date_f"
                                                             :enable-time-picker="false" format="dd/MM/yyyy"
-                                                            :auto-position="false"
-                                                            model-type="yyyy-MM-dd"
+                                                            :auto-position="false" model-type="yyyy-MM-dd"
                                                             input-class-name="dp-custom-input-dtpk" locale="pt-br"
                                                             calendar-class-name="dp-custom-calendar"
                                                             calendar-cell-class-name="dp-custom-cell"
@@ -500,8 +501,7 @@ onMounted(() => {
                                 <VueDatePicker auto-apply v-model="page.data.emission"
                                     :input-class-name="page.valids.emission ? 'dp-custom-input-dtpk-alert' : 'dp-custom-input-dtpk'"
                                     :enable-time-picker="false" format="dd/MM/yyyy" model-type="dd/MM/yyyy"
-                                    :auto-position="false"
-                                    locale="pt-br" calendar-class-name="dp-custom-calendar"
+                                    :auto-position="false" locale="pt-br" calendar-class-name="dp-custom-calendar"
                                     calendar-cell-class-name="dp-custom-cell" menu-class-name="dp-custom-menu" />
                             </div>
                             <div class="col-sm-12 col-md-4">
