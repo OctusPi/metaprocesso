@@ -85,9 +85,6 @@ function calcs() {
         })
 
         const base_media = report.value.finished_proposals.reduce((acc, p) => {
-            if (p.id === sorted_proposals[0].id) {
-                p.winner = (p.winner ?? 0) + 1
-            }
             return acc + utils.currencyToFloat(p.items[k].value)
         }, 0)
 
@@ -105,7 +102,7 @@ function calcs() {
 
 function check_winner() {
     return report.value.finished_proposals.reduce((p1, p2) => {
-        return p2.winner > p1.winner ? p2 : p1
+        return p2.global < p1.global ? p2 : p1
     })
 }
 
