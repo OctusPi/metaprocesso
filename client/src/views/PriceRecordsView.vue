@@ -141,6 +141,7 @@ const tabs = new Tabs([
 
 function prepare_register() {
     pageData.ui('register')
+    page.data.manual_items = null
     page.data.protocol = utils.dateProtocol(page.organ.id, '-', utils.randCode(6))
     page.data.date_ini = dates.getDateNow()
 }

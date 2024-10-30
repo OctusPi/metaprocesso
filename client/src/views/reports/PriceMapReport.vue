@@ -26,14 +26,13 @@ const report = ref({
 
 const headers = {
     proposals: [
-        { title: 'FORNECEDOR.', key: 'supplier.name', err: 'TCE/PNCP/VAREJO', sub: [{ key: 'supplier.cnpj', err: '***', }] },
+        { title: 'FORNECEDOR', key: 'supplier.name', err: 'TCE/PNCP/VAREJO', sub: [{ key: 'supplier.cnpj', err: 'Banco de Preços', }] },
         { title: 'MODALIDADE', key: 'modality' },
-        { title: 'CONTATO.', key: 'supplier.email', sub: [{ key: 'supplier.phone' }, { key: 'supplier.address' }] },
+        { title: 'CONTATO', key: 'supplier.email', sub: [{ key: 'supplier.phone' }, { key: 'supplier.address' }] },
         { title: 'VALOR', key: 'global' },
-        { title: 'DATA/HORA', key: 'date_ini', sub: [{ key: 'hour_ini' }] },
-        { title: 'STATUS', key: 'status' }
-    ],
-    items: []
+        { title: 'DATA/HORA', key: 'date_fin', sub: [{ key: 'hour_fin' }] },
+        { title: 'SITUAÇÃO', key: 'status' }
+    ]
 }
 
 function check_minor_price(proposals, index) {
@@ -231,8 +230,19 @@ onBeforeMount(() => {
                     <tr v-for="p in report.finished_proposals" :key="p.id"
                         :class="{ 'price_winner': check_minor_price(report.finished_proposals, k) == p.id }">
                         <td class="align-middle" colspan="4">
-                            <div class="p-0 m-0 small enfase">{{ p.supplier?.name ?? 'Coleta Banco de Preços' }}</div>
-                            <div class="p-0 m-0 small">{{ p.supplier?.cnpj ?? '' }}</div>
+                            <div class="p-0 m-0 small enfase">{{ p.supplier?.name ?? 'Coleta Banco de Preços' }} {{ p.supplier?.cnpj ?? '' }}</div>
+                            <div class="p-0 m-0 small" v-if="p.items[k].data">
+                                <template v-if="p.items[k]?.origin == 'Ecomerce'">
+                                    <p class="p-0 m-0 small">Site: {{ p.items[k].data?.site }} {{ p.items[k].data?.cnpj }}</p>
+                                    <p class="p-0 m-0 small">Produto: {{ p.items[k].data?.title }} - Valor Frete: R${{ p.items[k].data?.shipping }}</p>
+                                    <p class="p-0 m-0 small">URL: {{ p.items[k].data?.url }}</p>
+                                </template>
+                                <template v-if="p.items[k]?.origin == 'TCE'">
+                                    <p class="p-0 m-0 small">{{ `URL: https://api-dados-abertos.tce.ce.gov.br/itens_licitacoes?codigo_municipio=${p.items[k].data?.codigo_municipio}&data_realizacao_licitacao=${dates.formatDateIntervalYear(p.items[k].data?.data_realizacao_licitacao)}&numero_licitacao=${p.items[k].data?.numero_licitacao}` }}</p>
+                                    <p class="p-0 m-0 small">Código Município: {{ p.items[k].data?.codigo_municipio }} - Número da Licitação: R${{ p.items[k].data?.numero_licitacao }}</p>
+                                    <p class="p-0 m-0 small">Descrição : {{ p.items[k].data?.descricao_item_licitacao }}</p>
+                                </template>
+                            </div>
                         </td>
                         <td class="align-middle">
                             <div class="p-0 m-0 small">{{ p.items[k]?.origin ?? 'E-mail' }}</div>
@@ -307,8 +317,20 @@ onBeforeMount(() => {
         </table>
 
         <!-- assinatura dos responsáveis -->
-
-
+        <div class="user-signatures text-center mt-4">
+        <h1>COMISSÃO</h1>
+        <div class="row gap-3 justify-content-center mt-3">
+          <template v-if="props.pricerecord.comission_members.length > 0">
+            <div  v-for="person, i in props.pricerecord.comission_members" :key="i" class="col-12 mx-5">
+              <p>________________________________________________</p>
+              <strong class="signature">{{ person.name }}</strong>
+              <p class="small">{{ utils.getTxt(props.selects.comission_responsibilitys, person.responsibility) }}</p>
+            </div>
+          </template>
+          <p v-else>Não informado</p>
+        </div>
+      </div>
+      <p class="mt-4 text-center">{{ `${organ.postalcity ?? '*****'}, ${pricerecord.date_ini}` }}</p>
     </main>
 </template>
 

@@ -118,6 +118,17 @@ function nowPtbr() {
     }
 }
 
+function formatDateIntervalYear(dateString) {
+    const date = new Date(dateString);
+    const year = date.getUTCFullYear();
+    
+    const startOfYear = `${year}-01-01`;
+    const endOfYear = `${year}-12-31`;
+    
+    return `${startOfYear}_${endOfYear}`;
+}
+
+
 export default {
     months,
     dateTxtNow,
@@ -131,4 +142,5 @@ export default {
     getMonthYear,
     getYear,
     nowPtbr,
+    formatDateIntervalYear
 }

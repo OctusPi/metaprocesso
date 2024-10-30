@@ -100,7 +100,7 @@ class PriceRecords extends Controller
 
         return response()->json(Notify::warning('Registro não localizado'), 404);
     }
-    
+
     /**
      * Retorna dados para export
      *
@@ -192,6 +192,7 @@ class PriceRecords extends Controller
     {
         return response()->json(array_merge([
             'comissions' => Utils::map_select(Data::find(new Comission(), ['status' => Comission::STATUS_ACTIVE], ['name'])),
+            'comission_responsibilitys' => ComissionMember::list_responsabilities(),
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'status' => PriceRecord::list_status(),
             'calctypes' =>PriceRecord::list_calctypes(),
@@ -387,6 +388,8 @@ class PriceRecords extends Controller
                         'token' => $pricerecord . '-00'.Proposal::M_MANUAL.'-' . Str::random(16),
                         'date_ini' => $request->date_ini,
                         'hour_ini' => $hour_send,
+                        'date_fin' => date('d/m/Y'),
+                        'hour_fin' => date('H:i:s'),
                         'organ_id' => Data::getOrgan(),
                         'process_id' => $process->id,
                         'pricerecord_id' => $pricerecord,
