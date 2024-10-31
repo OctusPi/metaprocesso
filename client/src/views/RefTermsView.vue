@@ -100,7 +100,6 @@
     function fetchEtp(e) {
         http.post(`${page.url}/fetch_etp/${e.target._value?.id}`, {}, emit, (res) => {
             page.data.supplier_selection_criteria = res.data.process.price_record?.suppliers_justification
-            page.data.necessity = res.data.necessity
             page.data.contract_forecast = res.data.contract_forecast
             page.data.contract_requirements = res.data.contract_requirements
             page.data.contract_expected_price = res.data.contract_expected_price
@@ -108,6 +107,8 @@
             page.data.solution_full_description = res.data.solution_full_description
             page.data.correlated_contracts = res.data.correlated_contracts
             page.data.etp_id = res.data.id
+            page.data.necessity = (res.data.process.dfds ?? [])
+                .reduce((prev, curr) => prev + "\n" + curr.justification, "")
             page.data.estimated_budget = (res.data.process.dfds ?? [])
                 .reduce((prev, curr) => prev + utils.currencyToFloat(curr.estimated_value), 0)
         }, () => {
@@ -464,7 +465,7 @@
                         </div>
                         <!-- tab dfds -->
                         <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('dfds') }">
-                            <div class="m-0 mb-4 text-center">
+                            <div class="m-0 mb-4 text-center" v-if="page.data.process">
                                 <p class="m-0">Valor Estimado Total</p>
                                 <h1 class="m-0 txt-color">
                                     {{ utils.floatToCurrency(page.data.estimated_budget) }}
