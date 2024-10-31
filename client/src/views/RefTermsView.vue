@@ -19,6 +19,8 @@
     import exp from '@/services/export';
     import ReftermReport from './reports/ReftermReport.vue';
     import notifys from '@/utils/notifys';
+    import masks from '@/utils/masks';
+import { Mask } from 'maska';
 
     const sysapp = inject('sysapp')
 
@@ -108,8 +110,8 @@
             page.data.solution_full_description = res.data.solution_full_description
             page.data.correlated_contracts = res.data.correlated_contracts
             page.data.etp_id = res.data.id
-            page.data.estimated_budget = (res.data.dfds ?? [])
-                .reduce((prev, curr) => prev += curr.estimated_value, 0)
+            page.data.estimated_budget = (res.data.process.dfds ?? [])
+                .reduce((prev, curr) => prev + utils.currencyToFloat(curr.estimated_value), 0)
         }, () => {
             page.data.process = null
         })
@@ -464,6 +466,12 @@
                         </div>
                         <!-- tab dfds -->
                         <div class="tab-pane fade row m-0 g-3" :class="{ 'show active': tabs.is('dfds') }">
+                            <div class="m-0 mb-4 text-center">
+                                <p class="m-0">Valor Estimado Total</p>
+                                <h1 class="m-0 txt-color">
+                                    {{ utils.floatToCurrency(page.data.estimated_budget) }}
+                                </h1>
+                            </div>
                             <div v-if="page.data.process" class="m-0 p-0">
                                 <TableList :count="false" :header="page.dfd.headers" :body="page.data.process.dfds"
                                     :mounts="{
