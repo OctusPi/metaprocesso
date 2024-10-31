@@ -350,6 +350,7 @@ function fetch_process(e) {
         page.data.object_description = res.data?.process?.description
         page.generate.proposals_data = res.data?.proposals
         page.generate.dfds_items_data = res.data?.dfds_items
+        page.data.necessity = res.data?.process?.dfds.map(d => d.justification).join(' ')
 
     }, () => {
         page.data.process = null
