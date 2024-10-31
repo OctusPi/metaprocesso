@@ -14,7 +14,7 @@ const props = defineProps({
     pricerecord: { type: Object, required: true },
     proposals: { type: Array, required: true },
     items: { type: Array, default: () => [] },
-    selects: { type: Array, default: () => [] }
+    selects: { type: Object, default: () => {} }
 })
 
 const report = ref({
@@ -167,7 +167,7 @@ onBeforeMount(() => {
         <p class="mb-2 text-justify"> {{ pricerecord?.suppliers_justification }}</p>
 
         <div v-if="proposals.length > 0">
-            <TableListReport :count="false" :header="headers.proposals" :body="report.proposals" :selects="selects"
+            <TableListReport :count="false" :header="headers.proposals" :body="report.proposals"
                 :mounts="{
                     modality: [Mounts.Cast(selects.proposal_modalities)],
                     status: [Mounts.Cast(selects.proposal_status)]
@@ -268,7 +268,7 @@ onBeforeMount(() => {
                 Proposta selecionada com base no tipo de cálculo definido
             </p>
         </div>
-        <TableListReport :count="false" :header="headers.proposals" :body="[report.winner]" :selects="selects" :mounts="{
+        <TableListReport :count="false" :header="headers.proposals" :body="[report.winner]" :mounts="{
             modality: [Mounts.Cast(selects.proposal_modalities)],
             status: [Mounts.Cast(selects.proposal_status)]
         }" />
