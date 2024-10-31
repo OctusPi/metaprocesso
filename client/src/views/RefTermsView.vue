@@ -102,6 +102,7 @@
             page.data.supplier_selection_criteria = res.data.process.price_record?.suppliers_justification
             page.data.contract_forecast = res.data.contract_forecast
             page.data.contract_requirements = res.data.contract_requirements
+            page.data.ambiental_impacts = res.data.ambiental_impacts
             page.data.contract_expected_price = res.data.contract_expected_price
             page.data.market_survey = res.data.market_survey
             page.data.solution_full_description = res.data.solution_full_description
