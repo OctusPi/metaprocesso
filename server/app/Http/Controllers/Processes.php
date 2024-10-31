@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attachment;
 use App\Models\Dfd;
 use App\Models\Unit;
 use App\Models\User;
@@ -193,7 +194,7 @@ class Processes extends Controller
             'installment_types' => Process::list_installments_types(),
             'vars' => [
                 'INSTALLMENT_ITEM' => Process::INSTALLMENT_ITEM,
-                'ORIGIN_PROCESS' => User::MOD_PROCESSES['id'],
+                'ORIGIN_PROCESS' => Attachment::PROCESS,
             ]
         ], Dfd::make_details()), 200);
     }

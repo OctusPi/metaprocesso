@@ -195,7 +195,7 @@ class Etps extends Controller
             'responsibilities' => ComissionMember::list_responsabilities(),
             'installment_types' => Process::list_installments_types(),
             'vars' => [
-                'ORIGIN_ETP' => User::MOD_ETPS['id']
+                'ORIGIN_ETP' => Attachment::ETP
             ]
         ], Dfd::make_details()), 200);
     }
