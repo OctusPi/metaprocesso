@@ -951,27 +951,20 @@ onMounted(() => {
                                         </div>
                                         <div class="box-revisor-content">
                                             <div class="row">
-                                                <div class="col-md-3">
+                                                <div class="col-md-4">
                                                     <h4>Processo</h4>
                                                     <p>{{ page.data.process?.protocol ?? '*****' }}</p>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-4">
                                                     <h4>Comissão</h4>
                                                     <p>{{ utils.getTxt(
                                                         page.selects.comissions,
                                                         page.data.comission_id
                                                     ) }}</p>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-4">
                                                     <h4>Emissão</h4>
                                                     <p>{{ page.data.emission ?? '*****' }}</p>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <h4>Tipo de Parcelamento</h4>
-                                                    <p>{{ utils.getTxt(
-                                                        page.selects.installment_types,
-                                                        page.data.installment_type
-                                                    ) }}</p>
                                                 </div>
                                             </div>
                                             <div class="row">
