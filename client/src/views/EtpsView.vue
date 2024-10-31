@@ -32,11 +32,9 @@ import EtpReport from './reports/EtpReport.vue';
 import PDFMerger from 'pdf-merger-js';
 import notifys from '@/utils/notifys';
 
-const ORIGIN_ETPS = "1";
-
 const sysapp = inject('sysapp')
 
-const emit = defineEmits(['callAlert', 'callUpdate'])
+const emit = defineEmits(['callAlert', 'callUpdate', 'callRemove'])
 
 const props = defineProps({
     datalist: { type: Array, default: () => [] }
@@ -99,6 +97,7 @@ function list_processes() {
 function export_etp(id) {
     http.get(`${page.url}/export/${id}`, emit, async (resp) => {
         const etp = resp.data
+        console.log(etp)
 
         const merger = new PDFMerger()
 
@@ -109,6 +108,7 @@ function export_etp(id) {
             etp: etp,
             selects: page.selects,
         })
+
         instanceReport.mount(containerReport)
 
         const pdf = await exp.generatePDF(containerReport)
@@ -118,7 +118,7 @@ function export_etp(id) {
         for (const item of etp.attachments) {
             await axsi.axiosInstanceAuth.request({
                 method: 'GET',
-                url: `/attachments/${ORIGIN_ETPS}/${etp?.protocol}/download/${item.id}`,
+                url: `/attachments/${page.selects.vars?.ORIGIN_ETP}/${etp?.protocol}/download/${item.id}`,
                 responseType: 'blob',
                 headers: {
                     'Content-Type': 'application/json',
