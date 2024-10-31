@@ -97,7 +97,6 @@ function list_processes() {
 function export_etp(id) {
     http.get(`${page.url}/export/${id}`, emit, async (resp) => {
         const etp = resp.data
-        console.log(etp)
 
         const merger = new PDFMerger()
 
