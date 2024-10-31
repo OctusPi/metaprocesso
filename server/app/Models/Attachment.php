@@ -12,7 +12,7 @@ class Attachment extends Model
 {
     use HasFactory;
 
-    public const ETP = 1;
+    public const ETP = User::MOD_ETPS['id'];
 
     protected $table = 'attachments';
     protected $fillable = [
