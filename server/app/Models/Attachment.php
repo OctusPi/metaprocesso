@@ -14,6 +14,7 @@ class Attachment extends Model
 
     public const PROCESS = User::MOD_PROCESSES['id'];
     public const ETP = User::MOD_ETPS['id'];
+    public const PROCESS = User::MOD_PROCESSES['id'];
 
     protected $table = 'attachments';
     protected $fillable = [

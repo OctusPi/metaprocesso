@@ -19,8 +19,6 @@
     import exp from '@/services/export';
     import ReftermReport from './reports/ReftermReport.vue';
     import notifys from '@/utils/notifys';
-    import masks from '@/utils/masks';
-import { Mask } from 'maska';
 
     const sysapp = inject('sysapp')
 
