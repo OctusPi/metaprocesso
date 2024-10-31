@@ -12,7 +12,6 @@ class Attachment extends Model
 {
     use HasFactory;
 
-    public const PROCESS = User::MOD_PROCESSES['id'];
     public const ETP = User::MOD_ETPS['id'];
     public const PROCESS = User::MOD_PROCESSES['id'];
 
