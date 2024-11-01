@@ -206,12 +206,6 @@ function generate(type) {
             Elabore a categorização e descrição detalhada do bem,
             serviço ou obra que será adquirido ou contratado com base nessa descrição:
             ${base.process?.description}. Leve em consideração as seguintes palavras chaves: ${page.data.object_classification}. 
-            Siga esse padrão na elaboração da resposta: 
-            materiais de limpeza, objeto da contratação, se enquadra como bem comum, 
-            uma vez que os padrões de desempenho e qualidade estão objetivamente definidos 
-            em conformidade com o com o artigo 20° da Lei 14.133/2021. Não se enquadra 
-            como sendo de bem de natureza luxuosa, pois os padrões de desempenho e qualidade 
-            podem ser objetivamente definidos, por meio de especificações usuais de mercado. 
             retorne a resposta em um único parágrafo em plain text.
         `);
             break;
@@ -219,16 +213,7 @@ function generate(type) {
             setValuesAndPayload(type, `
             Descreva a necessidade da contratação ou aquisição baseado na descrição do objeto
             do processo: '${base.process?.description}'. Leve em consideração as palavras chave: '${page.data.necessity}'.
-            Use como base esse texto para elaboração da resposta seguindo os padrões identificados: A aquisição futura de 
-            materiais de limpeza é necessária, pois os itens que compõem essa contratação são indispensáveis à 
-            operacionalização para a não interrupção das atividades nas unidades, durante o ano letivo e administrativo, 
-            haja vista que são materiais de suma importância, utilizados para manutenção da limpeza e higienização 
-            das dependências dos órgãos públicos do município XXXXXX. Os itens listados foram selecionados 
-            por cada secretaria, garantindo a disponibilidade dos materiais comuns para o contínuo andamento das 
-            rotinas administrativas nos setores vinculados. Vale ressaltar que esta aquisição é fundamental para 
-            uma administração eficiente e deve atender a diversos usuários, tais como autoridades, funcionários, 
-            visitantes e comunidade em geral. Tendo isso em vista, tais objetos comuns precisam estarem disponíveis, 
-            conforme o aumento das demandas (previsíveis ou imprevisíveis) nesses setores. Retorne a reposta em um único parágrafo plain text.
+            Retorne a reposta em um único parágrafo plain text.
         `);
             break;
         case 'contract_forecast':
@@ -240,9 +225,9 @@ function generate(type) {
             break;
         case 'contract_requirements':
             setValuesAndPayload(type, `
-            De acordo com a lei de licitações do Brasil, faça a descrição dos requisitos de contração para o objeto:
+            De acordo com a lei de licitações do Brasil mais atual, faça a descrição dos requisitos de contração para o objeto:
             '${base.object_description}'. Elabore os requisitos de acordo com o tipo de item que está sendo contratado.
-            Leve em consideração as seguintes palavras chaves: ${page.data.object_description}. Retorne a resposta em plain text.
+            Leve em consideração as seguintes palavras chaves: ${page.data.contract_requirements}. Retorne a resposta em plain text.
         `);
             break;
         case 'market_survey':

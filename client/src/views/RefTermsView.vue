@@ -155,31 +155,38 @@ function generate(type) {
     switch (type) {
         case 'necessity':
             setValuesAndPayload(type, `
-                Crie uma descrição concisa para a necessidade de um Termo de Referência de um processo usando a breve descrição
-                para o órgão ${base.organ?.name} baseado na descrição do processo '${base.process?.description}' em plain text
+                Crie um texto que justifique a necessidade de contratação: '${base.process?.description}'.
+                Leve em consideração as palavras chaves: '${page.data.necessity}'.
+                Retorne a resposta em apenas um parágrafo plain text.
             `);
             break;
         case 'contract_forecast':
             setValuesAndPayload(type, `
-                Elabore detalhadamente uma previsão de contratação para o processo descrito no texto "${base.process?.description}"
-                e no texto prévio "${page.data.contract_forecast ?? ''}" em plain text
+                Com base nesse objeto: '${base.process?.description}'. E referenciado essa previsão data de contratação: 
+            ${base.process?.date_hour_ini}. Elabore um texto descrevendo a previsão da data que será realizado o contrato.
+            Retorne em plain text
             `);
             break;
         case 'contract_requirements':
             setValuesAndPayload(type, `
-                Elabore detalhadamente os requerimentos de contrato para o processo descrito no texto "${base.process?.description}" em plain text
+                De acordo com a lei de licitações do Brasil mais atual, faça a descrição dos requisitos de contração para o objeto:
+            '${base.process?.description}'. Elabore os requisitos de acordo com o tipo de item que está sendo contratado.
+            Leve em consideração as seguintes palavras chaves: ${page.data.contract_requirements}. Retorne a resposta em plain text.
             `);
             break;
         case 'contract_expected_price':
             setValuesAndPayload(type, `
                 Elabore detalhadamente um levantamento de preço para o processo descrito
-                no texto "${base.process?.description}" em plain text
+                no texto "${base.process?.description}". Leve em consideração as seguintes palavras chaves: ${page.data.contract_expected_price}.
+                Retorne a resposta em apenas um parágrafo em plain text.
             `);
             break;
         case 'market_survey':
             setValuesAndPayload(type, `
                 Elabore detalhadamente uma lista de itens e seus orçamentos aproximados para suprir as necessidades
-                do processo descrito no texto "${base.process?.description}" em plain text
+                do processo descrito no texto "${base.process?.description}".
+                Leve em consideração as seguintes palavras chaves: ${page.data.market_survey}. 
+                Retorne a resposta em apenas um parágrafo em plain text.
             `);
             break;
         case 'solution_full_description':
