@@ -1,276 +1,292 @@
 <script setup>
-    import { createApp, inject, onMounted, watch } from 'vue';
-    import TableList from '@/components/table/TableList.vue';
-    import NavMainUi from '@/components/NavMainUi.vue';
-    import HeaderMainUi from '@/components/HeaderMainUi.vue';
-    import FooterMainUi from '@/components/FooterMainUi.vue';
-    import Layout from '@/services/layout';
-    import Actions from '@/services/actions';
-    import Mounts from '@/services/mounts';
-    import http from '@/services/http';
-    import gpt from '@/services/gpt';
-    import utils from '@/utils/utils';
-    import TabNav from '@/components/TabNav.vue';
-    import Tabs from '@/utils/tabs';
-    import InputRichText from '@/components/inputs/InputRichText.vue';
-    import TableListRadio from '@/components/table/TableListRadio.vue';
-    import DfdDetails from '@/components/DfdDetails.vue';
-    import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
-    import exp from '@/services/export';
-    import ReftermReport from './reports/ReftermReport.vue';
-    import notifys from '@/utils/notifys';
+import { createApp, inject, onMounted, watch } from 'vue';
+import TableList from '@/components/table/TableList.vue';
+import NavMainUi from '@/components/NavMainUi.vue';
+import HeaderMainUi from '@/components/HeaderMainUi.vue';
+import FooterMainUi from '@/components/FooterMainUi.vue';
+import Layout from '@/services/layout';
+import Actions from '@/services/actions';
+import Mounts from '@/services/mounts';
+import http from '@/services/http';
+import gpt from '@/services/gpt';
+import utils from '@/utils/utils';
+import TabNav from '@/components/TabNav.vue';
+import Tabs from '@/utils/tabs';
+import InputRichText from '@/components/inputs/InputRichText.vue';
+import TableListRadio from '@/components/table/TableListRadio.vue';
+import DfdDetails from '@/components/DfdDetails.vue';
+import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
+import exp from '@/services/export';
+import ReftermReport from './reports/ReftermReport.vue';
+import notifys from '@/utils/notifys';
 
-    const sysapp = inject('sysapp')
+const sysapp = inject('sysapp')
 
-    const emit = defineEmits(['callAlert', 'callUpdate'])
+const emit = defineEmits(['callAlert', 'callUpdate'])
 
-    const props = defineProps({
-        datalist: { type: Array, default: () => [] }
-    })
+const props = defineProps({
+    datalist: { type: Array, default: () => [] }
+})
 
-    const [page, pageData] = Layout.new(emit, {
-        url: '/refterms',
-        datalist: props.datalist,
-        header: [
-            { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-            { key: 'comission.name', title: 'ORIGEM' },
-            { title: 'NECESSIDADE', sub: [{ key: 'necessity' }] },
-            { key: 'type', title: 'TIPO' },
+const [page, pageData] = Layout.new(emit, {
+    url: '/refterms',
+    datalist: props.datalist,
+    header: [
+        { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+        { key: 'comission.name', title: 'ORIGEM' },
+        { title: 'NECESSIDADE', sub: [{ key: 'necessity' }] },
+        { key: 'type', title: 'TIPO' },
+    ],
+    rules: {
+        comission_id: 'required',
+        necessity: 'required',
+        contract_forecast: 'required',
+        contract_requirements: 'required',
+        contract_expected_price: 'required',
+        market_survey: 'required',
+        solution_full_description: 'required',
+        ambiental_impacts: 'required',
+        correlated_contracts: 'required',
+        object_execution_model: 'required',
+        contract_management_model: 'required',
+        payment_measure_criteria: 'required',
+        supplier_selection_criteria: 'required',
+        funds_suitability: 'required',
+        parts_obligation: 'required',
+        emission: 'required',
+        type: 'required',
+    },
+    process: {
+        search: {},
+        data: [],
+        headers: [
+            { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { key: 'ordinators.name', title: 'ORDENADORES', err: 'Nenhum Ordenador' },
+            { key: 'units.title', title: 'ORIGEM' },
+            { title: 'OBJETO', sub: [{ key: 'description' }] },
+            { key: 'status', title: 'SITUAÇÃO' }
         ],
-        rules: {
-            comission_id: 'required',
-            necessity: 'required',
-            contract_forecast: 'required',
-            contract_requirements: 'required',
-            contract_expected_price: 'required',
-            market_survey: 'required',
-            solution_full_description: 'required',
-            ambiental_impacts: 'required',
-            correlated_contracts: 'required',
-            object_execution_model: 'required',
-            contract_management_model: 'required',
-            payment_measure_criteria: 'required',
-            supplier_selection_criteria: 'required',
-            funds_suitability: 'required',
-            parts_obligation: 'required',
-            emission: 'required',
-            type: 'required',
-        },
-        process: {
-            search: {},
-            data: [],
-            headers: [
-                { key: 'date_hour_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-                { key: 'ordinators.name', title: 'ORDENADORES', err: 'Nenhum Ordenador' },
-                { key: 'units.title', title: 'ORIGEM' },
-                { title: 'OBJETO', sub: [{ key: 'description' }] },
-                { key: 'status', title: 'SITUAÇÃO' }
-            ],
-        },
-        dfd: {
-            data: {},
-            headers: [
-                { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-                { key: 'demandant.name', title: 'DEMANDANTE' },
-                { key: 'ordinator.name', title: 'ORDENADOR' },
-                { key: 'unit.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
-                { title: 'OBJETO', sub: [{ key: 'description' }] },
-                { key: 'status', title: 'SITUAÇÃO' }
-            ],
-        }
+    },
+    dfd: {
+        data: {},
+        headers: [
+            { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { key: 'demandant.name', title: 'DEMANDANTE' },
+            { key: 'ordinator.name', title: 'ORDENADOR' },
+            { key: 'unit.name', title: 'ORIGEM', sub: [{ key: 'organ.name' }] },
+            { title: 'OBJETO', sub: [{ key: 'description' }] },
+            { key: 'status', title: 'SITUAÇÃO' }
+        ],
+    }
+})
+
+const tabs = new Tabs([
+    { id: 'process', title: 'Processo' },
+    { id: 'dfds', title: 'DFDs' },
+    { id: 'info', title: 'Informações' },
+    { id: 'solucao', title: 'Solução' },
+    { id: 'exec', title: 'Execução' },
+    { id: 'pagamentos', title: 'Pagamentos' },
+    { id: 'gestao', title: 'Gestão' },
+    { id: 'fiscalizacao', title: 'Fiscalização' },
+])
+
+function list_processes() {
+    http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
+        page.process.data = resp.data ?? []
     })
+}
 
-    const tabs = new Tabs([
-        { id: 'process', title: 'Processo' },
-        { id: 'dfds', title: 'DFDs' },
-        { id: 'info', title: 'Informações' },
-        { id: 'solucao', title: 'Solução' },
-        { id: 'exec', title: 'Execução' },
-        { id: 'pagamentos', title: 'Pagamentos' },
-        { id: 'gestao', title: 'Gestão' },
-        { id: 'fiscalizacao', title: 'Fiscalização' },
-    ])
+function fetchEtp(e) {
+    http.post(`${page.url}/fetch_etp/${e.target._value?.id}`, {}, emit, (res) => {
+        page.data.supplier_selection_criteria = res.data.process.price_record?.suppliers_justification
+        page.data.contract_forecast = res.data.contract_forecast
+        page.data.contract_requirements = res.data.contract_requirements
+        page.data.ambiental_impacts = res.data.ambiental_impacts
+        page.data.contract_expected_price = res.data.contract_expected_price
+        page.data.market_survey = res.data.market_survey
+        page.data.solution_full_description = res.data.solution_full_description
+        page.data.correlated_contracts = res.data.correlated_contracts
+        page.data.etp_id = res.data.id
+        page.data.necessity = (res.data.process.dfds ?? [])
+            .reduce((prev, curr) => prev + "\n" + curr.justification, "")
+        page.data.estimated_budget = (res.data.process.dfds ?? [])
+            .reduce((prev, curr) => prev + utils.currencyToFloat(curr.estimated_value), 0)
 
-    function list_processes() {
-        http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
-            page.process.data = resp.data ?? []
-        })
-    }
+        page.data.type = res.data.process?.acquisition_type > 2 ? 2 : 1
 
-    function fetchEtp(e) {
-        http.post(`${page.url}/fetch_etp/${e.target._value?.id}`, {}, emit, (res) => {
-            page.data.supplier_selection_criteria = res.data.process.price_record?.suppliers_justification
-            page.data.contract_forecast = res.data.contract_forecast
-            page.data.contract_requirements = res.data.contract_requirements
-            page.data.ambiental_impacts = res.data.ambiental_impacts
-            page.data.contract_expected_price = res.data.contract_expected_price
-            page.data.market_survey = res.data.market_survey
-            page.data.solution_full_description = res.data.solution_full_description
-            page.data.correlated_contracts = res.data.correlated_contracts
-            page.data.etp_id = res.data.id
-            page.data.necessity = (res.data.process.dfds ?? [])
-                .reduce((prev, curr) => prev + "\n" + curr.justification, "")
-            page.data.estimated_budget = (res.data.process.dfds ?? [])
-                .reduce((prev, curr) => prev + utils.currencyToFloat(curr.estimated_value), 0)
-        }, () => {
-            page.data.process = null
-        })
-    }
+    }, () => {
+        page.data.process = null
+    })
+}
 
-    function export_refterm(id) {
-        http.get(`${page.url}/export/${id}`, emit, async (resp) => {
-            const refterm = resp.data
-            const containerReport = document.createElement('div')
-            const instanceReport = createApp(ReftermReport, {
-                refterm,
-                qrdata: sysapp,
-                organ: page.organ,
-                selects: page.selects,
-            })
-            instanceReport.mount(containerReport)
-            exp.exportPDF(containerReport, `TermoDeReferencia-${id}`)
-        })
-    }
-
-    function generate(type) {
-        const base = {
+function export_refterm(id) {
+    http.get(`${page.url}/export/${id}`, emit, async (resp) => {
+        const refterm = resp.data
+        const containerReport = document.createElement('div')
+        const instanceReport = createApp(ReftermReport, {
+            refterm,
+            qrdata: sysapp,
             organ: page.organ,
-            comission: page.selects.comissions?.find(o => o.id === page.data.comission_id),
-            process: page.process
-        }
+            selects: page.selects,
+        })
+        instanceReport.mount(containerReport)
+        exp.exportPDF(containerReport, `TermoDeReferencia-${id}`)
+    })
+}
 
-        let callresp, payload = null
+function generate(type) {
+    const base = {
+        organ: page.organ,
+        comission: page.selects.comissions?.find(o => o.id === page.data.comission_id),
+        process: page.process
+    }
 
-        function setValuesAndPayload(key, mPayload) {
-            payload = mPayload
-            callresp = (resp) => {
-                page.data[key] = `<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`
-                console.log(`<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`)
-            };
-        }
+    let callresp, payload = null
 
-        switch (type) {
-            case 'necessity':
-                setValuesAndPayload(type, `
+    function setValuesAndPayload(key, mPayload) {
+        payload = mPayload
+        callresp = (resp) => {
+            page.data[key] = `<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`
+            console.log(`<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`)
+        };
+    }
+
+    switch (type) {
+        case 'necessity':
+            setValuesAndPayload(type, `
                 Crie uma descrição concisa para a necessidade de um Termo de Referência de um processo usando a breve descrição
                 para o órgão ${base.organ?.name} baseado na descrição do processo '${base.process?.description}' em plain text
             `);
-                break;
-            case 'contract_forecast':
-                setValuesAndPayload(type, `
+            break;
+        case 'contract_forecast':
+            setValuesAndPayload(type, `
                 Elabore detalhadamente uma previsão de contratação para o processo descrito no texto "${base.process?.description}"
                 e no texto prévio "${page.data.contract_forecast ?? ''}" em plain text
             `);
-                break;
-            case 'contract_requirements':
-                setValuesAndPayload(type, `
+            break;
+        case 'contract_requirements':
+            setValuesAndPayload(type, `
                 Elabore detalhadamente os requerimentos de contrato para o processo descrito no texto "${base.process?.description}" em plain text
             `);
-                break;
-            case 'contract_expected_price':
-                setValuesAndPayload(type, `
+            break;
+        case 'contract_expected_price':
+            setValuesAndPayload(type, `
                 Elabore detalhadamente um levantamento de preço para o processo descrito
                 no texto "${base.process?.description}" em plain text
             `);
-                break;
-            case 'market_survey':
-                setValuesAndPayload(type, `
+            break;
+        case 'market_survey':
+            setValuesAndPayload(type, `
                 Elabore detalhadamente uma lista de itens e seus orçamentos aproximados para suprir as necessidades
                 do processo descrito no texto "${base.process?.description}" em plain text
             `);
-                break;
-            case 'solution_full_description':
-                setValuesAndPayload(type, `
+            break;
+        case 'solution_full_description':
+            setValuesAndPayload(type, `
                 Elabore detalhadamente uma descrição completa para a solução do processo descrito em "${base.process?.description}" em plain text"
             `);
-                break;
-            case 'ambiental_impacts':
-                setValuesAndPayload(type, `
+            break;
+        case 'ambiental_impacts':
+            setValuesAndPayload(type, `
                 Elabore um levantamento de possíveis impactos ambientais
                 na execução do processo descrito em "${base.process?.description}" em plain text
             `);
-                break;
-            case 'correlated_contracts':
-                if (!page.data.correlated_contracts) {
-                    emit('callAlert', notifys.info('Digite o contrato correlato'))
-                    return
-                }
-                setValuesAndPayload(type, `
+            break;
+        case 'correlated_contracts':
+            if (!page.data.correlated_contracts) {
+                emit('callAlert', notifys.info('Digite o contrato correlato'))
+                return
+            }
+            setValuesAndPayload(type, `
                 Elabore detalhadamente uma descrição de correlação entre o processo descrito em "${base.process?.description}"
                 e na breve descrição "${page.data.correlated_contracts}" em plain text
                 `);
-                break;
-            case 'object_execution_model':
-                if (!page.data.object_execution_model) {
-                    emit('callAlert', notifys.info('Digite uma breve descrição'))
-                    return
-                }
-                setValuesAndPayload(type, `
+            break;
+        case 'object_execution_model':
+            if (!page.data.object_execution_model) {
+                emit('callAlert', notifys.info('Digite uma breve descrição'))
+                return
+            }
+            setValuesAndPayload(type, `
                 Elabore detalhadamente um modelo de execução para o processo descrito em "${base.process?.description}"
                 e na breve descrição "${page.data.object_execution_model ?? ''}" em plain text
             `);
-                break;
-            case 'contract_management_model':
-                setValuesAndPayload(type, `
+            break;
+        case 'contract_management_model':
+            setValuesAndPayload(type, `
                 Elabore uma descrição de um modelo de gerenciamento de contrato para o processo descrito em "${base.process?.description}"
                 e na breve descrição "${page.data.contract_management_model ?? ''}" em plain text"
             `);
-                break;
-            case 'payment_measure_criteria':
-                setValuesAndPayload(type, `
+            break;
+        case 'payment_measure_criteria':
+            setValuesAndPayload(type, `
                 Elabore uma critério de medida do pagamento do processo descrito no texto "${base.process?.description}"
                 e na breve descrição "${page.data.payment_measure_criteria ?? ''}" em plain text"
             `);
-                break;
-            case 'supplier_selection_criteria':
-                setValuesAndPayload(type, `
+            break;
+        case 'supplier_selection_criteria':
+            setValuesAndPayload(type, `
                 Elabore uma critério de seleção para o fornecedor do contrato descrito no texto "${base.process?.description}"
                 e na breve descrição "${page.data.supplier_selection_criteria ?? ''}" em plain text"
             `);
-                break;
-            case 'funds_suitability':
-                setValuesAndPayload(type, `
+            break;
+        case 'funds_suitability':
+            setValuesAndPayload(type, `
                 Elabore uma critério de seleção para o fornecedor do contrato descrito no texto "${base.process?.description}"
                 e na breve descrição "${page.data.funds_suitability ?? ''}" em plain text"
             `);
-                break;
-            case 'parts_obligation':
-                setValuesAndPayload(type, `
+            break;
+        case 'parts_obligation':
+            setValuesAndPayload(type, `
                 Elabore uma levantamento das obrigações das partes para os fornecedores e os contratadores
                 do processo descrito no texto "${base.process?.description}"
                 e na breve descrição "${page.data.parts_obligation ?? ''}" em plain text"
             `);
-                break;
-            default:
-                break;
-        }
-
-        gpt.generate(`${page.url}/generate`, payload, emit, callresp)
+            break;
+        default:
+            break;
     }
 
-    function dfd_details(id) {
-        if (page.data.process.dfds) {
-            page.dfd.data = page.data.process.dfds.find(obj => obj.id === id)
-            http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
-                page.dfd.data.items = resp.data
-            })
-        }
+    gpt.generate(`${page.url}/generate`, payload, emit, callresp)
+}
+
+function improve_generate(key) {
+    if (!page.data[key]) {
+        return emit('callAlert', notifys.warning('Informe algum conteúdo para que a I.A revise e aprimore.'))
     }
 
-    watch(() => page.ui.register, (newdata) => {
-        if (newdata && page.data.id == null) {
-            page.data.protocol = utils.dateProtocol(page.organ?.id)
-        }
-    })
+    const payload = `Revise e aprimore esse texto: ${page.data[key]}`
+    const callresp = (resp) => {
+        page.data[key] = `<p>${resp?.data?.choices[0]?.message.content ?? ''}</p>`
+    };
 
-    watch(() => props.datalist, (newdata) => {
-        page.datalist = newdata
-    })
+    gpt.generate(`${page.url}/generate`, payload, emit, callresp)
+}
 
-    onMounted(() => {
-        pageData.selects()
-        pageData.list()
-    })
+function dfd_details(id) {
+    if (page.data.process.dfds) {
+        page.dfd.data = page.data.process.dfds.find(obj => obj.id === id)
+        http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
+            page.dfd.data.items = resp.data
+        })
+    }
+}
+
+watch(() => page.ui.register, (newdata) => {
+    if (newdata && page.data.id == null) {
+        page.data.protocol = utils.dateProtocol(page.organ?.id)
+    }
+})
+
+watch(() => props.datalist, (newdata) => {
+    page.datalist = newdata
+})
+
+onMounted(() => {
+    pageData.selects()
+    pageData.list()
+})
 
 </script>
 
@@ -492,6 +508,7 @@
                                 </p>
                             </div>
                         </div>
+                        <!-- tab informations -->
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('info') }">
                             <div class="col-sm-12 col-md-4">
@@ -529,47 +546,66 @@
                                 </div>
                             </div>
                             <div class="col-12">
-                                <label for="necessity" class="form-label d-flex justify-content-between">
+                                <label for="necessity" class="form-label d-md-flex justify-content-between">
                                     Descrição Detalhada da Necessidade
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('necessity')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('necessity')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('necessity')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.necessity" placeholder="Descrição da Necessidade"
                                     identifier="necessity" v-model="page.data.necessity" />
                             </div>
                             <div class="col-12">
-                                <label for="contract_requirements" class="form-label d-flex justify-content-between">
+                                <label for="contract_requirements" class="form-label d-md-flex justify-content-between">
                                     Requisitos da Contratação
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('contract_requirements')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('contract_requirements')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('contract_requirements')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.contract_requirements"
                                     placeholder="Descrição dos Requisitos da Contratação"
                                     identifier="contract_requirements" v-model="page.data.contract_requirements" />
                             </div>
                         </div>
+                        <!-- tab solutions -->
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('solucao') }">
                             <div class="col-12">
-                                <label for="market_survey"
-                                    class="form-label d-flex justify-content-between">Levantamento de Mercado e
+                                <label for="market_survey" class="form-label d-md-flex justify-content-between">
                                     Justificativa Técnica e Econômica
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('market_survey')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('market_survey')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('market_survey')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.market_survey" placeholder="Levantamento de Mercado"
                                     identifier="market_survey" v-model="page.data.market_survey" />
                             </div>
                             <div class="col-12">
-                                <label for="solution_full_description"
-                                    class="form-label d-flex justify-content-between">Descrição da Solução como um todo
-                                    e Justificativa da Compra
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('solution_full_description')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                <label for="solution_full_description" class="form-label d-md-flex justify-content-between">
+                                    Descrição da Solução como um todo e Justificativa da Compra
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('solution_full_description')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('solution_full_description')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.solution_full_description"
                                     placeholder="Descrição da Solução como um Todo"
@@ -577,27 +613,36 @@
                                     v-model="page.data.solution_full_description" />
                             </div>
                             <div class="col-12">
-                                <label for="contract_expected_price"
-                                    class="form-label d-flex justify-content-between">Estimativa do Preço da
-                                    Contratação
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('contract_expected_price')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                <label for="contract_expected_price" class="form-label d-md-flex justify-content-between">
+                                    Estimativa do Preço da Contratação
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('contract_expected_price')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('contract_expected_price')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.contract_expected_price"
                                     placeholder="Estimativa do Preço da Contratação"
                                     identifier="contract_expected_price" v-model="page.data.contract_expected_price" />
                             </div>
                         </div>
+                        <!-- tab execution -->
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('exec') }">
                             <div class="col-12">
-                                <label for="supplier_selection_criteria"
-                                    class="form-label d-flex justify-content-between">Forma e critérios de seleção do
-                                    fornecedor
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('supplier_selection_criteria')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                <label for="supplier_selection_criteria" class="form-label d-md-flex justify-content-between">
+                                    Forma e critérios de seleção do fornecedor
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('supplier_selection_criteria')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('supplier_selection_criteria')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.supplier_selection_criteria"
                                     placeholder="Forma e critérios de seleção do fornecedor"
@@ -605,49 +650,68 @@
                                     v-model="page.data.supplier_selection_criteria" />
                             </div>
                             <div class="col-12">
-                                <label for="contract_forecast" class="form-label d-flex justify-content-between">
+                                <label for="contract_forecast" class="form-label d-md-flex justify-content-between">
                                     Alinhamento com o Planejamento Anual
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('contract_forecast')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('contract_forecast')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('contract_forecast')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.contract_forecast"
                                     placeholder="Previsão de Realização da Contratação" identifier="contract_forecast"
                                     v-model="page.data.contract_forecast" />
                             </div>
                             <div class="col-12">
-                                <label for="ambiental_impacts"
-                                    class="form-label d-flex justify-content-between">Previsão de Resultados e Impactos
-                                    Ambientais
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('ambiental_impacts')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                <label for="ambiental_impacts" class="form-label d-md-flex justify-content-between">
+                                    Previsão de Resultados e Impactos Ambientais
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('ambiental_impacts')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('ambiental_impacts')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.ambiental_impacts"
                                     placeholder="Previsão de Resultados e Impactos Ambientais"
                                     identifier="ambiental_impacts" v-model="page.data.ambiental_impacts" />
                             </div>
                         </div>
+                        <!-- tab payments -->
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('pagamentos') }">
                             <div class="col-12">
-                                <label for="funds_suitability"
-                                    class="form-label d-flex justify-content-between">Adequação orçamentária
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('funds_suitability')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                <label for="funds_suitability" class="form-label d-md-flex justify-content-between">
+                                    Adequação orçamentária
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('funds_suitability')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('funds_suitability')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.funds_suitability"
                                     placeholder="Adequação orçamentária" identifier="funds_suitability"
                                     v-model="page.data.funds_suitability" />
                             </div>
                             <div class="col-12">
-                                <label for="payment_measure_criteria"
-                                    class="form-label d-flex justify-content-between">Critérios de medição e de
-                                    pagamento
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('payment_measure_criteria')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                <label for="payment_measure_criteria" class="form-label d-md-flex justify-content-between">
+                                    Critérios de medição e de pagamento
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('payment_measure_criteria')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('payment_measure_criteria')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.payment_measure_criteria"
                                     placeholder="Critérios de medição e de pagamento"
@@ -655,56 +719,79 @@
                                     v-model="page.data.payment_measure_criteria" />
                             </div>
                         </div>
+                        <!-- tab management -->
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('gestao') }">
                             <div class="col-12">
-                                <label for="contract_management_model"
-                                    class="form-label d-flex justify-content-between">Modelo de gestão do contrato
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('contract_management_model')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                <label for="contract_management_model" class="form-label d-md-flex justify-content-between">
+                                    Modelo de gestão do contrato
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('contract_management_model')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('contract_management_model')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.contract_management_model"
                                     placeholder="Modelo de gestão do contrato" identifier="contract_management_model"
                                     v-model="page.data.contract_management_model" />
                             </div>
                             <div class="col-12">
-                                <label for="correlated_contracts"
-                                    class="form-label d-flex justify-content-between">Contratações Correlatas
-                                    e/ou Interdependentes
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('correlated_contracts')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                <label for="correlated_contracts" class="form-label d-md-flex justify-content-between">
+                                    Contratações Correlatas e/ou Interdependentes
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('correlated_contracts')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('correlated_contracts')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.correlated_contracts"
                                     placeholder="Contratações Correlatas e/ou Interdependentes"
                                     identifier="correlated_contracts" v-model="page.data.correlated_contracts" />
                             </div>
                         </div>
+                        <!-- tab ficalization -->
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('fiscalizacao') }">
                             <div class="col-12">
-                                <label for="parts_obligation"
-                                    class="form-label d-flex justify-content-between">Obrigações das partes
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('parts_obligation')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                <label for="parts_obligation" class="form-label d-md-flex justify-content-between">
+                                    Obrigações das partes
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('parts_obligation')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('parts_obligation')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.parts_obligation" placeholder="Ogrigações das partes"
                                     identifier="parts_obligation" v-model="page.data.parts_obligation" />
                             </div>
                             <div class="col-12">
-                                <label for="object_execution_model"
-                                    class="form-label d-flex justify-content-between">Modelo de execução do objeto
-                                    <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                        @click="generate('object_execution_model')">
-                                        <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                <label for="object_execution_model" class="form-label d-md-flex justify-content-between">
+                                    Modelo de execução do objeto
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('object_execution_model')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('object_execution_model')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    </div>
                                 </label>
                                 <InputRichText :valid="page.valids.object_execution_model"
                                     placeholder="Modelo de execução do objeto" identifier="object_execution_model"
                                     v-model="page.data.object_execution_model" />
                             </div>
                         </div>
+
+                        <!-- action buttons -->
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="checkmark-circle-outline" class="fs-5"></ion-icon>
@@ -724,8 +811,9 @@
                     </form>
                 </div>
             </section>
-            <DfdDetails :dfd="page.dfd.data" :selects="page.selects" />
+
             <FooterMainUi />
         </main>
     </div>
+    <DfdDetails :dfd="page.dfd.data" :selects="page.selects" />
 </template>

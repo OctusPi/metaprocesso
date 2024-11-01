@@ -87,8 +87,8 @@ class RefTerm extends Model
     public static function list_types(): array
     {
         return [
-            ['id' => 1, 'title' => 'Contratação de Serviço'],
-            ['id' => 2, 'title' => 'Aquisição de Materiais'],
+            ['id' => 1, 'title' => 'Aquisição de Materiais'],
+            ['id' => 2, 'title' => 'Contratação de Serviço'],
         ];
     }
 
