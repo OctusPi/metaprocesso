@@ -139,5 +139,10 @@ class Utils
         }
         return 'R$ ' . number_format($value, 2, ',', '.');
     }
-    
+
+    public static function getSelect(array $arr, int $itemId, string $key = 'title'): string
+    {
+        $index = array_search($itemId, array_column($arr, 'id'));
+        return $arr[$index][$key];
+    }
 }

@@ -66,12 +66,7 @@ class Pcas extends Controller
 
         $dfdsChart = (object) [];
         $dfds->each(function (Dfd $item) use ($dfdsChart) {
-            $key = match ($item->status) {
-                Dfd::ACQUISITION_MATERIAL_CONSUMO,
-                Dfd::ACQUISITION_MATERIAL_PERMANENTE => 'Material',
-                default => 'Serviço'
-            };
-
+            $key = Utils::getSelect(Dfd::list_acquisitions(), $item->acquisition_type);
             if (isset($dfdsChart->{$key})) {
                 $dfdsChart->{$key}['num']++;
                 $dfdsChart->{$key}['price'] += Utils::toFloat($item->estimated_value);

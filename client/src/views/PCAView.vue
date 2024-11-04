@@ -60,7 +60,7 @@ function populateDfds(dataset) {
     total: values.length,
     series: [{
       name: 'Quantidade',
-      data: values
+      data: values.map(x => x.num)
     }],
     chartOptions: {
       chart: {
@@ -88,10 +88,9 @@ function populateDfds(dataset) {
         }
       },
       dataLabels: {
-        enabled: false,
-        textAnchor: 'start',
+        textAnchor: 'center',
         formatter: function (_, opt) {
-          return opt.w.globals.labels[opt.dataPointIndex]
+          return utils.floatToCurrency(values.map(x => x.price)[opt.dataPointIndex])
         },
       },
       yaxis: {
@@ -386,7 +385,7 @@ onMounted(() => {
                       <div id="origem" class="tab-pane w-100">
                         <div class="row graph-row w-100">
                           <div class="col-12 text-center mb-4">
-                            <p class="m-0">Comissão/Equipe de Plaejamento</p>
+                            <p class="m-0">Comissão/Equipe de Planejamento</p>
                             <h1 class="m-0 txt-color">
                               {{ utils.getTxt(page.selects.comissions, page.dfd.pca.comission_id) }}
                             </h1>
@@ -425,8 +424,8 @@ onMounted(() => {
                       <ion-icon name="document" />
                     </span>
                     <div>
-                      <h1>Itens por Tipo</h1>
-                      <p>Valores estimados por tipo</p>
+                      <h1>Valor Total Estimado</h1>
+                      <p>Quantidade de Itens por Categoria</p>
                     </div>
                   </div>
                 </div>
