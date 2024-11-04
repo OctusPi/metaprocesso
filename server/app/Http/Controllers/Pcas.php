@@ -57,19 +57,12 @@ class Pcas extends Controller
                 Carbon::create($request->year, 12, 31)
             ]
         ];
-        
+
         $dfds = Data::query(
             new Dfd(),
             with: ['demandant', 'ordinator', 'unit'],
             between: $dateRange
-        )->whereNotIn(
-                'status',
-                [Dfd::STATUS_RASCUNHO, Dfd::STATUS_BLOQUEADO],
-            )->get();
-
-        $estimated = $dfds->reduce(function (?float $val, $dfd) {
-            return $val + Utils::toFloat($dfd->estimated_value);
-        });
+        )->whereNotIn('status', [Dfd::STATUS_RASCUNHO, Dfd::STATUS_BLOQUEADO])->get();
 
         $dfdsChart = (object) [];
         $dfds->each(function (Dfd $item) use ($dfdsChart) {
@@ -80,15 +73,16 @@ class Pcas extends Controller
             };
 
             if (isset($dfdsChart->{$key})) {
-                $dfdsChart->{$key}++;
+                $dfdsChart->{$key}['num']++;
+                $dfdsChart->{$key}['price'] += Utils::toFloat($item->estimated_value);
             } else {
-                $dfdsChart->{$key} = 1;
+                $dfdsChart->{$key}['num'] = 1;
+                $dfdsChart->{$key}['price'] = Utils::toFloat($item->estimated_value);
             }
         });
 
         return response()->json([
             'datalist' => $dfds,
-            'estimated' => Utils::toCurrency($estimated ?? 0),
             'dfds_chart' => $dfdsChart,
         ]);
     }
