@@ -33,6 +33,9 @@ return new class extends Migration
             $table->string('winner_value')->nullable();
             $table->json('dfds');
             $table->index('date_hour_ini');
+            $table->integer('category');
+            $table->integer('dispute');
+            $table->integer('benefit');
             $table->integer('acquisition');
             $table->integer('acquisition_type');
             $table->integer('installment_type');
@@ -48,4 +51,3 @@ return new class extends Migration
         Schema::dropIfExists('proccesses');
     }
 };
-    
