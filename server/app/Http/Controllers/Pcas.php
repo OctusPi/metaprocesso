@@ -51,44 +51,27 @@ class Pcas extends Controller
             return response()->json('Insira o ano de referência', 400);
         }
 
-        $dateRange = [
-            'date_ini' => [
-                Carbon::create($request->year, 1, 1),
-                Carbon::create($request->year, 12, 31)
-            ]
-        ];
-        
         $dfds = Data::query(
             new Dfd(),
-            with: ['demandant', 'ordinator', 'unit'],
-            between: $dateRange
-        )->whereNotIn(
-                'status',
-                [Dfd::STATUS_RASCUNHO, Dfd::STATUS_BLOQUEADO],
-            )->get();
-
-        $estimated = $dfds->reduce(function (?float $val, $dfd) {
-            return $val + Utils::toFloat($dfd->estimated_value);
-        });
+            ['year_pca' => $request->year],
+            ['date_ini'],
+            ['demandant', 'ordinator', 'unit'],
+        )->whereNotIn('status', [Dfd::STATUS_RASCUNHO, Dfd::STATUS_BLOQUEADO])->get();
 
         $dfdsChart = (object) [];
         $dfds->each(function (Dfd $item) use ($dfdsChart) {
-            $key = match ($item->status) {
-                Dfd::ACQUISITION_MATERIAL_CONSUMO,
-                Dfd::ACQUISITION_MATERIAL_PERMANENTE => 'Material',
-                default => 'Serviço'
-            };
-
+            $key = Utils::getSelect(Dfd::list_acquisitions(), $item->acquisition_type);
             if (isset($dfdsChart->{$key})) {
-                $dfdsChart->{$key}++;
+                $dfdsChart->{$key}['num']++;
+                $dfdsChart->{$key}['price'] += Utils::toFloat($item->estimated_value);
             } else {
-                $dfdsChart->{$key} = 1;
+                $dfdsChart->{$key}['num'] = 1;
+                $dfdsChart->{$key}['price'] = Utils::toFloat($item->estimated_value);
             }
         });
 
         return response()->json([
             'datalist' => $dfds,
-            'estimated' => Utils::toCurrency($estimated ?? 0),
             'dfds_chart' => $dfdsChart,
         ]);
     }

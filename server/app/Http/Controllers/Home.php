@@ -6,6 +6,7 @@ use App\Models\Etp;
 use App\Models\PriceRecord;
 use App\Models\RiskMap;
 use App\Models\User;
+use App\Utils\Utils;
 use Illuminate\Http\Request;
 use App\Models\Dfd;
 use App\Models\Process;
@@ -18,18 +19,12 @@ class Home extends Controller
         parent::__construct(null, User::MOD_INI['module']);
     }
 
-    private function verbose(array $arr, int $item)
-    {
-        $index = array_search($item, array_column($arr, 'id'));
-        return $arr[$index]['title'];
-    }
-
     public function list(Request $request)
     {
         $dfds = (object) [];
         Data::find(new Dfd(), [])
             ->each(function (Dfd $item) use ($dfds) {
-                $key = $this->verbose(
+                $key = Utils::getSelect(
                     Dfd::list_status(),
                     $item->status
                 );
@@ -43,7 +38,7 @@ class Home extends Controller
         $prices = (object) [];
         Data::find(new PriceRecord(), [])
             ->each(function (PriceRecord $item) use ($prices) {
-                $key = $this->verbose(
+                $key = Utils::getSelect(
                     PriceRecord::list_status(),
                     $item->status
                 );
@@ -63,7 +58,7 @@ class Home extends Controller
 
         $processes = (object) [];
         $processesQ->each(function (Process $item) use ($processes) {
-                $key = $this->verbose(
+                $key = Utils::getSelect(
                     Process::list_status(),
                     $item->status
                 );

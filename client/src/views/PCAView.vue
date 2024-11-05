@@ -1,154 +1,153 @@
 <script setup>
-import TableList from '@/components/table/TableList.vue';
-import NavMainUi from '@/components/NavMainUi.vue';
-import HeaderMainUi from '@/components/HeaderMainUi.vue';
-import FooterMainUi from '@/components/FooterMainUi.vue';
-import Layout from '@/services/layout';
-import Actions from '@/services/actions';
-import Mounts from '@/services/mounts';
-import masks from '@/utils/masks';
-import { onMounted, ref, watch } from 'vue';
-import DfdDetails from '@/components/DfdDetails.vue';
-import http from '@/services/http';
-import { Mask } from 'maska';
-import utils from '@/utils/utils';
-import TableListStatus from '@/components/table/TableListStatus.vue';
+  import TableList from '@/components/table/TableList.vue';
+  import NavMainUi from '@/components/NavMainUi.vue';
+  import HeaderMainUi from '@/components/HeaderMainUi.vue';
+  import FooterMainUi from '@/components/FooterMainUi.vue';
+  import Layout from '@/services/layout';
+  import Actions from '@/services/actions';
+  import Mounts from '@/services/mounts';
+  import masks from '@/utils/masks';
+  import { onMounted, ref, watch } from 'vue';
+  import DfdDetails from '@/components/DfdDetails.vue';
+  import http from '@/services/http';
+  import { Mask } from 'maska';
+  import utils from '@/utils/utils';
+  import TableListStatus from '@/components/table/TableListStatus.vue';
 
-const emit = defineEmits(['callAlert', 'callUpdate'])
+  const emit = defineEmits(['callAlert', 'callUpdate'])
 
-const props = defineProps({
-  datalist: { type: Array, default: () => [] }
-})
+  const props = defineProps({
+    datalist: { type: Array, default: () => [] }
+  })
 
-const [page, pageData] = Layout.new(emit, {
-  url: '/pca',
-  datalist: props.datalist,
-  header: [
-    { title: 'ANO E EMISSÃO', key: 'reference_year', sub: [{ key: 'emission' }] },
-    { key: 'comission.name', title: 'COMISSÃO' },
-    { key: 'observations', title: 'OBSERVAÇÕES' },
-    { key: 'status', title: 'STATUS' },
-  ],
-  rules: {
-    comission_id: 'required',
-    reference_year: 'required',
-    emission: 'required',
-    price: 'required',
-    status: 'required',
-  },
-  dfd: {
-    year: '',
-    datalist: [],
-    pca: {},
-    headers: [
-      { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-      { key: 'demandant.name', title: 'DEMANDANTE' },
-      { key: 'ordinator.name', title: 'ORDENADOR' },
-      { key: 'unit.name', title: 'ORIGEM' },
-      { title: 'OBJETO', sub: [{ key: 'description' }] },
-      { key: 'status', title: 'SITUAÇÃO' },
+  const [page, pageData] = Layout.new(emit, {
+    url: '/pca',
+    datalist: props.datalist,
+    header: [
+      { title: 'ANO E EMISSÃO', key: 'reference_year', sub: [{ key: 'emission' }] },
+      { key: 'comission.name', title: 'COMISSÃO' },
+      { key: 'observations', title: 'OBSERVAÇÕES' },
+      { key: 'status', title: 'STATUS' },
     ],
-  },
-})
+    rules: {
+      comission_id: 'required',
+      reference_year: 'required',
+      emission: 'required',
+      price: 'required',
+      status: 'required',
+    },
+    dfd: {
+      year: '',
+      datalist: [],
+      pca: {},
+      headers: [
+        { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+        { key: 'demandant.name', title: 'DEMANDANTE' },
+        { key: 'ordinator.name', title: 'ORDENADOR' },
+        { key: 'unit.name', title: 'ORIGEM' },
+        { title: 'OBJETO', sub: [{ key: 'description' }] },
+        { key: 'status', title: 'SITUAÇÃO' },
+      ],
+    },
+  })
 
-const dfdsChart = ref({})
+  const dfdsChart = ref({})
 
-function populateDfds(dataset) {
-  const keys = Object.keys(dataset)
-  const values = Object.values(dataset)
-  dfdsChart.value = {
-    total: values.length,
-    series: [{
-      name: 'Quantidade',
-      data: values
-    }],
-    chartOptions: {
-      chart: {
-        id: 'dfdsChart',
-        offsetX: -4,
-        width: "100%",
-        fontFamily: 'Inter, Helvetica, Arial',
-        toolbar: {
-          show: false
-        }
-      },
-      colors: ['var(--color-base)'],
-      grid: {
-        borderColor: 'var(--color-input-focus)',
-        position: 'front',
-        strokeDashArray: 7,
-        sort: true
-      },
-      plotOptions: {
-        bar: {
-          borderRadius: 8,
-          barHeight: "80%",
-          borderRadiusApplication: 'end',
-          horizontal: true,
-        }
-      },
-      dataLabels: {
-        enabled: false,
-        textAnchor: 'start',
-        formatter: function (_, opt) {
-          return opt.w.globals.labels[opt.dataPointIndex]
+  function populateDfds(dataset) {
+    const keys = Object.keys(dataset)
+    const values = Object.values(dataset)
+    dfdsChart.value = {
+      total: values.length,
+      series: [{
+        name: 'Quantidade',
+        data: values.map(x => x.num)
+      }],
+      chartOptions: {
+        chart: {
+          id: 'dfdsChart',
+          offsetX: -4,
+          width: "100%",
+          fontFamily: 'Inter, Helvetica, Arial',
+          toolbar: {
+            show: false
+          }
         },
-      },
-      yaxis: {
-        labels: {
-          color: 'var(--color-input-focus)',
-          show: true
+        colors: ['var(--color-base)'],
+        grid: {
+          borderColor: 'var(--color-input-focus)',
+          position: 'front',
+          strokeDashArray: 7,
+          sort: true
         },
-      },
-      xaxis: {
-        categories: keys,
-        stepSize: 1,
-        axisBorder: {
-          show: true,
-          color: 'var(--color-input-focus)',
+        plotOptions: {
+          bar: {
+            borderRadius: 8,
+            barHeight: "80%",
+            borderRadiusApplication: 'end',
+            horizontal: true,
+          }
+        },
+        dataLabels: {
+          textAnchor: 'center',
+          formatter: function (_, opt) {
+            return utils.floatToCurrency(values.map(x => x.price)[opt.dataPointIndex])
+          },
+        },
+        yaxis: {
+          labels: {
+            color: 'var(--color-input-focus)',
+            show: true
+          },
+        },
+        xaxis: {
+          categories: keys,
+          stepSize: 1,
+          axisBorder: {
+            show: true,
+            color: 'var(--color-input-focus)',
+          }
         }
       }
     }
   }
-}
 
-const moneyMask = new Mask(masks.maskmoney)
+  const moneyMask = new Mask(masks.maskmoney)
 
-const listDfdsForPCA = (id) => {
-  const pca = page.datalist.find(o => o.id === id)
-  http.post(`${page.url}/list_dfds/${pca?.reference_year}`, {}, emit, (res) => {
-    page.dfd.pca = pca
-    page.dfd.year = pca?.reference_year
-    page.dfd.datalist = res.data?.datalist
-    page.dfd.estimated = res.data?.estimated
-    populateDfds(res.data?.dfds_chart ?? [])
-    pageData.ui('prepare')
-  })
-}
-
-const dfd_details = (id) => {
-  if (page.dfd.datalist) {
-    page.dfd.data = page.dfd.datalist.find(obj => obj.id === id)
-    http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
-      page.dfd.data.items = resp.data
+  const listDfdsForPCA = (id) => {
+    const pca = page.datalist.find(o => o.id === id)
+    http.post(`${page.url}/list_dfds/${pca?.reference_year}`, {}, emit, (res) => {
+      page.dfd.pca = pca
+      page.dfd.year = pca?.reference_year
+      page.dfd.datalist = res.data?.datalist
+      page.dfd.estimated = res.data?.estimated
+      populateDfds(res.data?.dfds_chart ?? [])
+      pageData.ui('prepare')
     })
   }
-}
 
-watch(() => page.ui.register, (newdata) => {
-  if (newdata && page.data.id == null) {
-    page.data.protocol = utils.dateProtocol(page.organ?.id)
+  const dfd_details = (id) => {
+    if (page.dfd.datalist) {
+      page.dfd.data = page.dfd.datalist.find(obj => obj.id === id)
+      http.get(`${page.url}/list_dfd_items/${id}`, emit, (resp) => {
+        page.dfd.data.items = resp.data
+      })
+    }
   }
-})
 
-watch(() => props.datalist, (newdata) => {
-  page.datalist = newdata
-})
+  watch(() => page.ui.register, (newdata) => {
+    if (newdata && page.data.id == null) {
+      page.data.protocol = utils.dateProtocol(page.organ?.id)
+    }
+  })
 
-onMounted(() => {
-  pageData.selects()
-  pageData.list()
-})
+  watch(() => props.datalist, (newdata) => {
+    page.datalist = newdata
+  })
+
+  onMounted(() => {
+    pageData.selects()
+    pageData.list()
+  })
 
 </script>
 
@@ -186,7 +185,7 @@ onMounted(() => {
                 v-maska:[masks.masknumbs] v-model="page.search.reference_year" />
             </div>
             <div class="col-sm-12 col-md-4">
-              <label for="s-status" class="form-label">Status</label>
+              <label for="s-status" class="form-label">Situação</label>
               <select name="status" class="form-control" id="s-status" v-model="page.search.status">
                 <option value=""></option>
                 <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
@@ -213,9 +212,9 @@ onMounted(() => {
         </div>
         <div role="list" class="container p-0">
           <TableList :header="page.header" :body="page.datalist" :actions="[
+            Actions.Create('document-attach', 'Detalhar', listDfdsForPCA),
             Actions.Edit(pageData.update),
             Actions.Delete(pageData.remove),
-            Actions.Create('document-attach', 'DFDs', listDfdsForPCA),
           ]" :mounts="{
             status: [Mounts.Cast(page.selects.status), Mounts.Status()],
             observations: [Mounts.Truncate()],
@@ -277,13 +276,13 @@ onMounted(() => {
                 </div>
               </div>
               <div class="col-sm-12 col-md-4">
-                <label for="price" class="form-label">Preço</label>
+                <label for="price" class="form-label">Orçamento Previsto</label>
                 <input type="text" name="price" class="form-control"
                   :class="{ 'form-control-alert': page.valids.price }" id="price" placeholder="R$ 0.00"
                   v-model="page.data.price" v-maska:[masks.maskmoney] />
               </div>
               <div class="col-sm-12 col-md-4">
-                <label for="status" class="form-label">Status</label>
+                <label for="status" class="form-label">Situação</label>
                 <select name="status" class="form-control" :class="{ 'form-control-alert': page.valids.status }"
                   id="status" v-model="page.data.status">
                   <option value=""></option>
@@ -386,7 +385,7 @@ onMounted(() => {
                       <div id="origem" class="tab-pane w-100">
                         <div class="row graph-row w-100">
                           <div class="col-12 text-center mb-4">
-                            <p class="m-0">Comissão/Equipe de Plaejamento</p>
+                            <p class="m-0">Comissão/Equipe de Planejamento</p>
                             <h1 class="m-0 txt-color">
                               {{ utils.getTxt(page.selects.comissions, page.dfd.pca.comission_id) }}
                             </h1>
@@ -397,7 +396,7 @@ onMounted(() => {
                               {{ page.dfd.pca.protocol }}
                             </h1>
                           </div>
-                          
+
                           <div class="col-md-6 text-center">
                             <p class="m-0">Última modificação</p>
                             <h1 class="m-0 txt-color">{{ page.dfd.pca.updated_at }}</h1>
@@ -425,8 +424,8 @@ onMounted(() => {
                       <ion-icon name="document" />
                     </span>
                     <div>
-                      <h1>Itens por Tipo</h1>
-                      <p>Valores estimados por tipo</p>
+                      <h1>Valor Total Estimado</h1>
+                      <p>Quantidade de Itens por Categoria</p>
                     </div>
                   </div>
                 </div>
@@ -459,26 +458,26 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.chart-heading button span {
-  background-color: var(--color-input-focus);
-  color: var(--color-input-txt);
-}
+  .chart-heading button span {
+    background-color: var(--color-input-focus);
+    color: var(--color-input-txt);
+  }
 
-.chart-heading .nav-link {
-  background-color: transparent !important;
-  border: 0 !important;
-}
+  .chart-heading .nav-link {
+    background-color: transparent !important;
+    border: 0 !important;
+  }
 
-.chart-heading button.active span {
-  background-color: var(--color-base-tls);
-  color: var(--color-base);
-}
+  .chart-heading button.active span {
+    background-color: var(--color-base-tls);
+    color: var(--color-base);
+  }
 
-.graph {
-  min-height: 300px;
-}
+  .graph {
+    min-height: 300px;
+  }
 
-.graph-row h1 {
-  font-size: 1.25em;
-}
+  .graph-row h1 {
+    font-size: 1.25em;
+  }
 </style>
