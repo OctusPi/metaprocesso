@@ -51,17 +51,11 @@ class Pcas extends Controller
             return response()->json('Insira o ano de referência', 400);
         }
 
-        $dateRange = [
-            'date_ini' => [
-                Carbon::create($request->year, 1, 1),
-                Carbon::create($request->year, 12, 31)
-            ]
-        ];
-
         $dfds = Data::query(
             new Dfd(),
-            with: ['demandant', 'ordinator', 'unit'],
-            between: $dateRange
+            ['year_pca' => $request->year],
+            ['date_ini'],
+            ['demandant', 'ordinator', 'unit'],
         )->whereNotIn('status', [Dfd::STATUS_RASCUNHO, Dfd::STATUS_BLOQUEADO])->get();
 
         $dfdsChart = (object) [];
