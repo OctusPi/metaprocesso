@@ -7,14 +7,17 @@
   import Actions from '@/services/actions';
   import Mounts from '@/services/mounts';
   import masks from '@/utils/masks';
-  import { onMounted, ref, watch } from 'vue';
+  import { createApp, inject, onMounted, ref, watch } from 'vue';
   import DfdDetails from '@/components/DfdDetails.vue';
   import http from '@/services/http';
   import { Mask } from 'maska';
   import utils from '@/utils/utils';
   import TableListStatus from '@/components/table/TableListStatus.vue';
+  import PCAReport from './reports/PCAReport.vue';
+  import exp from '@/services/export';
 
   const emit = defineEmits(['callAlert', 'callUpdate'])
+  const sysapp = inject('sysapp')
 
   const props = defineProps({
     datalist: { type: Array, default: () => [] }
@@ -134,8 +137,13 @@
     }
   }
 
-  const exportPdf = () => {
-    
+  const exportPdf = (id) => {
+    http.get(`${page.url}/export/${id}`, emit, (resp) => {
+      const containerReport = document.createElement('div')
+      const instanceReport = createApp(PCAReport, { qrdata: sysapp, organ: page.organ, pca: resp.data, selects: page.selects })
+      instanceReport.mount(containerReport)
+      exp.exportPDF(containerReport, `PCA-${resp.data.protocol}`)
+    })
   }
 
   const exportCsv = () => {
