@@ -10,7 +10,8 @@ const emit = defineEmits(['callAlert', 'callRemove', 'clone'])
 const props = defineProps({
     origin: { type: String },
     protocol: { type: String },
-    label: { type: String }
+    label: { type: String },
+    types: { type: Array, default: () => [] }
 })
 
 const [page, pageData] = Layout.new(emit, {
@@ -99,11 +100,21 @@ onMounted(() => {
                 <form class="form-row" @submit.prevent="pageData.save">
                     <div class="row g-3">
                         <div class="col-sm-12 col-md-4">
-                            <label for="type" class="form-label">Tipo</label>
-                            <input class="form-control" placeholder="Tipo de Anexo" type="text" id="type"
+                            <label for="type" class="form-label">Modalide</label>
+                            <select name="type" class="form-control"
+                                :class="{ 'form-control-alert': page.valids.type }" id="type"
                                 v-model="page.data.type">
+                                <option v-for="o in props.types" :key="o.id" :value="o.id">
+                                    {{ o.title }}
+                                </option>
+                            </select>
                         </div>
-                        <div class="col-sm-12 col-md-8">
+                        <div class="col-sm-12 col-md-4">
+                            <label for="name" class="form-label">Nome Descritivo</label>
+                            <input class="form-control" placeholder="Identificação do Documento" type="text" id="name"
+                                v-model="page.data.name">
+                        </div>
+                        <div class="col-sm-12 col-md-4">
                             <FileInput label="Arquivo" identify="attachments-upload" v-model="page.data.document"
                                 :valid="page.valids.document" />
                         </div>

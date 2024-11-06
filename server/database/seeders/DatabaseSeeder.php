@@ -30,20 +30,20 @@ class DatabaseSeeder extends Seeder
     public function run(?array $data = null): void
     {
         Organ::factory(1)->create();
-        Unit::factory(1)->create();
-        Sector::factory(1)->create();
-        Program::factory(1)->create();
-        Dotation::factory(1)->create();
-        Supplier::factory(1)->create();
-        Demandant::factory(1)->create();
-        Ordinator::factory(1)->create();
+        Unit::factory(4)->create();
+        Sector::factory(4)->create();
+        Program::factory(4)->create();
+        Dotation::factory(4)->create();
+        Supplier::factory(4)->create();
+        Demandant::factory(4)->create();
+        Ordinator::factory(4)->create();
         Comission::factory(1)->create();
-        ComissionMember::factory(1)->create();
+        ComissionMember::factory(4)->create();
         Catalog::factory(1)->create();
-        CatalogSubCategoryItem::factory(1)->create();
-        CatalogItem::factory(1)->create();
-        Dfd::factory(1)->create();
-        DfdItem::factory(1)->create();
-        Process::factory(1)->create();
+        CatalogSubCategoryItem::factory(3)->create();
+        CatalogItem::factory(100)->create();
+        Dfd::factory(3)->create();
+        DfdItem::factory(10)->create();
+        Process::factory(2)->create();
     }
 }

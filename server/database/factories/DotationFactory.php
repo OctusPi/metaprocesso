@@ -6,21 +6,26 @@ use App\Models\Dotation;
 use App\Models\Organ;
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Faker\Factory as Faker;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Dotation>
  */
 class DotationFactory extends Factory
 {
+    protected $model = Dotation::class;
+
     public function definition(): array
     {
+        $faker = Faker::create('pt_BR');
+
         return [
-            'status' => fake()->randomElement(Dotation::list_status())['id'],
+            'status' => $faker->randomElement(Dotation::list_status())['id'],
             'organ_id' => Organ::latest()->first()->id,
             'unit_id' => Unit::latest()->first()->id,
-            'description' => fake()->text(200),
-            'name' => fake()->company(),
-            'law' => fake()->text(200),
+            'description' => $faker->text(200),
+            'name' => $faker->company(),
+            'law' => $faker->text(200),
         ];
     }
 }

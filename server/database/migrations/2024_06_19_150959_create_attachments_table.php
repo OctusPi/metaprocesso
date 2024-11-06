@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignId('organ_id')->constrained('organs');
             $table->integer('origin');
             $table->string('protocol');
-            $table->string('type');
+            $table->integer('type');
+            $table->string('name')->nullable();
             $table->string('document');
         });
     }

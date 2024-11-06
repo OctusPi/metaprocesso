@@ -923,7 +923,9 @@ onMounted(() => {
                                     @callAlert="(data) => emit('callAlert', data)"
                                     @callRemove="(data) => emit('callRemove', data)"
                                     @clone="(data) => { page.attachments = toRaw(data) }"
-                                    :origin="String(page.selects.vars?.ORIGIN_ETP)" :protocol="page.data.protocol" />
+                                    :types="page.selects.attachment_types"
+                                    :origin="String(page.selects.vars?.ORIGIN_ETP)" 
+                                    :protocol="page.data.protocol" />
                             </div>
 
                             <div id="revisor" class="tab-pane">
