@@ -134,6 +134,14 @@
     }
   }
 
+  const exportPdf = () => {
+    
+  }
+
+  const exportCsv = () => {
+
+  }
+
   watch(() => page.ui.register, (newdata) => {
     if (newdata && page.data.id == null) {
       page.data.protocol = utils.dateProtocol(page.organ?.id)
@@ -215,6 +223,8 @@
             Actions.Create('document-attach', 'Detalhar', listDfdsForPCA),
             Actions.Edit(pageData.update),
             Actions.Delete(pageData.remove),
+            Actions.Create('document-outline', 'Exportar PDF', exportPdf),
+            Actions.Create('document-text-outline', 'Exportar CSV', exportCsv),
           ]" :mounts="{
             status: [Mounts.Cast(page.selects.status), Mounts.Status()],
             observations: [Mounts.Truncate()],
