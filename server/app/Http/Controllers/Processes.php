@@ -127,7 +127,7 @@ class Processes extends Controller
         }
 
         $query = Data::query(new Dfd(), $search, ['date_ini'], ['unit', 'comission', 'demandant', 'ordinator'], $between);
-        
+
         if($query != null) {
             $units = json_decode($request->units) ?? [];
 
@@ -189,9 +189,13 @@ class Processes extends Controller
             'units' => Utils::map_select(Data::find(new Unit(), [], ['name'])),
             'types' => Process::list_types(),
             'status' => Process::list_status(),
-            'acquisition_types' => Process::list_acquisition_types(),
+            'categories' => Process::list_categories(),
+            'disputes' => Process::list_disputes(),
+            'benefits' => Process::list_benefits(),
             'acquisitions' => Process::list_acquisitions(),
+            'acquisition_types' => Process::list_acquisition_types(),
             'installment_types' => Process::list_installments_types(),
+            'attachment_types' => Attachment::list_types(),
             'vars' => [
                 'INSTALLMENT_ITEM' => Process::INSTALLMENT_ITEM,
                 'ORIGIN_PROCESS' => Attachment::PROCESS,

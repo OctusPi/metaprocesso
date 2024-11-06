@@ -194,6 +194,7 @@ class Etps extends Controller
             'status' => ETP::list_status(),
             'responsibilities' => ComissionMember::list_responsabilities(),
             'installment_types' => Process::list_installments_types(),
+            'attachment_types' => Attachment::list_types(),
             'vars' => [
                 'ORIGIN_ETP' => Attachment::ETP
             ]

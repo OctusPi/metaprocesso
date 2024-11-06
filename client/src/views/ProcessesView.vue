@@ -54,6 +54,9 @@ const [page, pageData] = Layout.new(emit, {
         acquisition_type: 'required',
         installment_type: 'required',
         installment_justification: 'required',
+        category: 'required',
+        dispute: 'required',
+        benefit: 'required'
     },
     dfds: {
         search: {},
@@ -359,28 +362,40 @@ onMounted(() => {
                                     </option>
                                 </select>
                             </div>
+
                             <div class="col-sm-12 col-md-4">
-                                <label for="initial_value" class="form-label">Valor Inicial (R$)</label>
-                                <input type="text" name="initial_value" class="form-control" v-maska:[masks.maskmoney]
-                                    :class="{ 'form-control-alert': page.valids.initial_value }" id="initial_value"
-                                    v-model="page.data.initial_value" placeholder="R$ 0.00">
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="winner_value" class="form-label">Valor Vencedor (R$)</label>
-                                <input type="text" name="winner_value" class="form-control" v-maska:[masks.maskmoney]
-                                    :class="{ 'form-control-alert': page.valids.winner_value }" id="winner_value"
-                                    v-model="page.data.winner_value" placeholder="R$ 0.00">
-                            </div>
-                            <div class="col-sm-12 col-md-4">
-                                <label for="status" class="form-label">Situação</label>
-                                <select name="status" class="form-control"
-                                    :class="{ 'form-control-alert': page.valids.status }" id="status"
-                                    v-model="page.data.status">
-                                    <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
+                                <label for="category" class="form-label">Categoria da Aquisição</label>
+                                <select name="category" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.category }" id="category"
+                                    v-model="page.data.category">
+                                    <option v-for="o in page.selects.categories" :key="o.id" :value="o.id">
                                         {{ o.title }}
                                     </option>
                                 </select>
                             </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="dispute" class="form-label">Modo de Disputa</label>
+                                <select name="dispute" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.dispute }"
+                                    id="dispute" v-model="page.data.dispute">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.disputes" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="benefit" class="form-label">Tipo de Benefício</label>
+                                <select name="benefit" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.benefit }"
+                                    id="benefit" v-model="page.data.benefit">
+                                    <option value=""></option>
+                                    <option v-for="o in page.selects.benefits" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            
                             <div class="col-sm-12 col-md-4">
                                 <label for="acquisition" class="form-label">Estilo da Aquisição</label>
                                 <select name="acquisition" class="form-control"
@@ -410,6 +425,28 @@ onMounted(() => {
                                     @change="() => setInstallmentJustification()">
                                     <option value=""></option>
                                     <option v-for="o in page.selects.installment_types" :key="o.id" :value="o.id">
+                                        {{ o.title }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="initial_value" class="form-label">Valor Inicial (R$)</label>
+                                <input type="text" name="initial_value" class="form-control" v-maska:[masks.maskmoney]
+                                    :class="{ 'form-control-alert': page.valids.initial_value }" id="initial_value"
+                                    v-model="page.data.initial_value" placeholder="R$ 0.00">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="winner_value" class="form-label">Valor Vencedor (R$)</label>
+                                <input type="text" name="winner_value" class="form-control" v-maska:[masks.maskmoney]
+                                    :class="{ 'form-control-alert': page.valids.winner_value }" id="winner_value"
+                                    v-model="page.data.winner_value" placeholder="R$ 0.00">
+                            </div>
+                            <div class="col-sm-12 col-md-4">
+                                <label for="status" class="form-label">Situação</label>
+                                <select name="status" class="form-control"
+                                    :class="{ 'form-control-alert': page.valids.status }" id="status"
+                                    v-model="page.data.status">
+                                    <option v-for="o in page.selects.status" :key="o.id" :value="o.id">
                                         {{ o.title }}
                                     </option>
                                 </select>
@@ -539,7 +576,9 @@ onMounted(() => {
                                 @callAlert="(data) => emit('callAlert', data)"
                                 @callRemove="(data) => emit('callRemove', data)"
                                 @clone="(data) => { page.attachments = toRaw(data) }"
-                                :origin="String(page.selects.vars?.ORIGIN_PROCESS)" :protocol="page.data.protocol" />
+                                :types="page.selects.attachment_types"
+                                :origin="String(page.selects.vars?.ORIGIN_PROCESS)" 
+                                :protocol="page.data.protocol" />
                         </div>
 
                         <!-- tab revisar -->
