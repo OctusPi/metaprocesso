@@ -93,4 +93,24 @@ class Pcas extends Controller
             ),
         ]));
     }
+
+    public function export(Request $request)
+    {
+        $pca = $this->base_details($request, ['organ', 'comission']);
+
+        if ($pca->status() == 200) {
+            $data = $pca->getData(true);
+
+            $dfds = Data::query(
+                new Dfd(),
+                ['year_pca' => $data['reference_year']],
+                ['date_ini'],
+                ['demandant', 'ordinator', 'unit'],
+            )->whereNotIn('status', [Dfd::STATUS_RASCUNHO, Dfd::STATUS_BLOQUEADO])->get();
+
+            return response()->json(array_merge($data, ['dfds' => $dfds->toArray()]), 200);
+        }
+
+        return response()->json(Notify::warning("ETP não localizado..."), $pca->status());
+    }
 }
