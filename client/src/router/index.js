@@ -26,6 +26,11 @@ const router = createRouter({
       component: () => import('@/views/SelectOrganView.vue')
     },
     {
+      path: '/opendocs',
+      name: 'opendocs',
+      component: () => import('@/views/OpenDocsView.vue')
+    },
+    {
       path: '/home',
       name: 'home',
       meta: { auth: true },
