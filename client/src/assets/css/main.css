@@ -123,6 +123,15 @@
     flex-direction: column;
 }
 
+.main-section-opendocs {
+    min-height: calc(100vh - 156px);
+    margin: 0 auto 50px auto;
+    background-color: var(--color-background);
+    border-radius: 30px;
+    display: flex;
+    flex-direction: column;
+}
+
 .page-colapsed .main-section {
     margin: 0;
     justify-content: center;

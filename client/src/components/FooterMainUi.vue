@@ -1,12 +1,13 @@
 <script setup>
 import { inject } from 'vue';
-
-
 const sysapp = inject('sysapp')
+const props = defineProps({
+    style: {type: String, default: 'main-footer'}
+})
 </script>
 
 <template>
-    <footer class="main-footer py-3">
+    <footer :class="props.style" class="py-3">
         {{ sysapp.copy }}&copy; - {{ sysapp.version }}
     </footer>
 </template>
