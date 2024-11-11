@@ -1,20 +1,21 @@
 <script setup>
+  import { createApp, inject, onMounted, ref, watch } from 'vue';
+  import { Mask } from 'maska';
+  import Layout from '@/services/layout';
+  import Actions from '@/services/actions';
+  import Mounts from '@/services/mounts';
+  import http from '@/services/http';
+  import masks from '@/utils/masks';
+  import utils from '@/utils/utils';
+  import exp from '@/services/export';
+  
   import TableList from '@/components/table/TableList.vue';
   import NavMainUi from '@/components/NavMainUi.vue';
   import HeaderMainUi from '@/components/HeaderMainUi.vue';
   import FooterMainUi from '@/components/FooterMainUi.vue';
-  import Layout from '@/services/layout';
-  import Actions from '@/services/actions';
-  import Mounts from '@/services/mounts';
-  import masks from '@/utils/masks';
-  import { createApp, inject, onMounted, ref, watch } from 'vue';
   import DfdDetails from '@/components/DfdDetails.vue';
-  import http from '@/services/http';
-  import { Mask } from 'maska';
-  import utils from '@/utils/utils';
   import TableListStatus from '@/components/table/TableListStatus.vue';
   import PCAReport from './reports/PCAReport.vue';
-  import exp from '@/services/export';
 
   const emit = defineEmits(['callAlert', 'callUpdate'])
   const sysapp = inject('sysapp')
@@ -30,7 +31,7 @@
       { title: 'ANO E EMISSÃO', key: 'reference_year', sub: [{ key: 'emission' }] },
       { key: 'comission.name', title: 'COMISSÃO' },
       { key: 'observations', title: 'OBSERVAÇÕES' },
-      { key: 'status', title: 'STATUS' },
+      { key: 'status', title: 'SITUAÇÃO' },
     ],
     rules: {
       comission_id: 'required',

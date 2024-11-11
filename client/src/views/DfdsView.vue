@@ -32,6 +32,7 @@
         datalist: props.datalist,
         header: [
             { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { key: 'year_pca', title: 'PCA' },
             { key: 'demandant.name', title: 'DEMANDANTE' },
             { key: 'ordinator.name', title: 'ORDENADOR' },
             { key: 'unit.name', title: 'ORIGEM' },

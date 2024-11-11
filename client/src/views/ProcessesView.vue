@@ -34,6 +34,7 @@ const [page, pageData] = Layout.new(emit, {
     datalist: props.datalist,
     header: [
         { key: 'date_hour_ini', title: 'ABERTURA', sub: [{ key: 'protocol' }] },
+        { key: 'year_pca', title: 'PCA' },
         { key: 'units.title', title: 'ORIGEM' },
         { key: 'modality', title: 'CLASSIFICAÇÃO', sub: [{ key: 'type' }] },
         { title: 'OBJETO', sub: [{ key: 'description' }] },
@@ -64,6 +65,7 @@ const [page, pageData] = Layout.new(emit, {
         data: null,
         headers: [
             { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+            { key: 'year_pca', title: 'PCA' },
             { key: 'demandant.name', title: 'DEMANDANTE' },
             { key: 'ordinator.name', title: 'ORDENADOR' },
             { key: 'unit.name', title: 'ORIGEM' },

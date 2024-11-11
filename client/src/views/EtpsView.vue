@@ -46,8 +46,9 @@ const [page, pageData] = Layout.new(emit, {
     generate: {},
     header: [
         { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
+        { key: 'process.year_pca', title: 'PCA' },
         { title:'PROCESSO', key:'process.protocol' },
-        { title: 'NECESSIDADE', sub: [{ key: 'necessity' }] },
+        { title: 'OBJETO', sub: [{ key: 'process.description' }] },
         { key: 'status', title: 'STATUS' },
     ],
     rules: {},

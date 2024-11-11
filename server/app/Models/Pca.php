@@ -13,6 +13,11 @@ class Pca extends Model
 {
     use HasFactory;
 
+    const S_ELABORATION = 1;
+    const S_APROVED = 2;
+    const S_DENIED = 3;
+    const S_PUBLISHED = 4;
+
     protected $table = 'pcas';
 
     protected $fillable = [
@@ -64,20 +69,17 @@ class Pca extends Model
     {
         return [
             'required' => 'Campo obrigatório não informado!',
-            'unique' => 'PCA já registrado para o ano de refer!'
+            'unique' => 'PCA já registrado para o ano de referência!'
         ];
     }
-
-    const S_ELABORATION = 1;
-    const S_APROVED = 2;
-    const S_DENIED = 3;
 
     public static function list_status(): array
     {
         return [
             ['id' => self::S_ELABORATION, 'title' => 'Em Elaboração'],
             ['id' => self::S_APROVED, 'title' => 'Aprovado'],
-            ['id' => self::S_DENIED, 'title' => 'Recusado'],
+            ['id' => self::S_DENIED, 'title' => 'Revogado'],
+            ['id' => self::S_PUBLISHED, 'title' => 'Publicado PNCP'],
         ];
     }
 
