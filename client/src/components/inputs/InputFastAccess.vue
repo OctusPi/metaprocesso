@@ -44,7 +44,7 @@ function search_item() {
 <template>
     <div class="container-input">
         <input class="form-control" :class="{'active' : comp.list.length}" placeholder="Acesso Rápido" v-model="comp.search" @keyup="search_item">
-        <div class="container-list" v-if="comp.list.length">
+        <div class="container-list" v-if="comp.list.length && comp.search">
             <ul class="fast-link">
                 <li v-for="i in comp.list" :key="i.title">
                     <RouterLink :to="i.href" class="d-flex align-items-center item-link">

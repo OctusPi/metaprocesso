@@ -6,7 +6,9 @@ use App\Http\Middlewares\Data;
 use App\Models\Comission;
 use App\Models\Dfd;
 use App\Models\DfdItem;
+use App\Models\Dotation;
 use App\Models\Pca;
+use App\Models\Program;
 use App\Models\User;
 use App\Utils\Notify;
 use App\Utils\Utils;
@@ -88,29 +90,54 @@ class Pcas extends Controller
     {
         return response()->json(array_merge(Dfd::make_details(), [
             'status' => Pca::list_status(),
-            'comissions' => Utils::map_select(
-                Data::find(new Comission(), ['status' => Comission::STATUS_ACTIVE], ['name'])
-            ),
+            'comissions' => Utils::map_select(Data::find(new Comission(), ['status' => Comission::STATUS_ACTIVE], ['name']))
         ]));
     }
 
+    /**
+     * Exporta dados de PCA e DFDs.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function export(Request $request)
     {
+        // Obtenha os detalhes básicos do PCA com informações relacionadas
         $pca = $this->base_details($request, ['organ', 'comission']);
 
-        if ($pca->status() == 200) {
-            $data = $pca->getData(true);
-
-            $dfds = Data::query(
-                new Dfd(),
-                ['year_pca' => $data['reference_year']],
-                ['date_ini'],
-                ['demandant', 'ordinator', 'unit'],
-            )->whereNotIn('status', [Dfd::STATUS_RASCUNHO, Dfd::STATUS_BLOQUEADO])->get();
-
-            return response()->json(array_merge($data, ['dfds' => $dfds->toArray()]), 200);
+        // Verifique se o status do PCA é 200 antes de continuar
+        if ($pca->status() !== 200) {
+            return response()->json(Notify::warning("DFDs não localizados..."), $pca->status());
         }
 
-        return response()->json(Notify::warning("ETP não localizado..."), $pca->status());
+        $data = $pca->getData(true);
+
+        // Query para buscar DFDs com filtros e exclusões de status
+        $dfds = Data::query(
+            new Dfd(),
+            ['year_pca' => $data['reference_year']],
+            ['date_ini'],
+            ['demandant', 'ordinator', 'unit'])
+            ->whereNotIn('status', [Dfd::STATUS_RASCUNHO, Dfd::STATUS_BLOQUEADO])
+            ->get();
+
+        // Verifica se há DFDs antes de buscar os itens relacionados
+        $items = [];
+        if ($dfds->isNotEmpty()) {
+            // Obtenha os itens dos DFDs com os IDs coletados
+            $dfdIds = $dfds->pluck('id');
+            $items = Data::query(new DfdItem(), with:['item', 'program', 'dotation'])
+                ->whereIn('dfd_id', $dfdIds)
+                ->get()
+                ->sortBy('item.name')
+                ->values()
+                ->toArray();
+        }
+
+
+
+        // Combine dados do PCA e resultados das queries em um único array de resposta
+        return response()->json(array_merge($data, ['dfds' => $dfds->toArray(), 'items' => $items]), 200);
     }
+
 }

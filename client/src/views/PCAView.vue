@@ -5,9 +5,9 @@
   import Actions from '@/services/actions';
   import Mounts from '@/services/mounts';
   import http from '@/services/http';
+  import exp from '@/services/export';
   import masks from '@/utils/masks';
   import utils from '@/utils/utils';
-  import exp from '@/services/export';
   
   import TableList from '@/components/table/TableList.vue';
   import NavMainUi from '@/components/NavMainUi.vue';
@@ -50,11 +50,13 @@
         { key: 'ordinator.name', title: 'ORDENADOR' },
         { key: 'unit.name', title: 'ORIGEM' },
         { title: 'OBJETO', sub: [{ key: 'description' }] },
+        { title: 'VALOR ESTIMADO', key:'estimated_value' },
         { key: 'status', title: 'SITUAÇÃO' },
       ],
     },
   })
 
+  const moneyMask = new Mask(masks.maskmoney)
   const dfdsChart = ref({})
 
   function populateDfds(dataset) {
@@ -64,7 +66,7 @@
       total: values.length,
       series: [{
         name: 'Quantidade',
-        data: values.map(x => x.num)
+        data: values.map(x => x.price)
       }],
       chartOptions: {
         chart: {
@@ -86,7 +88,7 @@
         plotOptions: {
           bar: {
             borderRadius: 8,
-            barHeight: "80%",
+            barHeight: "70%",
             borderRadiusApplication: 'end',
             horizontal: true,
           }
@@ -105,7 +107,6 @@
         },
         xaxis: {
           categories: keys,
-          stepSize: 1,
           axisBorder: {
             show: true,
             color: 'var(--color-input-focus)',
@@ -114,8 +115,6 @@
       }
     }
   }
-
-  const moneyMask = new Mask(masks.maskmoney)
 
   const listDfdsForPCA = (id) => {
     const pca = page.datalist.find(o => o.id === id)

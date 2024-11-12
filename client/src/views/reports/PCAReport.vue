@@ -1,9 +1,10 @@
 <script setup>
     import { ref } from 'vue'
-    import utils from '@/utils/utils'
-    import TableListReport from './TableListReport.vue';
-    import dates from '@/utils/dates';
     import QrcodeVue from 'qrcode.vue';
+    import utils from '@/utils/utils'
+    import dates from '@/utils/dates';
+    import Mounts from "@/services/mounts"
+    import TableListReport from '@/components/table/TableListReport.vue'
 
     const props = defineProps({
         qrdata: { type: Object, default: () => { } },
@@ -18,14 +19,30 @@
 
     const dfds = ref({
         datalist: pca.value.dfds,
+        datalist_items: pca.value.items,
         headers: [
             { key: 'date_ini', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
-            { obj: 'demandant', key: 'name', title: 'DEMANDANTE' },
-            { obj: 'ordinator', key: 'name', title: 'ORDENADOR' },
-            { obj: 'unit', key: 'name', title: 'ORIGEM' },
+            { key: 'demandant.name', title: 'DEMANDANTE' },
+            { key: 'ordinator.name', title: 'ORDENADOR' },
+            { key: 'unit.name', title: 'ORIGEM' },
             { title: 'OBJETO', sub: [{ key: 'description' }] },
-            { key: 'status', title: 'SITUAÇÃO', cast: 'title' }
+            { key: 'status', title: 'SITUAÇÃO' }
         ],
+        headers_items: [
+        {
+            key: 'item.code',
+            title: 'COD'
+        },
+        { key: 'item.name', title: 'ITEM' },
+        { key: 'item.description', title: 'DESCRIÇÃO' },
+        { key: 'item.und', title: 'UDN', sub: [{ key: 'item.volume' }] },
+        {
+            key: 'program.name',
+            title: 'VINCULO',
+            sub: [{ key: 'dotation.name' }]
+        },
+        { key: 'quantity', title: 'QUANT.' }
+    ]
     })
 </script>
 
@@ -126,9 +143,19 @@
             </p>
         </div>
         <div class="mb-3">
-            <TableListReport :smaller="true" :count="false" :header="dfds.headers" :body="dfds.datalist" :casts="{
-                status: selects.dfds_status,
-            }" />
+            <TableListReport :smaller="true" :count="false" :header="dfds.headers" :body="dfds.datalist" :mounts="{
+            status: [Mounts.Cast(selects.dfds_status)],
+        }" />
+        </div>
+
+        <div class="table-title">
+            <h3>Lista de Itens</h3>
+            <p>
+                Lista de materiais ou serviços do PCA
+            </p>
+        </div>
+        <div class="mb-3">
+            <TableListReport :smaller="true" :count="false" :header="dfds.headers_items" :body="dfds.datalist_items" errmsg="PCA não possuí materiais ou serviços" />
         </div>
 
         <p class="mt-4 text-center">{{ `${pca.organ.postalcity ?? '*****'}, ${pca.emission}` }}</p>
