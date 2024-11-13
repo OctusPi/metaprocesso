@@ -43,7 +43,25 @@ async function generatePDF(data) {
     }
 }
 
+function exportCSV(data, title) {
+    const blob = new Blob([data], { type: "text/csv;charset=utf-8;" });
+
+    // Cria um link para o Blob
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `${title}.csv`);
+
+    // Adiciona o link ao documento e clica nele para iniciar o download
+    document.body.appendChild(link);
+    link.click();
+
+    // Remove o link do documento
+    document.body.removeChild(link);
+}
+
 export default {
     exportPDF,
-    generatePDF
+    generatePDF,
+    exportCSV
 }
