@@ -170,7 +170,7 @@ const users = ref({
     selects: {},
     header: [
         { key: 'name', title: 'NOME', sub: [{ key: 'profile' }] },
-        { key: 'lastlogin', title: 'ÚLTIMO ACESSO', err: 'Não Acessado' },
+        { key: 'nowlogin', title: 'ÚLTIMO ACESSO', err: 'Não Acessado' },
     ],
 })
 
