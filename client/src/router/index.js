@@ -174,6 +174,12 @@ const router = createRouter({
       component: () => import('../views/PCAView.vue')
     },
     {
+      path: '/trasmission',
+      name: 'trasmission',
+      meta: { auth: true },
+      component: () => import('../views/TransmissionView.vue')
+    },
+    {
       path: '/forbidden',
       name: 'forbidden',
       component: () => import('../views/ForbiddenView.vue')
