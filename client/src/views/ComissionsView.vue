@@ -85,6 +85,7 @@ onMounted(() => {
         <main class="main">
             <HeaderMainUi />
 
+
             <!-- List -->
             <section v-if="!page.ui.register && !page.ui.prepare" class="main-section container-fluid p-4">
                 <div role="heading" class="inside-title mb-4">
@@ -106,6 +107,7 @@ onMounted(() => {
                         </button>
                     </div>
                 </div>
+
                 <!-- Search -->
                 <div v-if="page.ui.search" role="search" class="content container p-4 mb-4">
                     <form @submit.prevent="pageData.list" class="row g-3">
@@ -165,9 +167,11 @@ onMounted(() => {
                     </div>
                 </div>
                 <div role="form" class="container p-0">
+                    
                     <form class="form-row" @submit.prevent="pageData.save(null, onsave)">
                         <div class="row m-0 mb-3 g-3 content p-4 pt-1">
-                            <input type="hidden" name="id" v-model="page.id">
+                            
+                            
                             <div class="col-sm-12">
                                 <label for="name" class="form-label">Nome</label>
                                 <input type="text" name="name" class="form-control"
@@ -234,7 +238,14 @@ onMounted(() => {
                                 <textarea name="description" class="form-control" id="description"
                                     v-model="page.data.description"></textarea>
                             </div>
+
+                            <p class="small"> <span class="text-warning">Atenção!</span> O cadastro de comissões consistem em dois passos, primeiramente identifique a comissão e sua finalidade, 
+                                em seguida adicione os membros que a compõe clicando no botão avançar. Caso alguma etapa do processo seja atribuída a uma comissão 
+                                sem membros, o sistema emitirá um alerta informando que não é possível vincular processos a comissões sem membros.
+                            </p>
+                            
                         </div>
+                        
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
                             <button class="btn btn-action-primary">
                                 <ion-icon name="arrow-forward" class="fs-5"></ion-icon>

@@ -542,7 +542,7 @@ const items = ref({
                                             </div>
                                         </div>
                                         <div v-if="items.sent && !items.body.length" class="form-control load-items-cat p-0 m-0">
-                                            <p class="text-center small p-2">O item buscado ainda não foi adicionado ao seu catalógo. <RouterLink to="/catalogs">Adicionar</RouterLink></p>
+                                            <p class="text-center small p-2">O item buscado ainda não foi adicionado ao seu catalógo. <RouterLink to="/catalogs" target="_blank">Adicionar</RouterLink></p>
                                         </div>
                                     </div>
                                 </div>

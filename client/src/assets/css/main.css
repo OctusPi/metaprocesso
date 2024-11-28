@@ -75,11 +75,13 @@
 .content {
     background-color: var(--color-background-soft);
     border-radius: 15px;
+    
 }
 
 .content-secondary {
     background-color: var(--color-background);
     border-radius: 15px;
+    
 }
 
 .main-single-box {
@@ -623,6 +625,7 @@
 
 .tablelist {
     border-radius: 15px;
+    
 }
 
 .tablelist-prim {
