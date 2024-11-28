@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --vt-c-white: #f8f8f8;
+  --vt-c-white: #f7f7f7;
   --vt-c-white-soft: #ffffff;
   --vt-c-white-mute: #f2f2f2;
   --vt-c-white-soft-hover: #F1FAFF;
@@ -61,9 +61,9 @@
   --color-danger-txt: #3b3b3b;
   --color-danger-tls: rgba(255, 69, 44, 0.15);
 
-  --color-input: #f0f0f0;
+  --color-input: #e6e7ee;
   --color-input-txt: #4B5675;
-  --color-input-focus: #e6e7ee;
+  --color-input-focus: rgb(212, 218, 224);
   --color-input-active: #dadbe1;
   --color-input-placeholder: #99A1B7;
 

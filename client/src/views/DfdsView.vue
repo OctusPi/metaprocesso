@@ -55,7 +55,8 @@
         }
     })
 
-    const items = ref({
+const items = ref({
+        sent: false,
         search: null,
         body: [],
         header: [
@@ -84,6 +85,7 @@
 
     function search_items() {
         http.post(`${page.url}/items`, { name: items.value.search }, emit, (resp) => {
+            items.value.sent = true
             items.value.body = resp.data
             items.value.selected_item.item = null
         })
@@ -91,6 +93,7 @@
 
     function select_item(item) {
         items.value.selected_item.item = item
+        items.value.sent = false
         items.value.search = null
         items.value.body = []
     }
@@ -506,7 +509,7 @@
                                     </div>
 
                                     <!-- List Search Items -->
-                                    <div class="container-list position-relative bg-success">
+                                    <div class="container-list position-relative">
                                         <div v-if="items.search && items.body.length"
                                             class="position-absolute w-100 my-2 top-0 start-0 z-3">
                                             <div class="form-control load-items-cat p-0 m-0">
@@ -537,6 +540,9 @@
                                                     </li>
                                                 </ul>
                                             </div>
+                                        </div>
+                                        <div v-if="items.sent && !items.body.length" class="form-control load-items-cat p-0 m-0">
+                                            <p class="text-center small p-2">O item buscado ainda não foi adicionado ao seu catalógo. <RouterLink to="/catalogs">Adicionar</RouterLink></p>
                                         </div>
                                     </div>
                                 </div>
