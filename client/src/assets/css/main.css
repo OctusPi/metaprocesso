@@ -63,7 +63,7 @@
     width: calc(100% - 280px);
     min-height: 100vh;
     left: 280px;
-    padding: 0 40px;
+    padding: 0 40px 0 0;
 }
 
 .page-colapsed .main {
@@ -110,7 +110,7 @@
     background-color: var(--color-background-soft);
     position: fixed;
     width: calc(100% - 280px);
-    padding: 0 40px;
+    padding: 0 40px 0 0;
     left: 280px;
     top: 0;
     z-index: 999;
@@ -858,6 +858,7 @@ tbody tr:last-child td:first-child {
 
     .main-section {
         border-radius: 0;
+        padding: 0 40px;
     }
 
     .main-nav {
