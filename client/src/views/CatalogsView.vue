@@ -180,8 +180,8 @@ onMounted(() => {
                                     v-model="page.data.description">
                             </div>
 
-                            <p class="small"> <span class="text-warning">Atenção!</span> O cadastro de catálogos consistem em dois passos, primeiramente identifique o catálogo e sua finalidade, 
-                                em seguida adicione os itens que o compõe clicando no botão avançar. É possível inserir itens manualmente ou através base de dados do governo federal pelo Compras Gov.
+                            <p class="small"> <span class="text-warning">Atenção!</span> O cadastro de catálogos consiste em dois passos, primeiramente identifique o catálogo e sua finalidade, 
+                                em seguida adicione os itens que o compõe clicando no botão avançar. É possível inserir itens manualmente ou através da base de dados do governo federal pelo Compras Gov.
                             </p>
                         </div>
                         <div class="d-flex flex-row-reverse gap-2 mt-4">
