@@ -1,24 +1,24 @@
 <script setup>
 import { createApp, inject, onMounted, watch } from 'vue';
-import TableList from '@/components/table/TableList.vue';
-import NavMainUi from '@/components/NavMainUi.vue';
-import HeaderMainUi from '@/components/HeaderMainUi.vue';
-import FooterMainUi from '@/components/FooterMainUi.vue';
 import Layout from '@/services/layout';
 import Actions from '@/services/actions';
 import Mounts from '@/services/mounts';
 import http from '@/services/http';
+import exp from '@/services/export';
 import gpt from '@/services/gpt';
 import utils from '@/utils/utils';
-import TabNav from '@/components/TabNav.vue';
 import Tabs from '@/utils/tabs';
+import notifys from '@/utils/notifys';
+import TableList from '@/components/table/TableList.vue';
+import NavMainUi from '@/components/NavMainUi.vue';
+import HeaderMainUi from '@/components/HeaderMainUi.vue';
+import FooterMainUi from '@/components/FooterMainUi.vue';
+import TabNav from '@/components/TabNav.vue';
 import InputRichText from '@/components/inputs/InputRichText.vue';
 import TableListRadio from '@/components/table/TableListRadio.vue';
 import DfdDetails from '@/components/DfdDetails.vue';
 import InputDropMultSelect from '@/components/inputs/InputDropMultSelect.vue';
-import exp from '@/services/export';
 import ReftermReport from './reports/ReftermReport.vue';
-import notifys from '@/utils/notifys';
 
 const sysapp = inject('sysapp')
 
@@ -298,6 +298,7 @@ onMounted(() => {
 </script>
 
 <template>
+
     <div class="page">
         <NavMainUi />
         <main class="main">
@@ -603,7 +604,8 @@ onMounted(() => {
                                     identifier="market_survey" v-model="page.data.market_survey" />
                             </div>
                             <div class="col-12">
-                                <label for="solution_full_description" class="form-label d-md-flex justify-content-between">
+                                <label for="solution_full_description"
+                                    class="form-label d-md-flex justify-content-between">
                                     Descrição da Solução como um todo e Justificativa da Compra
                                     <div class="d-flex">
                                         <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
@@ -620,7 +622,8 @@ onMounted(() => {
                                     v-model="page.data.solution_full_description" />
                             </div>
                             <div class="col-12">
-                                <label for="contract_expected_price" class="form-label d-md-flex justify-content-between">
+                                <label for="contract_expected_price"
+                                    class="form-label d-md-flex justify-content-between">
                                     Estimativa do Preço da Contratação
                                     <div class="d-flex">
                                         <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
@@ -640,7 +643,8 @@ onMounted(() => {
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('exec') }">
                             <div class="col-12">
-                                <label for="supplier_selection_criteria" class="form-label d-md-flex justify-content-between">
+                                <label for="supplier_selection_criteria"
+                                    class="form-label d-md-flex justify-content-between">
                                     Forma e critérios de seleção do fornecedor
                                     <div class="d-flex">
                                         <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
@@ -709,7 +713,8 @@ onMounted(() => {
                                     v-model="page.data.funds_suitability" />
                             </div>
                             <div class="col-12">
-                                <label for="payment_measure_criteria" class="form-label d-md-flex justify-content-between">
+                                <label for="payment_measure_criteria"
+                                    class="form-label d-md-flex justify-content-between">
                                     Critérios de medição e de pagamento
                                     <div class="d-flex">
                                         <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
@@ -730,7 +735,8 @@ onMounted(() => {
                         <div class="tab-pane fade content row m-0 p-4 pt-1 g-3"
                             :class="{ 'show active': tabs.is('gestao') }">
                             <div class="col-12">
-                                <label for="contract_management_model" class="form-label d-md-flex justify-content-between">
+                                <label for="contract_management_model"
+                                    class="form-label d-md-flex justify-content-between">
                                     Modelo de gestão do contrato
                                     <div class="d-flex">
                                         <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
@@ -748,13 +754,28 @@ onMounted(() => {
                             <div class="col-12">
                                 <label for="correlated_contracts" class="form-label d-md-flex justify-content-between">
                                     Contratações Correlatas e/ou Interdependentes
-                                    <div class="d-flex">
-                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
-                                            @click="generate('correlated_contracts')">
-                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                            @click="improve_generate('correlated_contracts')">
-                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="check_correlated_contracts"
+                                                id="not_correlated_contracts">
+                                            <label class="form-check-label" for="not_correlated_contracts">
+                                                Não Existe
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="check_correlated_contracts"
+                                                id="yes_correlated_contracts">
+                                            <label class="form-check-label" for="yes_correlated_contracts">
+                                                Correlatas
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="check_correlated_contracts"
+                                                id="both_correlated_contracts">
+                                            <label class="form-check-label" for="both_correlated_contracts">
+                                                Ambas
+                                            </label>
+                                        </div>
                                     </div>
                                 </label>
                                 <InputRichText :valid="page.valids.correlated_contracts"
@@ -781,7 +802,8 @@ onMounted(() => {
                                     identifier="parts_obligation" v-model="page.data.parts_obligation" />
                             </div>
                             <div class="col-12">
-                                <label for="object_execution_model" class="form-label d-md-flex justify-content-between">
+                                <label for="object_execution_model"
+                                    class="form-label d-md-flex justify-content-between">
                                     Modelo de execução do objeto
                                     <div class="d-flex">
                                         <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
@@ -822,5 +844,6 @@ onMounted(() => {
             <FooterMainUi />
         </main>
     </div>
+
     <DfdDetails :dfd="page.dfd.data" :selects="page.selects" />
 </template>

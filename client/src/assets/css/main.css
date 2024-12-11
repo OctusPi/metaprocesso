@@ -238,6 +238,10 @@
     color: var(--color-input-placeholder);
 }
 
+input[type="radio"].form-control{
+    background-color: var(--color-input);
+}
+
 .form-control-alert {
     color: var(--color-danger-txt);
     background-color: var(--color-danger-tls);
