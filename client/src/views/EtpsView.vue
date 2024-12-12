@@ -44,6 +44,9 @@ const [page, pageData] = Layout.new(emit, {
     url: '/etps',
     datalist: props.datalist,
     generate: {},
+    options: {
+        correlated_contracts:''
+    },
     header: [
         { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
         { key: 'process.year_pca', title: 'PCA' },
@@ -88,6 +91,14 @@ const tabs = new Tabs({
     anexos: { title: 'Anexos' },
     revisor: { title: 'Revisar' },
 })
+
+const static_values = {
+    correlated_contracts: {
+        not_exists: 'Inexistem contratações correlatas e interdependentes para a contratação prevista neste estudo, uma vez que a sua execução NÃO necessita de outro objeto para acontecer.',
+        interdependent: 'Inexistem contratações correlatas. Por outro lado, há interdependência para a contratação prevista neste estudo, uma vez que a sua execução necessita de outro objeto para acontecer.',
+        both: 'Existem contratações correlatas. Por outro lado, há interdependência para a contratação prevista neste estudo, uma vez que a sua execução necessita de outro objeto para acontecer.'
+    }
+}
 
 function list_processes() {
     http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
@@ -352,6 +363,10 @@ function dfd_details(id) {
     }
 }
 
+watch(() => page.options.correlated_contracts, (newValue) => {
+    page.data.correlated_contracts = static_values.correlated_contracts[newValue]
+})
+
 watch(() => page.ui.register, (newUi) => {
     if (newUi && page.data.id == null) {
         page.data.protocol = utils.dateProtocol(page.organ?.id)
@@ -370,6 +385,8 @@ onMounted(() => {
 </script>
 
 <template>
+    <DfdDetails :dfd="page.dfd.data" :selects="page.selects" />
+    
     <div class="page">
         <NavMainUi />
         <main class="main">
@@ -793,14 +810,29 @@ onMounted(() => {
                                         <label for="object_classification"
                                             class="form-label d-md-flex justify-content-between">
                                             Contratações correlatas ou interdependentes
-                                            <div class="d-flex">
-                                                <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
-                                                @click="generate('correlated_contracts')">
-                                                <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
-                                                <a href="#" class="a-ia d-flex align-items-center gap-1"
-                                                @click="improve_generate('correlated_contracts')">
-                                                <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
-                                            </div>
+                                            <div class="d-flex align-items-center gap-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="check_correlated_contracts"
+                                                id="not_correlated_contracts" value="not_exists" v-model="page.options.correlated_contracts">
+                                            <label class="form-check-label" for="not_correlated_contracts">
+                                                Não Existe
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="check_correlated_contracts"
+                                                id="yes_interdependent" value="interdependent" v-model="page.options.correlated_contracts">
+                                            <label class="form-check-label" for="yes_interdependent">
+                                                Interdependentes
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="check_correlated_contracts"
+                                                id="both_correlated_contracts" value="both" v-model="page.options.correlated_contracts">
+                                            <label class="form-check-label" for="both_correlated_contracts">
+                                                Ambas
+                                            </label>
+                                        </div>
+                                    </div>
                                         </label>
                                         <InputRichText :valid="page.valids.correlated_contracts"
                                             placeholder="Contratações Correlatas e/ou Interdependentes"
@@ -1135,5 +1167,5 @@ onMounted(() => {
             <FooterMainUi />
         </main>
     </div>
-    <DfdDetails :dfd="page.dfd.data" :selects="page.selects" />
+
 </template>

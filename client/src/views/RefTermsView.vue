@@ -31,9 +31,6 @@ const props = defineProps({
 const [page, pageData] = Layout.new(emit, {
     url: '/refterms',
     datalist: props.datalist,
-    options: {
-        correlated_contracts:''
-    },
     header: [
         { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
         { key: 'comission.name', title: 'ORIGEM' },
@@ -94,14 +91,6 @@ const tabs = new Tabs([
     { id: 'fiscalizacao', title: 'Fiscalização' },
 ])
 
-const static_values = {
-    correlated_contracts: {
-        not_exists: 'Inexistem contratações correlatas e interdependentes para a contratação prevista neste estudo, uma vez que a sua execução necessita de outro objeto para acontecer.',
-        interdependent: 'Inexistem contratações correlatas. Por outro lado, há interdependência para a contratação prevista neste estudo, uma vez que a sua execução necessita de outro objeto para acontecer.',
-        both: 'Existem contratações correlatas. Por outro lado, há interdependência para a contratação prevista neste estudo, uma vez que a sua execução necessita de outro objeto para acontecer.'
-    }
-}
-
 function list_processes() {
     http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
         page.process.data = resp.data ?? []
@@ -150,7 +139,7 @@ function generate(type) {
     const base = {
         organ: page.organ,
         comission: page.selects.comissions?.find(o => o.id === page.data.comission_id),
-        process: page.process
+        process: page.data.process
     }
 
     let callresp, payload = null
@@ -765,28 +754,13 @@ onMounted(() => {
                             <div class="col-12">
                                 <label for="correlated_contracts" class="form-label d-md-flex justify-content-between">
                                     Contratações Correlatas e/ou Interdependentes
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="check_correlated_contracts"
-                                                id="not_correlated_contracts" value="not_exists" v-model="page.options.correlated_contracts">
-                                            <label class="form-check-label" for="not_correlated_contracts">
-                                                Não Existe
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="check_correlated_contracts"
-                                                id="yes_interdependent" value="interdependent" v-model="page.options.correlated_contracts">
-                                            <label class="form-check-label" for="yes_interdependent">
-                                                Interdependentes
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="check_correlated_contracts"
-                                                id="both_correlated_contracts" value="both" v-model="page.options.correlated_contracts">
-                                            <label class="form-check-label" for="both_correlated_contracts">
-                                                Ambas
-                                            </label>
-                                        </div>
+                                    <div class="d-flex">
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1 me-3"
+                                            @click="generate('correlated_contracts')">
+                                            <ion-icon name="hardware-chip-outline" /> Gerar com I.A</a>
+                                        <a href="#" class="a-ia d-flex align-items-center gap-1"
+                                            @click="improve_generate('correlated_contracts')">
+                                            <ion-icon name="sparkles-outline" /> Aprimorar com I.A</a>
                                     </div>
                                 </label>
                                 <InputRichText :valid="page.valids.correlated_contracts"
