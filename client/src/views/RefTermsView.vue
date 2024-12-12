@@ -31,6 +31,9 @@ const props = defineProps({
 const [page, pageData] = Layout.new(emit, {
     url: '/refterms',
     datalist: props.datalist,
+    options: {
+        correlated_contracts:''
+    },
     header: [
         { key: 'emission', title: 'IDENTIFICAÇÃO', sub: [{ key: 'protocol' }] },
         { key: 'comission.name', title: 'ORIGEM' },
@@ -90,6 +93,14 @@ const tabs = new Tabs([
     { id: 'gestao', title: 'Gestão' },
     { id: 'fiscalizacao', title: 'Fiscalização' },
 ])
+
+const static_values = {
+    correlated_contracts: {
+        not_exists: 'Inexistem contratações correlatas e interdependentes para a contratação prevista neste estudo, uma vez que a sua execução necessita de outro objeto para acontecer.',
+        interdependent: 'Inexistem contratações correlatas. Por outro lado, há interdependência para a contratação prevista neste estudo, uma vez que a sua execução necessita de outro objeto para acontecer.',
+        both: 'Existem contratações correlatas. Por outro lado, há interdependência para a contratação prevista neste estudo, uma vez que a sua execução necessita de outro objeto para acontecer.'
+    }
+}
 
 function list_processes() {
     http.post(`${page.url}/list_processes`, page.process.search, emit, (resp) => {
@@ -757,21 +768,21 @@ onMounted(() => {
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="check_correlated_contracts"
-                                                id="not_correlated_contracts">
+                                                id="not_correlated_contracts" value="not_exists" v-model="page.options.correlated_contracts">
                                             <label class="form-check-label" for="not_correlated_contracts">
                                                 Não Existe
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="check_correlated_contracts"
-                                                id="yes_correlated_contracts">
-                                            <label class="form-check-label" for="yes_correlated_contracts">
-                                                Correlatas
+                                                id="yes_interdependent" value="interdependent" v-model="page.options.correlated_contracts">
+                                            <label class="form-check-label" for="yes_interdependent">
+                                                Interdependentes
                                             </label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="check_correlated_contracts"
-                                                id="both_correlated_contracts">
+                                                id="both_correlated_contracts" value="both" v-model="page.options.correlated_contracts">
                                             <label class="form-check-label" for="both_correlated_contracts">
                                                 Ambas
                                             </label>
