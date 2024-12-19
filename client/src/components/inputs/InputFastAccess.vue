@@ -43,7 +43,7 @@ function search_item() {
 
 <template>
     <div class="container-input">
-        <input class="form-control" :class="{'active' : comp.list.length}" autocomplete="off" placeholder="Acesso Rápido" v-model="comp.search" @keyup="search_item">
+        <input class="form-control" :class="{'active' : comp.list.length}" autocomplete="off" name="fastaccess" id="fastaccess" placeholder="Acesso Rápido" v-model="comp.search" @keyup="search_item">
         <div class="container-list" v-if="comp.list.length && comp.search">
             <ul class="fast-link">
                 <li v-for="i in comp.list" :key="i.title">
