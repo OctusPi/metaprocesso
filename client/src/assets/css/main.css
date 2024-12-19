@@ -92,6 +92,8 @@
 
 .single-box {
     width: 380px;
+    background-color: var(--color-background-soft);
+    border-radius: 18px;
 }
 
 .logomarca-box {
@@ -117,8 +119,8 @@
 }
 
 .main-section {
-    min-height: calc(100vh - 146px);
-    margin: 95px auto 50px auto;
+    min-height: calc(100vh - 153px);
+    margin: 102px auto 50px auto;
     background-color: var(--color-background);
     border-radius: 30px;
     display: flex;
@@ -886,6 +888,15 @@ tbody tr:last-child td:first-child {
 
     .nav-label {
         display: none;
+    }
+
+    .label-btn-header {
+        display: none;
+    }
+
+    .single-box {
+        background-color: transparent;
+        box-shadow: none !important;
     }
 }
 

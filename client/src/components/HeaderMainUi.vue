@@ -23,7 +23,7 @@ function open_menu() {
             <div class="search-bar flex-grow-1 me-2">
                 <InputFastAccess />
             </div>
-            <div class="user-actions d-flex">
+            <div class="user-actions d-flex align-items-center">
                 <DropDownNotifyCmp />
                 <DropDownCalendarCmp />
                 <DropDownThemeCmp />

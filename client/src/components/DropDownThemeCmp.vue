@@ -15,11 +15,11 @@ function changeTheme(mode) {
         </button>
         <ul class="dropdown-menu shadow-lg">
             <li><a class="dropdown-item d-flex align-items-center mb-1" href="#" @click="changeTheme('ligth')">
-                    <ion-icon name="flash-outline" class="me-2 fs-5"></ion-icon>
+                    <ion-icon name="sunny-outline" class="me-2 fs-5"></ion-icon>
                     Modo Claro
                 </a></li>
             <li><a class="dropdown-item d-flex align-items-center" href="#" @click="changeTheme('dark')">
-                    <ion-icon name="cloudy-night-outline" class="me-2 fs-5"></ion-icon>
+                    <ion-icon name="moon-outline" class="me-2 fs-6"></ion-icon>
                     Modo Escuro
                 </a></li>
         </ul>

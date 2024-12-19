@@ -31,7 +31,7 @@ function recover(){
 
 <template>
     <main class="main-single-box d-flex justify-content-center align-items-center">
-        <div class="single-box p-5">
+        <div class="single-box shadow-sm p-5">
             <header class="text-center mb-4">
                 <img src="../assets/imgs/logo.svg" class="logomarca-box mb-3">
                 <div>
